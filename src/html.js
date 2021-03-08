@@ -1,4 +1,4 @@
-(function($){
+(function($, undefined){
 
 function findNodes(result, container, type){
 	if( container.nodeType===type )
@@ -33,7 +33,7 @@ $.html=function(){
 	var placeholder = "<!---->";
 	for(var i=0, l=arguments.length; i<l; ++i){
 		var arg = arguments[i];
-		if(!arg) continue;
+		if( arg===null || arg===undefined ) continue;
 		if( typeof arg==="function" || typeof arg==="object" ){
 			result.push(placeholder);
 			operators.push(arg);
@@ -42,8 +42,31 @@ $.html=function(){
 		}
 	}
 	
-	var container = document.createElement("div");
-	container.innerHTML = result.join("");
+	var cTag = "div";
+	var content = result.join("");
+	var tagMatch = content.match(/<[a-zA-Z]+/)[0];
+	
+	if( tagMatch ){
+		var firstTag = tagMatch.substring(1).toLowerCase();
+		switch( firstTag ){
+			case "th":
+			case "td":
+				cTag = "tr"; break;
+			case "tr":
+				cTag = "tbody"; break;
+			case "tbody":
+			case "thead":
+			case "tfoot":
+			case "caption":
+				cTag = "table"; break;
+			case "body":
+			case "head":
+				cTag = "html"; break;
+		}
+	}
+	
+	var container = document.createElement(cTag);
+	container.innerHTML = content;
 	
 	var comments = [];
 	findNodes(comments, container, 8);
