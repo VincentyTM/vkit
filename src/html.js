@@ -45,10 +45,8 @@ $.html=function(){
 	var cTag = "div";
 	var content = result.join("");
 	var tagMatch = content.match(/<[a-zA-Z]+/);
-	var firstMatch = tagMatch[0];
-	
-	if( firstMatch ){
-		var firstTag = firstMatch.substring(1).toLowerCase();
+	if( tagMatch && tagMatch.length ){
+		var firstTag = tagMatch[0].substring(1).toLowerCase();
 		switch( firstTag ){
 			case "th":
 			case "td":
