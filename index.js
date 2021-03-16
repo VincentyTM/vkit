@@ -87,8 +87,8 @@ function serveFile(req, res, path){
 		headers["content-type"]=getMimeType(path);
 		headers["accept-ranges"]="bytes";
 		const size=stats.size;
-		const start=0;
-		const end=size;
+		let start=0;
+		let end=size;
 		const range=req.headers.range;
 		if( range ){
 			const parts=range.replace("bytes=", "").split("-");
