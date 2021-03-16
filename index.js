@@ -527,7 +527,7 @@ process.openStdin().on("data", function(data){
 try{
 	fs.watch(config.appDirectory, {recursive: true}, (eventType, filename) => updateCache(config.appDirectory + "/" + filename));
 }catch(ex){
-	console.error("The '" + config.appDirectory + "' directory doesn't exist.");
+	console.error("The directory", config.appDirectory, "doesn't exist.");
 }
 
 try{
