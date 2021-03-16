@@ -268,19 +268,21 @@ async function updateCache(filename){
 	}
 }
 
-function exportApplication(){
-	const isDev = config.environment==="dev";
-	config.environment = "release";
+async function exportApplication(){
+	if( config.environment==="dev" ){
+		config.environment = "release";
+		await compileBundle();
+		config.environment = "dev";
+	}
 	fs.writeFile(
 		config.exportFile,
 		getHtmlString(false),
+		{ flag: "w" },
 		err => err
 			? console.error("Error while exporting file to '", config.exportFile, "': ", err)
 			: console.log("Exported to file", config.exportFile)
 	);
-	if( isDev ){
-		config.environment = "dev";
-	}
+	await compileBundle();
 }
 
 async function getLibrary(name){
