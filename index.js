@@ -274,7 +274,7 @@ function exportApplication(){
 		getHtmlString(false),
 		err => err
 			? console.error("Error while exporting file to '", config.exportFile, "': ", err)
-			: console.log("Exported to file '", config.exportFile, "'.")
+			: console.log("Exported to file", config.exportFile)
 	);
 }
 
