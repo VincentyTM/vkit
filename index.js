@@ -269,6 +269,8 @@ async function updateCache(filename){
 }
 
 function exportApplication(){
+	const isDev = config.environment==="dev";
+	config.environment = "release";
 	fs.writeFile(
 		config.exportFile,
 		getHtmlString(false),
@@ -276,6 +278,9 @@ function exportApplication(){
 			? console.error("Error while exporting file to '", config.exportFile, "': ", err)
 			: console.log("Exported to file", config.exportFile)
 	);
+	if( isDev ){
+		config.environment = "dev";
+	}
 }
 
 async function getLibrary(name){
