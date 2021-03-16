@@ -229,9 +229,11 @@ async function loadConfig(){
 		await startServer();
 		console.log("Server is running on port " + config.port + ". Type 'help' for help.");
 		await build();
+		compileBundle();
 		startBrowser("http://localhost:" + config.port);
 	}else{
 		await build();
+		compileBundle();
 		refresh();
 	}
 }
