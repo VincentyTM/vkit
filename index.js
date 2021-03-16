@@ -469,18 +469,17 @@ function getHtmlString(doIncludeRefresh){
 			'}',
 			'setTimeout(sendRequest, 0);',
 		'})();</script>'].join('') : '',
-		'<script>\n"use strict";\n\n/** vKit **/\n',
-			jsString,
-		'\n</script></body></html>'
+		jsString,
+		'</body></html>'
 	].join('');
 }
 
 
 
 console.log("");
-console.log("+----------------------------+");
-console.log("| vKit Builder Tool started! |");
-console.log("+----------------------------+");
+console.log("+-------------------+");
+console.log("| vKit CLI started! |");
+console.log("+-------------------+");
 
 process.openStdin().on("data", function(data){
 	const cmd = data
@@ -491,9 +490,9 @@ process.openStdin().on("data", function(data){
 	switch( cmd[0] ){
 		case "help":
 			console.log("");
-			console.log("+------------------------+");
-			console.log("| vKit Builder Tool Help |");
-			console.log("+------------------------+");
+			console.log("+---------------+");
+			console.log("| vKit CLI Help |");
+			console.log("+---------------+");
 			console.log("  help: Show this information");
 			console.log("  exit: Exit");
 			console.log("  build: Clear cache and rebuild application");
