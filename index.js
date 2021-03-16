@@ -259,7 +259,12 @@ async function rebuild(){
 
 async function compileBundle(){
 	const files = Object.keys(cache);
-	jsString = files.filter(file => file.toLowerCase().endsWith(".js")).sort(PathComparator).map(file => cache[file]).join("\n");
+	
+	jsString = files
+		.filter(file => file.startsWith("app/") && file.toLowerCase().endsWith(".js"))
+		.sort(PathComparator).map(file => cache[file])
+		.join("\n");
+	
 	jsString = (await getLibraries(jsString))
 		.map(str => str
 			.split("\r").join("\n")
@@ -269,7 +274,12 @@ async function compileBundle(){
 			.split("\t").join("")
 			.split("\n").join("")
 		).join("\n") + "\n\n" + jsString;
-	cssString = files.filter(file => file.toLowerCase().endsWith(".css")).sort(PathComparator).map(file => cache[file]).join("\n")
+	
+	cssString = files
+		.filter(file => file.toLowerCase().endsWith(".css"))
+		.sort(PathComparator)
+		.map(file => cache[file])
+		.join("\n")
 		.split("\t").join("")
 		.split("\r").join("")
 		.split("\n").join("")
