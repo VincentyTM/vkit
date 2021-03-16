@@ -4,5 +4,6 @@
 	"themeColor": "",
 	"title": "vKit Application",
 	"appDirectory": "app",
-	"exportFile": "index.html"
+	"exportFile": "index.html",
+	"environment": "dev"
 }

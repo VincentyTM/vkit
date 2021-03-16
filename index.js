@@ -11,7 +11,8 @@ const config = {
 	themeColor: "",
 	title: "vKit Application",
 	appDirectory: "app",
-	exportFile: "index.html"
+	exportFile: "index.html",
+	environment: "dev"
 };
 let latestPort = null;
 let latestAppDirectory = null;
@@ -40,19 +41,134 @@ async function startServer(){
 		server = http.createServer(function(req, res){
 			switch( req.url ){
 				case "/refresh":
-					res.setHeader('content-type', 'text/plain; charset=utf-8');
-					res.write('START');
+					res.setHeader("content-type", "text/plain; charset=utf-8");
+					res.write("START");
 					requests.push(() => {
-						res.end('REFRESH');
+						res.end("REFRESH");
 					});
 					break;
-				default:
-					res.setHeader('content-type', 'text/html; charset=utf-8');
+				case "/":
+					res.setHeader("content-type", "text/html; charset=utf-8");
 					res.end( getHtmlString(true) );
 					break;
+				default:
+					serveFile(req, res, sanitizePath(req.url));
 			}
 		}).listen({port: config.port}, resolve).on("error", reject);
 	});
+}
+
+function serveFile(req, res, path){
+	const headers = {};
+	fs.lstat(path, function(err, stats){
+		if( err || !stats ){
+			res.writeHead(404, {
+				"content-type": "text/plain",
+				"content-length": 3
+			});
+			res.end("404");
+			return;
+		}
+		if(!stats.isFile()){
+			res.writeHead(403, {
+				"content-type": "text/plain",
+				"content-length": 3
+			});
+			res.end("404");
+			return;
+		}
+		if(!recent(stats.mtimeMs, headers, req)){
+			res.writeHead(304, {
+				"content-length": 0
+			});
+			res.end();
+			return;
+		}
+		headers["content-type"]=getMimeType(path);
+		headers["accept-ranges"]="bytes";
+		const size=stats.size;
+		const start=0;
+		const end=size;
+		const range=req.headers.range;
+		if( range ){
+			const parts=range.replace("bytes=", "").split("-");
+			start=parseInt(parts[0]);
+			end=parts[1] ? parseInt(parts[1]) : size-1;
+			if( start>=size || start>end || start<0 || isNaN(start) || end>size ){
+				res.writeHead(416, {
+					"content-type": "text/plain",
+					"content-length": 3
+				});
+				res.end("416");
+				return;
+			}
+			headers["content-range"]="bytes "+start+"-"+end+"/"+size;
+			headers["content-length"]=end-start+1;
+			res.writeHead(206, headers);
+		}else{
+			headers["content-length"]=size;
+			res.writeHead(200, headers);
+		}
+		if( req.method.toLowerCase()==="head" ){
+			res.end();
+			return;
+		}
+		const stream=fs.createReadStream(path, {
+			"start": start,
+			"end": end
+		});
+		stream.on("error", function(){ res.end(); });
+		stream.on("finish", function(){ res.end(); });
+		stream.on("open", function(){ stream.pipe(res); });
+	});
+}
+
+function recent(lastModified, headers, req){
+	headers["vary"] = "if-modified-since";
+	headers["cache-control"] = "public, max-age=60, no-transform, immutable, min-fresh: 60, stale-while-revalidate=30, stale-if-error=30";
+	headers["expires"] = new Date(Date.now() + 300000).toUTCString();
+	headers["last-modified"] = new Date(lastModified).toUTCString();
+	return !( "if-modified-since" in req.headers && new Date(req.headers["if-modified-since"]).getTime() >= lastModified );
+}
+
+function sanitizePath(path, strict){
+	path=decodeURIComponent(path);
+	path=path.split("/");
+	for(let i=path.length; i--;){
+		path[i]=path[i].substring(0,50);
+		if( strict ){
+			path[i]=path[i].replace(/[^a-zA-Z0-9_\-.]/g, "");
+		}
+		while( path[i].charAt(0)=="." ){
+			path[i]=path[i].substring(1);
+		}
+		if(!path[i]){
+			path.splice(i, 1);
+		}
+	}
+	path=path.join("/");
+	return path;
+}
+
+function getMimeType(path){
+	const ldot=path.lastIndexOf(".");
+	if(~ldot){
+		const ext=path.substring(ldot+1).toLowerCase();
+		switch( ext ){
+			case "appcache": return "text/cache-manifest";
+			case "txt": return "text/plain; charset=UTF-8";
+			case "css": return "text/css; charset=UTF-8";
+			case "html": case "htm": return "text/html; charset=UTF-8";
+			case "js": return "text/javascript; charset=UTF-8";
+			case "json": return "application/json; charset=UTF-8";
+			case "jpg": case "jpeg": return "image/jpeg";
+			case "png": case "gif": case "webp": return "image/"+ext;
+			case "mp3": case "wav": case "flac": case "ogg": return "audio/"+ext;
+			case "mp4": case "avi": case "webm": return "video/"+ext;
+			case "ico": return "image/x-icon";
+		}
+	}
+	return "application/octet-stream";
 }
 
 async function recursivelyIterate(dir, array){
@@ -104,6 +220,7 @@ async function loadConfig(){
 		config.title = String(json.title || "");
 		config.appDirectory = String(json.appDirectory || "app");
 		config.exportFile = String(json.exportFile || "index.html");
+		config.environment = String(json.environment).toLowerCase()==="dev" ? "dev" : "release";
 	}catch(ex){
 	}
 	if( latestPort!==config.port || latestAppDirectory!==config.appDirectory ){
@@ -167,7 +284,7 @@ async function getLibrary(name){
 	return cache[filename] = await readFile(filename);
 }
 
-async function getLibraries(bundle){
+function getLibraryNames(bundle){
 	const libraries = [];
 	bundle = bundle
 		.split("\r").join("")
@@ -175,18 +292,18 @@ async function getLibraries(bundle){
 		.split("\t").join("")
 		.split(" ").join("");
 	if( bundle.includes("$(") || bundle.includes("$.") ){
-		libraries.push(await getLibrary("core"));
+		libraries.push("core");
 		if( bundle.includes(".append(") ){
-			libraries.push(await getLibrary("dom"));
+			libraries.push("dom");
 		}
 		if( bundle.includes("$.html") ){
-			libraries.push(await getLibrary("html"));
+			libraries.push("html");
 		}
 		if( bundle.includes("$.cookie") ){
-			libraries.push(await getLibrary("cookie"));
+			libraries.push("cookie");
 		}
 		if( bundle.includes(".drag") ){
-			libraries.push(await getLibrary("drag"));
+			libraries.push("drag");
 		}
 		if(
 			bundle.includes("$.prop") ||
@@ -196,45 +313,53 @@ async function getLibraries(bundle){
 			bundle.includes("$.effect") ||
 			bundle.includes("$.render")
 		){
-			libraries.push(await getLibrary("component"));
+			libraries.push("component");
 		}
 		if( bundle.includes("$.serialize") ){
-			libraries.push(await getLibrary("serialize"));
+			libraries.push("serialize");
 		}
 		if( bundle.includes("$.inject") ){
-			libraries.push(await getLibrary("inject"));
+			libraries.push("inject");
 		}
 		if( bundle.includes("$.thread") ){
-			libraries.push(await getLibrary("thread"));
+			libraries.push("thread");
 			if( bundle.includes("$.recorder") ){
-				libraries.push(await getLibrary("recorder"));
+				libraries.push("recorder");
 			}
 		}else if( bundle.includes("$.recorder") ){
-			libraries.push(await getLibrary("thread"), await getLibrary("recorder"));
+			libraries.push("thread", "recorder");
 		}
 		if( bundle.includes("$.webrtc") ){
-			libraries.push(await getLibrary("webrtc"));
+			libraries.push("webrtc");
 		}
 		if( bundle.includes("$.lexer") ){
-			libraries.push(await getLibrary("lexer"));
+			libraries.push("lexer");
 		}
 		if( bundle.includes("$.parser") ){
-			libraries.push(await getLibrary("parser"));
+			libraries.push("parser");
 		}
 		if( bundle.includes("$.parseTree") ){
-			libraries.push(await getLibrary("parsetree"));
+			libraries.push("parsetree");
 		}
 		if( bundle.includes("$.windowForm") ){
-			libraries.push(await getLibrary("windowForm"));
+			libraries.push("windowForm");
 		}
 		if( bundle.includes(".sandbox") ){
-			libraries.push(await getLibrary("sandbox"));
+			libraries.push("sandbox");
 		}
 		if( bundle.includes(".select") || bundle.includes(".insertText") ){
-			libraries.push(await getLibrary("selection"));
+			libraries.push("selection");
 		}
 	}
 	return libraries;
+}
+
+async function getLibrarySource(libraries){
+	const n = libraries.length;
+	const result = new Array(n);
+	for(let i=0; i<n; ++i)
+		result[i] = await getLibrary(libraries[i]);
+	return result;
 }
 
 async function build(){
@@ -260,30 +385,46 @@ async function rebuild(){
 async function compileBundle(){
 	const files = Object.keys(cache);
 	
-	jsString = files
-		.filter(file => file.startsWith("app/") && file.toLowerCase().endsWith(".js"))
-		.sort(PathComparator).map(file => cache[file])
-		.join("\n");
+	const appJSFiles = files.filter(file => file.startsWith(config.appDirectory + "/") && file.toLowerCase().endsWith(".js")).sort(PathComparator);
+	const appCSSFiles = files.filter(file => file.toLowerCase().endsWith(".css")).sort(PathComparator);
 	
-	jsString = (await getLibraries(jsString))
-		.map(str => str
-			.split("\r").join("\n")
-			.split("\n\n").join("\n")
-			.split("\n\n").join("\n")
-			.split("\n\n").join("\n")
-			.split("\t").join("")
-			.split("\n").join("")
-		).join("\n") + "\n\n" + jsString;
+	const appSource = appJSFiles.map(file => cache[file]).join("\n");
 	
-	cssString = files
-		.filter(file => file.toLowerCase().endsWith(".css"))
-		.sort(PathComparator)
-		.map(file => cache[file])
-		.join("\n")
-		.split("\t").join("")
-		.split("\r").join("")
-		.split("\n").join("")
-		.split("  ").join(" ");
+	const libraries = getLibraryNames(appSource);
+	
+	if( config.environment==="dev" ){
+		jsString = '\n' + libraries.map(lib => "src/" + lib + ".js").concat(appJSFiles).map(src => '<script src="' + src + '"></script>\n').join('');
+		cssString = '\n' + appCSSFiles.map(src => '<link rel="stylesheet" href="' + src + '">\n').join('');
+	}else{
+		const librarySource = (await getLibrarySource(libraries))
+			.map(str => str
+				.split("\r").join("\n")
+				.split("\n\n").join("\n")
+				.split("\n\n").join("\n")
+				.split("\n\n").join("\n")
+				.split("\t").join("")
+				.split("\n").join("")
+			).join("\n") + "\n\n";
+		
+		jsString = [
+			'<script>\n"use strict";\n\n/** vKit **/\n',
+				librarySource,
+				appSource,
+			'\n</script>'
+		].join('');
+	
+		cssString = [
+			'<style>',
+				appCSSFiles
+					.map(file => cache[file])
+					.join("\n")
+					.split("\t").join("")
+					.split("\r").join("")
+					.split("\n").join("")
+					.split("  ").join(" "),
+			'</style>'
+		].join('');
+	}
 }
 
 function refresh(){
@@ -310,9 +451,7 @@ function getHtmlString(doIncludeRefresh){
 		'<title>',
 			EscapeHTML(config.title),
 		'</title>',
-		'<style>',
-			cssString,
-		'</style>',
+		cssString,
 		'</head><body>',
 		doIncludeRefresh ? ['<script>(function(){',
 			'function sendRequest(){',
