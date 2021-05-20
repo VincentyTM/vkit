@@ -289,9 +289,10 @@ class DownloadService {
     constructor(){
         this.onDownload = $.observable();
     }
-    download(url){
+    async download(url){
         const blob = await (await fetch(url)).blob();
         this.onDownload(blob);
+        $.render();
     }
 }
 
