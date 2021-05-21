@@ -11,8 +11,10 @@ function CounterApp(){
         '<input type="button" value="Reset counter">',
             $.prop("disabled", () => count === 0),
             $.on("click", () => count = 0),
+            
         '<input type="button" value="Increase count!">',
             $.on("click", () => ++count),
+            
         '<br>Click count: ', $.text(() => count)
     );
 }
@@ -409,7 +411,8 @@ const rules = {
     "while": /while/,
     "(": /\(/,
     "identifier": /[a-zA-Z][a-zA-Z0-9]*/,
-    ")": /\)/
+    ")": /\)/,
+    "ws": /\s+/
 };
 const lexer = $.lexer(rules, text);
 while(!lexer.ended()){
@@ -421,12 +424,19 @@ while(!lexer.ended()){
 
 vKit is capable of building a parse tree based on the specified syntactic rules. To see how it works, take a look at this snippet from an equation solver application.
 ```javascript
-const input = "x^2+1=2*x";
+const input = "x^2 + 1 = 2*x";
 const parseTree = $.parseTree(precedence, left, unary);
 const outputMessage = $.parse(
+    //Lexer instance
     $.lexer(rules, input),
+    
+    //Top-level syntax
     ["EXPR", "=", "EXPR"],
+    
+    //Syntactic rules
     syntax,
+    
+    //How to apply a rule (optional)
     function(expect, node, replacement){
         if( expect==="EXPR" ){
             if( node.type==="-" ){
@@ -434,7 +444,10 @@ const outputMessage = $.parse(
             }
         }
         parseTree.add(node);
-    }
+    },
+    
+    //Which tokens to skip (optional)
+    node => node.type === "ws"
 );
 
 console.log( parseTree.root.toString() );
