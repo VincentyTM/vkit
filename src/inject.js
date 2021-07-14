@@ -36,8 +36,9 @@ $.inject = function(service){
 	while( injector && !(provider = injector.getProvider(service)))
 		injector = injector.parent;
 	if(!injector){
+		injector = Injector.stack[0];
 		provider = new Provider(service);
-		var providers = Injector.stack[0].providers;
+		var providers = injector.providers;
 		providers.set ? providers.set(service, provider) : providers.push(provider);
 	}
 	Injector.stack.push(injector);
