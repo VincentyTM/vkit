@@ -1,6 +1,12 @@
-# vKit
+<h1 align="center">vKit</h1>
+  
+<p align="center">
+  <img src="img/vkit-logo-200.png" alt="vKit logo" width="100" height="100">
+</p>
 
-*vKit* is a flexible JavaScript library for building dynamic UI declaratively, handling asynchronous calls, managing threads, serializing forms, parsing syntax, and much more.
+<p align="center"><i>vKit</i> is a flexible JavaScript library for building dynamic UI declaratively, handling asynchronous calls, managing threads, serializing forms, parsing syntax, and much more.</p>
+
+<hr>
 
 Example app:
 
