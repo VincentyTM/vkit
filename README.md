@@ -114,6 +114,27 @@ $.html(
 )
 ```
 
+You can use `$.template` instead of `$.html` in case you need to replace substrings with views or modifier functions.
+
+```javascript
+$.template(
+	document.querySelector("template").innerHTML,
+	{
+		"[count]": () => $.text(() => count),
+		"[onIncrease]": () => $.on("click", () => ++count)
+	}
+)
+```
+
+The HTML template:
+
+```html
+<template>
+	Count: [count]<br>
+	<input type="button" value="Increase!">[onIncrease]
+</template>
+```
+
 ## Dynamic UI
 
 Using the `$.text`, `$.prop` and `$.css` functions, you can update DOM nodes dynamically.

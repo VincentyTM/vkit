@@ -308,6 +308,9 @@ function getLibraryNames(bundle){
 		if( bundle.includes("$.html") ){
 			libraries.push("html");
 		}
+		if( bundle.includes("$.template") ){
+			libraries.push("template");
+		}
 		if( bundle.includes("$.cookie") ){
 			libraries.push("cookie");
 		}
