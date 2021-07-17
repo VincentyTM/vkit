@@ -58,6 +58,23 @@ $.provide = function(services, getContent){
 	}
 	var provider = new Provider(stack[stack.length - 1], containers);
 	stack.push(provider);
+	$.unmount && $.unmount(function(){
+		if( supportsWeakMap ){
+			services.forEach(function(service){
+				var container = containers.get(service);
+				if( container.instance && container.instance.destructor ){
+					container.instance.destructor();
+				}
+			});
+		}else{
+			for(var i=containers.length; i--;){
+				var container = containers[i];
+				if( container.instance && container.instance.destructor ){
+					container.instance.destructor();
+				}
+			}
+		}
+	});
 	var content = getContent();
 	stack.pop();
 	return content;
