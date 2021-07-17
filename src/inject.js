@@ -2,67 +2,65 @@
 
 var supportsWeakMap = typeof WeakMap=="function";
 
-function Provider(service){
+function Container(service){
 	this.service = service;
 	this.instance = null;
 }
 
-Provider.prototype.getInstance = function(){
-	if( this.instance )
-		return this.instance;
-	return this.instance = new this.service();
+Container.prototype.getInstance = function(){
+	return this.instance || (this.instance = new this.service());
 };
 
-function Injector(parent, providers){
+function Provider(parent, containers){
 	this.parent = parent;
-	this.providers = providers;
+	this.containers = containers;
 }
 
-Injector.stack = [new Injector(null, supportsWeakMap ? new WeakMap() : [])];
+var stack = [new Provider(null, supportsWeakMap ? new WeakMap() : [])];
 
-Injector.prototype.getProvider = function(service){
-	var providers = this.providers;
-	if( providers.get )
-		return providers.get(service);
-	for(var i=providers.length; i--;){
-		if( providers[i].service===service )
-			return providers[i];
+Provider.prototype.getContainer = function(service){
+	var containers = this.containers;
+	if( containers.get )
+		return containers.get(service);
+	for(var i=containers.length; i--;){
+		if( containers[i].service===service )
+			return containers[i];
 	}
 };
 
 $.inject = function(service){
-	var injector = Injector.stack[Injector.stack.length - 1];
-	var provider = null;
-	while( injector && !(provider = injector.getProvider(service)))
-		injector = injector.parent;
-	if(!injector){
-		injector = Injector.stack[0];
-		provider = new Provider(service);
-		var providers = injector.providers;
-		providers.set ? providers.set(service, provider) : providers.push(provider);
+	var provider = stack[stack.length - 1];
+	var container = null;
+	while( provider && !(container = provider.getContainer(service)))
+		provider = provider.parent;
+	if(!provider){
+		provider = stack[0];
+		container = new Container(service);
+		var containers = provider.containers;
+		containers.set ? containers.set(service, container) : containers.push(container);
 	}
-	Injector.stack.push(injector);
-	var ret = provider.getInstance();
-	Injector.stack.pop();
-	return ret;
+	stack.push(provider);
+	var instance = container.getInstance();
+	stack.pop();
+	return instance;
 };
 
-$.injector = function(services, func){
+$.provide = function(services, getContent){
 	if( supportsWeakMap ){
-		var providers = new WeakMap();
+		var containers = new WeakMap();
 		services.forEach(function(service){
-			providers.set(service, new Provider(service));
+			containers.set(service, new Container(service));
 		});
 	}else{
-		var providers = new Array(services.length);
+		var containers = new Array(services.length);
 		for(var i=services.length; i--;)
-			providers[i] = new Provider(services[i]);
+			containers[i] = new Container(services[i]);
 	}
-	var injector = new Injector(Injector.stack[Injector.stack.length - 1], providers);
-	Injector.stack.push(injector);
-	var ret = func();
-	Injector.stack.pop();
-	return ret;
+	var provider = new Provider(stack[stack.length - 1], containers);
+	stack.push(provider);
+	var content = getContent();
+	stack.pop();
+	return content;
 };
 
 })($);

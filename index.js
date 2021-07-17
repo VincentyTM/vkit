@@ -327,7 +327,10 @@ function getLibraryNames(bundle){
 		if( bundle.includes("$.serialize") ){
 			libraries.push("serialize");
 		}
-		if( bundle.includes("$.inject") ){
+		if(
+			bundle.includes("$.inject") ||
+			bundle.includes("$.provide")
+		){
 			libraries.push("inject");
 		}
 		if( bundle.includes("$.thread") ){

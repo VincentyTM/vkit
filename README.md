@@ -278,16 +278,16 @@ function MyComponent(){
     return $.html('<p>', $.text(() => myService.text), '</p>');
 }
 ```
-As your application grows, you might need to limit the scope of these services. You can do this easily with injectors.
+As your application grows, you might need to limit the scope of these services. You can do this easily with `$.provide`.
 ```javascript
-function InjectorComponent(){
-    return $.injector([
+function ProviderComponent(){
+    return $.provide([
         MyService,
         AnotherService
     ], MyComponent);
 }
 ```
-This means that inside the injector you can access the same instance of the service class, but a different instance outside.
+This means that in the scope of `$.provide` you can access the same instance of the service class, but a different instance outside.
 
 ## Observables and Subscription
 
