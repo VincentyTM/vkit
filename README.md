@@ -118,11 +118,11 @@ You can use `$.template` instead of `$.html` in case you need to replace substri
 
 ```javascript
 $.template(
-	document.querySelector("template").innerHTML,
-	{
-		"[count]": () => $.text(() => count),
-		"[onIncrease]": () => $.on("click", () => ++count)
-	}
+    document.querySelector("template").innerHTML,
+    {
+        "[count]": () => $.text(() => count),
+        "[onIncrease]": () => $.on("click", () => ++count)
+    }
 )
 ```
 
@@ -130,8 +130,8 @@ The HTML template:
 
 ```html
 <template>
-	Count: [count]<br>
-	<input type="button" value="Increase!">[onIncrease]
+    Count: [count]<br>
+    <input type="button" value="Increase!">[onIncrease]
 </template>
 ```
 
