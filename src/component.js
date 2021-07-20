@@ -1,5 +1,7 @@
 (function($){
 
+var mounts = [];
+
 $.observable = function(){
 	var subscriptions = {};
 	var id = 0;
@@ -86,11 +88,22 @@ $.unmount = function(func){
 	Component.current().onDestroy.subscribe(func);
 };
 
+$.mount = function(func){
+	mounts.push(func);
+};
+
 $.render = function(){
 	var component = Component.stack[Component.stack.length - 1];
 	while( component.parent && !component.stopEvents )
 		component = component.parent;
 	component.render();
+	var n = mounts.length;
+	if( n ){
+		var m = mounts.splice(0, n);
+		for(var i=0; i<n; ++i){
+			m[i]();
+		}
+	}
 };
 
 function copyToArray(list){
