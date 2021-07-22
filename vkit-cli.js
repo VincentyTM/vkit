@@ -421,8 +421,8 @@ async function compileBundle(){
 	if( config.environment==="dev" ){
 		jsString = '\n<script>"use strict"; window.onerror = function(err){ var msg = document.createElement("h1"); msg.style.color = "red"; msg.style.padding = "0.2em 1em"; msg.appendChild( document.createTextNode(err) ); document.body.appendChild(msg); };</script>' + libraries
 			.map(lib => "src/" + lib + ".js")
-			.concat(appJSFiles)
-			.map(src => '<script src="' + src.substring(appDirectory.length + 1) + '?v=' + Date.now() + '"></script>\n')
+			.concat(appJSFiles.map(src => src.substring(appDirectory.length + 1) + '?v=' + Date.now()))
+			.map(src => '<script src="' + src + '"></script>\n')
 			.join('');
 		cssString = '\n' + appCSSFiles
 			.map(src => '<link rel="stylesheet" href="' + src.substring(appDirectory.length + 1) + '?v=' + Date.now() + '">\n')
