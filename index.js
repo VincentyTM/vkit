@@ -305,11 +305,10 @@ function getLibraryNames(bundle){
 		if( bundle.includes(".append(") ){
 			libraries.push("dom");
 		}
-		if( bundle.includes("$.html") ){
-			libraries.push("html");
-		}
 		if( bundle.includes("$.template") ){
-			libraries.push("template");
+			libraries.push("html", "template");
+		}else if( bundle.includes("$.html") ){
+			libraries.push("html");
 		}
 		if( bundle.includes("$.cookie") ){
 			libraries.push("cookie");
