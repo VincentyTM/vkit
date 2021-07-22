@@ -1,6 +1,8 @@
 function App(){
 	return $.html(
-		'<p>Hello world</p>'
+		Header(),
+		Menu(),
+		Main()
 	);
 }
 

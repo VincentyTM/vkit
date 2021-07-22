@@ -1,9 +1,8 @@
 {
-	"port": 8000,
+	"port": 3000,
 	"lang": "en",
 	"themeColor": "",
 	"title": "vKit Application",
-	"appDirectory": "app",
 	"exportFile": "index.html",
 	"environment": "dev"
 }

@@ -2,20 +2,19 @@ const fs = require("fs");
 const http = require("http");
 const process = require("process");
 const childProcess = require("child_process");
+const appDirectory = process.argv.slice(2).join(" ").trim() || "app";
 
 const requests = [];
-const configFile = "config.json";
+const configFile = appDirectory + "/config.json";
 const config = {
-	port: 8000,
+	port: 3000,
 	lang: "en",
 	themeColor: "",
 	title: "vKit Application",
-	appDirectory: "app",
 	exportFile: "index.html",
 	environment: "dev"
 };
 let latestPort = null;
-let latestAppDirectory = null;
 
 const PathComparator = (x,y) => y.split("/").length - x.split("/").length || x.localeCompare(y);
 const EscapeHTMLMap={
@@ -132,6 +131,10 @@ function recent(lastModified, headers, req){
 }
 
 function sanitizePath(path, strict){
+	const qmp = path.indexOf("?");
+	if(~qmp){
+		path = path.substring(0, qmp);
+	}
 	path=decodeURIComponent(path);
 	path=path.split("/");
 	for(let i=path.length; i--;){
@@ -182,7 +185,7 @@ async function recursivelyIterate(dir, array){
 				return resolve(array);
 			}
 			for(const file of files){
-				const path = dir + "/" + file;
+				const path = dir + "/" + file.split("\\").join("/");
 				fs.stat(path, async function(err, stat){
 					if( err )
 						return reject("Error while reading '" + path + "': " + err);
@@ -218,19 +221,21 @@ async function loadConfig(){
 		config.lang = String(json.lang || "en");
 		config.themeColor = String(json.themeColor || "");
 		config.title = String(json.title || "");
-		config.appDirectory = String(json.appDirectory || "app");
 		config.exportFile = String(json.exportFile || "index.html");
 		config.environment = String(json.environment).toLowerCase()==="dev" ? "dev" : "release";
 	}catch(ex){
 	}
-	if( latestPort!==config.port || latestAppDirectory!==config.appDirectory ){
+	if( latestPort!==config.port ){
 		latestPort = config.port;
-		latestAppDirectory = config.appDirectory;
-		await startServer();
-		console.log("Server is running on port " + config.port + ". Type 'help' for help.");
-		await build();
-		await compileBundle();
-		startBrowser("http://localhost:" + config.port);
+		try{
+			await startServer();
+			console.log("Server is running on port " + config.port + ". Type 'help' for help.");
+			await build();
+			await compileBundle();
+			startBrowser("http://localhost:" + config.port);
+		}catch(ex){
+			console.error("Error while starting server:", ex);
+		}
 	}else{
 		await build();
 		await compileBundle();
@@ -263,7 +268,7 @@ async function updateCache(filename){
 	}
 	if( --taskCount==0 ){
 		await compileBundle();
-		console.log("Done!");
+		console.log("  Done!");
 		refresh();
 	}
 }
@@ -275,7 +280,7 @@ async function exportApplication(){
 		config.environment = "dev";
 	}
 	fs.writeFile(
-		config.exportFile,
+		appDirectory + "/" + config.exportFile,
 		getHtmlString(false),
 		{ flag: "w" },
 		err => err
@@ -322,7 +327,9 @@ function getLibraryNames(bundle){
 			bundle.includes("$.map") ||
 			bundle.includes("$.is") ||
 			bundle.includes("$.effect") ||
-			bundle.includes("$.render")
+			bundle.includes("$.render") ||
+			bundle.includes("$.unmount") ||
+			bundle.includes("$.mount")
 		){
 			libraries.push("component");
 		}
@@ -334,6 +341,9 @@ function getLibraryNames(bundle){
 			bundle.includes("$.provide")
 		){
 			libraries.push("inject");
+		}
+		if( bundle.includes("$.router") ){
+			libraries.push("router");
 		}
 		if( bundle.includes("$.thread") ){
 			libraries.push("thread");
@@ -378,7 +388,7 @@ async function getLibrarySource(libraries){
 
 async function build(){
 	try{
-		const files = await recursivelyIterate(config.appDirectory, []);
+		const files = await recursivelyIterate(appDirectory, []);
 		for(const file of files){
 			if( file in cache )
 				continue;
@@ -386,7 +396,7 @@ async function build(){
 			await updateCache(file);
 		}
 	}catch(ex){
-		console.error(ex);
+		console.error("Build error:", ex);
 	}
 }
 
@@ -394,12 +404,14 @@ async function rebuild(){
 	for(const key in cache)
 		delete cache[key];
 	await build();
+	await compileBundle();
+	refresh();
 }
 
 async function compileBundle(){
 	const files = Object.keys(cache);
 	
-	const appJSFiles = files.filter(file => file.startsWith(config.appDirectory + "/") && file.toLowerCase().endsWith(".js")).sort(PathComparator);
+	const appJSFiles = files.filter(file => file.startsWith(appDirectory + "/") && file.toLowerCase().endsWith(".js")).sort(PathComparator);
 	const appCSSFiles = files.filter(file => file.toLowerCase().endsWith(".css")).sort(PathComparator);
 	
 	const appSource = appJSFiles.map(file => cache[file]).join("\n");
@@ -407,8 +419,14 @@ async function compileBundle(){
 	const libraries = getLibraryNames(appSource);
 	
 	if( config.environment==="dev" ){
-		jsString = '\n' + libraries.map(lib => "src/" + lib + ".js").concat(appJSFiles).map(src => '<script src="' + src + '"></script>\n').join('');
-		cssString = '\n' + appCSSFiles.map(src => '<link rel="stylesheet" href="' + src + '">\n').join('');
+		jsString = '\n<script>"use strict"; window.onerror = function(err){ var msg = document.createElement("h1"); msg.style.color = "red"; msg.style.padding = "0.2em 1em"; msg.appendChild( document.createTextNode(err) ); document.body.appendChild(msg); };</script>' + libraries
+			.map(lib => "src/" + lib + ".js")
+			.concat(appJSFiles)
+			.map(src => '<script src="' + src + '?v=' + Date.now() + '"></script>\n')
+			.join('');
+		cssString = '\n' + appCSSFiles
+			.map(src => '<link rel="stylesheet" href="' + src + '?v=' + Date.now() + '">\n')
+			.join('');
 	}else{
 		const librarySource = (await getLibrarySource(libraries))
 			.map(str => str
@@ -537,9 +555,9 @@ process.openStdin().on("data", function(data){
 });
 
 try{
-	fs.watch(config.appDirectory, {recursive: true}, (eventType, filename) => updateCache(config.appDirectory + "/" + filename));
+	fs.watch(appDirectory, {recursive: true}, (eventType, filename) => updateCache(appDirectory + "/" + filename.split("\\").join("/")));
 }catch(ex){
-	console.error("The directory", config.appDirectory, "doesn't exist.");
+	console.error("The directory", appDirectory, "doesn't exist.");
 }
 
 try{
