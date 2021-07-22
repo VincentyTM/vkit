@@ -1,4 +1,4 @@
-function Todo(){
+function TodoList(){
 	let todos = [];
 	
 	return $.html(
