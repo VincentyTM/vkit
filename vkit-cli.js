@@ -150,6 +150,9 @@ function sanitizePath(path, strict){
 		}
 	}
 	path=path.join("/");
+	if( path.startsWith("app/") ){
+		path = path.replace("app", appDirectory);
+	}
 	return path;
 }
 
@@ -421,11 +424,11 @@ async function compileBundle(){
 	if( config.environment==="dev" ){
 		jsString = '\n<script>"use strict"; window.onerror = function(err){ var msg = document.createElement("h1"); msg.style.color = "red"; msg.style.padding = "0.2em 1em"; msg.appendChild( document.createTextNode(err) ); document.body.appendChild(msg); };</script>' + libraries
 			.map(lib => "src/" + lib + ".js")
-			.concat(appJSFiles.map(src => src.substring(appDirectory.length + 1) + '?v=' + Date.now()))
+			.concat(appJSFiles.map(src => src.replace(appDirectory, "app") + '?v=' + Date.now()))
 			.map(src => '<script src="' + src + '"></script>\n')
 			.join('');
 		cssString = '\n' + appCSSFiles
-			.map(src => '<link rel="stylesheet" href="' + src.substring(appDirectory.length + 1) + '?v=' + Date.now() + '">\n')
+			.map(src => '<link rel="stylesheet" href="' + src.replace(appDirectory, "app") + '?v=' + Date.now() + '">\n')
 			.join('');
 	}else{
 		const librarySource = (await getLibrarySource(libraries))
