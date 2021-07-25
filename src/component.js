@@ -116,7 +116,8 @@ function copyToArray(list){
 }
 
 $.map = function(models, getView, stopRender){
-	var A = copyToArray(typeof models=="function" ? models() : models);
+	var ref = typeof models=="function" ? models() : models;
+	var A = copyToArray(ref);
 	var curr = new Component(stopRender).setParent( Component.current() );
 	var placeholder = document.createTextNode("");
 	
@@ -125,6 +126,14 @@ $.map = function(models, getView, stopRender){
 	}
 	curr.onRender.subscribe(function(){
 		var B = typeof models=="function" ? models() : models;
+		if( stopRender ){
+			if( B===ref ){
+				return;
+			}else{
+				ref = B;
+			}
+		}
+		
 		var parent = placeholder.parentNode;
 		
 		var i, n=A.length, m=B.length;
