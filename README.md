@@ -53,7 +53,6 @@ You can manually copy and include the required files from the `src` folder:
 <script src="vkit/dom.js"></script>
 <script src="vkit/html.js"></script>
 <script src="vkit/component.js"></script>
-<script src="vkit/inject.js"></script>
 ...
 ```
 

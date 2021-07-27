@@ -326,24 +326,27 @@ function getLibraryNames(bundle){
 		}
 		if(
 			bundle.includes("$.prop") ||
+			bundle.includes("$.css") ||
 			bundle.includes("$.text") ||
 			bundle.includes("$.map") ||
 			bundle.includes("$.is") ||
+			bundle.includes("$.on") ||
 			bundle.includes("$.effect") ||
 			bundle.includes("$.render") ||
 			bundle.includes("$.unmount") ||
-			bundle.includes("$.mount")
+			bundle.includes("$.mount") ||
+			bundle.includes("$.observable") ||
+			bundle.includes("$.withComponent") ||
+			bundle.includes("$.component") ||
+			bundle.includes("$.inject") ||
+			bundle.includes("$.provide") ||
+			bundle.includes("$.guard") ||
+			bundle.includes("$.boundary")
 		){
 			libraries.push("component");
 		}
 		if( bundle.includes("$.serialize") ){
 			libraries.push("serialize");
-		}
-		if(
-			bundle.includes("$.inject") ||
-			bundle.includes("$.provide")
-		){
-			libraries.push("inject");
 		}
 		if( bundle.includes("$.router") ){
 			libraries.push("router");

@@ -21,9 +21,12 @@ $.observable = function(){
 
 $.withComponent = function(func){
 	var component = Component.current();
+	var provider = providers[providers.length - 1];
 	return function(){
 		Component.stack.push(component);
+		providers.push(provider);
 		var ret = func.apply(this, arguments);
+		providers.pop();
 		Component.stack.pop();
 		$.render();
 		return ret;
@@ -120,6 +123,7 @@ $.map = function(models, getView, stopRender){
 	var A = copyToArray(ref);
 	var curr = new Component(stopRender).setParent( Component.current() );
 	var placeholder = document.createTextNode("");
+	var provider = providers[providers.length - 1];
 	
 	for(var i=0, l=A.length; i<l; ++i){
 		new Component().setParent(curr).setIndex(i).setView(getView, A[i]);
@@ -134,6 +138,7 @@ $.map = function(models, getView, stopRender){
 			}
 		}
 		
+		providers.push(provider);
 		var parent = placeholder.parentNode;
 		
 		var i, n=A.length, m=B.length;
@@ -175,6 +180,8 @@ $.map = function(models, getView, stopRender){
 		}
 		for(i=0; i<m; ++i)
 			curr.children[i].setIndex(i);
+		
+		providers.pop();
 	});
 	
 	var ret = [];
@@ -189,6 +196,7 @@ $.is = function(getter, getView, stopRender){
 	var A = getter();
 	var curr = new Component(stopRender).setParent( Component.current() );
 	var placeholder = document.createTextNode("");
+	var provider = providers[providers.length - 1];
 	
 	new Component().setParent(curr).setView(getView, A);
 	
@@ -199,7 +207,9 @@ $.is = function(getter, getView, stopRender){
 		var parent = placeholder.parentNode;
 		
 		curr.removeComponent(0);
+		providers.push(provider);
 		curr.appendComponent(B, getView, parent, placeholder);
+		providers.pop();
 		
 		A = B;
 	});
@@ -330,6 +340,88 @@ Component.prototype.render = function(){
 		children[i].render();
 	}
 	return this;
+};
+
+/* Dependency injection */
+
+var supportsWeakMap = typeof WeakMap=="function";
+
+function Container(service){
+	this.service = service;
+	this.instance = null;
+}
+
+Container.prototype.getInstance = function(){
+	return this.instance || (this.instance = new this.service());
+};
+
+function Provider(parent, containers){
+	this.parent = parent;
+	this.containers = containers;
+}
+
+var providers = [new Provider(null, supportsWeakMap ? new WeakMap() : [])];
+
+Provider.prototype.getContainer = function(service){
+	var containers = this.containers;
+	if( containers.get )
+		return containers.get(service);
+	for(var i=containers.length; i--;){
+		if( containers[i].service===service )
+			return containers[i];
+	}
+};
+
+$.inject = function(service){
+	var provider = providers[providers.length - 1];
+	var container = null;
+	while( provider && !(container = provider.getContainer(service)))
+		provider = provider.parent;
+	if(!provider){
+		provider = providers[0];
+		container = new Container(service);
+		var containers = provider.containers;
+		containers.set ? containers.set(service, container) : containers.push(container);
+	}
+	providers.push(provider);
+	var instance = container.getInstance();
+	providers.pop();
+	return instance;
+};
+
+$.provide = function(services, getContent){
+	if( supportsWeakMap ){
+		var containers = new WeakMap();
+		services.forEach(function(service){
+			containers.set(service, new Container(service));
+		});
+	}else{
+		var containers = new Array(services.length);
+		for(var i=services.length; i--;)
+			containers[i] = new Container(services[i]);
+	}
+	var provider = new Provider(providers[providers.length - 1], containers);
+	providers.push(provider);
+	$.unmount(function(){
+		if( supportsWeakMap ){
+			services.forEach(function(service){
+				var container = containers.get(service);
+				if( container.instance && container.instance.destructor ){
+					container.instance.destructor();
+				}
+			});
+		}else{
+			for(var i=containers.length; i--;){
+				var container = containers[i];
+				if( container.instance && container.instance.destructor ){
+					container.instance.destructor();
+				}
+			}
+		}
+	});
+	var content = getContent();
+	providers.pop();
+	return content;
 };
 
 })($);
