@@ -1,0 +1,20 @@
+{
+  "name": "vkit-cli",
+  "bin": {
+    "vkit": "./bin/vkit.js"
+  },
+  "version": "0.0.1",
+  "description": "A server with a command line interface for web applications.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node ./src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cli",
+    "server",
+    "hot-reload"
+  ],
+  "author": "Vincenty",
+  "license": "MIT"
+}
