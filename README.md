@@ -47,7 +47,15 @@ $(document.body).append( CounterApp() );
 
 ## Getting Started
 
-You can manually copy and include the required files from the `src` folder:
+You can use the vKit CLI that automatically includes the libraries you need:
+1. Install [NodeJS](https://nodejs.org/) with npm
+2. Run `npm install -g VincentyTM/vkit`
+3. Create a project in a directory with `vkit .` or just `vkit`
+4. Create/edit your `js` and `css` files inside the generated `app` directory
+5. You can immediately see the changes in your browser
+6. Use the `export` command to create a standalone `export.html` file
+
+In case you do not want to use the CLI, you can manually include the required files:
 ```html
 <script src="vkit/core.js"></script>
 <script src="vkit/dom.js"></script>
@@ -55,12 +63,6 @@ You can manually copy and include the required files from the `src` folder:
 <script src="vkit/component.js"></script>
 ...
 ```
-
-Alternatively, you can use the vKit CLI that automatically includes the libraries you need.
-1. Run `node index.js`
-2. Create/edit your `js` and `css` files inside the `app` directory
-3. You can immediately see the changes in your browser
-4. Use the `export` command to create a standalone `index.html` file
 
 ## Components
 
