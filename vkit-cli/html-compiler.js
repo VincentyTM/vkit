@@ -42,8 +42,8 @@ class HTMLCompiler {
 			return '';
 		}
 		return cachedItem
-			.replace(/{{style}}\r?\n?/, this.getStyles(transformSrc))
-			.replace(/{{body}}\r?\n?/, this.getBodyContents(transformSrc, allowDebugScripts));
+			.replace(/\{\{style\}\}\r?\n?/, this.getStyles(transformSrc))
+			.replace(/\{\{body\}\}\r?\n?/, this.getBodyContents(transformSrc, allowDebugScripts));
 	}
 	getBodyContents(transformSrc, allowDebugScripts){
 		return (allowDebugScripts ? this.getDebugScripts() + '\n' : '') + this.getScripts(transformSrc);
