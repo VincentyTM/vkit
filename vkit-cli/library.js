@@ -33,7 +33,7 @@ class Library {
 	}
 	findDefinitions(){
 		const input = this.source;
-		const regex = /\$(\.[a-zA-Z_][a-zA-Z0-9_]*)*\b\s*=/g;
+		const regex = /\$(\.[a-zA-Z_][a-zA-Z0-9_]*)+\b\s*=/g;
 		for(let match; match = regex.exec(input);){
 			const def = match[0].replace(/\s*=/, "");
 			this.addDefinition(def);
@@ -41,7 +41,7 @@ class Library {
 	}
 	findDependencies(){
 		const input = this.source;
-		const regex = /\$(\.[a-zA-Z_][a-zA-Z0-9_]*)*\b/g;
+		const regex = /\$(\.[a-zA-Z_][a-zA-Z0-9_]*)+\b/g;
 		for(let match; match = regex.exec(input);){
 			const dep = match[0];
 			if(!(dep in this.definitions)){

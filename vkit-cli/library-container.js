@@ -69,17 +69,22 @@ class LibraryContainer {
 	}
 	getLibraries(input){
 		const definitions = {};
-		const regexDef = /\$(\.[a-zA-Z_][a-zA-Z0-9_]*)*\b\s*=/g;
+		const regexDef = /\$(\.[a-zA-Z_][a-zA-Z0-9_]*)+\b\s*=/g;
 		for(let match; match = regexDef.exec(input);){
 			const def = match[0].replace(/\s*=/, "");
 			definitions[def] = true;
 		}
 		const dependencies = {};
-		const regex = /\$(\.[a-zA-Z_][a-zA-Z0-9_]*)*\b/g;
-		for(let match; match = regex.exec(input);){
+		const extraDependencies = {};
+		const regexDep = /\$?(\.[a-zA-Z_][a-zA-Z0-9_]*)+\b/g;
+		for(let match; match = regexDep.exec(input);){
 			const dep = match[0];
-			if(!(dep in definitions)){
-				dependencies[dep] = true;
+			if( dep.startsWith("$.") ){
+				if(!(dep in definitions)){
+					dependencies[dep] = true;
+				}
+			}else{
+				extraDependencies["$.fn" + dep] = true;
 			}
 		}
 		const libraries = {};
@@ -89,6 +94,12 @@ class LibraryContainer {
 				libraries[lib.name] = lib;
 			}else{
 				console.warn("Warning: " + dep + " is not defined in any library!");
+			}
+		}
+		for(const dep in extraDependencies){
+			const lib = this.definitions[dep];
+			if( lib ){
+				libraries[lib.name] = lib;
 			}
 		}
 		const resolved = new Set();

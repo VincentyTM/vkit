@@ -41,9 +41,11 @@ class HTMLCompiler {
 		if(!cachedItem){
 			return '';
 		}
+		const style = this.getStyles(transformSrc);
+		const body = this.getBodyContents(transformSrc, allowDebugScripts);
 		return cachedItem
-			.replace(/\{\{style\}\}\r?\n?/, this.getStyles(transformSrc))
-			.replace(/\{\{body\}\}\r?\n?/, this.getBodyContents(transformSrc, allowDebugScripts));
+			.replace("{{style}}", style)
+			.replace("{{body}}", body);
 	}
 	getBodyContents(transformSrc, allowDebugScripts){
 		return (allowDebugScripts ? this.getDebugScripts() + '\n' : '') + this.getScripts(transformSrc);
