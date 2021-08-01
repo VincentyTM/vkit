@@ -1,20 +1,23 @@
 {
-  "name": "vkit-cli",
+  "name": "vkit",
   "bin": {
     "vkit": "./bin/vkit.js"
   },
   "version": "0.0.1",
-  "description": "A server with a command line interface for web applications.",
-  "main": "src/index.js",
+  "description": "vKit is a web application framework with a command line interface.",
+  "main": "vkit-cli/index.js",
   "scripts": {
-    "start": "node ./src/index.js",
+    "start": "node ./vkit-cli/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "cli",
-    "server",
-    "hot-reload"
+    "vkit",
+    "vkit-cli"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VincentyTM/vkit.git"
+  },
   "author": "Vincenty",
   "license": "MIT"
 }
