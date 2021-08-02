@@ -80,7 +80,8 @@ class HTMLCompiler {
 	}
 	getLibraries(input){
 		try{
-			return this.libraryContainer.getLibraries(input).map(lib => this.transformLibrary(lib.source)).join("\n");
+			const libraries = this.libraryContainer.getLibraries(input);
+			return libraries.map(lib => this.transformLibrary(lib.source)).join("\n");
 		}catch(ex){
 			console.error(ex);
 			return "";

@@ -42,7 +42,11 @@ class LibraryContainer {
 			for(const dep in lib.dependencies){
 				const parent = this.definitions[dep];
 				if( parent ){
-					parents[parent.name] = parent;
+					if( parent.name !== "core" ){
+						parents[parent.name] = parent;
+					}
+				}else if( dep.startsWith("$.fn.") ){
+					delete lib.dependencies[dep];
 				}else{
 					console.warn("Warning: In library '" + name + "' the '" + dep + "' dependency is not defined!");
 				}
@@ -68,23 +72,24 @@ class LibraryContainer {
 		this.definitions[def] = library;
 	}
 	getLibraries(input){
+		if(!this.libraries.core){
+			throw "The 'core' library is missing!";
+		}
 		const definitions = {};
-		const regexDef = /\$(\.[a-zA-Z_][a-zA-Z0-9_]*)+\b\s*=/g;
+		const regexDef = /\$(\.fn)?\.[a-zA-Z_][a-zA-Z0-9_]*\b\s*=/g;
 		for(let match; match = regexDef.exec(input);){
 			const def = match[0].replace(/\s*=/, "");
 			definitions[def] = true;
 		}
 		const dependencies = {};
-		const extraDependencies = {};
-		const regexDep = /\$?(\.[a-zA-Z_][a-zA-Z0-9_]*)+\b/g;
+		const regexDep = /\$?\.[a-zA-Z_][a-zA-Z0-9_]*\b/g;
 		for(let match; match = regexDep.exec(input);){
-			const dep = match[0];
-			if( dep.startsWith("$.") ){
-				if(!(dep in definitions)){
-					dependencies[dep] = true;
-				}
-			}else{
-				extraDependencies["$.fn" + dep] = true;
+			let dep = match[0];
+			if(!dep.startsWith("$.") ){
+				dep = "$.fn" + dep;
+			}
+			if(!(dep in definitions)){
+				dependencies[dep] = true;
 			}
 		}
 		const libraries = {};
@@ -92,21 +97,19 @@ class LibraryContainer {
 			const lib = this.definitions[dep];
 			if( lib ){
 				libraries[lib.name] = lib;
-			}else{
+			}else if(!dep.startsWith("$.fn.")){
 				console.warn("Warning: " + dep + " is not defined in any library!");
-			}
-		}
-		for(const dep in extraDependencies){
-			const lib = this.definitions[dep];
-			if( lib ){
-				libraries[lib.name] = lib;
 			}
 		}
 		const resolved = new Set();
 		for(const name in libraries){
 			this.resolveDependencies(libraries[name], resolved);
 		}
-		return this.libraries.core ? [this.libraries.core].concat(Array.from(resolved.values())) : [];
+		const result = Array.from(resolved.values()).reverse();
+		if( result.length>0 && result[0]!==this.libraries.core ){
+			result.unshift(this.libraries.core);
+		}
+		return result;
 	}
 	resolveDependencies(library, resolved = new Set(), unresolved = new Set()){
 		unresolved.add(library);
