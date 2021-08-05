@@ -89,6 +89,7 @@ class HTMLCompiler {
 	}
 	transformLibrary(script){
 		return script
+			.replace(/\*[^*]*\*+(?:[^/*][^*]*\*+)*/g, "")
 			.split("\r").join("\n")
 			.split("\n\n").join("\n")
 			.split("\n\n").join("\n")
