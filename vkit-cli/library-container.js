@@ -42,9 +42,7 @@ class LibraryContainer {
 			for(const dep in lib.dependencies){
 				const parent = this.definitions[dep];
 				if( parent ){
-					if( parent.name !== "core" ){
-						parents[parent.name] = parent;
-					}
+					parents[parent.name] = parent;
 				}else if( dep.startsWith("$.fn.") ){
 					delete lib.dependencies[dep];
 				}else{
@@ -105,9 +103,9 @@ class LibraryContainer {
 		for(const name in libraries){
 			this.resolveDependencies(libraries[name], resolved);
 		}
-		const result = Array.from(resolved.values()).reverse();
-		if( result.length>0 && result[0]!==this.libraries.core ){
-			result.unshift(this.libraries.core);
+		const result = Array.from(resolved.values());
+		if(!result.length && input.includes("$")){
+			result.push(this.libraries.core);
 		}
 		return result;
 	}
