@@ -26,9 +26,12 @@ function isPrefixOf(a, b){
 }
 
 function matchesDefault(routePath, path, exact){
+	if( routePath && routePath.test ){
+		return routePath.test(path);
+	}
 	var a = routePath.split("/");
 	var b = path.split("/");
-	return exact ? equals(a, b) : isPrefixOf(a, b);
+	return exact || exact === undefined ? equals(a, b) : isPrefixOf(a, b);
 }
 
 function navigateToDefault(path){
@@ -48,7 +51,7 @@ $.router = function(getPath, navigateTo, matches){
 		var n = routes.length;
 		for(var i=0; i<n; ++i){
 			var route = routes[i];
-			if( !route.path || matches(route.path, path, route.exact || route.exact === undefined) ){
+			if( !route.path || matches(route.path, path, route.exact) ){
 				return route;
 			}
 		}
@@ -62,7 +65,7 @@ $.router = function(getPath, navigateTo, matches){
 				element.href = path;
 				if( getClass ){
 					$.prop("className", function(){
-						return getClass( matches(path, getPath(), exact || exact === undefined) );
+						return getClass( matches(path, getPath(), exact) );
 					})(element);
 				}
 				element.onclick = function(){
@@ -73,7 +76,7 @@ $.router = function(getPath, navigateTo, matches){
 			};
 		},
 		isActive(path, exact){
-			return matches(path, getPath(), exact || exact === undefined);
+			return matches(path, getPath(), exact);
 		},
 		component: function(routes){
 			return $.is(
