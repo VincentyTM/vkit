@@ -26,7 +26,7 @@ function isPrefixOf(a, b){
 }
 
 function matchesDefault(routePath, path, exact){
-	if( routePath && routePath.test ){
+	if( routePath.test ){
 		return routePath.test(path);
 	}
 	var a = routePath.split("/");
