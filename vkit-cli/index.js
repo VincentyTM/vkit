@@ -22,7 +22,12 @@ const configFile = appDirectory + "/config.json";
 const reloader = new Reloader();
 const server = new Server(requestListener);
 const cache = new FileCache(
-	async () => commands.reload()
+	async () => {
+		commands.reload();
+		if( config.autoExport ){
+			commands.exportApplication(config.appDirectory + "/" + config.exportFile);
+		}
+	}
 );
 const config = new Config(appDirectory, configFile, async needsRestart => {
 	if( needsRestart ){

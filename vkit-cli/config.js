@@ -7,6 +7,7 @@ class Config {
 		this.onLoad = onLoad;
 		this.port = 3000;
 		this.exportFile = "export.html";
+		this.autoExport = false;
 		this.debugPath = "_dev_app";
 		this.environment = "dev";
 	}
@@ -28,6 +29,7 @@ class Config {
 				needsRestart = true;
 			}
 			this.exportFile = String(json.exportFile || "index.html");
+			this.autoExport = !!json.autoExport;
 			this.debugPath = String(json.debugPath || "");
 			this.environment = String(json.environment).toLowerCase()==="dev" ? "dev" : "release";
 			this.onLoad(needsRestart);
@@ -53,6 +55,7 @@ class Config {
 					themeColor: this.themeColor,
 					title: this.title,
 					exportFile: this.exportFile,
+					autoExport: this.autoExport,
 					debugPath: this.debugPath,
 					environment: this.environment
 				}, null, 4), err => err ? reject(err) : resolve())
