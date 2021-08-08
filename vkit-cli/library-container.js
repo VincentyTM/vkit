@@ -39,6 +39,9 @@ class LibraryContainer {
 		for(const name in libraries){
 			const lib = libraries[name];
 			const parents = {};
+			if( name !== "core" ){
+				parents.core = libraries.core;
+			}
 			for(const dep in lib.dependencies){
 				const parent = this.definitions[dep];
 				if( parent ){
