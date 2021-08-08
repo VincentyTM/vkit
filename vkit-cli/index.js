@@ -17,14 +17,15 @@ const DEFAULT_INDEX_HTML = require("./index-html.js");
 
 /* Instances */
 
+let librariesLoaded = false;
 const appDirectory = process.argv.slice(2).join(" ").trim() || ".";
 const configFile = appDirectory + "/config.json";
 const reloader = new Reloader();
 const server = new Server(requestListener);
 const cache = new FileCache(
-	async () => {
+	() => {
 		commands.reload();
-		if( config.autoExport ){
+		if( config.autoExport && librariesLoaded ){
 			commands.exportApplication(config.appDirectory + "/" + config.exportFile);
 		}
 	}
@@ -39,7 +40,10 @@ const config = new Config(appDirectory, configFile, async needsRestart => {
 		commands.reload();
 	}
 });
-const libraryContainer = new LibraryContainer(__dirname + "/../vkit"); libraryContainer.loadAll().then(() => console.log("Loaded all libraries."));
+const libraryContainer = new LibraryContainer(__dirname + "/../vkit"); libraryContainer.loadAll().then(() => {
+	console.log("Loaded all libraries.");
+	librariesLoaded = true;
+});
 const htmlCompiler = new HTMLCompiler(cache, appDirectory + "/app/index.html", libraryContainer);
 const commands = new Commands(server, reloader, cache, config, htmlCompiler);
 
