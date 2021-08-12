@@ -1,23 +1,24 @@
 (function($){
 
+function deepInsertBefore(anchor, elements){
+	var n = elements.length;
+	if( n ){
+		for(var i=0; i<n; ++i){
+			deepInsertBefore(anchor, elements[i]);
+		}
+	}else if( n!==0 ){
+		anchor.parentNode.insertBefore(elements, anchor);
+	}
+}
+
 $.fn.hydrate = function(map){
 	for(var tagName in map){
 		for(var i=this.length; i--;){
 			var elements = this[i].getElementsByTagName(tagName);
 			for(var j=elements.length; j--;){
 				var element = elements[j];
-				var instance = map[tagName]();
-				var n = instance.length;
-				var parent = element.parentNode;
-				if( n ){
-					var k = n - 1, last = instance[k];
-					parent.replaceChild(last, element);
-					for(; k>=0; --k){
-						parent.insertBefore(instance[k], last);
-					}
-				}else{
-					parent.removeChild(element);
-				}
+				deepInsertBefore(element, map[tagName]());
+				element.parentNode.removeChild(element);
 			}
 		}
 	}
