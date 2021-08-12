@@ -1,6 +1,13 @@
-(function($){
+(function($, undefined){
 
 function deepInsertBefore(anchor, elements){
+	if( elements === null || elements === undefined ){
+		return;
+	}
+	if( typeof elements !== "object" ){
+		anchor.parentNode.insertBefore(document.createTextNode(elements), anchor);
+		return;
+	}
 	var n = elements.length;
 	if( n ){
 		for(var i=0; i<n; ++i){
@@ -14,10 +21,11 @@ function deepInsertBefore(anchor, elements){
 $.fn.hydrate = function(map){
 	for(var tagName in map){
 		for(var i=this.length; i--;){
-			if(!this[i].getElementsByTagName){
+			var container = this[i];
+			if(!container.getElementsByTagName){
 				continue;
 			}
-			var elements = this[i].getElementsByTagName(tagName);
+			var elements = container.getElementsByTagName(tagName);
 			for(var j=elements.length; j--;){
 				var element = elements[j];
 				deepInsertBefore(element, map[tagName]());
