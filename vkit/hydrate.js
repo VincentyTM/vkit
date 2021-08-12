@@ -14,6 +14,9 @@ function deepInsertBefore(anchor, elements){
 $.fn.hydrate = function(map){
 	for(var tagName in map){
 		for(var i=this.length; i--;){
+			if(!this[i].getElementsByTagName){
+				continue;
+			}
 			var elements = this[i].getElementsByTagName(tagName);
 			for(var j=elements.length; j--;){
 				var element = elements[j];
