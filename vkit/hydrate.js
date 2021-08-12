@@ -8,13 +8,12 @@ function deepInsertBefore(anchor, elements){
 		anchor.parentNode.insertBefore(document.createTextNode(elements), anchor);
 		return;
 	}
-	var n = elements.length;
-	if( n ){
-		for(var i=0; i<n; ++i){
-			deepInsertBefore(anchor, elements[i]);
-		}
-	}else if( n!==0 ){
+	if( elements.nodeType ){
 		anchor.parentNode.insertBefore(elements, anchor);
+		return;
+	}
+	for(var i=0, n=elements.length; i<n; ++i){
+		deepInsertBefore(anchor, elements[i]);
 	}
 }
 
