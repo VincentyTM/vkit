@@ -27,7 +27,7 @@ $.fn.hydrate = function(map){
 			var elements = container.getElementsByTagName(tagName);
 			for(var j=elements.length; j--;){
 				var element = elements[j];
-				deepInsertBefore(element, map[tagName]());
+				deepInsertBefore(element, map[tagName](element));
 				element.parentNode.removeChild(element);
 			}
 		}
