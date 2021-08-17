@@ -29,6 +29,17 @@ function prop(key){
 	};
 }
 
+function css(key){
+	var value = this.get();
+	var onChange = this.onChange;
+	return function(node){
+		node.style[key] = value;
+		onChange.subscribe(function(value){
+			node.style[key] = value;
+		});
+	};
+}
+
 function effect(action){
 	action(this.get());
 	this.onChange.subscribe(action);
@@ -64,6 +75,7 @@ $.state = function(value){
 		onChange: onChange,
 		text: text,
 		prop: prop,
+		css: css,
 		effect: effect
 	};
 };
@@ -98,6 +110,7 @@ $.fn.combine = function(func){
 		onChange: onChange,
 		text: text,
 		prop: prop,
+		css: css,
 		effect: effect
 	};
 };
