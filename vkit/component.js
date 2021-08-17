@@ -47,9 +47,9 @@ $.effect = function(setter){
 $.css = function(prop, getter){
 	return function(element){
 		var style = element.style;
-		var oldValue = style[prop] = getter();
+		var oldValue = style[prop] = getter(element);
 		Component.subscribe(function(){
-			var value = getter();
+			var value = getter(element);
 			if( oldValue!==value )
 				oldValue = style[prop] = value;
 		});
@@ -58,9 +58,9 @@ $.css = function(prop, getter){
 
 $.prop = function(prop, getter){
 	return function(element){
-		var oldValue = element[prop] = getter();
+		var oldValue = element[prop] = getter(element);
 		Component.subscribe(function(){
-			var value = getter();
+			var value = getter(element);
 			if( oldValue!==value )
 				oldValue = element[prop] = value;
 		});
