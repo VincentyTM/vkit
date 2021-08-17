@@ -107,7 +107,6 @@ $.state.render = function(){
 		updateStates[id]();
 	}
 	updateStates = {};
-	maxId = 0;
 };
 
 $.state.on = function(type, action){
