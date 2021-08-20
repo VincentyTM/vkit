@@ -2,12 +2,20 @@
 
 var updateStates = {}, maxId = 0;
 
+function noop(x){
+	return x;
+}
+
 function map(query){
-	return $(this).combine(query);
+	return $(this).combine(query || noop);
 }
 
 function add(value){
 	this.set(this.get() + value);
+}
+
+function toggle(){
+	this.set(!this.get());
 }
 
 function text(){
@@ -70,6 +78,7 @@ $.state = function(value){
 			}
 		},
 		add: add,
+		toggle: toggle,
 		get: get,
 		map: map,
 		onChange: onChange,
@@ -96,12 +105,19 @@ $.fn.combine = function(func){
 		}
 	}
 	
+	function unsubscribe(){
+		for(var i=0; i<n; ++i){
+			unsubscribes[i]();
+		}
+	}
+	
 	var states = this, n = states.length;
 	var value = getValue();
 	var onChange = $.observable();
+	var unsubscribes = new Array(n);
 	
 	for(var i=0; i<n; ++i){
-		states[i].onChange.subscribe(update);
+		unsubscribes[i] = states[i].onChange.subscribe(update);
 	}
 	
 	return {
@@ -111,7 +127,12 @@ $.fn.combine = function(func){
 		text: text,
 		prop: prop,
 		css: css,
-		effect: effect
+		effect: effect,
+		unsubscribe: unsubscribe,
+		until: function(func){
+			func(unsubscribe);
+			return this;
+		}
 	};
 };
 
