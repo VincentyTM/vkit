@@ -75,13 +75,11 @@ $.html=function(){
 		var comment = comments[i];
 		
 		if( typeof operator==="function" ){
-			while( comment && comment.nodeType==8 ){
-				var prev = comment;
-				comment = comment.previousSibling || comment.parentNode;
-				prev.parentNode.removeChild(prev);
+			var ref = comment.previousSibling || comment.parentNode;
+			comment.parentNode.removeChild(comment);
+			if( ref && ref !== container ){
+				operator(ref);
 			}
-			if( comment && comment!==container)
-				operator(comment);
 		}else{
 			deepInsert(operator, comment.parentNode, comment);
 			comment.parentNode.removeChild(comment);
