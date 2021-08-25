@@ -120,8 +120,10 @@ $.state = function(value){
 		set: function(newValue){
 			if( value !== newValue ){
 				value = newValue;
-				update.queued = true;
-				stateUpdates.push(update);
+				if(!update.queued){
+					update.queued = true;
+					stateUpdates.push(update);
+				}
 			}
 		},
 		add: add,
