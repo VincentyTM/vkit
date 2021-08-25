@@ -1,6 +1,7 @@
 (function($){
 
-var updateStates = {}, maxId = 0;
+var stateUpdates = [];
+var currentUnmounts = null;
 
 function noop(x){
 	return x;
@@ -53,6 +54,52 @@ function effect(action){
 	this.onChange.subscribe(action);
 }
 
+function getView(value, component, unmounts){
+	var prevUnmounts = currentUnmounts;
+	currentUnmounts = unmounts;
+	try{
+		return component(value);
+	}finally{
+		currentUnmounts = prevUnmounts;
+	}
+}
+
+function is(component){
+	var componentUnmounts = [];
+	var value = this.get();
+	var view = getView(value, component, componentUnmounts);
+	var end = document.createTextNode("");
+	
+	this.onChange.subscribe(function(newValue){
+		value = newValue;
+		var el, parent, i, n;
+		
+		/* Call unmount functions */
+		n = componentUnmounts.length;
+		var unmounts = componentUnmounts.splice(0, n);
+		for(i=0; i<n; ++i){
+			unmounts[i]();
+		}
+		
+		/* Remove old DOM nodes */
+		for(i=view.length; i--;){
+			el = view[i];
+			parent = el.parentNode;
+			parent.removeChild(el);
+		}
+		
+		/* Insert new DOM nodes */
+		view = getView(value, component, componentUnmounts);
+		parent = end.parentNode;
+		n = view.length;
+		for(i=0; i<n; ++i){
+			parent.insertBefore(view[i], end);
+		}
+	});
+	
+	return $.html(view, end);
+}
+
 $.state = function(value){
 	var oldValue = value;
 	var onChange = $.observable();
@@ -63,8 +110,7 @@ $.state = function(value){
 		}
 	}
 	
-	var id = ++maxId;
-	update.id = id;
+	update.queued = false;
 	
 	function get(){
 		return value;
@@ -74,7 +120,8 @@ $.state = function(value){
 		set: function(newValue){
 			if( value !== newValue ){
 				value = newValue;
-				updateStates[id] = update;
+				update.queued = true;
+				stateUpdates.push(update);
 			}
 		},
 		add: add,
@@ -85,7 +132,8 @@ $.state = function(value){
 		text: text,
 		prop: prop,
 		css: css,
-		effect: effect
+		effect: effect,
+		is: is
 	};
 };
 
@@ -128,6 +176,7 @@ $.fn.combine = function(func){
 		prop: prop,
 		css: css,
 		effect: effect,
+		is: is,
 		unsubscribe: unsubscribe,
 		until: function(func){
 			func(unsubscribe);
@@ -136,11 +185,20 @@ $.fn.combine = function(func){
 	};
 };
 
-$.state.render = function(){
-	for(var id in updateStates){
-		updateStates[id]();
+$.state.unmount = function(func){
+	if( currentUnmounts ){
+		currentUnmounts.push(func);
 	}
-	updateStates = {};
+};
+
+$.state.render = function(){
+	var n = stateUpdates.length;
+	var updates = stateUpdates.splice(0, n);
+	for(var i=0; i<n; ++i){
+		var update = updates[i];
+		update.queued = false;
+		update();
+	}
 };
 
 $.state.on = function(type, action){
