@@ -30,7 +30,7 @@ function deepInsert(object, parent, nextSibling){
 
 $.html=function(){
 	var result = [], operators = [];
-	var placeholder = "_<!---->";
+	var placeholder = "<!---->";
 	for(var i=0, l=arguments.length; i<l; ++i){
 		var arg = arguments[i];
 		if( arg===null || arg===undefined ) continue;
@@ -73,13 +73,6 @@ $.html=function(){
 	for(i=0, l=operators.length; i<l; ++i){
 		var operator = operators[i];
 		var comment = comments[i];
-		
-		var prevNode = comment.previousSibling, prevText = prevNode.nodeValue;
-		if( prevText.length > 1 ){
-			prevNode.nodeValue = prevText.substring(0, prevText.length - 1);
-		}else{
-			prevNode.parentNode.removeChild(prevNode);
-		}
 		
 		if( typeof operator==="function" ){
 			while( comment && comment.nodeType==8 ){
