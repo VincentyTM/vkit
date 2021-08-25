@@ -74,6 +74,10 @@ $.html=function(){
 		var operator = operators[i];
 		var comment = comments[i];
 		
+		if(!comment){
+			throw new Error("Some object or function could not be inserted");
+		}
+		
 		if( typeof operator==="function" ){
 			var ref = comment.previousSibling || comment.parentNode;
 			comment.parentNode.removeChild(comment);
