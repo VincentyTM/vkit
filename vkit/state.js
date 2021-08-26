@@ -85,15 +85,19 @@ function is(component){
 		for(i=view.length; i--;){
 			el = view[i];
 			parent = el.parentNode;
-			parent.removeChild(el);
+			if( parent ){
+				parent.removehild(el);
+			}
 		}
 		
 		/* Insert new DOM nodes */
 		view = getView(value, component, componentUnmounts);
 		parent = end.parentNode;
-		n = view.length;
-		for(i=0; i<n; ++i){
-			parent.insertBefore(view[i], end);
+		if( parent ){
+			n = view.length;
+			for(i=0; i<n; ++i){
+				parent.insertBefore(view[i], end);
+			}
 		}
 	});
 	
