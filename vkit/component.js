@@ -20,16 +20,20 @@ $.observable = function(){
 };
 
 $.withComponent = function(func){
-	var component = Component.current();
-	var provider = providers[providers.length - 1];
+	var component = Component.current;
+	var provider = currentProvider;
 	return function(){
-		Component.stack.push(component);
-		providers.push(provider);
-		var ret = func.apply(this, arguments);
-		providers.pop();
-		Component.stack.pop();
-		$.render();
-		return ret;
+		var prev = Component.current;
+		Component.current = component;
+		var previousProvider = currentProvider;
+		currentProvider = provider;
+		try{
+			return func.apply(this, arguments);
+		}finally{
+			currentProvider = previousProvider;
+			Component.current = prev;
+			$.render();
+		}
 	};
 };
 
@@ -79,7 +83,7 @@ $.text = function(getter){
 };
 
 $.component = function(){
-	var component = Component.current();
+	var component = Component.current;
 	return {
 		index: function(){
 			return component.index;
@@ -88,7 +92,7 @@ $.component = function(){
 };
 
 $.unmount = function(func){
-	Component.current().onDestroy.subscribe(func);
+	Component.current.onDestroy.subscribe(func);
 };
 
 $.mount = function(func){
@@ -96,7 +100,7 @@ $.mount = function(func){
 };
 
 $.render = function(){
-	var component = Component.stack[Component.stack.length - 1];
+	var component = Component.current;
 	while( component.parent && !component.stopEvents )
 		component = component.parent;
 	component.render();
@@ -121,9 +125,9 @@ function copyToArray(list){
 $.map = function(models, getView, stopRender){
 	var ref = typeof models=="function" ? models() : models;
 	var A = copyToArray(ref);
-	var curr = new Component(stopRender).setParent( Component.current() );
+	var curr = new Component(stopRender).setParent( Component.current );
 	var placeholder = document.createTextNode("");
-	var provider = providers[providers.length - 1];
+	var provider = currentProvider;
 	
 	for(var i=0, l=A.length; i<l; ++i){
 		new Component().setParent(curr).setIndex(i).setView(getView, A[i]);
@@ -137,51 +141,53 @@ $.map = function(models, getView, stopRender){
 				ref = B;
 			}
 		}
-		
-		providers.push(provider);
-		var parent = placeholder.parentNode;
-		
-		var i, n=A.length, m=B.length;
-		for(i=0; i<n; ++i){
-			if( i<m ){
-				if( A[i]===B[i] ){
-					continue;
-				}
-				if( i+1<m ){
-					if( A[i]===B[i+1] ){
-						curr.insertComponent(i, B[i], getView, parent);
-						A.splice(i, 0, B[i++]); ++n;
+		var previousProvider = currentProvider;
+		currentProvider = provider;
+		try{
+			var parent = placeholder.parentNode;
+			
+			var i, n=A.length, m=B.length;
+			for(i=0; i<n; ++i){
+				if( i<m ){
+					if( A[i]===B[i] ){
 						continue;
 					}
-					if( i+2<m ){
-						if( A[i]===B[i+2] ){
-							curr.insertComponent(i, B[i+1], getView, parent);
+					if( i+1<m ){
+						if( A[i]===B[i+1] ){
 							curr.insertComponent(i, B[i], getView, parent);
-							A.splice(i, 0, B[i++], B[i++]); n+=2;
+							A.splice(i, 0, B[i++]); ++n;
 							continue;
 						}
-						if( i+3<m && A[i]===B[i+3] ){
-							curr.insertComponent(i, B[i+2], getView, parent);
-							curr.insertComponent(i, B[i+1], getView, parent);
-							curr.insertComponent(i, B[i], getView, parent);
-							A.splice(i, 0, B[i++], B[i++], B[i++]); n+=3;
-							continue;
+						if( i+2<m ){
+							if( A[i]===B[i+2] ){
+								curr.insertComponent(i, B[i+1], getView, parent);
+								curr.insertComponent(i, B[i], getView, parent);
+								A.splice(i, 0, B[i++], B[i++]); n+=2;
+								continue;
+							}
+							if( i+3<m && A[i]===B[i+3] ){
+								curr.insertComponent(i, B[i+2], getView, parent);
+								curr.insertComponent(i, B[i+1], getView, parent);
+								curr.insertComponent(i, B[i], getView, parent);
+								A.splice(i, 0, B[i++], B[i++], B[i++]); n+=3;
+								continue;
+							}
 						}
 					}
 				}
+				
+				curr.removeComponent(i);
+				A.splice(i, 1); --i; --n;
 			}
-			
-			curr.removeComponent(i);
-			A.splice(i, 1); --i; --n;
+			for(; i<m; ++i){
+				curr.appendComponent(B[i], getView, parent, placeholder);
+				A.push(B[i]);
+			}
+			for(i=0; i<m; ++i)
+				curr.children[i].setIndex(i);
+		}finally{
+			currentProvider = previousProvider;
 		}
-		for(; i<m; ++i){
-			curr.appendComponent(B[i], getView, parent, placeholder);
-			A.push(B[i]);
-		}
-		for(i=0; i<m; ++i)
-			curr.children[i].setIndex(i);
-		
-		providers.pop();
 	});
 	
 	var ret = [];
@@ -194,9 +200,9 @@ $.map = function(models, getView, stopRender){
 
 $.is = function(getter, getView, stopRender){
 	var A = getter();
-	var curr = new Component(stopRender).setParent( Component.current() );
+	var curr = new Component(stopRender).setParent( Component.current );
 	var placeholder = document.createTextNode("");
-	var provider = providers[providers.length - 1];
+	var provider = currentProvider;
 	
 	new Component().setParent(curr).setView(getView, A);
 	
@@ -207,18 +213,21 @@ $.is = function(getter, getView, stopRender){
 		var parent = placeholder.parentNode;
 		
 		curr.removeComponent(0);
-		providers.push(provider);
-		curr.appendComponent(B, getView, parent, placeholder);
-		providers.pop();
-		
-		A = B;
+		var previousProvider = currentProvider;
+		currentProvider = provider;
+		try{
+			curr.appendComponent(B, getView, parent, placeholder);
+		}finally{
+			currentProvider = previousProvider;
+			A = B;
+		}
 	});
 	
 	return [curr.children[0].view, placeholder];
 };
 
 $.guard = function(condition, getView){
-	var curr = new Component().setParent( Component.current() );
+	var curr = new Component().setParent( Component.current );
 	
 	new Component().setParent(curr).setView(getView);
 	
@@ -230,7 +239,7 @@ $.guard = function(condition, getView){
 };
 
 $.boundary = function(getView){
-	var curr = new Component().setParent( Component.current() ).setView(getView);
+	var curr = new Component().setParent( Component.current ).setView(getView);
 	curr.stopEvents = true;
 	return curr.view;
 };
@@ -246,14 +255,10 @@ function Component(stopRender){
 	this.onDestroy = $.observable();
 }
 
-Component.stack = [new Component()];
-
-Component.current = function(){
-	return this.stack[this.stack.length - 1];
-};
+Component.current = new Component();
 
 Component.subscribe = function(fn){
-	return this.current().onRender.subscribe(fn);
+	return this.current.onRender.subscribe(fn);
 };
 
 Component.prototype.setParent = function(parent){
@@ -268,9 +273,13 @@ Component.prototype.setIndex = function(index){
 };
 
 Component.prototype.setView = function(getView, model){
-	Component.stack.push(this);
-	this.view = getView(model);
-	Component.stack.pop();
+	var prev = Component.current;
+	Component.current = this;
+	try{
+		this.view = getView(model);
+	}finally{
+		Component.current = prev;
+	}
 	return this;
 };
 
@@ -360,7 +369,8 @@ function Provider(parent, containers){
 	this.containers = containers;
 }
 
-var providers = [new Provider(null, supportsWeakMap ? new WeakMap() : [])];
+var rootProvider = new Provider(null, supportsWeakMap ? new WeakMap() : []);
+var currentProvider = rootProvider;
 
 Provider.prototype.getContainer = function(service){
 	var containers = this.containers;
@@ -373,20 +383,23 @@ Provider.prototype.getContainer = function(service){
 };
 
 $.inject = function(service){
-	var provider = providers[providers.length - 1];
+	var provider = currentProvider;
 	var container = null;
 	while( provider && !(container = provider.getContainer(service)))
 		provider = provider.parent;
 	if(!provider){
-		provider = providers[0];
+		provider = rootProvider;
 		container = new Container(service);
 		var containers = provider.containers;
 		containers.set ? containers.set(service, container) : containers.push(container);
 	}
-	providers.push(provider);
-	var instance = container.getInstance();
-	providers.pop();
-	return instance;
+	var previousProvider = currentProvider;
+	currentProvider = provider;
+	try{
+		return container.getInstance();
+	}finally{
+		currentProvider = previousProvider;
+	}
 };
 
 $.provide = function(services, getContent){
@@ -400,8 +413,9 @@ $.provide = function(services, getContent){
 		for(var i=services.length; i--;)
 			containers[i] = new Container(services[i]);
 	}
-	var provider = new Provider(providers[providers.length - 1], containers);
-	providers.push(provider);
+	var provider = new Provider(currentProvider, containers);
+	var previousProvider = currentProvider;
+	currentProvider = provider;
 	$.unmount(function(){
 		if( supportsWeakMap ){
 			services.forEach(function(service){
@@ -419,9 +433,11 @@ $.provide = function(services, getContent){
 			}
 		}
 	});
-	var content = getContent();
-	providers.pop();
-	return content;
+	try{
+		return getContent();
+	}finally{
+		currentProvider = previousProvider;
+	}
 };
 
 })($);
