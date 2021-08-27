@@ -46,7 +46,9 @@ function createPeer(rtcInterface, config, options){
 	peer.oniceconnectionstatechange=function(){
 		switch( this.iceConnectionState ){
 			case "failed":
-				peer.restartIce();
+				if( peer.restartIce ){
+					peer.restartIce();
+				}
 				break;
 			default:
 				emitLog("Changed to ", this.iceConnectionState);
