@@ -86,6 +86,9 @@ class LibraryContainer {
 		const regexDep = /\$?\.[a-zA-Z_][a-zA-Z0-9_]*\b/g;
 		for(let match; match = regexDep.exec(input);){
 			let dep = match[0];
+			if(/^\$\.(apply|call|bind)$/.test(dep)){
+				continue;
+			}
 			if(!dep.startsWith("$.") ){
 				dep = "$.fn" + dep;
 			}
