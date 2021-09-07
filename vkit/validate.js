@@ -41,6 +41,9 @@ function validate(type, data){
 $.validate = validate;
 
 $.validators = {
+	Any: function(){
+		return true;
+	},
 	MinLength: function(a){
 		return function(x){
 			return x.length >= a;
