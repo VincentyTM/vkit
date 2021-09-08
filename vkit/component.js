@@ -1,89 +1,82 @@
 (function($){
 
-var mounts = [];
-
-$.observable = function(){
-	var subscriptions = {};
-	var id = 0;
-	function render(){
-		for(var id in subscriptions)
-			subscriptions[id].apply(null, arguments);
-	}
-	render.subscribe = function(fn){
-		var cid = ++id;
-		subscriptions[cid] = fn;
-		return function(){
-			delete subscriptions[cid];
-		};
-	};
-	return render;
-};
-
-$.withComponent = function(func){
-	var component = Component.current;
-	var provider = currentProvider;
-	return function(){
-		var prev = Component.current;
-		Component.current = component;
-		var previousProvider = currentProvider;
-		currentProvider = provider;
-		try{
-			return func.apply(this, arguments);
-		}finally{
-			currentProvider = previousProvider;
-			Component.current = prev;
-			$.render();
+function createComponent(parent, stopRender){
+	var children = [];
+	var start = document.createTextNode("");
+	var end = document.createTextNode("");
+	return {
+		index: 0,
+		children: children,
+		onRender: $.observable(),
+		onDestroy: $.observable(),
+		start: start,
+		end: end,
+		unmount: function(){
+			for(var i=children.length; i--;){
+				children[i].unmount();
+			}
+			this.onDestroy();
+			this.onDestroy = $.observable();
+		},
+		render: function(){
+			this.onRender();
+			if( stopRender ){
+				return;
+			}
+			var n = children.length;
+			for(var i=0; i<n; ++i){
+				children[i].render();
+			}
+		},
+		removeChild: function(index){
+			var removed = children.splice(index, 1)[0];
+			if( removed ){
+				removed.unmount();
+				removed.removeView();
+			}
+		},
+		removeView: function(){
+			this.clearView();
+			if( start.parentNode ) start.parentNode.removeChild(start);
+			if( end.parentNode ) end.parentNode.removeChild(end);
+		},
+		clearView: function(){
+			var parent = start.parentNode;
+			if(!parent) return;
+			for(var el=start.nextSibling; el && el !== end; el = start.nextSibling){
+				parent.removeChild(el);
+			}
+		},
+		insertView: function(view, anchor){
+			var parent = anchor.parentNode;
+			parent.insertBefore(start, anchor);
+			var n = view.length;
+			for(var i=0; i<n; ++i){
+				parent.insertBefore(view[i], anchor);
+			}
+			parent.insertBefore(end, anchor);
+		},
+		replaceView: function(view){
+			this.clearView();
+			var parent = end.parentNode;
+			var n = view.length;
+			for(var i=0; i<n; ++i){
+				parent.insertBefore(view[i], end);
+			}
+		},
+		getChildStart: function(index){
+			var child = children[index];
+			return child ? child.start : end;
 		}
 	};
-};
+}
 
-$.on = function(type, action){
-	return function(element){
-		element["on" + type] = $.withComponent(action);
-	};
-};
-
-$.effect = function(setter){
-	Component.subscribe(setter);
-	setter();
-};
-
-$.css = function(prop, getter){
-	return function(element){
-		var style = element.style;
-		var oldValue = style[prop] = getter(element);
-		Component.subscribe(function(){
-			var value = getter(element);
-			if( oldValue!==value )
-				oldValue = style[prop] = value;
-		});
-	};
-};
-
-$.prop = function(prop, getter){
-	return function(element){
-		var oldValue = element[prop] = getter(element);
-		Component.subscribe(function(){
-			var value = getter(element);
-			if( oldValue!==value )
-				oldValue = element[prop] = value;
-		});
-	};
-};
-
-$.text = function(getter){
-	var oldValue;
-	var node = document.createTextNode(oldValue = getter());
-	Component.subscribe(function(){
-		var value = getter();
-		if( oldValue!==value )
-			oldValue = node.nodeValue = value;
-	});
-	return node;
-};
+var onMount = $.observable();
+var rootComponent = createComponent(null);
+var currentComponent = rootComponent;
 
 $.component = function(){
-	var component = Component.current;
+	var component = currentComponent;
 	return {
 		index: function(){
 			return component.index;
@@ -91,353 +84,197 @@ $.component = function(){
 	};
 };
 
-$.unmount = function(func){
-	Component.current.onDestroy.subscribe(func);
+$.render = function(){
+	try{
+		rootComponent.render();
+		onMount();
+	}finally{
+		onMount = $.observable();
+	}
 };
 
 $.mount = function(func){
-	mounts.push(func);
+	return onMount.subscribe(func);
 };
 
-$.render = function(){
-	var component = Component.current;
-	while( component.parent && !component.stopEvents )
-		component = component.parent;
-	component.render();
-	var n = mounts.length;
-	if( n ){
-		var m = mounts.splice(0, n);
-		for(var i=0; i<n; ++i){
-			m[i]();
-		}
-	}
+$.unmount = function(func){
+	return currentComponent.onDestroy.subscribe(func);
 };
 
-function copyToArray(list){
-	if( list.slice ) return list.slice(0);
-	var length=list.length, array = new Array(length);
-	for(var i=0; i<length; ++i){
-		array[i] = list[i];
-	}
-	return array;
-}
-
-$.map = function(models, getView, stopRender){
-	var ref = typeof models=="function" ? models() : models;
-	var A = copyToArray(ref);
-	var curr = new Component(stopRender).setParent( Component.current );
-	var placeholder = document.createTextNode("");
-	var provider = currentProvider;
-	
-	for(var i=0, l=A.length; i<l; ++i){
-		new Component().setParent(curr).setIndex(i).setView(getView, A[i]);
-	}
-	curr.onRender.subscribe(function(){
-		var B = typeof models=="function" ? models() : models;
-		if( stopRender ){
-			if( B===ref ){
-				return;
-			}else{
-				ref = B;
-			}
-		}
-		var previousProvider = currentProvider;
-		currentProvider = provider;
+$.withComponent = function(func, doRender, component){
+	var provider = $.getProvider();
+	if(!component) component = currentComponent;
+	return function(){
+		var prevProvider = $.getProvider();
+		var prevComponent = currentComponent;
 		try{
-			var parent = placeholder.parentNode;
-			
-			var i, n=A.length, m=B.length;
-			for(i=0; i<n; ++i){
-				if( i<m ){
-					if( A[i]===B[i] ){
+			$.setProvider(provider);
+			currentComponent = component;
+			var ret = func.apply(this, arguments);
+			if( doRender ){
+				$.render();
+			}
+			return ret;
+		}finally{
+			$.setProvider(prevProvider);
+			currentComponent = prevComponent;
+		}
+	};
+};
+
+$.is = function(getData, getView, immutable, onRender){
+	var A = onRender ? getData : getData();
+	var prev = currentComponent;
+	var component = currentComponent = createComponent(prev, immutable);
+	try{
+		var view = getView(A);
+		prev.children.push(component);
+		(onRender || component.onRender).subscribe($.withComponent(function(newData){
+			var B = onRender ? newData : getData();
+			if( A === B ){
+				return;
+			}
+			component.unmount();
+			component.children.splice(0, component.children.length);
+			component.replaceView(getView(B));
+			A = B;
+		}, false, component));
+		return $.html(component.start, view, component.end);
+	}finally{
+		currentComponent = prev;
+	}
+};
+
+$.map = function(array, getView, immutable, onRender){
+	var oldArray = typeof array === "function" ? array() : array;
+	var items = $.fn.toArray.call(oldArray);
+	var prev = currentComponent;
+	var container = createComponent(prev, immutable);
+	prev.children.push(container);
+	var n = items.length;
+	var views = new Array(n);
+	
+	for(var i=0; i<n; ++i){
+		try{
+			var component = currentComponent = createComponent(container);
+			component.index = i;
+			views[i] = [component.start, getView(items[i]), component.end];
+			container.children.push(component);
+		}finally{
+			currentComponent = prev;
+		}
+	}
+	
+	function insertItem(index, data){
+		items.splice(index, 0, data);
+		var prev = currentComponent;
+		try{
+			var component = currentComponent = createComponent(container);
+			var view = getView(data);
+			var anchor = container.getChildStart(index);
+			component.insertView(view, anchor);
+			container.children.splice(index, 0, component);
+		}finally{
+			currentComponent = prev;
+		}
+	}
+	
+	(onRender || container.onRender).subscribe($.withComponent(function(newArray){
+		if(!newArray) newArray = typeof array === "function" ? array() : array;
+		if( immutable && newArray === oldArray ){
+			return;
+		}
+		var i, n=items.length, m=newArray.length;
+		for(i=0; i<n; ++i){
+			if( i<m ){
+				var data = items[i];
+				if( data === newArray[i] ){
+					continue;
+				}
+				if( i+1<m ){
+					if( data === newArray[i+1] ){
+						insertItem(i, newArray[i]);
+						++n; ++i;
 						continue;
 					}
-					if( i+1<m ){
-						if( A[i]===B[i+1] ){
-							curr.insertComponent(i, B[i], getView, parent);
-							A.splice(i, 0, B[i++]); ++n;
+					if( i+2<m ){
+						if( data === newArray[i+2] ){
+							insertItem(i, newArray[i+1]);
+							insertItem(i, newArray[i]);
+							n+=2; i+=2;
 							continue;
 						}
-						if( i+2<m ){
-							if( A[i]===B[i+2] ){
-								curr.insertComponent(i, B[i+1], getView, parent);
-								curr.insertComponent(i, B[i], getView, parent);
-								A.splice(i, 0, B[i++], B[i++]); n+=2;
-								continue;
-							}
-							if( i+3<m && A[i]===B[i+3] ){
-								curr.insertComponent(i, B[i+2], getView, parent);
-								curr.insertComponent(i, B[i+1], getView, parent);
-								curr.insertComponent(i, B[i], getView, parent);
-								A.splice(i, 0, B[i++], B[i++], B[i++]); n+=3;
-								continue;
-							}
+						if( i+3<m && data === newArray[i+3] ){
+							insertItem(i, newArray[i+2]);
+							insertItem(i, newArray[i+1]);
+							insertItem(i, newArray[i]);
+							n+=3; i+=3;
+							continue;
 						}
 					}
 				}
-				
-				curr.removeComponent(i);
-				A.splice(i, 1); --i; --n;
 			}
-			for(; i<m; ++i){
-				curr.appendComponent(B[i], getView, parent, placeholder);
-				A.push(B[i]);
+			items.splice(i, 1);
+			container.removeChild(i);
+			--n; --i;
+		}
+		for(; i<m; ++i){
+			insertItem(i, newArray[i]);
+		}
+		for(i=0; i<m; ++i){
+			container.children[i].index = i;
+		}
+	}));
+	
+	return $.html(container.start, views, container.end);
+};
+
+$.on = function(type, action){
+	return function(element){
+		element["on" + type] = $.withComponent(action, true);
+	};
+};
+
+$.effect = function(setter){
+	setter();
+	currentComponent.onRender.subscribe(setter);
+};
+
+$.css = function(prop, getter){
+	return function(element){
+		var style = element.style;
+		var oldValue = style[prop] = getter(element);
+		currentComponent.onRender.subscribe(function(){
+			var value = getter(element);
+			if( oldValue!==value ){
+				oldValue = style[prop] = value;
 			}
-			for(i=0; i<m; ++i)
-				curr.children[i].setIndex(i);
-		}finally{
-			currentProvider = previousProvider;
-		}
-	});
-	
-	var ret = [];
-	for(var i=0, l=curr.children.length; i<l; ++i){
-		ret.push( curr.children[i].view );
-	}
-	ret.push(placeholder);
-	return ret;
-};
-
-$.is = function(getter, getView, stopRender){
-	var A = getter();
-	var curr = new Component(stopRender).setParent( Component.current );
-	var placeholder = document.createTextNode("");
-	var provider = currentProvider;
-	
-	new Component().setParent(curr).setView(getView, A);
-	
-	curr.onRender.subscribe(function(){
-		var B = getter();
-		if( A===B )
-			return;
-		var parent = placeholder.parentNode;
-		
-		curr.removeComponent(0);
-		var previousProvider = currentProvider;
-		currentProvider = provider;
-		try{
-			curr.appendComponent(B, getView, parent, placeholder);
-		}finally{
-			currentProvider = previousProvider;
-			A = B;
-		}
-	});
-	
-	return [curr.children[0].view, placeholder];
-};
-
-$.guard = function(condition, getView){
-	var curr = new Component().setParent( Component.current );
-	
-	new Component().setParent(curr).setView(getView);
-	
-	curr.onRender.subscribe(function(){
-		curr.stopRender = !condition();
-	});
-	
-	return curr.children[0].view;
-};
-
-$.boundary = function(getView){
-	var curr = new Component().setParent( Component.current ).setView(getView);
-	curr.stopEvents = true;
-	return curr.view;
-};
-
-function Component(stopRender){
-	this.view = null;
-	this.parent = null;
-	this.index = null;
-	this.children = [];
-	this.stopEvents = false;
-	this.stopRender = !!stopRender;
-	this.onRender = $.observable();
-	this.onDestroy = $.observable();
-}
-
-Component.current = new Component();
-
-Component.subscribe = function(fn){
-	return this.current.onRender.subscribe(fn);
-};
-
-Component.prototype.setParent = function(parent){
-	this.parent = parent;
-	parent.children.push( this );
-	return this;
-};
-
-Component.prototype.setIndex = function(index){
-	this.index = index;
-	return this;
-};
-
-Component.prototype.setView = function(getView, model){
-	var prev = Component.current;
-	Component.current = this;
-	try{
-		this.view = getView(model);
-	}finally{
-		Component.current = prev;
-	}
-	return this;
-};
-
-Component.prototype.removeComponent = function(index){
-	var removed = this.children.splice(index, 1)[0];
-	removed.parent = null;
-	removed.remove();
-	return this;
-};
-
-Component.prototype.remove = function(){
-	var children = this.children;
-	for(var i=0, l=children.length; i<l; ++i)
-		children[i].remove();
-	this.onDestroy();
-	var view = this.view;
-	if( view ){
-		for(var i=0, l=view.length; i<l; ++i){
-			var node = view[i];
-			if( node.parentNode )
-				node.parentNode.removeChild(node);
-		}
-	}
-	return this;
-};
-
-Component.prototype.insertComponent = function(index, model, getView, parent){
-	var component = new Component();
-	component.parent = this;
-	component.setView(getView, model);
-	var next = this.children[index];
-	var view = component.view;
-	this.children.splice(index, 0, component);
-	if( next && next.view ){
-		var first = next.view;
-		while( first[0] ) first = first[0];
-		if( parent ){
-			for(var i=0, l=view.length; i<l; ++i){
-				parent.insertBefore(view[i], first);
-			}
-		}
-	}
-	return component;
-};
-
-Component.prototype.appendComponent = function(model, getView, parent, placeholder){
-	var component = new Component();
-	component.parent = this;
-	component.setView(getView, model);
-	var view = component.view;
-	this.children.push(component);
-	if( parent ){
-		for(var i=0, l=view.length; i<l; ++i){
-			parent.insertBefore(view[i], placeholder);
-		}
-	}
-	return component;
-};
-
-Component.prototype.render = function(){
-	this.onRender();
-	if( this.stopRender )
-		return this;
-	
-	var children = this.children;
-	for(var i=0, l=children.length; i<l; ++i){
-		children[i].render();
-	}
-	return this;
-};
-
-/* Dependency injection */
-
-var supportsWeakMap = typeof WeakMap=="function";
-
-function Container(service){
-	this.service = service;
-	this.instance = null;
-}
-
-Container.prototype.getInstance = function(){
-	return this.instance || (this.instance = new this.service());
-};
-
-function Provider(parent, containers){
-	this.parent = parent;
-	this.containers = containers;
-}
-
-var rootProvider = new Provider(null, supportsWeakMap ? new WeakMap() : []);
-var currentProvider = rootProvider;
-
-Provider.prototype.getContainer = function(service){
-	var containers = this.containers;
-	if( containers.get )
-		return containers.get(service);
-	for(var i=containers.length; i--;){
-		if( containers[i].service===service )
-			return containers[i];
-	}
-};
-
-$.inject = function(service){
-	var provider = currentProvider;
-	var container = null;
-	while( provider && !(container = provider.getContainer(service)))
-		provider = provider.parent;
-	if(!provider){
-		provider = rootProvider;
-		container = new Container(service);
-		var containers = provider.containers;
-		containers.set ? containers.set(service, container) : containers.push(container);
-	}
-	var previousProvider = currentProvider;
-	currentProvider = provider;
-	try{
-		return container.getInstance();
-	}finally{
-		currentProvider = previousProvider;
-	}
-};
-
-$.provide = function(services, getContent){
-	if( supportsWeakMap ){
-		var containers = new WeakMap();
-		services.forEach(function(service){
-			containers.set(service, new Container(service));
 		});
-	}else{
-		var containers = new Array(services.length);
-		for(var i=services.length; i--;)
-			containers[i] = new Container(services[i]);
-	}
-	var provider = new Provider(currentProvider, containers);
-	var previousProvider = currentProvider;
-	currentProvider = provider;
-	$.unmount(function(){
-		if( supportsWeakMap ){
-			services.forEach(function(service){
-				var container = containers.get(service);
-				if( container.instance && container.instance.destructor ){
-					container.instance.destructor();
-				}
-			});
-		}else{
-			for(var i=containers.length; i--;){
-				var container = containers[i];
-				if( container.instance && container.instance.destructor ){
-					container.instance.destructor();
-				}
+	};
+};
+
+$.prop = function(prop, getter){
+	return function(element){
+		var oldValue = element[prop] = getter(element);
+		currentComponent.onRender.subscribe(function(){
+			var value = getter(element);
+			if( oldValue!==value ){
+				oldValue = element[prop] = value;
 			}
+		});
+	};
+};
+
+$.text = function(getter){
+	var oldValue;
+	var node = document.createTextNode(oldValue = getter());
+	currentComponent.onRender.subscribe(function(){
+		var value = getter();
+		if( oldValue!==value ){
+			oldValue = node.nodeValue = value;
 		}
 	});
-	try{
-		return getContent();
-	}finally{
-		currentProvider = previousProvider;
-	}
+	return node;
 };
 
 })($);

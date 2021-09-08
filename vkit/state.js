@@ -1,7 +1,6 @@
 (function($){
 
 var stateUpdates = [];
-var currentUnmounts = null;
 
 function noop(x){
 	return x;
@@ -11,12 +10,23 @@ function map(query){
 	return $(this).combine(query || noop);
 }
 
+function input(query){
+	return map.call(this, query).until($.unmount);
+}
+
 function add(value){
 	this.set(this.get() + value);
 }
 
 function toggle(){
 	this.set(!this.get());
+}
+
+function createAction(update){
+	var state = this;
+	return function(){
+		state.set(update(state.get()));
+	};
 }
 
 function text(){
@@ -54,54 +64,18 @@ function effect(action){
 	this.onChange.subscribe(action);
 }
 
-function getView(value, component, unmounts){
-	var prevUnmounts = currentUnmounts;
-	currentUnmounts = unmounts;
-	try{
-		return component(value);
-	}finally{
-		currentUnmounts = prevUnmounts;
-	}
+function switchStateView(components, defaultComponent){
+	return getStateView.call(this, function(key){
+		return (components[key] || defaultComponent)();
+	});
 }
 
-function is(component){
-	var componentUnmounts = [];
-	var value = this.get();
-	var view = getView(value, component, componentUnmounts);
-	var end = document.createTextNode("");
-	
-	this.onChange.subscribe(function(newValue){
-		value = newValue;
-		var el, parent, i, n;
-		
-		/* Call unmount functions */
-		n = componentUnmounts.length;
-		var unmounts = componentUnmounts.splice(0, n);
-		for(i=0; i<n; ++i){
-			unmounts[i]();
-		}
-		
-		/* Remove old DOM nodes */
-		for(i=view.length; i--;){
-			el = view[i];
-			parent = el.parentNode;
-			if( parent ){
-				parent.removehild(el);
-			}
-		}
-		
-		/* Insert new DOM nodes */
-		view = getView(value, component, componentUnmounts);
-		parent = end.parentNode;
-		if( parent ){
-			n = view.length;
-			for(i=0; i<n; ++i){
-				parent.insertBefore(view[i], end);
-			}
-		}
-	});
-	
-	return $.html(view, end);
+function getStateView(getView, immutable){
+	return $.is(this.get(), getView, immutable, this.onChange);
+}
+
+function mapStateView(getView, immutable){
+	return $.map(this.get(), getView, immutable, this.onChange);
 }
 
 $.state = function(value){
@@ -130,16 +104,20 @@ $.state = function(value){
 				}
 			}
 		},
+		action: createAction,
 		add: add,
 		toggle: toggle,
 		get: get,
 		map: map,
+		input: input,
 		onChange: onChange,
 		text: text,
 		prop: prop,
 		css: css,
 		effect: effect,
-		is: is
+		view: getStateView,
+		mapView: mapStateView,
+		switchView: switchStateView
 	};
 };
 
@@ -177,24 +155,21 @@ $.fn.combine = function(func){
 	return {
 		get: getValue,
 		map: map,
+		input: input,
 		onChange: onChange,
 		text: text,
 		prop: prop,
 		css: css,
 		effect: effect,
-		is: is,
+		view: getStateView,
+		mapView: mapStateView,
+		switchView: switchStateView,
 		unsubscribe: unsubscribe,
 		until: function(func){
 			func(unsubscribe);
 			return this;
 		}
 	};
-};
-
-$.state.unmount = function(func){
-	if( currentUnmounts ){
-		currentUnmounts.push(func);
-	}
 };
 
 $.state.render = function(){
