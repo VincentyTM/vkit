@@ -8,6 +8,8 @@ function append(el, child){
 		case "object":
 			if( child.nodeType ){
 				el.appendChild(child);
+			}else if( typeof child.text === "function" ){
+				el.appendChild(child.text());
 			}else{
 				var n = child.length;
 				var a = $.fn.toArray.call(child);
@@ -26,15 +28,17 @@ function append(el, child){
 
 function createElement(tagName, props, content){
 	var el = document.createElement(tagName);
-	for(var prop in props ){
+	for(var prop in props){
 		var val = props[prop];
 		if( prop.indexOf("on") === 0 ){
-			$.on(prop.substring(2), val)(el);
+			$.state.on(prop.substring(2), val)(el);
 		}else if( prop === "style" ){
 			for(var cssProp in val){
 				var cssVal = val[cssProp];
 				if( typeof cssVal === "function" ){
 					$.css(cssProp, cssVal)(el);
+				}else if( cssVal && cssVal.css ){
+					cssVal.css(cssProp)(el);
 				}else{
 					el.style[cssProp] = cssVal;
 				}
@@ -42,6 +46,8 @@ function createElement(tagName, props, content){
 		}else{
 			if( typeof val === "function" ){
 				$.prop(prop, val)(el);
+			}else if( val && val.prop ){
+				val.prop(prop)(el);
 			}else{
 				el[prop] = val;
 			}
@@ -54,9 +60,10 @@ function createElement(tagName, props, content){
 	return el;
 };
 
-var selfClosing = /^input|img|br|hr|link|meta|embed|param|source|area|base|col|track|wbr|keygen|menuitem|command$/i;
+var selfClosing = /^input|img|br|hr|link|meta|embed|param|source|area|base|col|track|wbr|keygen|menuitem|command$/;
 
-$.useTag = function(tagName){
+$.htmlTag = function(tagName){
+	tagName = tagName.toLowerCase();
 	if( selfClosing.test(tagName) ){
 		return function(props){
 			return createElement(tagName, props || {}, []);
@@ -75,9 +82,9 @@ $.useTag = function(tagName){
 };
 
 if( typeof Proxy === "function" ){
-	$.tags = new Proxy({}, {
+	$.htmlTags = new Proxy({}, {
 		get: function(target, prop, receiver){
-			return $.useTag(prop);
+			return $.htmlTag(prop);
 		}
 	});
 }
