@@ -58,7 +58,7 @@ function createElement(tagName, props, content){
 		append(el, content[i]);
 	}
 	return el;
-};
+}
 
 var selfClosing = /^input|img|br|hr|link|meta|embed|param|source|area|base|col|track|wbr|keygen|menuitem|command$/;
 
@@ -72,7 +72,7 @@ $.htmlTag = function(tagName){
 	return function(){
 		var args = arguments;
 		var obj = args[0];
-		if( typeof obj === "object" && !obj.nodeType ){
+		if( obj && typeof obj === "object" && !obj.nodeType && typeof obj.text !== "function" && typeof obj.length !== "number" ){
 			return function(){
 				return createElement(tagName, obj, arguments);
 			};

@@ -82,7 +82,7 @@ $.svgTag = function(tagName){
 	return function(){
 		var args = arguments;
 		var obj = args[0];
-		if( typeof obj === "object" && !obj.nodeType ){
+		if( obj && typeof obj === "object" && !obj.nodeType && typeof obj.text !== "function" && typeof obj.length !== "number" ){
 			return function(){
 				return createElement(tagName, obj, arguments);
 			};
