@@ -136,10 +136,10 @@ $.is = function(getData, getView, immutable, onRender){
 			}
 			component.unmount();
 			component.children.splice(0, component.children.length);
-			component.replaceView(getView(B));
+			component.replaceView($.group(getView(B)));
 			A = B;
 		}, false, component));
-		return $.html(component.start, view, component.end);
+		return $.group(component.start, view, component.end);
 	}finally{
 		currentComponent = prev;
 	}
@@ -170,7 +170,7 @@ $.map = function(array, getView, immutable, onRender){
 		var prev = currentComponent;
 		try{
 			var component = currentComponent = createComponent(container);
-			var view = getView(data);
+			var view = $.group(getView(data));
 			var anchor = container.getChildStart(index);
 			component.insertView(view, anchor);
 			container.children.splice(index, 0, component);
@@ -226,7 +226,7 @@ $.map = function(array, getView, immutable, onRender){
 		}
 	}));
 	
-	return $.html(container.start, views, container.end);
+	return $.group(container.start, views, container.end);
 };
 
 $.on = function(type, action){
