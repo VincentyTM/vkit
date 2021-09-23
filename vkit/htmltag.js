@@ -12,22 +12,25 @@ function append(el, child){
 				el.appendChild(child.text());
 			}else{
 				var n = child.length;
-				var a = $.fn.toArray.call(child);
-				for(var i=0; i<n; ++i){
-					append(el, a[i]);
+				if( typeof n === "number" ){
+					var a = $.fn.toArray.call(child);
+					for(var i=0; i<n; ++i){
+						append(el, a[i]);
+					}
+				}else{
+					setProps(el, child);
 				}
 			}
 			break;
 		case "function":
-			el.appendChild($.text(child));
+			child(el);
 			break;
 		default:
 			el.appendChild(document.createTextNode(child));
 	}
 }
 
-function createElement(tagName, props, content){
-	var el = document.createElement(tagName);
+function setProps(el, props){
 	for(var prop in props){
 		var val = props[prop];
 		if( prop.indexOf("on") === 0 ){
@@ -53,6 +56,10 @@ function createElement(tagName, props, content){
 			}
 		}
 	}
+}
+
+function createElement(tagName, content){
+	var el = document.createElement(tagName);
 	var n = content.length;
 	for(var i=0; i<n; ++i){
 		append(el, content[i]);
@@ -60,31 +67,16 @@ function createElement(tagName, props, content){
 	return el;
 }
 
-var selfClosing = /^input|img|br|hr|link|meta|embed|param|source|area|base|col|track|wbr|keygen|menuitem|command$/;
-
 $.htmlTag = function(tagName){
-	tagName = tagName.toLowerCase();
-	if( selfClosing.test(tagName) ){
-		return function(props){
-			return createElement(tagName, props || {}, []);
-		};
-	}
 	return function(){
-		var args = arguments;
-		var obj = args[0];
-		if( obj && typeof obj === "object" && !obj.nodeType && typeof obj.text !== "function" && typeof obj.length !== "number" ){
-			return function(){
-				return createElement(tagName, obj, arguments);
-			};
-		}
-		return createElement(tagName, {}, args);
+		return createElement(tagName, arguments);
 	};
 };
 
 if( typeof Proxy === "function" ){
 	$.htmlTags = new Proxy({}, {
 		get: function(target, prop, receiver){
-			return $.htmlTag(prop);
+			return $.htmlTag(prop.toLowerCase());
 		}
 	});
 }

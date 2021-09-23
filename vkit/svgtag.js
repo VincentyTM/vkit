@@ -14,14 +14,18 @@ function append(el, child){
 				el.appendChild(child.text());
 			}else{
 				var n = child.length;
-				var a = $.fn.toArray.call(child);
-				for(var i=0; i<n; ++i){
-					append(el, a[i]);
+				if( typeof n === "number" ){
+					var a = $.fn.toArray.call(child);
+					for(var i=0; i<n; ++i){
+						append(el, a[i]);
+					}
+				}else{
+					setAttrs(el, child);
 				}
 			}
 			break;
 		case "function":
-			el.appendChild($.text(child));
+			child(el);
 			break;
 		default:
 			el.appendChild(document.createTextNode(child));
@@ -42,8 +46,7 @@ function setAttr(el, attr, val){
 	}
 }
 
-function createElement(tagName, attrs, content){
-	var el = document.createElementNS(xmlns, tagName);
+function setAttrs(el, attrs){
 	for(var attr in attrs){
 		var val = attrs[attr];
 		if( attr.indexOf("on") === 0 ){
@@ -63,6 +66,10 @@ function createElement(tagName, attrs, content){
 			setAttr(el, attr, val);
 		}
 	}
+}
+
+function createElement(tagName, content){
+	var el = document.createElementNS(xmlns, tagName);
 	var n = content.length;
 	for(var i=0; i<n; ++i){
 		append(el, content[i]);
@@ -70,31 +77,16 @@ function createElement(tagName, attrs, content){
 	return el;
 };
 
-var selfClosing = /^circle|ellipse|line|path|polygon|polyline|rect|stop|use$/;
-
 $.svgTag = function(tagName){
-	tagName = tagName.toLowerCase();
-	if( selfClosing.test(tagName) ){
-		return function(attrs){
-			return createElement(tagName, attrs || {}, []);
-		};
-	}
 	return function(){
-		var args = arguments;
-		var obj = args[0];
-		if( obj && typeof obj === "object" && !obj.nodeType && typeof obj.text !== "function" && typeof obj.length !== "number" ){
-			return function(){
-				return createElement(tagName, obj, arguments);
-			};
-		}
-		return createElement(tagName, {}, args);
+		return createElement(tagName, arguments);
 	};
 };
 
 if( typeof Proxy === "function" ){
 	$.svgTags = new Proxy({}, {
 		get: function(target, prop, receiver){
-			return $.svgTag(prop);
+			return $.svgTag(prop.toLowerCase());
 		}
 	});
 }
