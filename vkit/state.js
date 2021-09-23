@@ -14,6 +14,12 @@ function input(query){
 	return map.call(this, query).until($.unmount);
 }
 
+function select(prop){
+	return map.call(this, function(value){
+		return value ? value[prop] : undefined;
+	});
+}
+
 function add(value){
 	this.set(this.get() + value);
 }
@@ -110,6 +116,7 @@ $.state = function(value){
 		get: get,
 		map: map,
 		input: input,
+		select: select,
 		onChange: onChange,
 		text: text,
 		prop: prop,
@@ -156,6 +163,7 @@ $.fn.combine = function(func){
 		get: getValue,
 		map: map,
 		input: input,
+		select: select,
 		onChange: onChange,
 		text: text,
 		prop: prop,
