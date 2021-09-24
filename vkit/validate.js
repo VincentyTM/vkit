@@ -126,6 +126,37 @@ $.validators = {
 			return validate(obj, x);
 		};
 	},
+	Partial: function(T){
+		if(!T || typeof T !== "object" || T instanceof Array || T instanceof RegExp){
+			throw new TypeError("Partial types can only be used with non-Array, non-RegExp objects.");
+		}
+		return function(x){
+			for(var k in x){
+				if(!(k in T) || !validate(T[k], x[k])){
+					return false;
+				}
+			}
+			return true;
+		};
+	},
+	Required: function(T){
+		if(!T || typeof T !== "object" || T instanceof Array || T instanceof RegExp){
+			throw new TypeError("Required types can only be used with non-Array, non-RegExp objects.");
+		}
+		return function(x){
+			for(var k in T){
+				if(!(k in x) || !validate(T[k], x[k])){
+					return false;
+				}
+			}
+			return true;
+		};
+	},
+	Recursive: function(getType){
+		return function(x){
+			return validate(getType(), x);
+		};
+	},
 	Not: function(T){
 		return function(x){
 			return !validate(T, x);
