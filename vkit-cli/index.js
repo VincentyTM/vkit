@@ -14,6 +14,7 @@ const sanitizePath = require("./sanitize-path.js");
 const serveFile = require("./serve-file.js");
 const getMimeType = require("./get-mime-type.js");
 const DEFAULT_INDEX_HTML = require("./index-html.js");
+const STYLESHEET_REGEXP = /\.css$/i;
 
 /* Instances */
 
@@ -22,9 +23,15 @@ const appDirectory = process.argv.slice(2).join(" ").trim() || ".";
 const configFile = appDirectory + "/config.json";
 const reloader = new Reloader();
 const server = new Server(requestListener);
+const transformSRC = src => config.debugPath + "/" + src.replace(config.appDirectory + "/app/", "");
 const cache = new FileCache(
-	() => {
-		commands.reload();
+	(updated, deleted) => {
+		const srcs = Object.keys(updated);
+		commands.reload(
+			Object.keys(deleted).length === 0 && srcs.every(src => STYLESHEET_REGEXP.test(src)) && !config.isRelease()
+				? srcs.map(transformSRC)
+				: null
+		);
 		if( config.autoExport && librariesLoaded ){
 			commands.exportApplication(config.appDirectory + "/" + config.exportFile);
 		}
@@ -46,6 +53,10 @@ const libraryContainer = new LibraryContainer(__dirname + "/../vkit"); libraryCo
 });
 const htmlCompiler = new HTMLCompiler(cache, appDirectory + "/app/index.html", libraryContainer);
 const commands = new Commands(server, reloader, cache, config, htmlCompiler);
+const withoutQuery = url => {
+	const pos = url.indexOf("?");
+	return ~pos ? url.substring(0, pos) : url;
+};
 
 /* Request listener */
 
@@ -57,13 +68,13 @@ async function requestListener(req, res){
 	if( req.url === "/" ){
 		res.setHeader('content-type', 'text/html; charset=utf-8');
 		res.end(await htmlCompiler.compile(
-			config.isRelease() ? null : src => config.debugPath + "/" + src.replace(config.appDirectory + "/app/", ""),
+			config.isRelease() ? null : src => transformSRC(src) + cache.getVersionString(src),
 			true
 		));
 		return;
 	}
 	if( req.url.startsWith("/" + config.debugPath + "/") ){
-		const path = decodeURIComponent(req.url.replace("/" + config.debugPath + "/", config.appDirectory + "/app/"));
+		const path = decodeURIComponent(withoutQuery(req.url).replace("/" + config.debugPath + "/", config.appDirectory + "/app/"));
 		const cached = cache.get(path);
 		if( cached ){
 			res.setHeader('content-type', getMimeType(sanitizePath(path), "text/html; charset=UTF-8"));

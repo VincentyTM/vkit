@@ -6,9 +6,19 @@ class FileCache {
 		this.cache = {};
 		this.taskCount = 0;
 		this.onComplete = onComplete;
+		this.updated = {};
+		this.deleted = {};
+	}
+	getVersionString(src){
+		const item = this.cache[src];
+		return item ? "?v=" + item.version : "";
+	}
+	getKeys(){
+		return Object.keys(this.cache);
 	}
 	get(src){
-		return this.cache[src] || null;
+		const item = this.cache[src];
+		return item ? item.content : null;
 	}
 	clear(){
 		const cache = this.cache;
@@ -41,8 +51,12 @@ class FileCache {
 		const cache = this.cache;
 		try{
 			const content = await this.readFile(src);
-			if( cache[src] !== content ){
-				cache[src] = content;
+			if(!(src in cache) || cache[src].content !== content){
+				cache[src] = {
+					content,
+					version: Date.now()
+				};
+				this.updated[src] = true;
 				console.log("Updating", src);
 			}else{
 				//console.log("Skipping", src);
@@ -53,6 +67,7 @@ class FileCache {
 					break;
 				case "ENOENT":
 					delete cache[src];
+					this.deleted[src] = true;
 					console.log("Deleting", src);
 					break;
 				default:
@@ -60,7 +75,9 @@ class FileCache {
 			}
 		}
 		if( --this.taskCount==0 ){
-			await this.onComplete();
+			await this.onComplete(this.updated, this.deleted);
+			this.updated = {};
+			this.deleted = {};
 			console.log("  Done!");
 		}
 	}

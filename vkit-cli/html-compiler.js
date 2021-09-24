@@ -15,12 +15,41 @@ window.onerror = function(err){
 const RELOAD_SCRIPT = `<script type="text/javascript" language="javascript">
 "use strict";
 (function(){
+	function applyStyle(src){
+		var stylesheets = document.styleSheets;
+		for(var i=stylesheets.length; i--;){
+			var curr = stylesheets[i].href;
+			var pos = curr.indexOf("?");
+			if(~pos){
+				curr = curr.substring(0, pos);
+			}
+			curr = curr.replace(location.href, "");
+			if( curr === src ){
+				stylesheets[i].ownerNode.href = src + "?v=" + new Date().getTime();
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	function sendRequest(){
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function(){
 			if( xhr.readyState==4 || xhr.readyState==0 ){
 				xhr.onreadystatechange = null;
-				xhr.status==200 ? location.reload(true) : sendRequest();
+				if( xhr.status !== 200 ){
+					sendRequest();
+					return;
+				}
+				var res = xhr.responseText.split(":");
+				var n = res.length;
+				for(var i=1; i<n; ++i){
+					if( applyStyle(res[i]) ){
+						sendRequest();
+						return;
+					}
+				}
+				location.reload();
 			}
 		};
 		xhr.open("GET", "/reload", true);
@@ -54,24 +83,24 @@ class HTMLCompiler {
 		return DEBUG_SCRIPT + '\n' + RELOAD_SCRIPT;
 	}
 	getStyles(transformSrc){
-		const cache = this.cache.cache;
-		const styles = Object.keys(cache).filter(src => src.toLowerCase().endsWith(".css")).sort(PathComparator);
+		const cache = this.cache;
+		const styles = cache.getKeys().filter(src => src.toLowerCase().endsWith(".css")).sort(PathComparator);
 		if( transformSrc ){
 			return styles.map(src => '<link rel="stylesheet" href="' + transformSrc(src) + '">').join('\n');
 		}else{
-			return '<style>\n' + styles.map(src => this.transformStyle(cache[src])).join('\n') + '\n</style>';
+			return '<style>\n' + styles.map(src => this.transformStyle(cache.get(src))).join('\n') + '\n</style>';
 		}
 	}
 	getScripts(transformSrc){
-		const cache = this.cache.cache;
-		const scripts = Object.keys(cache).filter(src => src.toLowerCase().endsWith(".js")).sort(PathComparator);
+		const cache = this.cache;
+		const scripts = cache.getKeys().filter(src => src.toLowerCase().endsWith(".js")).sort(PathComparator);
 		if( transformSrc ){
 			return '<script type="text/javascript" language="javascript">\n"use strict";\n' +
-				this.getLibraries(scripts.map(src => cache[src]).join('\n')) +
+				this.getLibraries(scripts.map(src => cache.get(src)).join('\n')) +
 			'\n</script>\n' +
 			scripts.map(src => '<script type="text/javascript" language="javascript" src="' + transformSrc(src) + '"></script>').join('\n');
 		}else{
-			const compiledScript = scripts.map(src => this.transformScript(cache[src])).join('\n');
+			const compiledScript = scripts.map(src => this.transformScript(cache.get(src))).join('\n');
 			return '<script type="text/javascript" language="javascript">\n"use strict";\n' +
 				this.getLibraries(compiledScript) + '\n' +
 				compiledScript +

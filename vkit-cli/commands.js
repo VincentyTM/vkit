@@ -38,8 +38,8 @@ class Commands {
 			)
 		);
 	}
-	reload(){
-		this.reloader.reload();
+	reload(data){
+		this.reloader.reload(data);
 	}
 	async rebuild(){
 		this.cache.clear();
