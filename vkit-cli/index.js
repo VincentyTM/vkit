@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const process = require("process");
+const path = require("path");
 const Server = require("./server.js");
 const Commands = require("./commands.js");
 const Config = require("./config.js");
@@ -24,6 +25,7 @@ const configFile = appDirectory + "/config.json";
 const reloader = new Reloader();
 const server = new Server(requestListener);
 const transformSRC = src => config.debugPath + "/" + src.replace(config.appDirectory + "/app/", "");
+const getExportPath = () => path.isAbsolute(config.exportFile) ? config.exportFile : config.appDirectory + "/" + config.exportFile;
 const cache = new FileCache(
 	(updated, deleted) => {
 		const srcs = Object.keys(updated);
@@ -33,7 +35,7 @@ const cache = new FileCache(
 				: null
 		);
 		if( config.autoExport && librariesLoaded ){
-			commands.exportApplication(config.appDirectory + "/" + config.exportFile);
+			commands.exportApplication(getExportPath());
 		}
 	}
 );
@@ -118,7 +120,7 @@ process.openStdin().on("data", function(data){
 		case "reload": commands.reload(); break;
 		case "config": commands.loadConfig(); break;
 		case "build": commands.rebuild(); break;
-		case "export": commands.exportApplication(config.appDirectory + "/" + config.exportFile); break;
+		case "export": commands.exportApplication(getExportPath()); break;
 		default: console.log("Unknown command. Try 'help'.");
 	}
 });
