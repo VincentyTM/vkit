@@ -123,7 +123,7 @@ $.state = function(value){
 		css: css,
 		effect: effect,
 		view: getStateView,
-		mapView: mapStateView,
+		views: mapStateView,
 		switchView: switchStateView
 	};
 };
@@ -170,7 +170,7 @@ $.fn.combine = function(func){
 		css: css,
 		effect: effect,
 		view: getStateView,
-		mapView: mapStateView,
+		views: mapStateView,
 		switchView: switchStateView,
 		unsubscribe: unsubscribe,
 		until: function(func){
