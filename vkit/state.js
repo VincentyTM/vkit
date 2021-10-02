@@ -1,4 +1,4 @@
-(function($){
+(function($, undefined){
 
 var stateUpdates = [];
 
@@ -15,6 +15,17 @@ function input(query){
 }
 
 function select(prop){
+	if( prop === undefined ){
+		if( typeof Proxy !== "function" ){
+			throw new ReferenceError("Proxy is not supported in your browser!");
+		}
+		var state = this;
+		return new Proxy({}, {
+			get: function(target, prop, receiver){
+				return state.select(prop);
+			}
+		});
+	}
 	return map.call(this, function(value){
 		return value ? value[prop] : undefined;
 	});
