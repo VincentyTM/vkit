@@ -175,6 +175,7 @@ $.fn.combine = function(func){
 		map: map,
 		input: input,
 		select: select,
+		update: update,
 		onChange: onChange,
 		text: text,
 		prop: prop,
@@ -192,12 +193,14 @@ $.fn.combine = function(func){
 };
 
 $.state.render = function(){
-	var n = stateUpdates.length;
-	var updates = stateUpdates.splice(0, n);
-	for(var i=0; i<n; ++i){
-		var update = updates[i];
-		update.queued = false;
-		update();
+	var n;
+	while( n = stateUpdates.length ){
+		var updates = stateUpdates.splice(0, n);
+		for(var i=0; i<n; ++i){
+			var update = updates[i];
+			update.queued = false;
+			update();
+		}
 	}
 };
 
