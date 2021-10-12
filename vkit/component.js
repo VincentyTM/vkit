@@ -127,7 +127,7 @@ $.is = function(getData, getView, immutable, onRender){
 	var prev = currentComponent;
 	var component = currentComponent = createComponent(prev, immutable);
 	try{
-		var view = getView(A);
+		var view = getView ? getView(A) : A;
 		prev.children.push(component);
 		(onRender || component.onRender).subscribe($.withComponent(function(newData){
 			var B = onRender ? newData : getData();
@@ -136,7 +136,7 @@ $.is = function(getData, getView, immutable, onRender){
 			}
 			component.unmount();
 			component.children.splice(0, component.children.length);
-			component.replaceView($.group(getView(B)));
+			component.replaceView(getView ? getView(B) : B);
 			A = B;
 		}, false, component));
 		return $.group(component.start, view, component.end);
