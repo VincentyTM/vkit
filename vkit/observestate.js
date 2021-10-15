@@ -31,7 +31,9 @@ $.observeState = function(state, prop){
 			_set.call(value, undefined);
 		}
 	});
-	$.unmount(() => unsub && unsub());
+	$.unmount(function(){
+		unsub && unsub();
+	});
 	return value;
 };
 
