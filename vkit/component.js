@@ -1,4 +1,20 @@
-(function($){
+(function($, document){
+
+function insertBefore(view, anchor){
+	var parent = anchor.parentNode;
+	var n = view.length;
+	if( document.createDocumentFragment ){
+		var container = document.createDocumentFragment();
+		for(var i=0; i<n; ++i){
+			container.appendChild(view[i]);
+		}
+		parent.insertBefore(container, anchor);
+	}else{
+		for(var i=0; i<n; ++i){
+			parent.insertBefore(view[i], anchor);
+		}
+	}
+}
 
 function createComponent(parent, stopRender){
 	var children = [];
@@ -48,21 +64,11 @@ function createComponent(parent, stopRender){
 			}
 		},
 		insertView: function(view, anchor){
-			var parent = anchor.parentNode;
-			parent.insertBefore(start, anchor);
-			var n = view.length;
-			for(var i=0; i<n; ++i){
-				parent.insertBefore(view[i], anchor);
-			}
-			parent.insertBefore(end, anchor);
+			insertBefore($.group(start, view, end), anchor);
 		},
 		replaceView: function(view){
 			this.clearView();
-			var parent = end.parentNode;
-			var n = view.length;
-			for(var i=0; i<n; ++i){
-				parent.insertBefore(view[i], end);
-			}
+			insertBefore(view, end);
 		},
 		getChildStart: function(index){
 			var child = children[index];
@@ -136,7 +142,7 @@ $.is = function(getData, getView, immutable, onRender){
 			}
 			component.unmount();
 			component.children.splice(0, component.children.length);
-			component.replaceView(getView ? getView(B) : B);
+			component.replaceView(getView ? $.group(getView(B)) : B);
 			A = B;
 		}, false, component));
 		return $.group(component.start, view, component.end);
@@ -170,7 +176,7 @@ $.map = function(array, getView, immutable, onRender){
 		var prev = currentComponent;
 		try{
 			var component = currentComponent = createComponent(container);
-			var view = $.group(getView(data));
+			var view = getView(data);
 			var anchor = container.getChildStart(index);
 			component.insertView(view, anchor);
 			container.children.splice(index, 0, component);
@@ -277,4 +283,4 @@ $.text = function(getter){
 	return node;
 };
 
-})($);
+})($, document);
