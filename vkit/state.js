@@ -10,6 +10,15 @@ function map(query){
 	return $(this).combine(query || noop);
 }
 
+function pipe(state, transform){
+	if(!transform) transform = noop;
+	function update(value){
+		state.set(transform(value));
+	}
+	this.effect(update);
+	return this;
+}
+
 function input(query){
 	return map.call(this, query).until($.unmount);
 }
@@ -39,11 +48,8 @@ function toggle(){
 	this.set(!this.get());
 }
 
-function createAction(update){
-	var state = this;
-	return function(){
-		state.set(update(state.get()));
-	};
+function apply(update){
+	this.set(update(this.get()));
 }
 
 function text(){
@@ -111,21 +117,24 @@ $.state = function(value){
 		return value;
 	}
 	
-	return {
-		set: function(newValue){
-			if( value !== newValue ){
-				value = newValue;
-				if(!update.queued){
-					update.queued = true;
-					stateUpdates.push(update);
-				}
+	function set(newValue){
+		if( value !== newValue ){
+			value = newValue;
+			if(!update.queued){
+				update.queued = true;
+				stateUpdates.push(update);
 			}
-		},
-		action: createAction,
+		}
+	}
+	
+	return {
+		set: set,
+		apply: apply,
 		add: add,
 		toggle: toggle,
 		get: get,
 		map: map,
+		pipe: pipe,
 		input: input,
 		select: select,
 		onChange: onChange,
@@ -161,6 +170,11 @@ $.fn.combine = function(func){
 		}
 	}
 	
+	function until(func){
+		func(unsubscribe);
+		return this;
+	}
+	
 	var states = this, n = states.length;
 	var value = getValue();
 	var onChange = $.observable();
@@ -173,6 +187,7 @@ $.fn.combine = function(func){
 	return {
 		get: getValue,
 		map: map,
+		pipe: pipe,
 		input: input,
 		select: select,
 		update: update,
@@ -185,10 +200,7 @@ $.fn.combine = function(func){
 		views: mapStateView,
 		switchView: switchStateView,
 		unsubscribe: unsubscribe,
-		until: function(func){
-			func(unsubscribe);
-			return this;
-		}
+		until: until
 	};
 };
 
