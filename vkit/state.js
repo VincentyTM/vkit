@@ -2,7 +2,7 @@
 
 var renderComponentTree = $.component.render;
 var stateUpdates = [];
-var onMount = [];
+var afterRender = [];
 
 function noop(x){
 	return x;
@@ -211,8 +211,8 @@ $.fn.combine = function(func){
 	};
 };
 
-$.mount = function(func){
-	return onMount.push(func);
+$.afterRender = function(func){
+	return afterRender.push(func);
 };
 
 $.render = function(){
@@ -226,9 +226,9 @@ $.render = function(){
 		}
 	}
 	renderComponentTree();
-	n = onMount.length;
+	n = afterRender.length;
 	if( n ){
-		var updates = onMount.splice(0, n);
+		var updates = afterRender.splice(0, n);
 		for(var i=0; i<n; ++i){
 			updates[i]();
 		}
