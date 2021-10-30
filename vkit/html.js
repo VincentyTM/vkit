@@ -15,7 +15,7 @@ function findNodes(result, container, type){
 function deepInsert(object, parent, nextSibling){
 	if(!object)
 		return;
-	if( typeof object!="object" ){
+	if( typeof object !== "object" ){
 		parent.insertBefore(document.createTextNode(object), nextSibling);
 		return;
 	}
@@ -23,8 +23,33 @@ function deepInsert(object, parent, nextSibling){
 		parent.insertBefore(object, nextSibling);
 		return;
 	}
-	for(var i=0, l=object.length; i<l; ++i){
-		deepInsert(object[i], parent, nextSibling);
+	var n = object.length;
+	if( typeof n === "number" ){
+		for(var i=0; i<n; ++i){
+			deepInsert(object[i], parent, nextSibling);
+		}
+		return;
+	}
+	if( typeof object.text === "function" ){
+		deepInsert(object.text(), parent, nextSibling);
+		return;
+	}
+	if( typeof object.render === "function" ){
+		deepInsert(object.render(), parent, nextSibling);
+		return;
+	}
+}
+
+function deepInsertFragment(object, parent, nextSibling){
+	if( document.createDocumentFragment ){
+		var fragment = document.createDocumentFragment();
+		function insert(node){
+			fragment.appendChild(node);
+		}
+		deepInsert(object, {insertBefore: insert}, nextSibling);
+		parent.insertBefore(fragment, nextSibling);
+	}else{
+		deepInsert(object, parent, nextSibling);
 	}
 }
 
@@ -85,7 +110,7 @@ $.html=function(){
 				operator(ref);
 			}
 		}else{
-			deepInsert(operator, comment.parentNode, comment);
+			deepInsertFragment(operator, comment.parentNode, comment);
 			comment.parentNode.removeChild(comment);
 		}
 	}
