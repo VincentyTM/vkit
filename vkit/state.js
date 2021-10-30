@@ -48,8 +48,13 @@ function toggle(){
 	this.set(!this.get());
 }
 
-function apply(update){
-	this.set(update(this.get()));
+function apply(){
+	var n = arguments.length;
+	var value = this.get();
+	for(var i=0; i<n; ++i){
+		value = arguments[i].call(this, value);
+	}
+	this.set(value);
 }
 
 function text(){
