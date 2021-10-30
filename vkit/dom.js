@@ -14,14 +14,7 @@ $.create=function(tag, count){
 };
 
 $.fn.append=function(){
-	for(var i=0, e, l=arguments.length; i<l; ++i){
-		if( null!==(e=arguments[i]) )
-			typeof e!=="object"
-				? this[0].appendChild(document.createTextNode(e))
-				: e.nodeType
-				? this[0].appendChild(e)
-				: this.append.apply(this, $.fn.toArray.call(e));
-	}
+	$.append(this[0], arguments);
 	return this;
 };
 

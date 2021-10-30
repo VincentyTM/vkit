@@ -2,36 +2,6 @@
 
 var xmlns = "http://www.w3.org/2000/svg";
 
-function append(el, child){
-	if( child === null || child === undefined ){
-		return;
-	}
-	switch( typeof child ){
-		case "object":
-			if( child.nodeType ){
-				el.appendChild(child);
-			}else if( typeof child.text === "function" ){
-				el.appendChild(child.text());
-			}else{
-				var n = child.length;
-				if( typeof n === "number" ){
-					var a = $.fn.toArray.call(child);
-					for(var i=0; i<n; ++i){
-						append(el, a[i]);
-					}
-				}else{
-					setAttrs(el, child);
-				}
-			}
-			break;
-		case "function":
-			child(el);
-			break;
-		default:
-			el.appendChild(document.createTextNode(child));
-	}
-}
-
 function setAttr(el, attr, val){
 	if( typeof val === "function" ){
 		$.effect(function(){
@@ -68,18 +38,11 @@ function setAttrs(el, attrs){
 	}
 }
 
-function createElement(tagName, content){
-	var el = document.createElementNS(xmlns, tagName);
-	var n = content.length;
-	for(var i=0; i<n; ++i){
-		append(el, content[i]);
-	}
-	return el;
-};
-
 $.svgTag = function(tagName){
 	return function(){
-		return createElement(tagName, arguments);
+		var el = document.createElementNS(xmlns, tagName);
+		$.append(el, arguments, setAttrs);
+		return el;
 	};
 };
 

@@ -1,35 +1,5 @@
 (function($, undefined){
 
-function append(el, child){
-	if( child === null || child === undefined ){
-		return;
-	}
-	switch( typeof child ){
-		case "object":
-			if( child.nodeType ){
-				el.appendChild(child);
-			}else if( typeof child.text === "function" ){
-				el.appendChild(child.text());
-			}else{
-				var n = child.length;
-				if( typeof n === "number" ){
-					var a = $.fn.toArray.call(child);
-					for(var i=0; i<n; ++i){
-						append(el, a[i]);
-					}
-				}else{
-					setProps(el, child);
-				}
-			}
-			break;
-		case "function":
-			child(el);
-			break;
-		default:
-			el.appendChild(document.createTextNode(child));
-	}
-}
-
 function setProps(el, props){
 	for(var prop in props){
 		var val = props[prop];
@@ -58,18 +28,11 @@ function setProps(el, props){
 	}
 }
 
-function createElement(tagName, content){
-	var el = document.createElement(tagName);
-	var n = content.length;
-	for(var i=0; i<n; ++i){
-		append(el, content[i]);
-	}
-	return el;
-}
-
 $.htmlTag = function(tagName){
 	return function(){
-		return createElement(tagName, arguments);
+		var el = document.createElement(tagName);
+		$.append(el, arguments, setProps);
+		return el;
 	};
 };
 
