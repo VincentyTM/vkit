@@ -13,12 +13,12 @@ function fixEvent(e){
 $.onEvent = function(obj, type, fn){
 	function fnListener(e){
 		var ret = fn.call(obj, e);
-		$.state.render();
+		$.render();
 		return ret;
 	}
 	function fnAttach(){
 		var ret = fn.call(obj, fixEvent(window.event));
-		$.state.render();
+		$.render();
 		return ret;
 	}
 	if( obj.addEventListener ){

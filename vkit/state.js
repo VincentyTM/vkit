@@ -1,6 +1,8 @@
 (function($, undefined){
 
+var renderComponentTree = $.component.render;
 var stateUpdates = [];
+var onMount = [];
 
 function noop(x){
 	return x;
@@ -209,7 +211,11 @@ $.fn.combine = function(func){
 	};
 };
 
-$.state.render = function(){
+$.mount = function(func){
+	return onMount.push(func);
+};
+
+$.render = function(){
 	var n;
 	while( n = stateUpdates.length ){
 		var updates = stateUpdates.splice(0, n);
@@ -219,13 +225,21 @@ $.state.render = function(){
 			update();
 		}
 	}
+	renderComponentTree();
+	n = onMount.length;
+	if( n ){
+		var updates = onMount.splice(0, n);
+		for(var i=0; i<n; ++i){
+			updates[i]();
+		}
+	}
 };
 
-$.state.on = function(type, action){
+$.on = function(type, action){
 	return function(element){
 		element["on" + type] = function(){
 			var ret = action.apply(this, arguments);
-			$.state.render();
+			$.render();
 			return ret;
 		};
 	};

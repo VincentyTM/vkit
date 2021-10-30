@@ -20,7 +20,7 @@ function setAttrs(el, attrs){
 	for(var attr in attrs){
 		var val = attrs[attr];
 		if( attr.indexOf("on") === 0 ){
-			$.state.on(attr.substring(2), val)(el);
+			$.on(attr.substring(2), val)(el);
 		}else if( attr === "style" ){
 			for(var cssProp in val){
 				var cssVal = val[cssProp];

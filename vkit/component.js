@@ -1,5 +1,7 @@
 (function($, document){
 
+var anySubscribed = false;
+
 function insertBefore(view, anchor){
 	var parent = anchor.parentNode;
 	var n = view.length;
@@ -27,6 +29,10 @@ function createComponent(parent, stopRender){
 		onDestroy: $.observable(),
 		start: start,
 		end: end,
+		subscribe: function(update){
+			anySubscribed = true;
+			this.onRender.subscribe(update);
+		},
 		unmount: function(){
 			for(var i=children.length; i--;){
 				children[i].unmount();
@@ -77,7 +83,6 @@ function createComponent(parent, stopRender){
 	};
 }
 
-var onMount = $.observable();
 var rootComponent = createComponent(null);
 var currentComponent = rootComponent;
 
@@ -90,24 +95,17 @@ $.component = function(){
 	};
 };
 
-$.render = function(){
-	try{
+$.component.render = function(){
+	if( anySubscribed ){
 		rootComponent.render();
-		onMount();
-	}finally{
-		onMount = $.observable();
 	}
-};
-
-$.mount = function(func){
-	return onMount.subscribe(func);
 };
 
 $.unmount = function(func){
 	return currentComponent.onDestroy.subscribe(func);
 };
 
-$.withComponent = function(func, doRender, component){
+$.withComponent = function(func, component){
 	var provider = $.getProvider();
 	if(!component) component = currentComponent;
 	return function(){
@@ -116,11 +114,7 @@ $.withComponent = function(func, doRender, component){
 		try{
 			$.setProvider(provider);
 			currentComponent = component;
-			var ret = func.apply(this, arguments);
-			if( doRender ){
-				$.render();
-			}
-			return ret;
+			return func.apply(this, arguments);
 		}finally{
 			$.setProvider(prevProvider);
 			currentComponent = prevComponent;
@@ -135,7 +129,7 @@ $.is = function(getData, getView, immutable, onRender){
 	try{
 		var view = getView ? getView(A) : A;
 		prev.children.push(component);
-		(onRender || component.onRender).subscribe($.withComponent(function(newData){
+		(onRender || component).subscribe($.withComponent(function(newData){
 			var B = onRender ? newData : getData();
 			if( A === B ){
 				return;
@@ -144,7 +138,7 @@ $.is = function(getData, getView, immutable, onRender){
 			component.children.splice(0, component.children.length);
 			component.replaceView(getView ? $.group(getView(B)) : B);
 			A = B;
-		}, false, component));
+		}, component));
 		return $.group(component.start, view, component.end);
 	}finally{
 		currentComponent = prev;
@@ -185,7 +179,7 @@ $.map = function(array, getView, immutable, onRender){
 		}
 	}
 	
-	(onRender || container.onRender).subscribe($.withComponent(function(newArray){
+	(onRender || container).subscribe($.withComponent(function(newArray){
 		if(!newArray) newArray = typeof array === "function" ? array() : array;
 		if( immutable && newArray === oldArray ){
 			return;
@@ -235,22 +229,16 @@ $.map = function(array, getView, immutable, onRender){
 	return $.group(container.start, views, container.end);
 };
 
-$.on = function(type, action){
-	return function(element){
-		element["on" + type] = $.withComponent(action, true);
-	};
-};
-
 $.effect = function(setter){
 	setter();
-	currentComponent.onRender.subscribe(setter);
+	currentComponent.subscribe(setter);
 };
 
 $.css = function(prop, getter){
 	return function(element){
 		var style = element.style;
 		var oldValue = style[prop] = getter(element);
-		currentComponent.onRender.subscribe(function(){
+		currentComponent.subscribe(function(){
 			var value = getter(element);
 			if( oldValue!==value ){
 				oldValue = style[prop] = value;
@@ -262,7 +250,7 @@ $.css = function(prop, getter){
 $.prop = function(prop, getter){
 	return function(element){
 		var oldValue = element[prop] = getter(element);
-		currentComponent.onRender.subscribe(function(){
+		currentComponent.subscribe(function(){
 			var value = getter(element);
 			if( oldValue!==value ){
 				oldValue = element[prop] = value;
@@ -274,7 +262,7 @@ $.prop = function(prop, getter){
 $.text = function(getter){
 	var oldValue;
 	var node = document.createTextNode(oldValue = getter());
-	currentComponent.onRender.subscribe(function(){
+	currentComponent.subscribe(function(){
 		var value = getter();
 		if( oldValue!==value ){
 			oldValue = node.nodeValue = value;
