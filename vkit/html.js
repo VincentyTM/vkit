@@ -44,7 +44,7 @@ $.html=function(){
 	
 	var cTag = "div";
 	var content = result.join("");
-	var tagMatch = content.match(/<[a-zA-Z]+/);
+	var tagMatch = content.match(/<[a-zA-Z0-9\-]+/);
 	if( tagMatch && tagMatch.length ){
 		var firstTag = tagMatch[0].substring(1).toLowerCase();
 		switch( firstTag ){
