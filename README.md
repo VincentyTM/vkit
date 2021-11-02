@@ -330,7 +330,7 @@ This means that in the scope of `$.provide` you can access the same instance of 
 
 ## Observables and Subscription
 
-It may be desirable to subscribe to events. In vKit, the easiest tool for that is `$.observable`, similar to a promise or an event emitter. First you need to `subscribe` to it. Remember to `unsubscribe` when the surrounding component is destroyed (`$.unmount`).
+It may be desirable to subscribe to events. In vKit, the easiest tool for that is `$.observable`, similar to a promise or an event emitter. First, you need to `subscribe` to it. Remember to `unsubscribe` when the surrounding component is destroyed (`$.unmount`).
 ```javascript
 class DownloadService {
     constructor(){
@@ -450,7 +450,7 @@ $(document.body).append( new Counter() );
 
 ## Serializing a Form
 
-To serialize a form the way you want, you can use `$.serialize`. It iterates over all name-value pairs of the form, just as if it was parsed on the server side.
+In order to serialize a form the way you want, you can use `$.serialize`. It iterates over all name-value pairs of the form, just as if it was parsed on the server side.
 ```javascript
 function FormComponent(){
     function onSubmit(e){
@@ -540,7 +540,7 @@ while( tokens.length ){
     process( tokens.shift() );
 }
 ```
-Scanning a text very similar. With a set of rules, you can simply iterate over the input text and process the generated tokens on the fly.
+Scanning a text is very similar. With a set of rules, you can simply iterate over the input text and process the generated tokens on the fly.
 ```javascript
 const text = "while(i<5)";
 const rules = {
