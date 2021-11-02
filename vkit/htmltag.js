@@ -28,6 +28,8 @@ function setProps(el, props){
 	}
 }
 
+$.setProps = setProps;
+
 $.htmlTag = function(tagName){
 	return function(){
 		var el = document.createElement(tagName);

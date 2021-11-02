@@ -12,44 +12,51 @@ function findNodes(result, container, type){
 		findNodes(result, children[i], type);
 }
 
-function deepInsert(object, parent, nextSibling){
-	if(!object)
+function deepInsert(object, parent, nextSibling, ref){
+	if( object === null || object === undefined )
 		return;
 	if( typeof object !== "object" ){
-		parent.insertBefore(document.createTextNode(object), nextSibling);
+		if( typeof object === "function" ){
+			if( ref ){
+				object(ref);
+			}
+		}else{
+			parent.insertBefore(document.createTextNode(object), nextSibling);
+		}
 		return;
 	}
 	if( object.nodeType ){
 		parent.insertBefore(object, nextSibling);
 		return;
 	}
-	var n = object.length;
-	if( typeof n === "number" ){
-		for(var i=0; i<n; ++i){
-			deepInsert(object[i], parent, nextSibling);
-		}
-		return;
-	}
 	if( typeof object.text === "function" ){
-		deepInsert(object.text(), parent, nextSibling);
+		deepInsert(object.text(), parent, nextSibling, ref);
 		return;
 	}
 	if( typeof object.render === "function" ){
-		deepInsert(object.render(), parent, nextSibling);
+		deepInsert(object.render(), parent, nextSibling, ref);
 		return;
 	}
+	var n = object.length;
+	if( typeof n === "number" ){
+		for(var i=0; i<n; ++i){
+			deepInsert(object[i], parent, nextSibling, ref);
+		}
+		return;
+	}
+	$.setProps(ref, object);
 }
 
-function deepInsertFragment(object, parent, nextSibling){
+function deepInsertFragment(object, parent, nextSibling, ref){
 	if( document.createDocumentFragment ){
 		var fragment = document.createDocumentFragment();
 		function insert(node){
 			fragment.appendChild(node);
 		}
-		deepInsert(object, {insertBefore: insert}, nextSibling);
+		deepInsert(object, {insertBefore: insert}, nextSibling, ref);
 		parent.insertBefore(fragment, nextSibling);
 	}else{
-		deepInsert(object, parent, nextSibling);
+		deepInsert(object, parent, nextSibling, ref);
 	}
 }
 
@@ -103,16 +110,12 @@ $.html=function(){
 			throw new Error("Some object or function could not be inserted");
 		}
 		
-		if( typeof operator==="function" ){
-			var ref = comment.previousSibling || comment.parentNode;
-			comment.parentNode.removeChild(comment);
-			if( ref && ref !== container ){
-				operator(ref);
-			}
-		}else{
-			deepInsertFragment(operator, comment.parentNode, comment);
-			comment.parentNode.removeChild(comment);
+		var ref = comment.previousSibling || comment.parentNode;
+		if( ref === container ){
+			ref = null;
 		}
+		deepInsertFragment(operator, comment.parentNode, comment, ref);
+		comment.parentNode.removeChild(comment);
 	}
 	
 	return $().forEach(container.childNodes, function(node){
