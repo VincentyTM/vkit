@@ -15,11 +15,15 @@ function CounterApp(){
     let count = 0;
     return $.html(
         '<input type="button" value="Reset counter">',
-            $.prop("disabled", () => count === 0),
-            $.on("click", () => count = 0),
+            {
+                disabled: () => count === 0,
+                onclick: () => count = 0
+            },
             
         '<input type="button" value="Increase count!">',
-            $.on("click", () => ++count),
+            {
+                onclick: () => ++count
+            },
             
         '<br>Click count: ', $.text(() => count)
     );
@@ -37,6 +41,7 @@ $(document.body).append( CounterApp() );
   * [Component Lifecycle](#component-lifecycle)
   * [Dependency Injection](#dependency-injection)
   * [Observables and Subscription](#observables-and-subscription)
+  * [States](#states)
   * [Serializing a Form](#serializing-a-form)
   * [Cookies](#cookies)
   * [Dragging Elements](#dragging-elements)
@@ -76,10 +81,10 @@ const myView = $.html(
 In vKit, a component is a function that returns a view:
 ```javascript
 const HelloComponent = name => $.html(
-    '<h1>Hello ', $.createText(name), '</h1>'
+    '<h1>Hello ', [name], '</h1>'
 );
 ```
-As you can see, the `$.createText` function allows you to safely insert text in HTML. To append a view to `document.body`, just call `append` on it. This will be the root of your application.
+As you can see, you can wrap any text in an array to safely insert it in HTML. To append a view to `document.body`, just call `append` on it. This will be the root of your application.
 ```javascript
 $(document.body).append( HelloComponent("world") );
 ```
@@ -134,6 +139,17 @@ The HTML template:
     Count: [count]<br>
     <input type="button" value="Increase!">[onIncrease]
 </template>
+```
+
+As an alternative to `$.html`, you can also create elements with `$.htmlTag` and `$.group`. The syntax is a bit different, but you can combine it with `$.html` by choice.
+
+```javascript
+let count = 0;
+const {Br, Input} = $.htmlTags;
+const myView = $.group(
+    "Count: ", $.text(() => count), Br(),
+    Input({type: "button", value: "Increase!", onclick: () => ++count})
+);
 ```
 
 ## Dynamic UI
@@ -195,8 +211,10 @@ function ToggleComponent(){
     let shown = false;
     return $.html(
         '<input type="button">',
-            $.prop("value", () => shown ? "Hide" : "Show"),
-            $.on("click", () => shown = !shown),
+            {
+                value: () => shown ? "Hide" : "Show",
+                onclick: () => shown = !shown,
+            },
         $.is(
             () => shown,
             isShown => isShown
@@ -217,8 +235,10 @@ function TabsComponent(){
         return $.html(
             '<input type="button">',
                 button => button.value = title,
-                $.prop("disabled", () => currentView === view),
-                $.on("click", () => currentView = view)
+                {
+                    disabled: () => currentView === view,
+                    onclick: () => currentView = view
+                }
         );
     }
     
@@ -226,10 +246,7 @@ function TabsComponent(){
         Tab("Home", homeView),
         Tab("About", aboutView),
         '<hr>',
-        $.is(
-            () => currentView,
-            view => view
-        )
+        $.is(() => currentView)
     );
 }
 ```
@@ -338,6 +355,97 @@ function DownloadListComponent(){
         $.map(downloadedBlobs, FileComponent)
     );
 }
+```
+
+## States
+
+The default change detection mechanism in vKit is relatively slow, as all components need to be traversed to find any changes. It can be optimized with immutable objects, but that is still not optimal. However, there is a solution: `$.state`.
+
+```javascript
+function Counter(){
+    const count = $.state(0);
+    return $.html(
+        '<input type="button" value="Reset counter">',
+            {
+                disabled: count.map(count => count === 0),
+                onclick: () => count.set(0)
+            },
+            
+        '<input type="button" value="Increase count!">',
+            {
+                onclick: () => count.add(1)
+            },
+            
+        '<br>Click count: ', count
+    );
+}
+```
+
+States are container objects. Upon rendering, their descendants ― the so-called derived states ― will be updated up to view level. Multiple states can be combined with pure functions:
+
+```javascript
+const a = $.state(3);
+const b = $.state(4);
+const aPlusB = $(a, b).combine((a, b) => a + b);
+//aPlusB.get() === 7
+a.set(5);
+//aPlusB.get() === 7
+$.render();
+//aPlusB.get() === 9
+```
+
+If you want to transform a single state, you can use `map` instead of `combine`. Note that derived states cannot be set.
+
+```javascript
+const x = $.state(5);
+const xPlus1 = x.map(x => x + 1);
+```
+
+### States inside components
+
+Everything you can do with simple vKit components you can do with states. In order to avoid memory leaks, you should call `input` on non-locally-created states before continuing to use them.
+
+```javascript
+function MyComponent(someExternalState){
+    const internalState = someExternalState.input();
+    internalState.effect(value => console.log("Value has changed to:", value));
+    return $.group("State value as text: ", internalState);
+}
+```
+
+Conditional rendering and array mapping can even be more readable than without states.
+
+```javascript
+function DynamicList(arrayState = $.state([])){
+    arrayState = arrayState.input();
+    const {Ul, Li} = $.htmlTags;
+    return arrayState
+        .map(array => array.length === 0)
+        .view(isEmpty => isEmpty
+            ? "There are no items in your array."
+            : Ul(arrayState.views(Li))
+        );
+}
+```
+
+If you have a model object, you can intercept its property changes with `observe` without ever explicitly creating or setting a state. Calling `input` is not necessary here, as `observe` will automatically unsubscribe all derived states, and the rest will be garbage collected.
+
+```javascript
+class Counter {
+    constructor(){
+        this.count = 0;
+    }
+    render(){
+        const {count} = $.observe(this);
+        return $.html(
+            'Count: ', count, '<br>',
+            '<input type="button" value="Increase">',
+                $.on("click", () => ++this.count)
+        );
+    }
+}
+
+$(document.body).append( new Counter() );
 ```
 
 ## Serializing a Form
