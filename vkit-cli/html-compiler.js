@@ -19,6 +19,9 @@ const RELOAD_SCRIPT = `<script type="text/javascript" language="javascript">
 		var stylesheets = document.styleSheets;
 		for(var i=stylesheets.length; i--;){
 			var curr = stylesheets[i].href;
+			if(!curr){
+				continue;
+			}
 			var pos = curr.indexOf("?");
 			if(~pos){
 				curr = curr.substring(0, pos);
