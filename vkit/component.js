@@ -2,6 +2,8 @@
 
 var anySubscribed = false;
 
+function noop(){}
+
 function insertBefore(view, anchor){
 	var parent = anchor.parentNode;
 	var n = view.length;
@@ -102,7 +104,7 @@ $.component.render = function(){
 };
 
 $.unmount = function(func){
-	return currentComponent.onDestroy.subscribe(func);
+	return currentComponent !== rootComponent ? currentComponent.onDestroy.subscribe(func) : noop;
 };
 
 $.withComponent = function(func, component){
