@@ -8,8 +8,8 @@ function noop(x){
 	return x;
 }
 
-function map(query){
-	return $(this).combine(query || noop);
+function map(transform){
+	return $(this).combine(transform || noop);
 }
 
 function pipe(state, transform){
@@ -21,8 +21,15 @@ function pipe(state, transform){
 	return this;
 }
 
-function input(query){
-	return map.call(this, query).until($.unmount);
+function input(transform){
+	var state = createState(this.get());
+	var set = state.set;
+	state.set = this.set;
+	function onChange(value){
+		set(transform(value));
+	}
+	$.unmount(this.onChange.subscribe(transform ? onChange : set));
+	return state;
 }
 
 function select(prop){
@@ -108,7 +115,7 @@ function mapStateView(getView, immutable){
 	return $.map(this.get(), getView, immutable, this.onChange);
 }
 
-$.state = function(value){
+function createState(value){
 	var oldValue = value;
 	var onChange = $.observable();
 	
@@ -153,9 +160,9 @@ $.state = function(value){
 		views: mapStateView,
 		switchView: switchStateView
 	};
-};
+}
 
-$.fn.combine = function(func){
+function combineStates(func){
 	function getValue(){
 		var values = new Array(n);
 		for(var i=0; i<n; ++i){
@@ -209,7 +216,11 @@ $.fn.combine = function(func){
 		unsubscribe: unsubscribe,
 		until: until
 	};
-};
+}
+
+$.state = createState;
+
+$.fn.combine = combineStates;
 
 $.afterRender = function(func){
 	return afterRender.push(func);
