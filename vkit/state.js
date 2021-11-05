@@ -131,13 +131,17 @@ function createState(value){
 		return value;
 	}
 	
+	function enqueue(){
+		if(!update.queued){
+			update.queued = true;
+			stateUpdates.push(update);
+		}
+	}
+	
 	function set(newValue){
 		if( value !== newValue ){
 			value = newValue;
-			if(!update.queued){
-				update.queued = true;
-				stateUpdates.push(update);
-			}
+			enqueue();
 		}
 	}
 	
@@ -152,6 +156,7 @@ function createState(value){
 		input: input,
 		select: select,
 		onChange: onChange,
+		enqueue: enqueue,
 		text: text,
 		prop: prop,
 		css: css,
@@ -164,6 +169,7 @@ function createState(value){
 
 function combineStates(func){
 	function getValue(){
+		var n = states.length;
 		var values = new Array(n);
 		for(var i=0; i<n; ++i){
 			values[i] = states[i].get();
@@ -179,9 +185,18 @@ function combineStates(func){
 	}
 	
 	function unsubscribe(){
+		var n = unsubscribes.length;
 		for(var i=0; i<n; ++i){
 			unsubscribes[i]();
 		}
+	}
+	
+	function addDependency(){
+		var n = arguments.length;
+		for(var i=0; i<n; ++i){
+			unsubscribes.push(arguments[i].onChange.subscribe(update));
+		}
+		return this;
 	}
 	
 	function until(func){
@@ -206,6 +221,7 @@ function combineStates(func){
 		select: select,
 		update: update,
 		onChange: onChange,
+		addDependency: addDependency,
 		text: text,
 		prop: prop,
 		css: css,
@@ -218,15 +234,24 @@ function combineStates(func){
 	};
 }
 
-$.state = createState;
+function mapStates(transform){
+	return function(){
+		return combineStates.call(arguments, transform);
+	};
+}
 
-$.fn.combine = combineStates;
+function createUpdater(){
+	var updater = $.observable();
+	updater.onChange = updater;
+	updater.get = noop;
+	return updater;
+}
 
-$.afterRender = function(func){
+function addAfterRender(func){
 	return afterRender.push(func);
-};
+}
 
-$.render = function(){
+function render(){
 	var n;
 	while( n = stateUpdates.length ){
 		var updates = stateUpdates.splice(0, n);
@@ -244,9 +269,9 @@ $.render = function(){
 			updates[i]();
 		}
 	}
-};
+}
 
-$.on = function(type, action){
+function on(type, action){
 	return function(element){
 		element["on" + type] = function(){
 			var ret = action.apply(this, arguments);
@@ -254,6 +279,14 @@ $.on = function(type, action){
 			return ret;
 		};
 	};
-};
+}
+
+$.updater = createUpdater;
+$.state = createState;
+$.stateMap = mapStates;
+$.fn.combine = combineStates;
+$.afterRender = addAfterRender;
+$.render = render;
+$.on = on;
 
 })($);
