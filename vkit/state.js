@@ -1,8 +1,6 @@
 (function($, undefined){
 
-var renderComponentTree = $.component.render;
 var stateUpdates = [];
-var afterRender = [];
 
 function noop(x){
 	return x;
@@ -194,7 +192,8 @@ function combineStates(func){
 	function addDependency(){
 		var n = arguments.length;
 		for(var i=0; i<n; ++i){
-			unsubscribes.push(arguments[i].onChange.subscribe(update));
+			var arg = arguments[i];
+			unsubscribes.push(arg.subscribe ? arg.subscribe(update) : arg.onChange.subscribe(update));
 		}
 		return this;
 	}
@@ -207,10 +206,13 @@ function combineStates(func){
 	var states = this, n = states.length;
 	var value = getValue();
 	var onChange = $.observable();
-	var unsubscribes = new Array(n);
+	var unsubscribes = [];
 	
 	for(var i=0; i<n; ++i){
-		unsubscribes[i] = states[i].onChange.subscribe(update);
+		var state = states[i];
+		if( state && state.onChange && typeof state.onChange.subscribe === "function" ){
+			unsubscribes.push(state.onChange.subscribe(update));
+		}
 	}
 	
 	return {
@@ -234,24 +236,7 @@ function combineStates(func){
 	};
 }
 
-function mapStates(transform){
-	return function(){
-		return combineStates.call(arguments, transform);
-	};
-}
-
-function createUpdater(){
-	var updater = $.observable();
-	updater.onChange = updater;
-	updater.get = noop;
-	return updater;
-}
-
-function addAfterRender(func){
-	return afterRender.push(func);
-}
-
-function render(){
+function renderStates(){
 	var n;
 	while( n = stateUpdates.length ){
 		var updates = stateUpdates.splice(0, n);
@@ -261,32 +246,11 @@ function render(){
 			update();
 		}
 	}
-	renderComponentTree();
-	n = afterRender.length;
-	if( n ){
-		var updates = afterRender.splice(0, n);
-		for(var i=0; i<n; ++i){
-			updates[i]();
-		}
-	}
 }
 
-function on(type, action){
-	return function(element){
-		element["on" + type] = function(){
-			var ret = action.apply(this, arguments);
-			$.render();
-			return ret;
-		};
-	};
-}
-
-$.updater = createUpdater;
 $.state = createState;
-$.stateMap = mapStates;
+$.state.render = renderStates;
+$.state.updateQueue = stateUpdates;
 $.fn.combine = combineStates;
-$.afterRender = addAfterRender;
-$.render = render;
-$.on = on;
 
 })($);
