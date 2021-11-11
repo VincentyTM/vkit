@@ -88,13 +88,29 @@ function createComponent(parent, stopRender){
 var rootComponent = createComponent(null);
 var currentComponent = rootComponent;
 
-$.component = function(){
-	var component = currentComponent;
-	return {
-		index: function(){
-			return component.index;
+function unmount(func){
+	return currentComponent !== rootComponent ? currentComponent.onDestroy.subscribe(func) : noop;
+}
+
+function withComponent(func, component){
+	var provider = currentProvider;
+	if(!component) component = currentComponent;
+	return function(){
+		var prevProvider = currentProvider;
+		var prevComponent = currentComponent;
+		try{
+			currentProvider = provider;
+			currentComponent = component;
+			return func.apply(this, arguments);
+		}finally{
+			currentProvider = prevProvider;
+			currentComponent = prevComponent;
 		}
 	};
+}
+
+$.component = function(){
+	return currentComponent;
 };
 
 $.component.render = function(){
@@ -103,26 +119,9 @@ $.component.render = function(){
 	}
 };
 
-$.unmount = function(func){
-	return currentComponent !== rootComponent ? currentComponent.onDestroy.subscribe(func) : noop;
-};
+$.unmount = unmount;
 
-$.withComponent = function(func, component){
-	var provider = $.getProvider();
-	if(!component) component = currentComponent;
-	return function(){
-		var prevProvider = $.getProvider();
-		var prevComponent = currentComponent;
-		try{
-			$.setProvider(provider);
-			currentComponent = component;
-			return func.apply(this, arguments);
-		}finally{
-			$.setProvider(prevProvider);
-			currentComponent = prevComponent;
-		}
-	};
-};
+$.withComponent = withComponent;
 
 $.is = function(getData, getView, immutable, onRender){
 	var A = onRender ? getData : getData();
@@ -272,5 +271,85 @@ $.text = function(getter){
 	});
 	return node;
 };
+
+var supportsWeakMap = typeof WeakMap === "function";
+
+function Container(service){
+	this.service = service;
+	this.instance = null;
+}
+
+Container.prototype.getInstance = function(component){
+	if( this.instance ){
+		return this.instance;
+	}
+	var instance = this.instance = withComponent(function(service){ return new service() }, component)(this.service);
+	if( typeof instance.destructor === "function" ){
+		withComponent(function(instance){
+			unmount(function(){ instance.destructor() });
+		}, component)(instance);
+	}
+	return instance;
+};
+
+function Provider(parent, containers, component){
+	this.parent = parent;
+	this.containers = containers;
+	this.component = component;
+}
+
+var rootProvider = new Provider(null, supportsWeakMap ? new WeakMap() : [], currentComponent);
+var currentProvider = rootProvider;
+
+Provider.prototype.getContainer = function(service){
+	var containers = this.containers;
+	if( containers.get ){
+		return containers.get(service);
+	}
+	for(var i=containers.length; i--;){
+		if( containers[i].service === service ){
+			return containers[i];
+		}
+	}
+};
+
+function inject(service){
+	var provider = currentProvider;
+	var container = null;
+	while( provider && !(container = provider.getContainer(service))){
+		provider = provider.parent;
+	}
+	if(!provider){
+		provider = rootProvider;
+		container = new Container(service);
+		var containers = provider.containers;
+		containers.set ? containers.set(service, container) : containers.push(container);
+	}
+	return container.getInstance(provider.component);
+}
+
+function provide(services, getContent){
+	if( supportsWeakMap ){
+		var containers = new WeakMap();
+		services.forEach(function(service){
+			containers.set(service, new Container(service));
+		});
+	}else{
+		var containers = new Array(services.length);
+		for(var i=services.length; i--;){
+			containers[i] = new Container(services[i]);
+		}
+	}
+	try{
+		var previousProvider = currentProvider;
+		currentProvider = new Provider(currentProvider, containers, currentComponent);
+		return getContent();
+	}finally{
+		currentProvider = previousProvider;
+	}
+}
+
+$.inject = inject;
+$.provide = provide;
 
 })($, document);
