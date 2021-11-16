@@ -37,6 +37,14 @@ function deepInsert(object, parent, nextSibling, ref){
 		deepInsert(object.render(), parent, nextSibling, ref);
 		return;
 	}
+	if( typeof object.next === "function" ){
+		var x;
+		do{
+			x = object.next();
+			deepInsert(x.value, parent, nextSibling, ref);
+		}while(!x.done);
+		return;
+	}
 	var n = object.length;
 	if( typeof n === "number" ){
 		for(var i=0; i<n; ++i){

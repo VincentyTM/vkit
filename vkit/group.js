@@ -16,6 +16,12 @@ function deepPush(array, item, parent, appendObject){
 		deepPush(array, item.text(), parent, appendObject);
 	}else if( typeof item.render === "function" ){
 		deepPush(array, item.render(), parent, appendObject);
+	}else if( typeof item.next === "function" ){
+		var x;
+		do{
+			x = item.next();
+			deepPush(array, x.value, parent, appendObject);
+		}while(!x.done);
 	}else{
 		var n = item.length;
 		if( typeof n === "number" ){
