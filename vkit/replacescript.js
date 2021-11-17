@@ -1,15 +1,22 @@
 (function($, undefined){
 
-$.replaceScript = function(getView){
-	var script = $.currentScript();
+var append = $.append;
+var currentScript = $.currentScript();
+
+function replaceScript(getView){
+	var script = currentScript;
 	var parent = script.parentNode;
 	var view = typeof getView === "function" ? getView(script) : getView;
-	var n = view.length;
-	for(var i=0; i<n; ++i){
-		parent.insertBefore(view[i], script);
+	function insert(node){
+		parent.insertBefore(node, script);
 	}
-	parent.removeChild(script);
+	if( script.parentNode === parent ){
+		append({appendChild: insert}, view);
+		parent.removeChild(script);
+	}
 	return view;
-};
+}
+
+$.replaceScript = replaceScript;
 
 })($);
