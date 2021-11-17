@@ -245,19 +245,26 @@ class HTMLCompiler {
 	}
 	getScripts(transformSrc){
 		const cache = this.cache;
-		const scripts = cache.getKeys().filter(src => src.toLowerCase().endsWith(".js")).sort(PathComparator);
 		if( transformSrc ){
+			const scripts = cache.getKeys().filter(src => src.toLowerCase().endsWith(".js")).sort(PathComparator);
 			return '<script type="text/javascript" language="javascript">\n"use strict";\n' +
 				this.getLibraries(scripts.map(src => cache.get(src)).join('\n')) +
 			'\n</script>\n' +
 			scripts.map(src => '<script type="text/javascript" language="javascript" src="' + transformSrc(src) + '"></script>').join('\n');
 		}else{
-			const compiledScript = scripts.map(src => this.transformScript(cache.get(src))).join('\n');
 			return '<script type="text/javascript" language="javascript">\n"use strict";\n' +
-				this.getLibraries(compiledScript) + '\n' +
-				compiledScript +
+				this.getScriptsRaw() +
 			'\n</script>';
 		}
+	}
+	getScriptsRaw(){
+		const cache = this.cache;
+		const scripts = cache.getKeys().filter(src => {
+			src = src.toLowerCase();
+			return src.endsWith(".js") && !src.endsWith(".test.js");
+		}).sort(PathComparator);
+		const compiledScript = scripts.map(src => this.transformScript(cache.get(src))).join('\n');
+		return this.getLibraries(compiledScript) + '\n' + compiledScript;
 	}
 	getLibraries(input){
 		try{

@@ -21,22 +21,21 @@ class Commands {
 		startBrowser("http://localhost:" + port);
 	}
 	async exportApplication(src){
-		return await new Promise(async (resolve, reject) =>
-			fs.writeFile(
-				src,
-				await this.htmlCompiler.compile(null, false),
-				{ flag: "w" },
-				err => {
-					if( err ){
-						console.error("Error while exporting file to '", src, "': ", err);
-						reject(err);
-					}else{
-						console.log("Exported to file", src);
-						resolve(src);
-					}
-				}
-			)
-		);
+		try{
+			await new Promise(async (resolve, reject) =>
+				fs.writeFile(
+					src,
+					src.toLowerCase().endsWith(".js")
+						? this.htmlCompiler.getScriptsRaw()
+						: await this.htmlCompiler.compile(null, false),
+					{ flag: "w" },
+					err => err ? reject(err) : resolve()
+				)
+			);
+			console.log("Exported to '" + src + "'.");
+		}catch(ex){
+			console.error("Error while exporting to '" + src + "'.");
+		}
 	}
 	reload(data){
 		this.reloader.reload(data);
