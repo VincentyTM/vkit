@@ -5,6 +5,7 @@ class FileCache {
 	constructor(onComplete){
 		this.cache = {};
 		this.taskCount = 0;
+		this.visibleTaskCount = 0;
 		this.onComplete = onComplete;
 		this.updated = {};
 		this.deleted = {};
@@ -34,7 +35,7 @@ class FileCache {
 			});
 			return watch;
 		}catch(ex){
-			console.error("The directory", directory, "doesn't exist.");
+			console.error("The directory '" + directory + "' doesn't exist.");
 		}
 	}
 	async updateDirectory(directory){
@@ -44,6 +45,7 @@ class FileCache {
 				await this.update(file);
 			}
 		}catch(ex){
+			console.error("Error while loading directory '" + directory + "'.");
 		}
 	}
 	async update(src){
@@ -58,8 +60,7 @@ class FileCache {
 				};
 				this.updated[src] = true;
 				console.log("Updating", src);
-			}else{
-				//console.log("Skipping", src);
+				++this.visibleTaskCount;
 			}
 		}catch(ex){
 			switch(ex.code){
@@ -69,16 +70,20 @@ class FileCache {
 					delete cache[src];
 					this.deleted[src] = true;
 					console.log("Deleting", src);
+					++this.visibleTaskCount;
 					break;
 				default:
-					console.error("Can't read", src, "as", ex);
+					console.error("Error while reading '" + src + "'.");
 			}
 		}
 		if( --this.taskCount==0 ){
 			await this.onComplete(this.updated, this.deleted);
 			this.updated = {};
 			this.deleted = {};
-			console.log("  Done!");
+			if( this.visibleTaskCount > 0 ){
+				this.visibleTaskCount = 0;
+				console.log("  Done!");
+			}
 		}
 	}
 	async readFile(src){

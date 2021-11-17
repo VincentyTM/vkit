@@ -14,7 +14,7 @@ class Config {
 	isRelease(){
 		return this.environment === "release";
 	}
-	async load(){
+	async load(attempt = 3){
 		try{
 			let needsRestart = false;
 			const src = this.src;
@@ -38,11 +38,17 @@ class Config {
 				case "EISDIR":
 					break;
 				case "ENOENT":
-					console.log("Config file was deleted, creating one at", this.src);
+					console.log("Creating config file at '" + this.src + "'...");
 					await this.save();
 					break;
 				default:
-					console.error("Couldn't load config file because", ex);
+					if( attempt > 0 ){
+						await new Promise((resolve, reject) =>
+							setTimeout(() => this.load(attempt - 1).then(resolve, reject), 100)
+						);
+					}else{
+						console.error("Error while loading config file.");
+					}
 			}
 		}
 	}
@@ -61,12 +67,12 @@ class Config {
 				}, null, 4), err => err ? reject(err) : resolve())
 			);
 		}catch(ex){
-			console.error("Couldn't save config file because", ex);
+			console.error("Error while saving config file.");
 		}
 	}
 	watch(){
 		try{
-			const watch = fs.watch(this.src, this.load.bind(this));
+			const watch = fs.watch(this.src, () => this.load());
 			watch.on("error", err => {
 				console.error("Error:", err);
 			});
