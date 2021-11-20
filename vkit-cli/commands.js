@@ -20,14 +20,14 @@ class Commands {
 	startBrowser(port){
 		startBrowser("http://localhost:" + port);
 	}
-	async exportApplication(src){
+	async exportApplication(src, includeLibraries){
 		try{
 			await new Promise(async (resolve, reject) =>
 				fs.writeFile(
 					src,
 					src.toLowerCase().endsWith(".js")
-						? this.htmlCompiler.getScriptsRaw()
-						: await this.htmlCompiler.compile(null, false),
+						? this.htmlCompiler.getScriptsRaw(includeLibraries)
+						: await this.htmlCompiler.compile(null, false, includeLibraries),
 					{ flag: "w" },
 					err => err ? reject(err) : resolve()
 				)

@@ -217,19 +217,28 @@ class HTMLCompiler {
 		this.fileName = fileName;
 		this.libraryContainer = libraryContainer;
 	}
-	async compile(transformSrc, allowDebugScripts = true){
+	async compile(transformSrc, allowDebugScripts = true, includeLibraries = true){
 		const cachedItem = this.cache.get(this.fileName);
 		if(!cachedItem){
 			return '';
 		}
 		const style = this.getStyles(transformSrc);
-		const body = this.getBodyContents(transformSrc, allowDebugScripts);
+		const body = this.getBodyContents(transformSrc, allowDebugScripts, includeLibraries);
 		return cachedItem
 			.replace("{{style}}", style)
 			.replace("{{body}}", body);
 	}
-	getBodyContents(transformSrc, allowDebugScripts){
-		return (allowDebugScripts ? this.getDebugScripts() + '\n' : '') + this.getScripts(transformSrc);
+	getScriptsRaw(includeLibraries = true){
+		const cache = this.cache;
+		const scripts = cache.getKeys().filter(src => {
+			src = src.toLowerCase();
+			return src.endsWith(".js") && !src.endsWith(".test.js");
+		}).sort(PathComparator);
+		const compiledScript = scripts.map(src => this.transformScript(cache.get(src))).join('\n');
+		return (includeLibraries ? this.getLibraries(compiledScript) + '\n' : '') + compiledScript;
+	}
+	getBodyContents(transformSrc, allowDebugScripts, includeLibraries){
+		return (allowDebugScripts ? this.getDebugScripts() + '\n' : '') + this.getScripts(transformSrc, includeLibraries);
 	}
 	getDebugScripts(){
 		return DEBUG_SCRIPT + '\n' + RELOAD_SCRIPT;
@@ -240,10 +249,11 @@ class HTMLCompiler {
 		if( transformSrc ){
 			return styles.map(src => '<link rel="stylesheet" href="' + transformSrc(src) + '">').join('\n');
 		}else{
-			return '<style>\n' + styles.map(src => this.transformStyle(cache.get(src))).join('\n') + '\n</style>';
+			const styleContent = styles.map(src => this.transformStyle(cache.get(src))).join('\n');
+			return styleContent ? '<style>\n' + styleContent + '\n</style>' : '';
 		}
 	}
-	getScripts(transformSrc){
+	getScripts(transformSrc, includeLibraries){
 		const cache = this.cache;
 		if( transformSrc ){
 			const scripts = cache.getKeys().filter(src => src.toLowerCase().endsWith(".js")).sort(PathComparator);
@@ -253,18 +263,9 @@ class HTMLCompiler {
 			scripts.map(src => '<script type="text/javascript" language="javascript" src="' + transformSrc(src) + '"></script>').join('\n');
 		}else{
 			return '<script type="text/javascript" language="javascript">\n"use strict";\n' +
-				this.getScriptsRaw() +
+				this.getScriptsRaw(includeLibraries) +
 			'\n</script>';
 		}
-	}
-	getScriptsRaw(){
-		const cache = this.cache;
-		const scripts = cache.getKeys().filter(src => {
-			src = src.toLowerCase();
-			return src.endsWith(".js") && !src.endsWith(".test.js");
-		}).sort(PathComparator);
-		const compiledScript = scripts.map(src => this.transformScript(cache.get(src))).join('\n');
-		return this.getLibraries(compiledScript) + '\n' + compiledScript;
 	}
 	getLibraries(input){
 		try{

@@ -35,7 +35,7 @@ const cache = new FileCache(
 				: null
 		);
 		if( config.autoExport && librariesLoaded ){
-			commands.exportApplication(getExportPath());
+			commands.exportApplication(getExportPath(), config.includeLibraries);
 		}
 	}
 );
@@ -120,7 +120,7 @@ process.openStdin().on("data", function(data){
 		case "reload": commands.reload(); break;
 		case "config": commands.loadConfig(); break;
 		case "build": commands.rebuild(); break;
-		case "export": commands.exportApplication(getExportPath()); break;
+		case "export": commands.exportApplication(getExportPath(), config.includeLibraries); break;
 		default: console.log("Unknown command. Try 'help'.");
 	}
 });
