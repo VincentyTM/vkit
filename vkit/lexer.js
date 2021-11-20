@@ -1,5 +1,7 @@
 (function($){
 
+var iterator = typeof Symbol === "function" ? Symbol.iterator : null;
+
 function LexNode(type, word, pos, len){
 	this.type=type;
 	this.word=word;
@@ -15,6 +17,21 @@ LexNode.prototype.toString = function(){
 function Lexer(rules, text){
 	var pos=0;
 	var buffer=[];
+	if( iterator ){
+		this[iterator] = function(){
+			return this;
+		};
+	}
+	this.all=function(){
+		var array = [];
+		while(!this.ended()){
+			array.push(this.shift());
+		}
+		return array;
+	};
+	this.next=function(){
+		return this.ended() ? {done: true} : {done: false, value: this.shift()};
+	};
 	this.shift=function(){
 		if( buffer.length )
 			return buffer.pop();
@@ -32,12 +49,12 @@ function Lexer(rules, text){
 				}
 			}
 			if(!len)
-				throw "Illegal character.";
+				throw new SyntaxError("Illegal character in lexer input.");
 			var node=new LexNode(ctype, word, pos, len);
 			pos+=len;
 			return node;
 		}
-		throw "Reached the end of input. Should not happen.";
+		throw new SyntaxError("Reached the end of input. Should not happen.");
 	};
 	this.unshift=function(token){
 		buffer.push(token);
@@ -65,7 +82,11 @@ function Lexer(rules, text){
 }
 
 $.lexer = function(rules, text){
-	return new Lexer(rules, text);
+	return arguments.length >= 2 ? new Lexer(rules, text) : {
+		scan: function(text){
+			return new Lexer(rules, text);
+		}
+	};
 };
 
 })($);
