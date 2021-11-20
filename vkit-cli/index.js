@@ -15,6 +15,7 @@ const sanitizePath = require("./sanitize-path.js");
 const serveFile = require("./serve-file.js");
 const getMimeType = require("./get-mime-type.js");
 const DEFAULT_INDEX_HTML = require("./index-html.js");
+const DEFAULT_APP_JS = require("./app-js.js");
 const STYLESHEET_REGEXP = /\.css$/i;
 
 /* Instances */
@@ -129,7 +130,10 @@ async function init(){
 	try{
 		try{ await new Promise((resolve, reject) => fs.mkdir(appDirectory, err => err ? reject(err) : resolve())); }catch(ex){}
 		try{ await new Promise((resolve, reject) => fs.mkdir(appDirectory + "/www", err => err ? reject(err) : resolve())); }catch(ex){}
-		try{ await new Promise((resolve, reject) => fs.mkdir(appDirectory + "/app", err => err ? reject(err) : resolve())); }catch(ex){}
+		try{
+			await new Promise((resolve, reject) => fs.mkdir(appDirectory + "/app", err => err ? reject(err) : resolve()));
+			await new Promise((resolve, reject) => fs.writeFile(appDirectory + "/app/App.js", DEFAULT_APP_JS, {flag: "wx"}, err => err ? reject(err) : resolve()));
+		}catch(ex){}
 		try{ await new Promise((resolve, reject) => fs.writeFile(appDirectory + "/app/index.html", DEFAULT_INDEX_HTML, {flag: "wx"}, err => err ? reject(err) : resolve())); }catch(ex){}
 		try{
 			await config.load();
