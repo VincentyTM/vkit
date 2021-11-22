@@ -274,22 +274,41 @@ $.text = function(getter){
 
 var supportsWeakMap = typeof WeakMap === "function";
 
-function Container(service){
+function serviceFactory(service){
+	return new service();
+}
+
+function configFactory(config){
+	if( "useValue" in config ){
+		return config.useValue;
+	}
+	if( "useFactory" in config ){
+		return config.useFactory.apply(null, config.params || []);
+	}
+	if( "useClass" in config ){
+		return new config.useClass();
+	}
+	if( "useExisting" in config ){
+		return inject(config.useExisting);
+	}
+	return new config.provide();
+}
+
+function Container(service, serviceOrConfig){
 	this.service = service;
+	this.serviceOrConfig = serviceOrConfig;
 	this.instance = null;
+	this.instanceCreated = false;
+	this.createInstance = service === serviceOrConfig ? serviceFactory : configFactory;
 }
 
 Container.prototype.getInstance = function(component){
-	if( this.instance ){
+	if( this.instanceCreated ){
 		return this.instance;
 	}
-	var instance = this.instance = withComponent(function(service){ return new service() }, component)(this.service);
-	if( typeof instance.destructor === "function" ){
-		withComponent(function(instance){
-			unmount(function(){ instance.destructor() });
-		}, component)(instance);
-	}
-	return instance;
+	this.instance = withComponent(this.createInstance, component)(this.serviceOrConfig);
+	this.instanceCreated = true;
+	return this.instance;
 };
 
 function Provider(parent, containers, component){
@@ -319,9 +338,9 @@ function inject(service){
 	while( provider && !(container = provider.getContainer(service))){
 		provider = provider.parent;
 	}
-	if(!provider){
+	if(!container){
 		provider = rootProvider;
-		container = new Container(service);
+		container = new Container(service, service);
 		var containers = provider.containers;
 		containers.set ? containers.set(service, container) : containers.push(container);
 	}
@@ -332,12 +351,14 @@ function provide(services, getContent){
 	if( supportsWeakMap ){
 		var containers = new WeakMap();
 		services.forEach(function(service){
-			containers.set(service, new Container(service));
+			var key = typeof service === "object" ? service.provide : service;
+			containers.set(key, new Container(key, service));
 		});
 	}else{
 		var containers = new Array(services.length);
 		for(var i=services.length; i--;){
-			containers[i] = new Container(services[i]);
+			var service = services[i];
+			containers[i] = new Container(typeof service === "object" ? service.provide : service, service);
 		}
 	}
 	try{
