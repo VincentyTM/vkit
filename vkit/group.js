@@ -40,18 +40,21 @@ function group(){
 	return deepPush($(), arguments, null, noop);
 }
 
-function append(parent, children, appendObject){
+function append(parent, children, appendObject, parentRef){
 	function push(node){
 		parent.appendChild(node);
 	}
 	var pusher = {push: push};
+	if( arguments.length < 4 ){
+		parentRef = parent;
+	}
 	if( document.createDocumentFragment ){
 		var container = parent;
 		parent = document.createDocumentFragment();
-		deepPush(pusher, children, container, appendObject || noop);
+		deepPush(pusher, children, parentRef, appendObject || noop);
 		container.appendChild(parent);
 	}else{
-		deepPush(pusher, children, parent, appendObject || noop);
+		deepPush(pusher, children, parentRef, appendObject || noop);
 	}
 }
 

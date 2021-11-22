@@ -1,5 +1,9 @@
 (function($, undefined){
 
+var group = $.group;
+var append = $.append;
+var setProps = $.setProps;
+
 function findNodes(result, container, type){
 	if( container.nodeType===type )
 		result.push(container);
@@ -12,63 +16,14 @@ function findNodes(result, container, type){
 		findNodes(result, children[i], type);
 }
 
-function deepInsert(object, parent, nextSibling, ref){
-	if( object === null || object === undefined )
-		return;
-	if( typeof object !== "object" ){
-		if( typeof object === "function" ){
-			if( ref ){
-				object(ref);
-			}
-		}else{
-			parent.insertBefore(document.createTextNode(object), nextSibling);
-		}
-		return;
+function deepInsert(children, parent, nextSibling, ref){
+	function insert(node){
+		parent.insertBefore(node, nextSibling);
 	}
-	if( object.nodeType ){
-		parent.insertBefore(object, nextSibling);
-		return;
-	}
-	if( typeof object.text === "function" ){
-		deepInsert(object.text(), parent, nextSibling, ref);
-		return;
-	}
-	if( typeof object.render === "function" ){
-		deepInsert(object.render(), parent, nextSibling, ref);
-		return;
-	}
-	if( typeof object.next === "function" ){
-		var x;
-		do{
-			x = object.next();
-			deepInsert(x.value, parent, nextSibling, ref);
-		}while(!x.done);
-		return;
-	}
-	var n = object.length;
-	if( typeof n === "number" ){
-		for(var i=0; i<n; ++i){
-			deepInsert(object[i], parent, nextSibling, ref);
-		}
-		return;
-	}
-	$.setProps(ref, object);
+	append({appendChild: insert}, children, setProps, ref);
 }
 
-function deepInsertFragment(object, parent, nextSibling, ref){
-	if( document.createDocumentFragment ){
-		var fragment = document.createDocumentFragment();
-		function insert(node){
-			fragment.appendChild(node);
-		}
-		deepInsert(object, {insertBefore: insert}, nextSibling, ref);
-		parent.insertBefore(fragment, nextSibling);
-	}else{
-		deepInsert(object, parent, nextSibling, ref);
-	}
-}
-
-$.html=function(){
+function html(){
 	var result = [], operators = [];
 	var placeholder = "<!---->";
 	for(var i=0, l=arguments.length; i<l; ++i){
@@ -122,13 +77,13 @@ $.html=function(){
 		if( ref === container ){
 			ref = null;
 		}
-		deepInsertFragment(operator, comment.parentNode, comment, ref);
+		deepInsert(operator, comment.parentNode, comment, ref);
 		comment.parentNode.removeChild(comment);
 	}
 	
-	return $().forEach(container.childNodes, function(node){
-		this.push(node);
-	});
-};
+	return group(container.childNodes);
+}
+
+$.html = html;
 
 })($);
