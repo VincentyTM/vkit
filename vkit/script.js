@@ -44,8 +44,10 @@ function createScript(url, options){
 		"resolve": resolve
 	};
 	
+	if( options.referrerPolicy) s.referrerPolicy = options.referrerPolicy;
 	if( options.crossOrigin ) s.crossOrigin = options.crossOrigin;
 	if( options.integrity ) s.integrity = options.integrity;
+	if( options.nonce ) s.nonce = options.nonce;
 	
 	s.onerror = reject;
 	"onload" in s ? (s.onload = onLoad) : (s.onreadystatechange = onLoad);
