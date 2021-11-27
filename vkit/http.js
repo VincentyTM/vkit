@@ -52,6 +52,7 @@ function sendXHR(method, url, options){
 	var headers = options.headers;
 	var http = createEmitter();
 	http.status = 0;
+	http.response = "";
 	http.readyState = createState(0);
 	http.progress = createState({loaded: 0, total: 0, lengthComputable: false});
 	http.upload = {
@@ -77,7 +78,7 @@ function sendXHR(method, url, options){
 		http.status = xhr.status;
 		http.readyState.set(xhr.readyState);
 		if( xhr.readyState === 4 || xhr.readyState === 0 ){
-			xhr.status >= 200 ? http.emit(xhr.response) : http.throwError(e || window.event);
+			xhr.status >= 200 ? http.emit(http.response = xhr.response) : http.throwError(e || window.event);
 		}
 		render();
 	};
