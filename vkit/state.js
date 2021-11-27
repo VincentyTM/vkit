@@ -20,7 +20,8 @@ function pipe(state, transform){
 }
 
 function input(transform){
-	var state = createState(this.get());
+	var value = this.get();
+	var state = createState(transform ? transform(value) : value);
 	var set = state.set;
 	state.set = this.set;
 	function onChange(value){
