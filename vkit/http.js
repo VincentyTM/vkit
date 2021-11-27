@@ -73,6 +73,9 @@ function sendXHR(method, url, options){
 	http.header = function(name){
 		return xhr.getResponseHeader(name);
 	};
+	http.headers = function(){
+		return xhr.getAllResponseHeaders();
+	};
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function(e){
 		http.status = xhr.status;
