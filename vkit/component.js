@@ -261,10 +261,10 @@ $.prop = function(prop, getter){
 };
 
 $.text = function(getter){
-	var oldValue;
-	var node = document.createTextNode(oldValue = getter());
+	var oldValue = String(getter());
+	var node = document.createTextNode(oldValue);
 	currentComponent.subscribe(function(){
-		var value = getter();
+		var value = String(getter());
 		if( oldValue!==value ){
 			oldValue = node.nodeValue = value;
 		}

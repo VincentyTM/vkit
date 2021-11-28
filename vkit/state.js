@@ -68,7 +68,7 @@ function apply(){
 function text(){
 	var node = document.createTextNode(this.get());
 	this.onChange.subscribe(function(value){
-		node.nodeValue = value;
+		node.nodeValue = String(value);
 	});
 	return node;
 }
