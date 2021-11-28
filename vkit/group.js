@@ -1,4 +1,4 @@
-(function($, undefined){
+(function($, document, undefined){
 
 function noop(){}
 
@@ -60,5 +60,9 @@ function append(parent, children, appendObject, parentRef){
 
 $.group = group;
 $.append = append;
+$.fn.append = function(){
+	append(this[0], arguments);
+	return this;
+};
 
-})($);
+})($, document);
