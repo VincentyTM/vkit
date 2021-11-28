@@ -1,5 +1,70 @@
 (function($, undefined){
 
+function createRouter(pathState){
+	function createComponent(routes){
+		routes = routes.slice();
+		var n = routes.length;
+		for(var i=0; i<n; ++i){
+			routes[i] = new Route(routes[i]);
+		}
+		return pathState.view(function(path){
+			var route = getCurrentRoute(routes, path);
+			return route ? route.component() : null;
+		});
+	}
+	
+	function getCurrentRoute(routes, path){
+		var n = routes.length;
+		for(var i=0; i<n; ++i){
+			var route = routes[i];
+			if( route.matches(path) ){
+				return route;
+			}
+		}
+		return null;
+	}
+	
+	function isActive(path, exact){
+		var route = typeof path === "object" ? path : new Route({path: path, exact: exact});
+		return pathState.input(function(currentPath){
+			return route.matches(currentPath);
+		});
+	}
+	
+	function redirectTo(path){
+		return function(){
+			pathState.set(path);
+		};
+	}
+	
+	return {
+		path: pathState,
+		isActive: isActive,
+		redirectTo: redirectTo,
+		component: createComponent
+	};
+}
+
+function Route(route){
+	this.path = route.path;
+	this.exact = route.exact || route.exact === undefined;
+	this.component = route.component;
+	if( route.matches ) this.matches = route.matches;
+}
+
+Route.prototype.matches = function(path){
+	var routePath = this.path;
+	if( routePath === path || routePath === undefined ){
+		return true;
+	}
+	if( routePath.test ){
+		return routePath.test(path);
+	}
+	var a = routePath.split("/");
+	var b = path.split("/");
+	return this.exact ? equals(a, b) : isPrefixOf(a, b);
+};
+
 function equals(a, b){
 	var n = a.length;
 	if( n!==b.length ){
@@ -25,72 +90,6 @@ function isPrefixOf(a, b){
 	return true;
 }
 
-function matchesDefault(routePath, path, exact){
-	if( routePath.test ){
-		return routePath.test(path);
-	}
-	var a = routePath.split("/");
-	var b = path.split("/");
-	return exact || exact === undefined ? equals(a, b) : isPrefixOf(a, b);
-}
-
-function navigateToDefault(path){
-	location.assign(path);
-}
-
-function getPathDefault(){
-	return location.hash || "#";
-}
-
-$.router = function(getPath, navigateTo, matches){
-	if(!getPath) getPath = getPathDefault;
-	if(!matches) matches = matchesDefault;
-	if(!navigateTo) navigateTo = navigateToDefault;
-	
-	function getCurrentRoute(routes, path){
-		var n = routes.length;
-		for(var i=0; i<n; ++i){
-			var route = routes[i];
-			if( !route.path || matches(route.path, path, route.exact) ){
-				return route;
-			}
-		}
-		return null;
-	}
-	
-	return {
-		path: getPath,
-		link: function(path, getClass, exact){
-			return function(element){
-				element.href = path;
-				if( getClass ){
-					$.prop("className", function(){
-						return getClass( matches(path, getPath(), exact) );
-					})(element);
-				}
-				element.onclick = function(){
-					navigateTo(path);
-					$.render();
-					return false;
-				};
-			};
-		},
-		isActive(path, exact){
-			return matches(path, getPath(), exact);
-		},
-		component: function(routes){
-			return $.is(
-				getPath,
-				function(path){
-					var route = getCurrentRoute(routes, path);
-					if( route && route.redirectTo ){
-						navigateTo(route.redirectTo);
-					}
-					return route ? route.component() : [];
-				}
-			);
-		}
-	};
-};
+$.router = createRouter;
 
 })($);
