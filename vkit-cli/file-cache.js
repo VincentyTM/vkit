@@ -49,6 +49,10 @@ class FileCache {
 		}
 	}
 	async update(src){
+		const lowerSrc = src.toLowerCase();
+		if(!(lowerSrc.endsWith(".js") || lowerSrc.endsWith(".css") || lowerSrc.endsWith(".html"))){
+			return;
+		}
 		++this.taskCount;
 		const cache = this.cache;
 		try{
