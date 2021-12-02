@@ -31,6 +31,7 @@ function classNames(map){
 	var unsubscribe = createObservable();
 	state.unsubscribe = unsubscribe;
 	var effect = false;
+	var autoUnsubscribe = false;
 	for(var cname in map){
 		var value = map[cname];
 		if( value && value.onChange && typeof value.onChange.subscribe === "function" ){
