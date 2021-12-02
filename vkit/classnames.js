@@ -1,5 +1,6 @@
 (function($){
 
+var unmount = $.unmount;
 var addEffect = $.effect;
 var createState = $.state;
 var createObservable = $.observable;
@@ -36,9 +37,15 @@ function classNames(map){
 			unsubscribe.subscribe(
 				value.onChange.subscribe(updateValue)
 			);
+			if( value.component !== state.component ){
+				autoUnsubscribe = true;
+			}
 		}else if( typeof value === "function" ){
 			effect = true;
 		}
+	}
+	if( autoUnsubscribe ){
+		unmount(unsubscribe);
 	}
 	if( effect ){
 		addEffect(updateValue);

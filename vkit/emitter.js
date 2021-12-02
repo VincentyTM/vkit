@@ -1,8 +1,15 @@
 (function($){
 
+var getComponent = $.component;
+var createObservable = $.observable;
+var createState = $.state;
+var unmount = $.unmount;
+var render = $.render;
+
 function createEmitter(){
-	var dataChannel = $.observable();
-	var errorChannel = $.observable();
+	var component = getComponent();
+	var dataChannel = createObservable();
+	var errorChannel = createObservable();
 	
 	function subscribe(child, onData, onError){
 		function forwardData(data){ child.emit(data); }
@@ -17,6 +24,10 @@ function createEmitter(){
 		}
 		
 		child.unsubscribe = unsubscribe;
+		
+		if( component !== getComponent() ){
+			unmount(unsubscribe);
+		}
 		
 		return child;
 	}
@@ -75,12 +86,6 @@ function createEmitter(){
 		return subscribe(child, onData);
 	}
 	
-	function input(transform){
-		var child = map(transform);
-		$. unmount(child.unsubscribe);
-		return child;
-	}
-	
 	function when(condition){
 		var child = createEmitter();
 		function onData(data){
@@ -104,7 +109,7 @@ function createEmitter(){
 	}
 	
 	function createState(init){
-		var state = $.state(init);
+		var state = createState(init);
 		pipe(state);
 		return state;
 	}
@@ -112,7 +117,7 @@ function createEmitter(){
 	function pipe(state){
 		function onData(data){
 			state.set(data);
-			$.render();
+			render();
 		}
 		state.unsubscribe = dataChannel.subscribe(onData);
 		return emitter;
@@ -125,7 +130,6 @@ function createEmitter(){
 		tap: tap,
 		await: awaitMap,
 		async: asyncMap,
-		input: input,
 		when: when,
 		then: then,
 		catchError: catchError,

@@ -1,9 +1,22 @@
 (function($, undefined){
 
+var createObservable = $.observable;
+var getComponent = $.component;
+var isView = $.is;
+var mapView = $.map;
+var unmount = $.unmount;
 var stateUpdates = [];
 
 function noop(x){
 	return x;
+}
+
+function subscribe(state, callback){
+	var unsubscribe = state.onChange.subscribe(callback);
+	if( state.component !== getComponent() ){
+		unmount(unsubscribe);
+	}
+	return unsubscribe;
 }
 
 function map(transform){
@@ -27,7 +40,7 @@ function input(transform){
 	function onChange(value){
 		set(transform(value));
 	}
-	$.unmount(this.onChange.subscribe(transform ? onChange : set));
+	unmount(subscribe(this, transform ? onChange : set));
 	return state;
 }
 
@@ -67,7 +80,7 @@ function apply(){
 
 function text(){
 	var node = document.createTextNode(this.get());
-	this.onChange.subscribe(function(value){
+	subscribe(this, function(value){
 		node.nodeValue = String(value);
 	});
 	return node;
@@ -75,10 +88,10 @@ function text(){
 
 function prop(key){
 	var value = this.get();
-	var onChange = this.onChange;
+	var state = this;
 	return function(node){
 		node[key] = value;
-		onChange.subscribe(function(value){
+		subscribe(state, function(value){
 			node[key] = value;
 		});
 	};
@@ -86,10 +99,10 @@ function prop(key){
 
 function css(key){
 	var value = this.get();
-	var onChange = this.onChange;
+	var state = this;
 	return function(node){
 		node.style[key] = value;
-		onChange.subscribe(function(value){
+		subscribe(state, function(value){
 			node.style[key] = value;
 		});
 	};
@@ -97,7 +110,7 @@ function css(key){
 
 function effect(action){
 	action(this.get());
-	this.onChange.subscribe(action);
+	subscribe(this, action);
 }
 
 function switchStateView(components, defaultComponent){
@@ -107,16 +120,16 @@ function switchStateView(components, defaultComponent){
 }
 
 function getStateView(getView, immutable){
-	return $.is(this.get(), getView, immutable, this.onChange);
+	return isView(this.get(), getView, immutable, this.onChange);
 }
 
 function mapStateView(getView, immutable){
-	return $.map(this.get(), getView, immutable, this.onChange);
+	return mapView(this.get(), getView, immutable, this.onChange);
 }
 
 function createState(value){
 	var oldValue = value;
-	var onChange = $.observable();
+	var onChange = createObservable();
 	
 	function update(){
 		if( value !== oldValue ){
@@ -162,7 +175,8 @@ function createState(value){
 		effect: effect,
 		view: getStateView,
 		views: mapStateView,
-		switchView: switchStateView
+		switchView: switchStateView,
+		component: getComponent()
 	};
 }
 
@@ -206,14 +220,23 @@ function combineStates(func){
 	
 	var states = this, n = states.length;
 	var value = getValue();
-	var onChange = $.observable();
+	var onChange = createObservable();
 	var unsubscribes = [];
+	var component = getComponent();
+	var autoUnsubscribe = false;
 	
 	for(var i=0; i<n; ++i){
 		var state = states[i];
 		if( state && state.onChange && typeof state.onChange.subscribe === "function" ){
 			unsubscribes.push(state.onChange.subscribe(update));
+			if( state.component !== component ){
+				autoUnsubscribe = true;
+			}
 		}
+	}
+	
+	if( autoUnsubscribe ){
+		unmount(unsubscribe);
 	}
 	
 	return {
@@ -233,7 +256,8 @@ function combineStates(func){
 		views: mapStateView,
 		switchView: switchStateView,
 		unsubscribe: unsubscribe,
-		until: until
+		until: until,
+		component: component
 	};
 }
 
