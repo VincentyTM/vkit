@@ -4,16 +4,17 @@ var group = $.group;
 var append = $.append;
 var setProps = $.setProps;
 
-function findNodes(result, container, type){
-	if( container.nodeType===type )
+function findNodes(result, container, type, count){
+	if( container.nodeType === type ){
 		result.push(container);
-
-	var children = container.childNodes;
-	if(!children)
-		return;
+		--count;
+	}
 	
-	for(var i=0, l=children.length; i<l; ++i)
-		findNodes(result, children[i], type);
+	for(var child = container.firstChild; 0 < count && child; child = child.nextSibling){
+		count = findNodes(result, child, type, count);
+	}
+	
+	return count;
 }
 
 function deepInsert(children, parent, nextSibling, ref){
@@ -62,23 +63,26 @@ function html(){
 	var container = document.createElement(cTag);
 	container.innerHTML = content;
 	
-	var comments = [];
-	findNodes(comments, container, 8);
-	
-	for(i=0, l=operators.length; i<l; ++i){
-		var operator = operators[i];
-		var comment = comments[i];
+	var n = operators.length;
+	if( n ){
+		var comments = [];
+		findNodes(comments, container, 8, n);
 		
-		if(!comment){
-			throw new Error("Some object or function could not be inserted");
+		for(i=0; i<n; ++i){
+			var operator = operators[i];
+			var comment = comments[i];
+			
+			if(!comment){
+				throw new Error("Some object or function could not be inserted");
+			}
+			
+			var ref = comment.previousSibling || comment.parentNode;
+			if( ref === container ){
+				ref = null;
+			}
+			deepInsert(operator, comment.parentNode, comment, ref);
+			comment.parentNode.removeChild(comment);
 		}
-		
-		var ref = comment.previousSibling || comment.parentNode;
-		if( ref === container ){
-			ref = null;
-		}
-		deepInsert(operator, comment.parentNode, comment, ref);
-		comment.parentNode.removeChild(comment);
 	}
 	
 	return group(container.childNodes);
