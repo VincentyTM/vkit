@@ -9,7 +9,8 @@ function createRouter(pathState){
 		}
 		return pathState.view(function(path){
 			var route = getCurrentRoute(routes, path);
-			return route ? route.component() : null;
+			var params = typeof route.params === "function" ? route.params(route, path) : route.params;
+			return route ? route.component.apply(null, params) : null;
 		});
 	}
 	
@@ -48,6 +49,7 @@ function createRouter(pathState){
 function Route(route){
 	this.path = route.path;
 	this.exact = route.exact || route.exact === undefined;
+	this.params = route.params || [];
 	this.component = route.component;
 	if( route.matches ) this.matches = route.matches;
 }
