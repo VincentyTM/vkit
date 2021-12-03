@@ -52,7 +52,9 @@ function append(parent, children, appendObject, parentRef){
 		var container = parent;
 		parent = document.createDocumentFragment();
 		deepPush(pusher, children, parentRef, appendObject || noop);
-		container.appendChild(parent);
+		if( parent.firstChild ){
+			container.appendChild(parent);
+		}
 	}else{
 		deepPush(pusher, children, parentRef, appendObject || noop);
 	}
