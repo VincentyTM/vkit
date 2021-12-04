@@ -42,7 +42,7 @@ function setHTML(html){
 function remove(){
 	for(var i=this.length; i--;){
 		var child = this[i];
-		var parent = c.parentNode;
+		var parent = child.parentNode;
 		if( parent ){
 			parent.removeChild(child);
 		}
