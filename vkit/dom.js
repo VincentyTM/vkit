@@ -39,17 +39,6 @@ function setHTML(html){
 	return this;
 }
 
-function remove(){
-	for(var i=this.length; i--;){
-		var child = this[i];
-		var parent = child.parentNode;
-		if( parent ){
-			parent.removeChild(child);
-		}
-	}
-	return this;
-}
-
 function empty(){
 	for(var i=this.length; i--;){
 		var el = this[i];
@@ -65,6 +54,5 @@ $.create = create;
 $.fn.add = add;
 $.fn.html = setHTML;
 $.fn.empty = empty;
-$.fn.remove = remove;
 
 })($, document);

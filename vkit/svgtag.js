@@ -1,10 +1,14 @@
 (function($, undefined){
 
+var on = $.on;
+var setCSS = $.css;
+var addEffect = $.effect;
+var append = $.append;
 var xmlns = "http://www.w3.org/2000/svg";
 
 function setAttr(el, attr, val){
 	if( typeof val === "function" ){
-		$.effect(function(){
+		addEffect(function(){
 			el.setAttributeNS(null, attr, val());
 		});
 	}else if( val && val.effect ){
@@ -20,12 +24,12 @@ function setAttrs(el, attrs){
 	for(var attr in attrs){
 		var val = attrs[attr];
 		if( attr.indexOf("on") === 0 ){
-			$.on(attr.substring(2), val)(el);
+			on(attr.substring(2), val)(el);
 		}else if( attr === "style" ){
 			for(var cssProp in val){
 				var cssVal = val[cssProp];
 				if( typeof cssVal === "function" ){
-					$.css(cssProp, cssVal)(el);
+					setCSS(cssProp, cssVal)(el);
 				}else if( cssVal && cssVal.css ){
 					cssVal.css(cssProp)(el);
 				}else{
@@ -38,18 +42,20 @@ function setAttrs(el, attrs){
 	}
 }
 
-$.svgTag = function(tagName){
+function createSVGTag(tagName){
 	return function(){
 		var el = document.createElementNS(xmlns, tagName);
-		$.append(el, arguments, setAttrs);
+		append(el, arguments, el, setAttrs);
 		return el;
 	};
-};
+}
+
+$.svgTag = createSVGTag;
 
 if( typeof Proxy === "function" ){
 	$.svgTags = new Proxy({}, {
 		get: function(target, prop, receiver){
-			return $.svgTag(prop.toLowerCase());
+			return createSVGTag(prop.toLowerCase().replace(/_/g, "-"));
 		}
 	});
 }

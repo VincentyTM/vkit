@@ -1,7 +1,7 @@
 (function($, undefined){
 
 var group = $.group;
-var append = $.append;
+var insert = $.insert;
 var setProps = $.setProps;
 
 function findNodes(result, container, type, count){
@@ -15,13 +15,6 @@ function findNodes(result, container, type, count){
 	}
 	
 	return count;
-}
-
-function deepInsert(children, parent, nextSibling, ref){
-	function insert(node){
-		parent.insertBefore(node, nextSibling);
-	}
-	append({appendChild: insert}, children, setProps, ref);
 }
 
 function html(){
@@ -76,11 +69,11 @@ function html(){
 				throw new Error("Some object or function could not be inserted");
 			}
 			
-			var ref = comment.previousSibling || comment.parentNode;
-			if( ref === container ){
-				ref = null;
+			var context = comment.previousSibling || comment.parentNode;
+			if( context === container ){
+				context = null;
 			}
-			deepInsert(operator, comment.parentNode, comment, ref);
+			insert(operator, comment, context, setProps);
 			comment.parentNode.removeChild(comment);
 		}
 	}

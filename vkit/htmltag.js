@@ -1,22 +1,22 @@
 (function($){
 
-var setProps = $.setProps;
 var append = $.append;
+var setProps = $.setProps;
 
-function htmlTag(tagName){
+function createHTMLTag(tagName){
 	return function(){
 		var el = document.createElement(tagName);
-		append(el, arguments, setProps);
+		append(el, arguments, el, setProps);
 		return el;
 	};
 }
 
-$.htmlTag = htmlTag;
+$.htmlTag = createHTMLTag;
 
 if( typeof Proxy === "function" ){
 	$.htmlTags = new Proxy({}, {
 		get: function(target, prop, receiver){
-			return $.htmlTag(prop.toLowerCase());
+			return createHTMLTag(prop.toLowerCase().replace(/_/g, "-"));
 		}
 	});
 }
