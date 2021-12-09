@@ -10,10 +10,10 @@ function deepPush(array, item, context, setProps){
 		}
 	}else if( item.nodeType ){
 		array.push(item);
-	}else if( typeof item.text === "function" ){
-		deepPush(array, item.text(), context, setProps);
 	}else if( typeof item.render === "function" ){
 		deepPush(array, item.render(), context, setProps);
+	}else if( typeof item.text === "function" ){
+		deepPush(array, item.text(), context, setProps);
 	}else if( typeof item.next === "function" ){
 		var x;
 		do{

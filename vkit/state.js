@@ -7,10 +7,6 @@ var mapView = $.map;
 var unmount = $.unmount;
 var stateUpdates = [];
 
-function noop(x){
-	return x;
-}
-
 function subscribe(state, callback){
 	var unsubscribe = state.onChange.subscribe(callback);
 	if( state.component !== getComponent() ){
@@ -19,29 +15,23 @@ function subscribe(state, callback){
 	return unsubscribe;
 }
 
-function map(transform){
-	return $(this).combine(transform || noop);
+function map(){
+	var args = arguments, n = args.length;
+	function transform(x){
+		for(var i=0; i<n; ++i){
+			x = args[i](x);
+		}
+		return x;
+	}
+	return $(this).combine(n === 1 ? args[0] : transform);
 }
 
 function pipe(state, transform){
-	if(!transform) transform = noop;
 	function update(value){
-		state.set(transform(value));
+		state.set(transform ? transform(value) : value);
 	}
 	this.effect(update);
 	return this;
-}
-
-function input(transform){
-	var value = this.get();
-	var state = createState(transform ? transform(value) : value);
-	var set = state.set;
-	state.set = this.set;
-	function onChange(value){
-		set(transform(value));
-	}
-	unmount(subscribe(this, transform ? onChange : set));
-	return state;
 }
 
 function select(prop){
@@ -97,7 +87,7 @@ function prop(key){
 	};
 }
 
-function css(key){
+function style(key){
 	var value = this.get();
 	var state = this;
 	return function(node){
@@ -111,12 +101,6 @@ function css(key){
 function effect(action){
 	action(this.get());
 	subscribe(this, action);
-}
-
-function switchStateView(components, defaultComponent){
-	return getStateView.call(this, function(key){
-		return (components[key] || defaultComponent)();
-	});
 }
 
 function getStateView(getView, immutable){
@@ -165,17 +149,15 @@ function createState(value){
 		get: get,
 		map: map,
 		pipe: pipe,
-		input: input,
 		select: select,
 		onChange: onChange,
 		enqueue: enqueue,
 		text: text,
 		prop: prop,
-		css: css,
+		style: style,
 		effect: effect,
 		view: getStateView,
 		views: mapStateView,
-		switchView: switchStateView,
 		component: getComponent()
 	};
 }
@@ -213,11 +195,6 @@ function combineStates(func){
 		return this;
 	}
 	
-	function until(func){
-		func(unsubscribe);
-		return this;
-	}
-	
 	var states = this, n = states.length;
 	var value = getValue();
 	var onChange = createObservable();
@@ -243,20 +220,17 @@ function combineStates(func){
 		get: getValue,
 		map: map,
 		pipe: pipe,
-		input: input,
 		select: select,
 		update: update,
 		onChange: onChange,
 		addDependency: addDependency,
 		text: text,
 		prop: prop,
-		css: css,
+		style: style,
 		effect: effect,
 		view: getStateView,
 		views: mapStateView,
-		switchView: switchStateView,
 		unsubscribe: unsubscribe,
-		until: until,
 		component: component
 	};
 }

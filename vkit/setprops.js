@@ -1,7 +1,7 @@
 (function($){
 
 var on = $.on;
-var setCSS = $.css;
+var setStyle = $.style;
 var setProp = $.prop;
 
 function setProps(el, props){
@@ -13,9 +13,9 @@ function setProps(el, props){
 			for(var cssProp in val){
 				var cssVal = val[cssProp];
 				if( typeof cssVal === "function" ){
-					setCSS(cssProp, cssVal)(el);
-				}else if( cssVal && cssVal.css ){
-					cssVal.css(cssProp)(el);
+					setStyle(cssProp, cssVal)(el);
+				}else if( cssVal && cssVal.style ){
+					cssVal.style(cssProp)(el);
 				}else{
 					el.style[cssProp] = cssVal;
 				}

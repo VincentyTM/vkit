@@ -1,21 +1,25 @@
 (function($, undefined){
 
-$.input = function(obj, prop){
+var observe = $.observe;
+
+function createInput(obj, prop){
 	if( prop === undefined ){
 		if( typeof Proxy !== "function" ){
 			throw new ReferenceError("Proxy is not supported in your browser!");
 		}
 		return new Proxy({}, {
 			get: function(target, prop, receiver){
-				return $.input(obj, prop);
+				return createInput(obj, prop);
 			}
 		});
 	}
 	var value = obj[prop];
-	if( value && typeof value.input === "function" ){
-		return value.input();
+	if( value && typeof value.get === "function" ){
+		return value;
 	}
-	return $.observe(obj, prop);
-};
+	return observe(obj, prop);
+}
+
+$.input = createInput;
 
 })($);

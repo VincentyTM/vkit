@@ -27,7 +27,7 @@ function createRouter(pathState){
 	
 	function isActive(path, exact){
 		var route = typeof path === "object" ? path : new Route({path: path, exact: exact});
-		return pathState.input(function(currentPath){
+		return pathState.map(function(currentPath){
 			return route.matches(currentPath);
 		});
 	}

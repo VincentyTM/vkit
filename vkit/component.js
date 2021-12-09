@@ -235,7 +235,7 @@ $.effect = function(setter){
 	currentComponent.subscribe(setter);
 };
 
-$.css = function(prop, getter){
+$.style = function(prop, getter){
 	return function(element){
 		var style = element.style;
 		var oldValue = style[prop] = getter(element);

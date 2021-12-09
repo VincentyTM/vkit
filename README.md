@@ -14,17 +14,15 @@ Example app:
 function CounterApp(){
     let count = 0;
     return $.html(
-        '<input type="button" value="Reset counter">',
-            {
-                disabled: () => count === 0,
-                onclick: () => count = 0
-            },
-            
-        '<input type="button" value="Increase count!">',
-            {
-                onclick: () => ++count
-            },
-            
+        '<input type="button" value="Reset counter">', {
+            disabled: () => count === 0,
+            onclick: () => count = 0
+        },
+        
+        '<input type="button" value="Increase count!">', {
+            onclick: () => ++count
+        },
+        
         '<br>Click count: ', $.text(() => count)
     );
 }
@@ -42,6 +40,8 @@ $(document.body).append( CounterApp() );
   * [Dependency Injection](#dependency-injection)
   * [Observables and Subscription](#observables-and-subscription)
   * [States](#states)
+  * [Routing](#routing)
+  * [References](#references)
   * [Serializing a Form](#serializing-a-form)
   * [Cookies](#cookies)
   * [Dragging Elements](#dragging-elements)
@@ -141,22 +141,22 @@ The HTML template:
 </template>
 ```
 
-As an alternative to `$.html`, you can also create elements with `$.htmlTag` and `$.group`. The syntax is a bit different, but you can combine it with `$.html` by choice.
+As an alternative to `$.html`, you can also create elements with `$.htmlTag`. The syntax is a bit different, but you can combine it with `$.html` by choice.
 
 ```javascript
 let count = 0;
 const {Br, Input} = $.htmlTags;
-const myView = $.group(
+const myView = [
     "Count: ", $.text(() => count), Br(),
     Input({type: "button", value: "Increase!", onclick: () => ++count})
-);
+];
 ```
 
 ## Dynamic UI
 
-Using the `$.text`, `$.prop` and `$.css` functions, you can update DOM nodes dynamically.
+Using the `$.text`, `$.prop` and `$.style` functions, you can update DOM nodes dynamically.
 
-> **Important:** `$.text` must not be followed by `$.prop`, `$.css` or `$.on`, as it is not an HTML element.
+> **Important:** `$.text` must not be followed by `$.prop`, `$.style` or `$.on`, as it is not an HTML element.
 
 ```javascript
 let color = "red";
@@ -166,7 +166,7 @@ let highlight = false;
 $.html(
     '<p>',
         $.prop("className", () => highlight ? "highlighted" : ""),
-        $.css("color", () => color),
+        $.style("color", () => color),
         $.text(() => text),
     '</p>'
 )
@@ -227,28 +227,41 @@ function ToggleComponent(){
 The function in the first argument can return any value, not just `true` or `false`. This is useful for creating tabs easily.
 ```javascript
 function TabsComponent(){
-    const homeView = HomeComponent();
-    const aboutView = AboutComponent();
-    let currentView = homeView;
+    let currentComponent = HomeComponent;
     
-    function Tab(title, view){
+    function Tab(title, component){
         return $.html(
-            '<input type="button">',
-                button => button.value = title,
-                {
-                    disabled: () => currentView === view,
-                    onclick: () => currentView = view
-                }
+            '<input type="button">', {
+                value: title,
+                disabled: () => currentComponent === component,
+                onclick: () => currentComponent = component
+            }
         );
     }
     
     return $.html(
-        Tab("Home", homeView),
-        Tab("About", aboutView),
+        Tab("Home", HomeComponent),
+        Tab("About", AboutComponent),
         '<hr>',
-        $.is(() => currentView)
+        $.is(() => currentComponent, component => component())
     );
 }
+```
+In some cases, it can be more convenient to write a classic `$.ifElse` statement.
+```javascript
+$.ifElse(
+    () => isFirstConditionTrue(), () => {
+        return "The first condition is true.";
+    },
+    
+    () => isSecondConditionTrue(), () => {
+        return "The first condition is false, but the second condition is true.";
+    },
+    
+    () => {
+        return "Both conditions are false.";
+    }
+)
 ```
 
 ## Mapping an Array
@@ -403,13 +416,12 @@ const xPlus1 = x.map(x => x + 1);
 
 ### States inside components
 
-Everything you can do with simple vKit components you can do with states. In order to avoid memory leaks, you should call `input` on non-locally-created states before continuing to use them.
+Everything you can do with simple vKit components you can do with states. In order to avoid memory leaks, vKit automatically unsubscribes from parent states when necessary.
 
 ```javascript
-function MyComponent(someExternalState){
-    const internalState = someExternalState.input();
-    internalState.effect(value => console.log("Value has changed to:", value));
-    return $.group("State value as text: ", internalState);
+function MyComponent(someState){
+    someState.effect(value => console.log("Value has changed to:", value));
+    return ["State value as text: ", someState];
 }
 ```
 
@@ -417,18 +429,17 @@ Conditional rendering and array mapping can even be more readable than without s
 
 ```javascript
 function DynamicList(arrayState = $.state([])){
-    arrayState = arrayState.input();
     const {Ul, Li} = $.htmlTags;
-    return arrayState
-        .map(array => array.length === 0)
-        .view(isEmpty => isEmpty
-            ? "There are no items in your array."
-            : Ul(arrayState.views(Li))
-        );
+    return $.ifElse(
+        arrayState.map(array => array.length === 0), () =>
+            "There are no items in your array.",
+        
+        () => Ul(arrayState.views(Li))
+    );
 }
 ```
 
-If you have a model object, you can intercept its property changes with `observe` without ever explicitly creating or setting a state. Calling `input` is not necessary here, as `observe` will automatically unsubscribe all derived states, and the rest will be garbage collected.
+If you have a model object, you can intercept its property changes with `observe` without ever explicitly creating or setting a state.
 
 ```javascript
 class Counter {
@@ -439,13 +450,122 @@ class Counter {
         const {count} = $.observe(this);
         return $.html(
             'Count: ', count, '<br>',
-            '<input type="button" value="Increase">',
-                $.on("click", () => ++this.count)
+            '<input type="button" value="Increase">', {
+                onclick: () => ++this.count
+            }
         );
     }
 }
 
 $(document.body).append( new Counter() );
+```
+
+## Routing
+
+Any state can be used to provide the current path of the application. For instance, vKit has a `hashState` factory function which can be used for hash based routing. Since `hashState` is a state, you can create a view from it.
+
+```javascript
+$.hashState().view(path => {
+    switch( path ){
+        case "": return HomeComponent();
+        case "about": return AboutComponent();
+        default: return NotFoundComponent();
+    }
+});
+```
+
+vKit provides a `router` function to implement more sophisticated routing.
+
+```javascript
+function RouterComponent(){
+    const router = $.router( $.hashState() );
+    return router.component([
+        {
+            path: "",
+            component: HomeComponent
+        },
+        {
+            path: "about",
+            component: AboutComponent
+        },
+        {
+            component: NotFoundComponent
+        }
+    ]);
+}
+```
+
+It may be useful to combine routing with dependency injection.
+
+```javascript
+const Router = () => $.router( $.hashState() );
+
+function App(){
+    const router = $.provide([
+        {provide: Router, useFactory: Router}
+    ], () => [
+        MenuComponent(),
+        RouterComponent()
+    ]);
+}
+
+function MenuComponent(){
+    const router = $.inject(Router);
+
+    function Link(title, path, exact = true){
+        return $.html(
+            '<li><a>', {
+                href: "#" + path,
+                className: $.classNames({
+                    "menu-button": true,
+                    "menu-button-selected": router.isActive(path, exact)
+                })
+            },
+                [title],
+            '</a></li>'
+        );
+    }
+    return $.html(
+        '<ul>',
+            Link("Home", ""),
+            Link("About", "about", false),
+        '</ul>'
+    );
+}
+
+function RouterComponent(){
+    const router = $.inject(Router);
+
+    return router.component([
+        {
+            path: "",
+            component: HomeComponent
+        },
+        {
+            path: "about",
+            component: AboutComponent
+        },
+        {
+            component: NotFoundComponent
+        }
+    ]);
+}
+```
+
+## References
+
+Although element (or other) references can be set with simple functions, there is a built-in `ref` function to create references.
+
+```javascript
+function InputFocusComponent(){
+    const inputRef = $.ref();
+    return $.html(
+        '<input>', inputRef,
+        '<input type="button" value="Focus">', {
+            onclick: () => inputRef.current.focus()
+        }
+    );
+}
 ```
 
 ## Serializing a Form
@@ -460,8 +580,9 @@ function FormComponent(){
         sendRequest(data);
     }
     
-    return $.html('<form>',
-        $.on("submit", onSubmit),
+    return $.html('<form>', {
+        onsubmit: onSubmit
+    },
         'Name: <input type="text" name="name">',
         '<input type="submit" value="Submit">',
     '</form>');
@@ -505,26 +626,26 @@ $(myElement).dragZone();
 A cross-browser implementation of selection in input fields and textareas. It can be used for rich text editors, for example.
 ```javascript
 function EditorComponent(){
-    const textarea = $.create("textarea");
+    let textarea;
     return $.html(
         '<input type="button" value="Insert tab">',
-            $.on("click", () => textarea.insertText("\t")),
+            {onclick: () => $(textarea).insertText("\t")},
 
         '<input type="button" value="Select first character">',
-            $.on("click", () => textarea.select(0, 1)),
+            {onclick: () => $(textarea).select(0, 1)},
 
         '<input type="button" value="Show selected text">',
-            $.on("click", () => {
-                const selection = textarea.selection();
+            {onclick: () => {
+                const selection = $(textarea).selection();
                 console.log(
-                    textarea[0].value.substring(
+                    textarea.value.substring(
                         selection.start,
                         selection.end
                     )
                 );
-            }),
+            }},
 
-        '<br>', textarea
+        '<br><textarea></textarea>', el => textarea = el
     );
 }
 ```
