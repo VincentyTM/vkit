@@ -1,24 +1,12 @@
 (function($, document){
 
+var group = $.group;
+var insert = $.insert;
+var toArray = $.fn.toArray;
+var createObservable = $.observable;
 var anySubscribed = false;
 
 function noop(){}
-
-function insertBefore(view, anchor){
-	var parent = anchor.parentNode;
-	var n = view.length;
-	if( document.createDocumentFragment ){
-		var container = document.createDocumentFragment();
-		for(var i=0; i<n; ++i){
-			container.appendChild(view[i]);
-		}
-		parent.insertBefore(container, anchor);
-	}else{
-		for(var i=0; i<n; ++i){
-			parent.insertBefore(view[i], anchor);
-		}
-	}
-}
 
 function createComponent(parent, stopRender){
 	var children = [];
@@ -27,8 +15,8 @@ function createComponent(parent, stopRender){
 	return {
 		index: 0,
 		children: children,
-		onRender: $.observable(),
-		onDestroy: $.observable(),
+		onRender: createObservable(),
+		onDestroy: createObservable(),
 		start: start,
 		end: end,
 		subscribe: function(update){
@@ -40,7 +28,7 @@ function createComponent(parent, stopRender){
 				children[i].unmount();
 			}
 			this.onDestroy();
-			this.onDestroy = $.observable();
+			this.onDestroy = createObservable();
 		},
 		render: function(){
 			this.onRender();
@@ -72,11 +60,11 @@ function createComponent(parent, stopRender){
 			}
 		},
 		insertView: function(view, anchor){
-			insertBefore($.group(start, view, end), anchor);
+			insert([start, view, end], anchor);
 		},
 		replaceView: function(view){
 			this.clearView();
-			insertBefore(view, end);
+			insert(view, end);
 		},
 		getChildStart: function(index){
 			var child = children[index];
@@ -109,46 +97,42 @@ function withComponent(func, component){
 	};
 }
 
-$.component = function(){
+function getCurrentComponent(){
 	return currentComponent;
-};
+}
 
-$.component.render = function(){
+function renderComponents(){
 	if( anySubscribed ){
 		rootComponent.render();
 	}
-};
+}
 
-$.unmount = unmount;
-
-$.withComponent = withComponent;
-
-$.is = function(getData, getView, immutable, onRender){
+function getViewOf(getData, getView, immutable, onRender){
 	var A = onRender ? getData : getData();
 	var prev = currentComponent;
 	var component = currentComponent = createComponent(prev, immutable);
 	try{
 		var view = getView ? getView(A) : A;
 		prev.children.push(component);
-		(onRender || component).subscribe($.withComponent(function(newData){
+		(onRender || component).subscribe(withComponent(function(newData){
 			var B = onRender ? newData : getData();
 			if( A === B ){
 				return;
 			}
 			component.unmount();
 			component.children.splice(0, component.children.length);
-			component.replaceView($.group(getView ? getView(B) : B));
+			component.replaceView(getView ? getView(B) : B);
 			A = B;
 		}, component));
-		return $.group(component.start, view, component.end);
+		return group(component.start, view, component.end);
 	}finally{
 		currentComponent = prev;
 	}
-};
+}
 
-$.map = function(array, getView, immutable, onRender){
+function mapViewsOf(array, getView, immutable, onRender){
 	var oldArray = typeof array === "function" ? array() : array;
-	var items = $.fn.toArray.call(oldArray);
+	var items = toArray.call(oldArray);
 	var prev = currentComponent;
 	var container = createComponent(prev, immutable);
 	prev.children.push(container);
@@ -180,7 +164,7 @@ $.map = function(array, getView, immutable, onRender){
 		}
 	}
 	
-	(onRender || container).subscribe($.withComponent(function(newArray){
+	(onRender || container).subscribe(withComponent(function(newArray){
 		if(!newArray) newArray = typeof array === "function" ? array() : array;
 		if( immutable && newArray === oldArray ){
 			return;
@@ -227,15 +211,15 @@ $.map = function(array, getView, immutable, onRender){
 		}
 	}));
 	
-	return $.group(container.start, views, container.end);
-};
+	return group(container.start, views, container.end);
+}
 
-$.effect = function(setter){
+function createEffect(setter){
 	setter();
 	currentComponent.subscribe(setter);
-};
+}
 
-$.style = function(prop, getter){
+function bindStyle(prop, getter){
 	return function(element){
 		var style = element.style;
 		var oldValue = style[prop] = getter(element);
@@ -246,9 +230,9 @@ $.style = function(prop, getter){
 			}
 		});
 	};
-};
+}
 
-$.prop = function(prop, getter){
+function bindProp(prop, getter){
 	return function(element){
 		var oldValue = element[prop] = getter(element);
 		currentComponent.subscribe(function(){
@@ -258,9 +242,9 @@ $.prop = function(prop, getter){
 			}
 		});
 	};
-};
+}
 
-$.text = function(getter){
+function createText(getter){
 	var oldValue = String(getter());
 	var node = document.createTextNode(oldValue);
 	currentComponent.subscribe(function(){
@@ -270,7 +254,7 @@ $.text = function(getter){
 		}
 	});
 	return node;
-};
+}
 
 var supportsWeakMap = typeof WeakMap === "function";
 
@@ -370,6 +354,16 @@ function provide(services, getContent){
 	}
 }
 
+$.withComponent = withComponent;
+$.component = getCurrentComponent;
+$.component.render = renderComponents;
+$.unmount = unmount;
+$.is = getViewOf;
+$.map = mapViewsOf;
+$.effect = createEffect;
+$.style = bindStyle;
+$.prop = bindProp;
+$.text = createText;
 $.inject = inject;
 $.provide = provide;
 
