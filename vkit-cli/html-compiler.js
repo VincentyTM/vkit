@@ -201,7 +201,11 @@ const RELOAD_SCRIPT = `<script type="text/javascript" language="javascript">
 						return;
 					}
 				}
-				location.reload();
+				if( location.pathname === "/" ){
+					location.reload();
+				}else{
+					location.replace("/" + location.hash);
+				}
 			}
 		};
 		xhr.open("GET", "/reload", true);
