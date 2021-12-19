@@ -19,12 +19,20 @@ function preloadComponent(promise, pendingComponent, errorComponent){
 		promise = createScript(promise);
 	}
 	var successComponent = null;
+	var failed = false;
+	var exception;
 	promise.then(function(component){
 		successComponent = component;
+	}, function(ex){
+		failed = true;
+		exception = ex;
 	});
 	return function(){
 		if( successComponent ){
 			return successComponent.apply(null, arguments);
+		}
+		if( failed ){
+			return errorComponent(exception);
 		}
 		var args = arguments;
 		var state = createState([pendingComponent, []]);
