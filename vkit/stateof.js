@@ -1,8 +1,11 @@
 (function($){
 
-$.stateOf = function(get, set){
+var effect = $.effect;
+var createState = $.state;
+
+function stateOf(get, set){
 	var isFunction = typeof get === "function";
-	var state = $.state(isFunction ? get() : get[set]);
+	var state = createState(isFunction ? get() : get[set]);
 	state.get = isFunction ? get : function(){
 		return get[set];
 	};
@@ -14,15 +17,17 @@ $.stateOf = function(get, set){
 			}else{
 				get[set] = value;
 			}
-			_set.call(state, value);
+			_set(value);
 		};
 	}else{
 		delete state.set;
 	}
-	$.effect(function(){
-		_set.call(state, isFunction ? get() : get[set]);
+	effect(function(){
+		_set(isFunction ? get() : get[set]);
 	});
 	return state;
-};
+}
+
+$.stateOf = stateOf;
 
 })($);
