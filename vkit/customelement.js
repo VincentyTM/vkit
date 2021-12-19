@@ -1,8 +1,9 @@
 (function($, undefined){
 
-var render = $.render;
-var append = $.append;
 var group = $.group;
+var append = $.append;
+var render = $.render;
+var setProps = $.setProps;
 var createState = $.state;
 
 function setPrototypeOf(obj, proto){
@@ -16,12 +17,8 @@ function setPrototypeOf(obj, proto){
 function createCustomElement(name, component, options){
 	function CustomElement(){
 		var el = Reflect.construct(HTMLElement, [], CustomElement);
-		var useShadow = !options || options.shadow || options.shadow === undefined;
 		var attrs = {};
 		el.data = {attributes: attrs};
-		if( useShadow ){
-			el.attachShadow({mode: "open"});
-		}
 
 		function attr(name){
 			if( name === undefined ){
@@ -44,25 +41,17 @@ function createCustomElement(name, component, options){
 			}
 			return attrs[name];
 		}
-		
+
 		function getAttr(target, prop, receiver){
 			return attr(prop);
 		}
-		
+
 		var view = component.call(el, {
 			element: el,
 			children: el.childNodes,
 			attr: attr
 		});
-
-		if( useShadow ){
-			append(el.shadowRoot, view);
-		}else{
-			var views = group(view);
-			el.innerHTML = "";
-			append(el, views);
-		}
-
+		append(el, view, el, setProps);
 		return el;
 	}
 
