@@ -1,6 +1,6 @@
 (function($, undefined){
 
-var observe = $.observe;
+var observe = Object.getOwnPropertyDescriptor ? $.observe : $.stateOf;
 
 function createInput(obj, prop){
 	if( prop === undefined ){
