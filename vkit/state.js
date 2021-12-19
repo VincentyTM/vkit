@@ -134,6 +134,18 @@ function createState(value){
 		}
 	}
 	
+	function dequeue(){
+		if( update.queued ){
+			update.queued = false;
+			for(var i=stateUpdates.length; i--;){
+				if( stateUpdates[i] === update ){
+					stateUpdates.splice(i, 1);
+					break;
+				}
+			}
+		}
+	}
+	
 	function set(newValue){
 		if( value !== newValue ){
 			value = newValue;
@@ -152,6 +164,7 @@ function createState(value){
 		select: select,
 		onChange: onChange,
 		enqueue: enqueue,
+		dequeue: dequeue,
 		text: text,
 		prop: prop,
 		style: style,
