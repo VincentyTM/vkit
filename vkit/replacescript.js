@@ -2,10 +2,10 @@
 
 var insert = $.insert;
 var remove = $.remove;
-var currentScript = $.currentScript();
+var getCurrentScript = $.currentScript;
 
 function replaceScript(getView){
-	var script = currentScript;
+	var script = getCurrentScript();
 	var view = typeof getView === "function" ? getView(script) : getView;
 	insert(view, script);
 	remove(script);
