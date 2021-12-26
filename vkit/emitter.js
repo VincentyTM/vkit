@@ -108,7 +108,7 @@ function createEmitter(){
 		return subscribe(createEmitter(), null, onError);
 	}
 	
-	function createState(init){
+	function createStateFrom(init){
 		var state = createState(init);
 		pipe(state);
 		return state;
@@ -133,7 +133,7 @@ function createEmitter(){
 		when: when,
 		then: then,
 		catchError: catchError,
-		state: createState,
+		state: createStateFrom,
 		pipe: pipe
 	};
 	
