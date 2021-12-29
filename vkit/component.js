@@ -72,7 +72,7 @@ function createComponent(parent, stopRender){
 		clearView: function(){
 			var parent = start.parentNode;
 			if(!parent) return;
-			for(var el=start.nextSibling; el && el !== end; el = start.nextSibling){
+			for(var el=end.previousSibling; el && el !== start; el = el.previousSibling){
 				parent.removeChild(el);
 			}
 		},
