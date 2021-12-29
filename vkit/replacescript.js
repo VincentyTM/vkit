@@ -1,4 +1,4 @@
-(function($, undefined){
+(function($){
 
 var insert = $.insert;
 var remove = $.remove;

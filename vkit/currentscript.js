@@ -1,10 +1,10 @@
-(function($){
+(function($, document){
 
-$.currentScript=function(){
+function getCurrentScript(){
 	if( document.currentScript ){
 		return document.currentScript;
 	}
-	var scripts=document.scripts;
+	var scripts = document.scripts;
 	for(var i=scripts.length-1; i>=0; --i){
 		var script=scripts[i];
 		if(!script.readyState || script.readyState=="interactive"){
@@ -12,6 +12,8 @@ $.currentScript=function(){
 		}
 	}
 	throw new ReferenceError("Current script not found!");
-};
+}
 
-})($);
+$.currentScript = getCurrentScript;
+
+})($, document);
