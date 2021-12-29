@@ -656,9 +656,9 @@ To implement a syntax highlighter or parser, you might need a lexical scanner. v
 
 ```javascript
 const rules = {
-	"identifier": /[a-zA-Z][a-zA-Z0-9]*/,
-	"whitespace": /\s+/,
-	"illegal": /[^]/
+    "identifier": /[a-zA-Z][a-zA-Z0-9]*/,
+    "whitespace": /\s+/,
+    "illegal": /[^]/
 };
 const lexer = $.lexer(rules);
 ```
@@ -667,10 +667,10 @@ You can use it to scan your text input and generate tokens.
 
 ```javascript
 for(const token of lexer.scan("Hello world")){
-	if( token.type === "whitespace" ){
-		continue;
-	}
-	console.log(token);
+    if( token.type === "whitespace" ){
+        continue;
+    }
+    console.log(token);
 }
 ```
 
