@@ -14,9 +14,11 @@ function createComponent(parent, stopRender){
 	var end = document.createTextNode("");
 	return {
 		index: 0,
+		parent: parent,
 		children: children,
 		onRender: createObservable(),
 		onDestroy: createObservable(),
+		onError: null,
 		start: start,
 		end: end,
 		subscribe: function(update){
@@ -39,6 +41,21 @@ function createComponent(parent, stopRender){
 			for(var i=0; i<n; ++i){
 				children[i].render();
 			}
+		},
+		throwError: function(error){
+			var component = this;
+			while( component ){
+				if( component.onError ){
+					try{
+						component.onError(error);
+						return;
+					}catch(ex){
+						error = ex;
+					}
+				}
+				component = component.parent;
+			}
+			throw error;
 		},
 		removeChild: function(index){
 			var removed = children.splice(index, 1)[0];
@@ -90,6 +107,8 @@ function withComponent(func, component){
 			currentProvider = provider;
 			currentComponent = component;
 			return func.apply(this, arguments);
+		}catch(ex){
+			component.throwError(ex);
 		}finally{
 			currentProvider = prevProvider;
 			currentComponent = prevComponent;
