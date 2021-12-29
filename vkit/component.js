@@ -2,6 +2,7 @@
 
 var group = $.group;
 var insert = $.insert;
+var remove = $.remove;
 var toArray = $.fn.toArray;
 var createObservable = $.observable;
 var anySubscribed = false;
@@ -66,14 +67,14 @@ function createComponent(parent, stopRender){
 		},
 		removeView: function(){
 			this.clearView();
-			if( start.parentNode ) start.parentNode.removeChild(start);
-			if( end.parentNode ) end.parentNode.removeChild(end);
+			remove(start);
+			remove(end);
 		},
 		clearView: function(){
 			var parent = start.parentNode;
 			if(!parent) return;
 			for(var el=end.previousSibling; el && el !== start; el = el.previousSibling){
-				parent.removeChild(el);
+				remove(el);
 			}
 		},
 		insertView: function(view, anchor){
@@ -367,7 +368,7 @@ function provide(services, getContent){
 	try{
 		var previousProvider = currentProvider;
 		currentProvider = new Provider(currentProvider, containers, currentComponent);
-		return getContent();
+		return group(getContent());
 	}finally{
 		currentProvider = previousProvider;
 	}
