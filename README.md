@@ -654,26 +654,23 @@ function EditorComponent(){
 
 To implement a syntax highlighter or parser, you might need a lexical scanner. vKit has a built-in function for that purpose: `$.lexer`.
 
-If your tokens were in an array, you could just simply do this:
 ```javascript
-const tokens = ["while", "(", "i", "<", "5", ")"];
-while( tokens.length ){
-    process( tokens.shift() );
-}
-```
-Scanning a text is very similar. With a set of rules, you can simply iterate over the input text and process the generated tokens on the fly.
-```javascript
-const text = "while(i<5)";
 const rules = {
-    "while": /while/,
-    "(": /\(/,
-    "identifier": /[a-zA-Z][a-zA-Z0-9]*/,
-    ")": /\)/,
-    "ws": /\s+/
+	"identifier": /[a-zA-Z][a-zA-Z0-9]*/,
+	"whitespace": /\s+/,
+	"illegal": /[^]/
 };
-const lexer = $.lexer(rules, text);
-while(!lexer.ended()){
-    process( lexer.shift() );
+const lexer = $.lexer(rules);
+```
+
+You can use it to scan your text input and generate tokens.
+
+```javascript
+for(const token of lexer.scan("Hello world")){
+	if( token.type === "whitespace" ){
+		continue;
+	}
+	console.log(token);
 }
 ```
 
