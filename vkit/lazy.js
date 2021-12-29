@@ -5,7 +5,7 @@ var createState = $.state;
 var createScript = $.script;
 
 function call(component){
-	return component();
+	return typeof component === "function" ? component() : component;
 }
 
 function emptyComponent(){
