@@ -17,7 +17,7 @@ function mapStates(transform){
 			var state = arguments[i];
 			a[i] = state && typeof state.get === "function" ? state : createConstState(state);
 		}
-		return combineStates.call(arguments, transform);
+		return combineStates.call(a, transform);
 	};
 }
 
