@@ -28,16 +28,17 @@ function createCustomElement(name, component, options){
 			}
 
 			function onAttrChange(value){
-				el.setAttribute(name, value);
+				if( value === null ){
+					el.removeAttribute(name);
+				}else{
+					el.setAttribute(name, value);
+				}
 			}
 
 			if(!(name in attrs)){
 				var state = createState(el.getAttribute(name));
 				state.onChange.subscribe(onAttrChange);
 				attrs[name] = state;
-				if( CustomElement.observedAttributes.indexOf(name) === -1 ){
-					CustomElement.observedAttributes.push(name);
-				}
 			}
 			return attrs[name];
 		}
@@ -46,11 +47,7 @@ function createCustomElement(name, component, options){
 			return attr(prop);
 		}
 
-		var view = component.call(el, {
-			element: el,
-			children: el.childNodes,
-			attr: attr
-		});
+		var view = component(el, attr);
 		append(el, view, el, setProps);
 		return el;
 	}
@@ -66,16 +63,16 @@ function createCustomElement(name, component, options){
 		}
 	}
 
-	CustomElement.observedAttributes = [];
-
 	var proto = CustomElement.prototype;
-
-	proto.attributeChangedCallback = onAttr;
 
 	if( options ){
 		if( options.adopt ) proto.adoptedCallback = options.adopt;
 		if( options.connect ) proto.connectedCallback = options.connect;
 		if( options.disconnect ) proto.disconnectedCallback = options.disconnect;
+		if( options.observe ){
+			CustomElement.observedAttributes = options.observe;
+			proto.attributeChangedCallback = onAttr;
+		}
 	}
 
 	customElements.define(name, CustomElement);
