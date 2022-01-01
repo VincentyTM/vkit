@@ -24,11 +24,32 @@ class LibraryContainer {
 				await this.libraries[name].load();
 			}
 			this.findParents();
+			this.generateDocs().catch(err => {});
 		}catch(ex){
 			this.unloadAll();
 			console.error("Failed to load a library:");
 			console.error(ex);
 		}
+	}
+	async generateDocs(){
+		const data = {
+			"lastUpdated": Date.now(),
+			"modules": Object.keys(this.libraries).map(name => {
+				const lib = this.libraries[name];
+				return {
+					"name": name,
+					"dependencies": Object.keys(lib.parents),
+					"declarations": Object.keys(lib.definitions)
+				};
+			})
+		};
+		await new Promise((resolve, reject) =>
+			fs.writeFile(
+				this.path + "/../docs.json",
+				JSON.stringify(data),
+				err => err ? reject(err) : resolve()
+			)
+		);
 	}
 	unloadAll(){
 		this.libraries = {};
