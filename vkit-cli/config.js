@@ -1,15 +1,15 @@
 const fs = require("fs");
 
 class Config {
-	constructor(appDirectory, src, onLoad){
-		this.appDirectory = appDirectory;
+	constructor(srcDirectory, src, onLoad){
+		this.srcDirectory = srcDirectory;
 		this.src = src;
 		this.onLoad = onLoad;
 		this.port = 3000;
 		this.exportFile = "export.html";
 		this.autoExport = false;
 		this.includeLibraries = true;
-		this.debugPath = "_dev_app";
+		this.debugPath = "_dev_src";
 		this.environment = "dev";
 	}
 	isRelease(){
