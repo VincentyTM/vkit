@@ -1,9 +1,9 @@
-(function($, window){
+(function($, global){
 
 var createObservable = $.observable;
-var requestAnimationFrame = window.requestAnimationFrame || window.setTimeout;
-var cancelAnimationFrame = window.cancelAnimationFrame || window.clearTimeout;
-var performance = window.performance && window.performance.now ? window.performance : {
+var requestAnimationFrame = global.requestAnimationFrame || global.setTimeout;
+var cancelAnimationFrame = global.cancelAnimationFrame || global.clearTimeout;
+var performance = global.performance && global.performance.now ? global.performance : {
 	now: function(){ return new Date().getTime() }
 };
 
@@ -63,4 +63,4 @@ function animate(update, duration, timeSource){
 
 $.animate = animate;
 
-})($, window);
+})($, this);
