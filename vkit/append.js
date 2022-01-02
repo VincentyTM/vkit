@@ -1,4 +1,4 @@
-(function($){
+(function($, document){
 
 var deepPush = $.deepPush;
 
@@ -27,4 +27,4 @@ function appendToThis(){
 $.append = append;
 $.fn.append = appendToThis;
 
-})($);
+})($, document);

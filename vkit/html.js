@@ -1,4 +1,4 @@
-(function($, undefined){
+(function($, document, undefined){
 
 var group = $.group;
 var insert = $.insert;
@@ -83,4 +83,4 @@ function html(){
 
 $.html = html;
 
-})($);
+})($, document);

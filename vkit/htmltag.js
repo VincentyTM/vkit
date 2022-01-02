@@ -1,4 +1,4 @@
-(function($){
+(function($, document){
 
 var append = $.append;
 var setProps = $.setProps;
@@ -21,4 +21,4 @@ if( typeof Proxy === "function" ){
 	});
 }
 
-})($);
+})($, document);

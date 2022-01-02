@@ -1,4 +1,4 @@
-(function($, undefined){
+(function($, document){
 
 var on = $.on;
 var setStyle = $.style;
@@ -60,4 +60,4 @@ if( typeof Proxy === "function" ){
 	});
 }
 
-})($);
+})($, document);

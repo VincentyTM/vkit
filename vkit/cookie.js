@@ -1,4 +1,4 @@
-(function($){
+(function($, document){
 
 function Cookie(name){
 	this.name=name;
@@ -56,4 +56,4 @@ $.cookie.each=function(handler){
 	return this;
 };
 
-})($);
+})($, document);

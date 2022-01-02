@@ -1,4 +1,4 @@
-(function($, undefined){
+(function($, document, undefined){
 
 var createObservable = $.observable;
 var getComponent = $.component;
@@ -265,4 +265,4 @@ $.state.render = renderStates;
 $.state.updateQueue = stateUpdates;
 $.fn.combine = combineStates;
 
-})($);
+})($, document);
