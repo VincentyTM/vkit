@@ -4,11 +4,12 @@ var unmount = $.unmount;
 var createState = $.state;
 var render = $.render;
 
-function createMediaState(mediaQuery){
-	if(!window.matchMedia){
+function createMediaState(mediaQuery, win){
+	if(!win) win = window;
+	if(!win.matchMedia){
 		return createState(false);
 	}
-	var matcher = window.matchMedia(mediaQuery);
+	var matcher = win.matchMedia(mediaQuery);
 	var state = createState(matcher.matches);
 	function onChange(e){
 		state.set(e.matches);

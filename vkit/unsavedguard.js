@@ -10,9 +10,9 @@ function prevent(e){
 	return "";
 }
 
-function unsavedGuard(){
+function unsavedGuard(win){
 	unmount(
-		onEvent(window, "beforeunload", prevent)
+		onEvent(win || window, "beforeunload", prevent)
 	);
 }
 

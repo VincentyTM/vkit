@@ -5,32 +5,33 @@ var delay = typeof Promise === "function" && typeof Promise.resolve === "functio
 	Promise.resolve().then(fn);
 } : setTimeout;
 
-function selectElement(el){
+function selectElement(el, doc){
 	if( el.select ){
 		el.select();
-	}else if( document.selection ){
-		var range = document.body.createTextRange();
+	}else if( doc.selection ){
+		var range = doc.body.createTextRange();
 		range.moveToElementText(el);
 		range.select();
 	}else if( window.getSelection ){
-		var range = document.createRange();
+		var range = doc.createRange();
 		range.selectNode(el);
 		window.getSelection().removeAllRanges();
 		window.getSelection().addRange(range);
 	}
 }
 
-function writeToClipboard(text){
-	var resolve = $.observable();
-	var reject = $.observable();
+function writeToClipboard(text, doc){
+	if(!doc) doc = document;
+	var resolve = createObservable();
+	var reject = createObservable();
 	function exec(){
 		try{
-			var container = document.body || document.documentElement;
-			var textarea = document.createElement("textarea");
+			var container = doc.body || doc.documentElement;
+			var textarea = doc.createElement("textarea");
 			textarea.value = text;
 			container.appendChild(textarea);
 			textarea.select();
-			document.execCommand("copy");
+			doc.execCommand("copy");
 			container.removeChild(textarea);
 			delay(resolve);
 		}catch(ex){
@@ -39,8 +40,8 @@ function writeToClipboard(text){
 	}
 	if( text.nodeType ){
 		try{
-			selectElement(text);
-			document.execCommand("copy");
+			selectElement(text, doc);
+			doc.execCommand("copy");
 			delay(resolve);
 		}catch(ex){
 			delay(function(){ reject(ex) });

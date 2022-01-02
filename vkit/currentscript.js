@@ -1,10 +1,11 @@
 (function($, document){
 
-function getCurrentScript(){
-	if( document.currentScript ){
-		return document.currentScript;
+function getCurrentScript(doc){
+	if(!doc) doc = document;
+	if( doc.currentScript ){
+		return doc.currentScript;
 	}
-	var scripts = document.scripts;
+	var scripts = doc.scripts;
 	for(var i=scripts.length-1; i>=0; --i){
 		var script=scripts[i];
 		if(!script.readyState || script.readyState=="interactive"){

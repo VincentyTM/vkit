@@ -4,7 +4,7 @@ var unmount = $.unmount;
 var onEvent = $.onEvent;
 var createState = $.state;
 
-function createStorageState(storage, key){
+function createStorageState(storage, key, win){
 	var state = createState(storage.getItem(key));
 	unmount(
 		state.onChange.subscribe(function(value){
@@ -16,7 +16,7 @@ function createStorageState(storage, key){
 		})
 	);
 	unmount(
-		onEvent(window, "storage", function(e){
+		onEvent(win || window, "storage", function(e){
 			if( e.storageArea === storage && e.key === key ){
 				state.set(e.newValue);
 			}
