@@ -69,7 +69,7 @@ function getKeyframesOf(array){
 	return keyframes;
 }
 
-function createRange(array, interpolate, thirdArg){
+function createTimeline(array, interpolate, thirdArg){
 	if(!(typeof array === "object" && array)){
 		array = [
 			{
@@ -146,6 +146,6 @@ function createRange(array, interpolate, thirdArg){
 	};
 }
 
-$.range = createRange;
+$.keyframes = createTimeline;
 
 })($);
