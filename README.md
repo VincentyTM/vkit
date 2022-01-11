@@ -127,7 +127,7 @@ $.template(
     document.querySelector("template").innerHTML,
     {
         "[count]": () => $.text(() => count),
-        "[onIncrease]": () => $.on("click", () => ++count)
+        "[onIncrease]": () => ({onclick: () => ++count})
     }
 )
 ```
@@ -148,15 +148,17 @@ let count = 0;
 const {Br, Input} = $.htmlTags;
 const myView = [
     "Count: ", $.text(() => count), Br(),
-    Input({type: "button", value: "Increase!", onclick: () => ++count})
+    Input({
+        type: "button",
+        value: "Increase!",
+        onclick: () => ++count
+    })
 ];
 ```
 
 ## Dynamic UI
 
-Using the `$.text`, `$.prop` and `$.style` functions, you can update DOM nodes dynamically.
-
-> **Important:** `$.text` must not be followed by `$.prop`, `$.style` or `$.on`, as it is not an HTML element.
+Using plain objects and `$.text`, you can update DOM nodes dynamically.
 
 ```javascript
 let color = "red";
@@ -164,9 +166,12 @@ let text = "Hello world";
 let highlight = false;
 
 $.html(
-    '<p>',
-        $.prop("className", () => highlight ? "highlighted" : ""),
-        $.style("color", () => color),
+    '<p>', {
+        className: () => highlight ? "highlighted" : "",
+        style: {
+            color: () => color
+        }
+    },
         $.text(() => text),
     '</p>'
 )
@@ -179,26 +184,28 @@ function HelloWorldComponent(){
     return $.html('<p>Hello world</p>');
 }
 ```
-You can use `$.on` to add an event listener to the current DOM element. After the callback fires, an automatic rerender is triggered.
+You can add `on*` properties to attach event listeners to the current DOM element. After the callback fires, an automatic rerender is triggered.
 ```javascript
 function CounterComponent(){
     let count = 0;
     return $.html(
         $.text(() => count),
-        '<input type="button" value="Increase">',
-            $.on("click", () => ++count)
+        '<input type="button" value="Increase">', {
+            onclick: () => ++count
+        }
     );
 }
 ```
-Unless you use `$.on`, you must explicitly call `$.render` inside callback functions. Example:
+In asynchronous functions and callbacks (other than vKit-specific event handlers) you must explicitly call `$.render`. Example:
 ```javascript
 async function load(){
-    dataToDisplay = await (await fetch("/api/data")).json();
+    const response = await fetch("/api/data");
+    dataToDisplay = await response.json();
     $.render();
 }
 
 setInterval(() => {
-    ++counter;
+    ++count;
     $.render();
 }, 1000);
 ```
@@ -210,13 +217,11 @@ Sometimes, modifying DOM nodes is not enough; you may need to replace a whole su
 function ToggleComponent(){
     let shown = false;
     return $.html(
-        '<input type="button">',
-            {
-                value: () => shown ? "Hide" : "Show",
-                onclick: () => shown = !shown,
-            },
-        $.is(
-            () => shown,
+        '<input type="button">', {
+            value: () => shown ? "Hide" : "Show",
+            onclick: () => shown = !shown,
+        },
+        $.is(() => shown,
             isShown => isShown
                 ? $.html('<p>This text is currently shown.</p>')
                 : $.html()
@@ -378,17 +383,15 @@ The default change detection mechanism in vKit is relatively slow, as all compon
 function Counter(){
     const count = $.state(0);
     return $.html(
-        '<input type="button" value="Reset counter">',
-            {
-                disabled: count.map(count => count === 0),
-                onclick: () => count.set(0)
-            },
-            
-        '<input type="button" value="Increase count!">',
-            {
-                onclick: () => count.add(1)
-            },
-            
+        '<input type="button" value="Reset counter">', {
+            disabled: count.map(count => count === 0),
+            onclick: () => count.set(0)
+        },
+
+        '<input type="button" value="Increase count!">', {
+            onclick: () => count.add(1)
+        },
+
         '<br>Click count: ', count
     );
 }
@@ -431,7 +434,8 @@ Conditional rendering and array mapping can even be more readable than without s
 function DynamicList(arrayState = $.state([])){
     const {Ul, Li} = $.htmlTags;
     return $.ifElse(
-        arrayState.map(array => array.length === 0), () =>
+        arrayState.map(array => array.length === 0),
+        () =>
             "There are no items in your array.",
         
         () => Ul(arrayState.views(Li))
