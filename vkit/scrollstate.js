@@ -21,7 +21,7 @@ function createScrollState(el){
 			setByEvent = false;
 			var oldValue = state.get();
 			return {
-				x: Math.min(x, oldValue.w),
+				x: Math.max(0, Math.min(x, oldValue.w)),
 				y: oldValue.y,
 				w: oldValue.w,
 				h: oldValue.h
@@ -38,7 +38,7 @@ function createScrollState(el){
 			var oldValue = state.get();
 			return {
 				x: oldValue.x,
-				y: Math.min(y, oldValue.h),
+				y: Math.max(0, Math.min(y, oldValue.h)),
 				w: oldValue.w,
 				h: oldValue.h
 			};
@@ -52,8 +52,8 @@ function createScrollState(el){
 		}
 		var oldValue = state.get();
 		set({
-			x: typeof value.x === "number" ? Math.min(value.x, oldValue.w) : oldValue.x,
-			y: typeof value.y === "number" ? Math.min(value.y, oldValue.h) : oldValue.y,
+			x: typeof value.x === "number" ? Math.max(0, Math.min(value.x, oldValue.w)) : oldValue.x,
+			y: typeof value.y === "number" ? Math.max(0, Math.min(value.y, oldValue.h)) : oldValue.y,
 			w: oldValue.w,
 			h: oldValue.h
 		});
