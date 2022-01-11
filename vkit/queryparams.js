@@ -3,17 +3,21 @@
 function queryParams(search){
 	var data = {};
 	if( typeof search === "string" ){
-		var array = search.split(/[&;]/);
-		var n = array.length;
-		for(var i=0; i<n; ++i){
-			var item = array[i];
-			var eqp = item.indexOf("=");
-			if( eqp === -1 ){
-				add(decodeURIComponent(item), "");
-			}else{
-				add(decodeURIComponent(item.substring(0, eqp)), decodeURIComponent(item.substring(eqp + 1)));
+		if( search ){
+			var array = search.split(/[&;]/);
+			var n = array.length;
+			for(var i=0; i<n; ++i){
+				var item = array[i];
+				var eqp = item.indexOf("=");
+				if( eqp === -1 ){
+					add(decodeURIComponent(item), "");
+				}else{
+					add(decodeURIComponent(item.substring(0, eqp)), decodeURIComponent(item.substring(eqp + 1)));
+				}
 			}
 		}
+	}else if( search && typeof search.clone === "function" ){
+		return search.clone();
 	}
 	function get(name){
 		return data[name] || "";
@@ -41,6 +45,13 @@ function queryParams(search){
 		}
 		return this;
 	}
+	function clone(){
+		var qp = queryParams();
+		for(var name in data){
+			qp.set(name, data[name]);
+		}
+		return qp;
+	}
 	function toString(){
 		var array = [];
 		for(var name in data){
@@ -62,6 +73,7 @@ function queryParams(search){
 		set: set,
 		has: has,
 		del: del,
+		clone: clone,
 		text: toString,
 		toString: toString
 	};
