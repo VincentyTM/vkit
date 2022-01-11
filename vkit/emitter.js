@@ -6,11 +6,11 @@ var createState = $.state;
 var unmount = $.unmount;
 var render = $.render;
 
-function createEmitter(){
+function createEmitter(base){
 	var component = getComponent();
 	var dataChannel = createObservable();
 	var errorChannel = createObservable();
-	
+
 	function subscribe(child, onData, onError){
 		function forwardData(data){ child.emit(data); }
 		function forwardError(error){ child.throwError(error); }
@@ -31,9 +31,9 @@ function createEmitter(){
 		
 		return child;
 	}
-	
+
 	function map(transform){
-		var child = createEmitter();
+		var child = createEmitter(base);
 		function onData(data){
 			try{
 				child.emit(transform ? transform(data) : data);
@@ -43,9 +43,9 @@ function createEmitter(){
 		}
 		return subscribe(child, onData);
 	}
-	
+
 	function tap(observe){
-		var child = createEmitter();
+		var child = createEmitter(base);
 		function onData(data){
 			try{
 				observe(data);
@@ -56,9 +56,9 @@ function createEmitter(){
 		}
 		return subscribe(child, onData);
 	}
-	
+
 	function awaitMap(transform){
-		var child = createEmitter();
+		var child = createEmitter(base);
 		function onData(data){
 			try{
 				var value = transform ? transform(data) : data;
@@ -73,9 +73,9 @@ function createEmitter(){
 		}
 		return subscribe(child, onData);
 	}
-	
+
 	function asyncMap(callback){
-		var child = createEmitter();
+		var child = createEmitter(base);
 		function onData(data){
 			try{
 				callback(data, child.emit, child.throwError);
@@ -85,9 +85,9 @@ function createEmitter(){
 		}
 		return subscribe(child, onData);
 	}
-	
+
 	function when(condition){
-		var child = createEmitter();
+		var child = createEmitter(base);
 		function onData(data){
 			try{
 				if( condition(data) ){
@@ -99,21 +99,21 @@ function createEmitter(){
 		}
 		return subscribe(child, onData);
 	}
-	
+
 	function then(onData, onError){
-		return subscribe(createEmitter(), onData, onError);
+		return subscribe(createEmitter(base), onData, onError);
 	}
-	
+
 	function catchError(onError){
-		return subscribe(createEmitter(), null, onError);
+		return subscribe(createEmitter(base), null, onError);
 	}
-	
+
 	function createStateFrom(init){
 		var state = createState(init);
 		pipe(state);
 		return state;
 	}
-	
+
 	function pipe(state){
 		function onData(data){
 			state.set(data);
@@ -122,22 +122,30 @@ function createEmitter(){
 		state.unsubscribe = dataChannel.subscribe(onData);
 		return emitter;
 	}
-	
-	var emitter = {
-		emit: dataChannel,
-		throwError: errorChannel,
-		map: map,
-		tap: tap,
-		await: awaitMap,
-		async: asyncMap,
-		when: when,
-		then: then,
-		catchError: catchError,
-		state: createStateFrom,
-		pipe: pipe
-	};
-	
-	return emitter;
+
+	var e;
+
+	if( base ){
+		function Emitter(){}
+		Emitter.prototype = base;
+		e = new Emitter();
+	}else{
+		e = {};
+	}
+
+	e.emit = dataChannel;
+	e.throwError = errorChannel;
+	e.map = map;
+	e.tap = tap;
+	e.await = awaitMap;
+	e.async = asyncMap;
+	e.when = when;
+	e.then = then;
+	e.catchError = catchError;
+	e.state = createStateFrom;
+	e.pipe = pipe;
+
+	return e;
 }
 
 $.emitter = createEmitter;
