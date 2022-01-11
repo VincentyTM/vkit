@@ -6,7 +6,7 @@ var stateUpdates = $.state.updateQueue;
 var afterRender = [];
 
 function addAfterRender(func){
-	return afterRender.push(func);
+	afterRender.push(func);
 }
 
 function callAfterRender(){
@@ -31,18 +31,7 @@ function render(){
 	callAfterRender();
 }
 
-function on(type, action){
-	return function(element){
-		element["on" + type] = function(){
-			var ret = action.apply(this, arguments);
-			render();
-			return ret;
-		};
-	};
-}
-
 $.afterRender = addAfterRender;
 $.render = render;
-$.on = on;
 
 })($);

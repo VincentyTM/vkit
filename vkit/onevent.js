@@ -1,5 +1,8 @@
 (function($){
 
+var unmount = $.unmount;
+var render = $.render;
+
 function fixEvent(e){
 	e.preventDefault = function(){
 		e.returnValue = false;
@@ -10,15 +13,15 @@ function fixEvent(e){
 	return e;
 }
 
-$.onEvent = function(obj, type, fn){
+function onEvent(obj, type, fn){
 	function fnListener(e){
 		var ret = fn.call(obj, e);
-		$.render();
+		render();
 		return ret;
 	}
 	function fnAttach(){
 		var ret = fn.call(obj, fixEvent(window.event));
-		$.render();
+		render();
 		return ret;
 	}
 	if( obj.addEventListener ){
@@ -34,19 +37,29 @@ $.onEvent = function(obj, type, fn){
 		};
 	}
 	throw new Error("Event listener could not be attached.");
-};
+}
 
-$.fn.onEvent = function(type, fn){
+function onEventAll(type, fn){
 	var n = this.length;
 	var a = new Array(n);
 	for(var i=0; i<n; ++i){
-		a[i] = $.onEvent(this[i], type, fn);
+		a[i] = onEvent(this[i], type, fn);
 	}
 	return a.length === 1 ? a[0] : function(){
 		for(var i=0; i<n; ++i){
 			a[i]();
 		}
 	};
-};
+}
+
+function on(type, action){
+	return function(el){
+		unmount(onEvent(el, type, action));
+	};
+}
+
+$.on = on;
+$.onEvent = onEvent;
+$.fn.onEvent = onEventAll;
 
 })($);
