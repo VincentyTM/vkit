@@ -29,7 +29,7 @@ function parse(lexer, expecting, map, applyRule, skipToken){
 			}
 		}else if( expect in map ){
 			if( lex in map[expect] ){
-				push.apply(expecting, map[expect][lex].reverse());
+				push.apply(expecting, map[expect][lex].slice().reverse());
 				if( applyRule ){
 					applyRule(expect, node, map[expect][lex]);
 				}
