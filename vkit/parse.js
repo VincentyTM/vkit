@@ -42,7 +42,7 @@ function parse(lexer, expecting, map, applyRule, skipToken){
 				throw createError(lexer, "Invalid token '" + node + "', expecting '" + expect + "'.");
 			}
 		}else{
-			throw createError(lexer, "Unexpected token '" + node + "', expecting '" + expect + "'.");
+			throw createError(lexer, "Expecting '" + expect + "' before '" + node + "'.");
 		}
 	}
 	if( lexer.length || lexer.ended && !lexer.ended() ){
