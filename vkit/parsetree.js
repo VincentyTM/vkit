@@ -1,5 +1,7 @@
 (function($){
 
+var ROOT = {toString: function(){ return "ROOT"; }};
+
 function BinaryNode(type, word){
 	this.type = type;
 	this.word = word;
@@ -17,36 +19,42 @@ BinaryNode.prototype.toString = function(level){
 		tab : "") + "</" + (this.word || this.type) + ">";
 };
 
-function ParseTree(precedence, left, unary){
+function ParseTree(precedence, left, unary, openingParenthesis, closingParenthesis){
 	this.precedence = precedence;
 	this.left = left;
 	this.unary = unary;
-	this.root = new BinaryNode("ROOT", null);
+	this.openingParenthesis = openingParenthesis;
+	this.closingParenthesis = closingParenthesis;
+	this.root = new BinaryNode(ROOT, null);
 	this.curr = this.root;
 }
 
 ParseTree.prototype.isOpeningParenthesis = function(node){
-	return node.type==="(";
+	return node.type in this.openingParenthesis;
 };
 
 ParseTree.prototype.isClosingParenthesis = function(node){
-	return node.type===")";
+	return node.type in this.closingParenthesis;
 };
 
 ParseTree.prototype.compare = function(node1, node2){
-	if(!node1 || node1.type==="ROOT" || this.isOpeningParenthesis(node1))
+	if(!node1 || node1.type===ROOT || this.isOpeningParenthesis(node1)){
 		return false;
+	}
 	var precedence = this.precedence;
 	var A = node1.type;
 	var B = node2.type;
 	if( A in precedence && B in precedence ){
-		if( precedence[A] > precedence[B] )
+		if( precedence[A] > precedence[B] ){
 			return true;
-		if( precedence[A] < precedence[B] )
+		}
+		if( precedence[A] < precedence[B] ){
 			return false;
+		}
 		if( precedence[A]===precedence[B] ){
-			if((A in this.left)!==(B in this.left))
-				throw "Same precedence with different associativity is not allowed.";
+			if((A in this.left)!==(B in this.left)){
+				throw new SyntaxError("Same precedence with different associativity is not allowed.");
+			}
 			return A in this.left;
 		}
 	}
@@ -80,8 +88,9 @@ ParseTree.prototype.insertToRight = function(parent, node){
 };
 
 ParseTree.prototype.add = function(node){
-	if(!node)
+	if(!node){
 		return;
+	}
 	if( this.isClosingParenthesis(node) ){
 		this.addClosingParenthesis(node);
 	}else if( node.type in this.precedence ){
@@ -100,8 +109,9 @@ ParseTree.prototype.addClosingParenthesis = function(node){
 	while( parent && !this.isOpeningParenthesis(parent) ){
 		parent = parent.parent;
 	}
-	if(!parent)
-		throw "No opening parenthesis. Should not happen.";
+	if(!parent){
+		throw new SyntaxError("No opening parenthesis. Should not happen.");
+	}
 	if( this.isOpeningParenthesis(parent) ){
 		parent.right.parent = parent.parent;
 		parent.parent.right = parent.right;
@@ -113,8 +123,9 @@ ParseTree.prototype.addOperand = function(node){
 	node = new BinaryNode(node.type, node.word);
 	node.parent = this.curr;
 	if( this.curr.left || this.curr.type==="ROOT" || !(this.curr.type in this.precedence) || this.curr.type in this.unary ){
-		if( this.curr.right )
-			throw "Third argument for binary operator. Should not happen.";
+		if( this.curr.right ){
+			throw new SyntaxError("Third argument for binary operator. Should not happen.");
+		}
 		this.curr.right = node;
 	}else{
 		this.curr.left = node;
@@ -135,8 +146,8 @@ ParseTree.prototype.addUnaryOperator = function(node){
 	}
 };
 
-$.parseTree = function(precedence, left, unary){
-	return new ParseTree(precedence, left, unary);
+$.parseTree = function(precedence, left, unary, openingParenthesis, closingParenthesis){
+	return new ParseTree(precedence, left, unary, openingParenthesis, closingParenthesis);
 };
 
 })($);
