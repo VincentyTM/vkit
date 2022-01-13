@@ -113,7 +113,9 @@ ParseTree.prototype.addClosingParenthesis = function(node){
 		throw new SyntaxError("No opening parenthesis. Should not happen.");
 	}
 	if( this.isOpeningParenthesis(parent) ){
-		parent.right.parent = parent.parent;
+		if( parent.right ){
+			parent.right.parent = parent.parent;
+		}
 		parent.parent.right = parent.right;
 		this.curr = parent.parent;
 	}
