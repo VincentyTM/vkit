@@ -5,6 +5,7 @@ var append = $.append;
 var render = $.render;
 var setProps = $.setProps;
 var createState = $.state;
+var syncState = $.sync;
 
 function setPrototypeOf(obj, proto){
 	if( Object.setPrototypeOf ){
@@ -20,7 +21,7 @@ function createCustomElement(name, component, options){
 		var attrs = {};
 		el.data = {attributes: attrs};
 
-		function attr(name){
+		function attr(name, defaultValue){
 			if( name === undefined ){
 				return new Proxy({}, {
 					get: getAttr
@@ -40,7 +41,15 @@ function createCustomElement(name, component, options){
 				state.onChange.subscribe(onAttrChange);
 				attrs[name] = state;
 			}
-			return attrs[name];
+
+			var attrState = attrs[name];
+			if( defaultValue !== undefined && defaultValue !== null ){
+				attrState = syncState(attrState, function(value){
+					return value !== undefined && value !== null ? value : defaultValue;
+				});
+			}
+
+			return attrState;
 		}
 
 		function getAttr(target, prop, receiver){
