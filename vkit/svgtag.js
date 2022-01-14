@@ -1,7 +1,7 @@
 (function($, document){
 
 var on = $.on;
-var setStyle = $.style;
+var setStyle = $.bind.style;
 var addEffect = $.effect;
 var append = $.append;
 var xmlns = "http://www.w3.org/2000/svg";

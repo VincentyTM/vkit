@@ -1,8 +1,8 @@
 (function($){
 
 var on = $.on;
-var setStyle = $.style;
-var setProp = $.prop;
+var setStyle = $.bind.style;
+var setProp = $.bind.prop;
 
 function setProps(el, props){
 	for(var prop in props){

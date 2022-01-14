@@ -1,95 +1,20 @@
 (function($, document){
 
 var group = $.group;
-var insert = $.insert;
-var remove = $.remove;
 var toArray = $.fn.toArray;
-var createObservable = $.observable;
+var createComponentCore = $.createComponent;
 var anySubscribed = false;
 
-function noop(){}
-
 function createComponent(parent, stopRender){
-	var children = [];
-	var start = document.createTextNode("");
-	var end = document.createTextNode("");
-	return {
-		index: 0,
-		parent: parent,
-		children: children,
-		onRender: createObservable(),
-		onDestroy: createObservable(),
-		onError: null,
-		start: start,
-		end: end,
-		subscribe: function(update){
-			anySubscribed = true;
-			this.onRender.subscribe(update);
-		},
-		unmount: function(){
-			for(var i=children.length; i--;){
-				children[i].unmount();
-			}
-			this.onDestroy();
-			this.onDestroy = createObservable();
-		},
-		render: function(){
-			this.onRender();
-			if( stopRender ){
-				return;
-			}
-			var n = children.length;
-			for(var i=0; i<n; ++i){
-				children[i].render();
-			}
-		},
-		throwError: function(error){
-			var component = this;
-			while( component ){
-				if( component.onError ){
-					try{
-						component.onError(error);
-						return;
-					}catch(ex){
-						error = ex;
-					}
-				}
-				component = component.parent;
-			}
-			throw error;
-		},
-		removeChild: function(index){
-			var removed = children.splice(index, 1)[0];
-			if( removed ){
-				removed.unmount();
-				removed.removeView();
-			}
-		},
-		removeView: function(){
-			this.clearView();
-			remove(start);
-			remove(end);
-		},
-		clearView: function(){
-			var parent = start.parentNode;
-			if(!parent) return;
-			for(var el=end.previousSibling; el && el !== start; el = end.previousSibling){
-				parent.removeChild(el);
-			}
-		},
-		insertView: function(view, anchor){
-			insert([start, view, end], anchor);
-		},
-		replaceView: function(view){
-			this.clearView();
-			insert(view, end);
-		},
-		getChildStart: function(index){
-			var child = children[index];
-			return child ? child.start : end;
-		}
-	};
+	var component = createComponentCore(parent, stopRender);
+	var unsubscribe = component.onRender.subscribe(function(){
+		anySubscribed = true;
+		unsubscribe();
+	});
+	return component;
 }
+
+function noop(){}
 
 var rootComponent = createComponent(null);
 var currentComponent = rootComponent;
@@ -234,48 +159,6 @@ function mapViewsOf(array, getView, immutable, onRender){
 	return group(container.start, views, container.end);
 }
 
-function createEffect(setter){
-	setter();
-	currentComponent.subscribe(setter);
-}
-
-function bindStyle(prop, getter){
-	return function(element){
-		var style = element.style;
-		var oldValue = style[prop] = getter(element);
-		currentComponent.subscribe(function(){
-			var value = getter(element);
-			if( oldValue!==value ){
-				oldValue = style[prop] = value;
-			}
-		});
-	};
-}
-
-function bindProp(prop, getter){
-	return function(element){
-		var oldValue = element[prop] = getter(element);
-		currentComponent.subscribe(function(){
-			var value = getter(element);
-			if( oldValue!==value ){
-				oldValue = element[prop] = value;
-			}
-		});
-	};
-}
-
-function createText(getter){
-	var oldValue = String(getter());
-	var node = document.createTextNode(oldValue);
-	currentComponent.subscribe(function(){
-		var value = String(getter());
-		if( oldValue!==value ){
-			oldValue = node.nodeValue = value;
-		}
-	});
-	return node;
-}
-
 var supportsWeakMap = typeof WeakMap === "function";
 
 function serviceFactory(service){
@@ -380,10 +263,6 @@ $.component.render = renderComponents;
 $.unmount = unmount;
 $.is = getViewOf;
 $.map = mapViewsOf;
-$.effect = createEffect;
-$.style = bindStyle;
-$.prop = bindProp;
-$.text = createText;
 $.inject = inject;
 $.provide = provide;
 
