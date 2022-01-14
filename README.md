@@ -683,7 +683,7 @@ for(const token of lexer.scan("Hello world")){
 vKit is capable of building a parse tree based on the specified syntactic rules. To see how it works, take a look at this snippet from an equation solver application.
 ```javascript
 const input = "x^2 + 1 = 2*x";
-const parseTree = $.parseTree(precedence, left, unary);
+const parseTree = $.parseTree(operators);
 const outputMessage = $.parse(
     //Lexer instance
     $.lexer(rules, input),
@@ -734,29 +734,45 @@ const syntax = {
     }
 };
 ```
-Precedence, associativity and unarity can be configured such as:
+Operators can be configured such as:
 ```javascript
-const precedence={
-    "^": 11,
-    "*": 10,
-    "/": 10,
-    "+": 9,
-    "-": 9,
-    "negation": 9,
-    "=": 6,
-    ",": 5
-};
-
-const left={
-    "*": true,
-    "/": true,
-    "+": true,
-    "-": true,
-    "negation": true
-};
-
-const unary={
-    "negation": true
+const operators = {
+    "^": {
+        precedence: 11
+    },
+    "*": {
+        precedence: 10,
+        left: true
+    },
+    "/": {
+        precedence: 10,
+        left: true
+    },
+    "+": {
+        precedence: 9,
+        left: true
+    },
+    "-": {
+        precedence: 9,
+        left: true
+    },
+    "negation": {
+        unary: true,
+        precedence: 9,
+        left: true
+    },
+    "=": {
+        precedence: 6
+    },
+    ",": {
+        precedence: 5
+    },
+    "(": {
+        parenthesis: "opening"
+    },
+    ")": {
+        parenthesis: "closing"
+    }
 };
 ```
 

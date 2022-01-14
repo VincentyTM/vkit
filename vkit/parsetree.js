@@ -13,13 +13,41 @@ function BinaryNode(type, word){
 BinaryNode.prototype.toString = function(level){
 	level = level || 0;
 	var tab = new Array(level+1).join("    ");
-	return tab + "<" + (this.word || this.type) + ">" + (this.left || this.right ? "\n" +
-		(this.left ? this.left.toString(level+1) : tab + "    <null></null>") + "\n" +
-		(this.right ? this.right.toString(level+1) : tab + "    <null></null>") + "\n" +
-		tab : "") + "</" + (this.word || this.type) + ">";
+	var inner = (
+		this.left || this.right ? "\n" +
+		(this.left ? this.left.toString(level+1) : tab + "    -") + "\n" +
+		(this.right ? this.right.toString(level+1) : tab + "    -") + "\n" +
+		tab : ""
+	);
+	return tab + (inner
+		? "<" + (this.word || this.type) + ">" + inner + "</" + (this.word || this.type) + ">"
+		: "<" + (this.word || this.type) + " />"
+	);
 };
 
-function ParseTree(precedence, left, unary, openingParenthesis, closingParenthesis){
+function ParseTree(operators){
+	var precedence = {};
+	var left = {};
+	var unary = {};
+	var openingParenthesis = {};
+	var closingParenthesis = {};
+	for(var k in operators){
+		var op = operators[k];
+		if( op.left ){
+			left[k] = true;
+		}
+		if( op.unary ){
+			unary[k] = true;
+		}
+		if( op.parenthesis === "opening" ){
+			openingParenthesis[k] = true;
+		}else if( op.parenthesis === "closing" ){
+			closingParenthesis[k] = true;
+		}
+		if( typeof op.precedence === "number" ){
+			precedence[k] = op.precedence;
+		}
+	}
 	this.precedence = precedence;
 	this.left = left;
 	this.unary = unary;
