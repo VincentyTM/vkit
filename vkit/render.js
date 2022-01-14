@@ -31,6 +31,8 @@ function render(){
 	callAfterRender();
 }
 
+setTimeout(render, 0);
+
 $.afterRender = addAfterRender;
 $.render = render;
 
