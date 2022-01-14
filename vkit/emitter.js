@@ -120,7 +120,7 @@ function createEmitter(base){
 			render();
 		}
 		state.unsubscribe = dataChannel.subscribe(onData);
-		return emitter;
+		return e;
 	}
 
 	var e;
