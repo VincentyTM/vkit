@@ -2,6 +2,7 @@
 
 var unmount = $.unmount;
 var render = $.render;
+var slice = Array.prototype.slice;
 
 function fixEvent(e){
 	e.preventDefault = function(){
@@ -14,26 +15,25 @@ function fixEvent(e){
 }
 
 function onEvent(obj, type, fn){
-	function fnListener(e){
-		var ret = fn.call(obj, e);
-		render();
-		return ret;
-	}
-	function fnAttach(){
-		var ret = fn.call(obj, fixEvent(window.event));
+	function eventHandler(){
+		var args = slice.call(arguments);
+		if(!args[0]){
+			args[0] = fixEvent(window.event);
+		}
+		var ret = fn.apply(obj, args);
 		render();
 		return ret;
 	}
 	if( obj.addEventListener ){
-		obj.addEventListener(type, fnListener, false);
+		obj.addEventListener(type, eventHandler, false);
 		return function(){
-			obj.removeEventListener(type, fnListener, false);
+			obj.removeEventListener(type, eventHandler, false);
 		};
 	}else if( obj.attachEvent ){
 		type = "on" + type;
-		obj.attachEvent(type, fnAttach);
+		obj.attachEvent(type, eventHandler);
 		return function(){
-			obj.detachEvent(type, fnAttach);
+			obj.detachEvent(type, eventHandler);
 		};
 	}
 	throw new Error("Event listener could not be attached.");
