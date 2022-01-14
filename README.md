@@ -705,32 +705,39 @@ const outputMessage = $.parse(
     },
     
     //Which tokens to skip (optional)
-    node => node.type === "ws"
+    node => node.type === "whitespace"
 );
 
 console.log( parseTree.root.toString() );
 ```
-Syntactic rules can be given in the following form. Note that trailing question marks have a special meaning: the referred nonterminal symbol is optional.
+Syntactic rules can be given in the following form.
 ```javascript
 const syntax = {
     "EXPR": {
-        "number": ["EXPR_AFTER?"],
-        "(": ["EXPR", ")", "EXPR_AFTER?"],
-        "x": ["EXPR_AFTER?"],
-        "function": ["(", "EXPR", "COMMA_EXPR?", ")", "EXPR_AFTER?"],
-        "-": ["EXPR", "EXPR_AFTER?"]
+        "number": ["EXPR_AFTER"],
+        "(": ["EXPR", ")", "EXPR_AFTER"],
+        "x": ["EXPR_AFTER"],
+        "function": ["(", "ARGS)", "EXPR_AFTER"],
+        "+": ["EXPR", "EXPR_AFTER"],
+        "-": ["EXPR", "EXPR_AFTER"]
     },
-    "EXPR_AFTER?": {
+    "EXPR_AFTER": {
         "+": ["EXPR"],
         "-": ["EXPR"],
         "*": ["EXPR"],
         "/": ["EXPR"],
         "^": ["EXPR"],
         "composition": ["EXPR"],
-        "iteration": ["EXPR"]
+        "iteration": ["EXPR"],
+        "": []
     },
-    "COMMA_EXPR?": {
-        ",": ["EXPR", "COMMA_EXPR?"]
+    "ARGS)": {
+        ")": [],
+        "": ["EXPR", "COMMA_EXPR", ")"]
+    },
+    "COMMA_EXPR": {
+        ",": ["EXPR", "COMMA_EXPR"],
+        "": []
     }
 };
 ```

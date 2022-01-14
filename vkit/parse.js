@@ -6,43 +6,49 @@ function createError(lexer, message){
 	return new SyntaxError("SyntaxError at line " + lexer.line() + ", char " + lexer.charPos() + ": " + message);
 }
 
+function createExpectingError(lexer, expect, node){
+	return createError(lexer, node
+		? "Expecting '" + expect + "' before '" + node + "'."
+		: "Unexpected end of input, still expecting '" + expect + "'."
+	);
+}
+
 function parse(lexer, expecting, map, applyRule, skipToken){
 	expecting = expecting.slice().reverse();
 	while( expecting.length ){
 		var expect = expecting.pop();
+		var node = lexer.length === 0 || lexer.ended && lexer.ended() ? null : lexer.shift();
+		var lex = node ? node.type || node : null;
 
-		if( lexer.length === 0 || lexer.ended && lexer.ended() ){
-			if( expect.charAt(expect.length - 1) === "?" ){
-				continue;
-			}
-			throw createError(lexer, "Unexpected end of input, still expecting '" + expect + "'.");
-		}
-
-		var node = lexer.shift();
-		var lex = node.type || node;
-
-		if( skipToken && skipToken(node) ){
+		if( skipToken && node && skipToken(node) ){
 			expecting.push(expect);
 		}else if( expect === lex ){
 			if( applyRule ){
 				applyRule(expect, node, null);
 			}
 		}else if( expect in map ){
-			if( lex in map[expect] ){
-				push.apply(expecting, map[expect][lex].slice().reverse());
+			var array = lex ? map[expect][lex] : null;
+			if( array ){
+				push.apply(expecting, array.slice().reverse());
 				if( applyRule ){
-					applyRule(expect, node, map[expect][lex]);
-				}
-			}else if( expect.charAt(expect.length - 1) === "?" ){
-				lexer.unshift(node);
-				if( applyRule ){
-					applyRule(expect, null, null);
+					applyRule(expect, node, array);
 				}
 			}else{
-				throw createError(lexer, "Invalid token '" + node + "', expecting '" + expect + "'.");
+				var defaultArray = map[expect][""];
+				if( defaultArray ){
+					push.apply(expecting, defaultArray.slice().reverse());
+					if( node ){
+						lexer.unshift(node);
+					}
+					if( applyRule ){
+						applyRule(expect, null, defaultArray);
+					}
+				}else{
+					throw createExpectingError(lexer, expect, node);
+				}
 			}
 		}else{
-			throw createError(lexer, "Expecting '" + expect + "' before '" + node + "'.");
+			throw createExpectingError(lexer, expect, node);
 		}
 	}
 	if( lexer.length || lexer.ended && !lexer.ended() ){
