@@ -81,8 +81,18 @@ async function requestListener(req, res){
 		const cachedPath = decodeURIComponent(path.replace("/" + config.debugPath + "/", config.srcDirectory + "/src/"));
 		const cached = cache.get(cachedPath);
 		if( cached ){
+			const lastModified = cache.getVersion(cachedPath);
+			const ifModifiedSince = req.headers["if-modified-since"];
+			if( ifModifiedSince && new Date(ifModifiedSince).getTime() >= lastModified ){
+				res.writeHead(304, {}).end();
+				return;
+			}
+			res.setHeader('cache-control', 'public, max-age=31536000, stale-while-revalidate=2592000, immutable');
 			res.setHeader('content-type', getMimeType(sanitizePath(path), "text/html; charset=UTF-8"));
 			res.setHeader('content-length', Buffer.byteLength(cached));
+			res.setHeader('date', new Date().toUTCString());
+			res.setHeader('expires', new Date(Date.now() + 31536000*1000).toUTCString());
+			res.setHeader('last-modified', new Date(lastModified).toUTCString());
 			res.end(cached);
 			return;
 		}

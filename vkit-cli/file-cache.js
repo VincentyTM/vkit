@@ -21,6 +21,10 @@ class FileCache {
 		const item = this.cache[src];
 		return item ? item.content : null;
 	}
+	getVersion(src){
+		const item = this.cache[src];
+		return item ? item.version : 0;
+	}
 	clear(){
 		const cache = this.cache;
 		for(const key in cache){
