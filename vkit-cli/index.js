@@ -64,11 +64,12 @@ const withoutQuery = url => {
 /* Request listener */
 
 async function requestListener(req, res){
-	if( req.url === "/reload" ){
+	const path = withoutQuery(req.url);
+	if( path === "/reload" ){
 		reloader.subscribe(res);
 		return;
 	}
-	if( req.url === "/" ){
+	if( path === "/" ){
 		res.setHeader('content-type', 'text/html; charset=utf-8');
 		res.end(await htmlCompiler.compile(
 			config.isRelease() ? null : src => transformSRC(src) + cache.getVersionString(src),
@@ -76,9 +77,9 @@ async function requestListener(req, res){
 		));
 		return;
 	}
-	if( req.url.startsWith("/" + config.debugPath + "/") ){
-		const path = decodeURIComponent(withoutQuery(req.url).replace("/" + config.debugPath + "/", config.srcDirectory + "/src/"));
-		const cached = cache.get(path);
+	if( path.startsWith("/" + config.debugPath + "/") ){
+		const cachedPath = decodeURIComponent(path.replace("/" + config.debugPath + "/", config.srcDirectory + "/src/"));
+		const cached = cache.get(cachedPath);
 		if( cached ){
 			res.setHeader('content-type', getMimeType(sanitizePath(path), "text/html; charset=UTF-8"));
 			res.setHeader('content-length', Buffer.byteLength(cached));
@@ -86,7 +87,7 @@ async function requestListener(req, res){
 			return;
 		}
 	}
-	serveFile(req, res, config.srcDirectory + "/www/" + sanitizePath(req.url));
+	serveFile(req, res, config.srcDirectory + "/www/" + sanitizePath(path));
 }
 
 /* Main menu */
