@@ -4,7 +4,10 @@ var unmount = $.unmount;
 var afterRender = $.afterRender;
 var styleCount = 0;
 
-function addStyle(docs, document, css){
+function addStyle(docs, document, css, selector){
+	function replace(css){
+		return css.replace(/::?this\b/ig, selector);
+	}
 	for(var i=docs.length; i--;){
 		if( docs[i].document === document ){
 			++docs[i].count;
@@ -13,7 +16,10 @@ function addStyle(docs, document, css){
 	}
 	var head = document.getElementsByTagName("head")[0];
 	var style = document.createElement("style");
-	style.appendChild(document.createTextNode(css));
+	style.appendChild(typeof css.map === "function"
+		? css.map(replace).text()
+		: document.createTextNode(replace(css))
+	);
 	head.appendChild(style);
 	docs.push({
 		document: document,
@@ -37,16 +43,17 @@ function removeStyle(docs, document){
 }
 
 function componentStyle(css){
-	var count = 0;
 	var attr = "vkit-component" + (++styleCount);
 	var selector = "[" + attr + "]";
 	var docs = [];
-	css = css.replace(/::this/g, selector);
 	return function(el){
+		var document = el.ownerDocument;
+		unmount(function(){
+			removeStyle(docs, document);
+		});
 		afterRender(function(){
-			var document = el.ownerDocument;
-			addStyle(docs, document, css);
-			unmount(function(){ removeStyle(docs, document); });
+			document = el.ownerDocument;
+			addStyle(docs, document, css, selector);
 			el.setAttribute(attr, "true");
 		});
 	};
