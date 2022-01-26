@@ -45,6 +45,12 @@ function queryParams(search){
 		}
 		return this;
 	}
+	function clear(){
+		for(var name in data){
+			delete data[name];
+		}
+		return this;
+	}
 	function clone(){
 		var qp = queryParams();
 		for(var name in data){
@@ -73,6 +79,7 @@ function queryParams(search){
 		set: set,
 		has: has,
 		del: del,
+		clear: clear,
 		clone: clone,
 		text: toString,
 		toString: toString
