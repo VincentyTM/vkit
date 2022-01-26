@@ -15,9 +15,15 @@ function createComponent(parent, stopRender){
 		onRender: createObservable(),
 		onDestroy: createObservable(),
 		onError: null,
+		shouldRender: false,
 		start: start,
 		end: end,
 		subscribe: function(update){
+			var curr = this;
+			while( curr && !curr.shouldRender ){
+				curr.shouldRender = true;
+				curr = curr.parent;
+			}
 			return this.onRender.subscribe(update);
 		},
 		unmount: function(){
@@ -28,6 +34,9 @@ function createComponent(parent, stopRender){
 			this.onDestroy = createObservable();
 		},
 		render: function(){
+			if(!this.shouldRender){
+				return;
+			}
 			this.onRender();
 			if( stopRender ){
 				return;

@@ -2,17 +2,7 @@
 
 var group = $.group;
 var toArray = $.fn.toArray;
-var createComponentCore = $.createComponent;
-var anySubscribed = false;
-
-function createComponent(parent, stopRender){
-	var component = createComponentCore(parent, stopRender);
-	var unsubscribe = component.onRender.subscribe(function(){
-		anySubscribed = true;
-		unsubscribe();
-	});
-	return component;
-}
+var createComponent = $.createComponent;
 
 function noop(){}
 
@@ -47,9 +37,7 @@ function getCurrentComponent(){
 }
 
 function renderComponents(){
-	if( anySubscribed ){
-		rootComponent.render();
-	}
+	rootComponent.render();
 }
 
 function getViewOf(getData, getView, immutable, onRender){
