@@ -45,6 +45,12 @@ function queryParams(search){
 		}
 		return this;
 	}
+	function each(func){
+		for(var name in data){
+			func(name, data[name]);
+		}
+		return this;
+	}
 	function clear(){
 		for(var name in data){
 			delete data[name];
@@ -79,6 +85,7 @@ function queryParams(search){
 		set: set,
 		has: has,
 		del: del,
+		each: each,
 		clear: clear,
 		clone: clone,
 		text: toString,
