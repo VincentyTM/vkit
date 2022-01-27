@@ -50,6 +50,7 @@ function componentStyle(css){
 		var document = el.ownerDocument;
 		unmount(function(){
 			removeStyle(docs, document);
+			el.removeAttribute(attr);
 		});
 		afterRender(function(){
 			document = el.ownerDocument;
