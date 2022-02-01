@@ -21,12 +21,13 @@ const STYLESHEET_REGEXP = /\.css$/i;
 /* Instances */
 
 let librariesLoaded = false;
-const srcDirectory = process.argv.slice(2).join(" ").trim() || ".";
-const configFile = srcDirectory + "/config.json";
+const appDirectory = process.argv.slice(2).join(" ").trim() || ".";
+const configFile = appDirectory + "/config.json";
 const reloader = new Reloader();
 const server = new Server(requestListener);
-const transformSRC = src => config.debugPath + "/" + src.replace(config.srcDirectory + "/src/", "");
-const getExportPath = () => path.isAbsolute(config.exportFile) ? config.exportFile : config.srcDirectory + "/" + config.exportFile;
+const transformSRC = src => config.debugPath + "/" + src.replace(config.appDirectory + "/src/", "");
+const getExportPath = () => path.isAbsolute(config.exportFile) ? config.exportFile : config.appDirectory + "/" + config.exportFile;
+const getStaticPath = () => path.isAbsolute(config.staticRoot) ? config.staticRoot : config.appDirectory + "/" + config.staticRoot;
 const cache = new FileCache(
 	(updated, deleted) => {
 		const srcs = Object.keys(updated);
@@ -40,7 +41,7 @@ const cache = new FileCache(
 		}
 	}
 );
-const config = new Config(srcDirectory, configFile, async needsRestart => {
+const config = new Config(appDirectory, configFile, async needsRestart => {
 	if( needsRestart ){
 		await commands.startServer(config.port);
 		await commands.build();
@@ -54,7 +55,7 @@ const libraryContainer = new LibraryContainer(__dirname + "/../vkit"); libraryCo
 	console.log("Loaded all libraries.");
 	librariesLoaded = true;
 });
-const htmlCompiler = new HTMLCompiler(cache, srcDirectory + "/src/index.html", libraryContainer);
+const htmlCompiler = new HTMLCompiler(cache, appDirectory + "/src/index.html", libraryContainer);
 const commands = new Commands(server, reloader, cache, config, htmlCompiler);
 const withoutQuery = url => {
 	const pos = url.indexOf("?");
@@ -78,7 +79,7 @@ async function requestListener(req, res){
 		return;
 	}
 	if( path.startsWith("/" + config.debugPath + "/") ){
-		const cachedPath = decodeURIComponent(path.replace("/" + config.debugPath + "/", config.srcDirectory + "/src/"));
+		const cachedPath = decodeURIComponent(path.replace("/" + config.debugPath + "/", config.appDirectory + "/src/"));
 		const cached = cache.get(cachedPath);
 		if( cached ){
 			const lastModified = cache.getVersion(cachedPath);
@@ -97,7 +98,7 @@ async function requestListener(req, res){
 			return;
 		}
 	}
-	serveFile(req, res, config.srcDirectory + "/www/" + sanitizePath(path));
+	serveFile(req, res, getStaticPath() + "/" + sanitizePath(path));
 }
 
 /* Main menu */
@@ -139,21 +140,21 @@ process.openStdin().on("data", function(data){
 
 async function init(){
 	try{
-		try{ await new Promise((resolve, reject) => fs.mkdir(srcDirectory, err => err ? reject(err) : resolve())); }catch(ex){}
-		try{ await new Promise((resolve, reject) => fs.mkdir(srcDirectory + "/www", err => err ? reject(err) : resolve())); }catch(ex){}
-		try{
-			await new Promise((resolve, reject) => fs.mkdir(srcDirectory + "/src", err => err ? reject(err) : resolve()));
-			await new Promise((resolve, reject) => fs.writeFile(srcDirectory + "/src/App.js", DEFAULT_APP_JS, {flag: "wx"}, err => err ? reject(err) : resolve()));
-		}catch(ex){}
-		try{ await new Promise((resolve, reject) => fs.writeFile(srcDirectory + "/src/index.html", DEFAULT_INDEX_HTML, {flag: "wx"}, err => err ? reject(err) : resolve())); }catch(ex){}
 		try{
 			await config.load();
-		}catch(ex){
+		}catch(exc){
+			try{ await new Promise((resolve, reject) => fs.mkdir(appDirectory, err => err ? reject(err) : resolve())); }catch(ex){}
 			await config.save();
 		}
+		try{ await new Promise((resolve, reject) => fs.mkdir(getStaticPath(), err => err ? reject(err) : resolve())); }catch(ex){}
+		try{
+			await new Promise((resolve, reject) => fs.mkdir(appDirectory + "/src", err => err ? reject(err) : resolve()));
+			await new Promise((resolve, reject) => fs.writeFile(appDirectory + "/src/App.js", DEFAULT_APP_JS, {flag: "wx"}, err => err ? reject(err) : resolve()));
+		}catch(ex){}
+		try{ await new Promise((resolve, reject) => fs.writeFile(appDirectory + "/src/index.html", DEFAULT_INDEX_HTML, {flag: "wx"}, err => err ? reject(err) : resolve())); }catch(ex){}
 		config.watch();
-		cache.watchDirectory(config.srcDirectory + "/src");
-		cache.updateDirectory(config.srcDirectory + "/src");
+		cache.watchDirectory(config.appDirectory + "/src");
+		cache.updateDirectory(config.appDirectory + "/src");
 		await commands.startServer(config.port);
 		await commands.build();
 		commands.startBrowser(config.port);

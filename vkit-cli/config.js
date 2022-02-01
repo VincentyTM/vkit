@@ -1,11 +1,12 @@
 const fs = require("fs");
 
 class Config {
-	constructor(srcDirectory, src, onLoad){
-		this.srcDirectory = srcDirectory;
+	constructor(appDirectory, src, onLoad){
+		this.appDirectory = appDirectory;
 		this.src = src;
 		this.onLoad = onLoad;
 		this.port = 3000;
+		this.staticRoot = "www";
 		this.exportFile = "export.html";
 		this.autoExport = false;
 		this.includeLibraries = true;
@@ -29,6 +30,7 @@ class Config {
 				this.port = port;
 				needsRestart = true;
 			}
+			this.staticRoot = String(json.staticRoot || "www");
 			this.exportFile = String(json.exportFile || "index.html");
 			this.autoExport = Boolean(json.autoExport);
 			this.includeLibraries = Boolean(json.includeLibraries);
@@ -62,6 +64,7 @@ class Config {
 					lang: this.lang,
 					themeColor: this.themeColor,
 					title: this.title,
+					staticRoot: this.staticRoot,
 					exportFile: this.exportFile,
 					autoExport: this.autoExport,
 					includeLibraries: this.includeLibraries,

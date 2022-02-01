@@ -46,7 +46,7 @@ class Commands {
 		this.reload();
 	}
 	async build(){
-		await this.cache.updateDirectory(this.config.srcDirectory + "/src");
+		await this.cache.updateDirectory(this.config.appDirectory + "/src");
 	}
 	async loadConfig(){
 		await this.config.load();
