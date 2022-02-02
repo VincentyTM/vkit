@@ -3,4 +3,5 @@ module.exports = `function App(){
 }
 
 $(document.body).append( App() );
+$.render();
 `;
