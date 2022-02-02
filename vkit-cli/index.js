@@ -15,7 +15,7 @@ const sanitizePath = require("./sanitize-path.js");
 const serveFile = require("./serve-file.js");
 const getMimeType = require("./get-mime-type.js");
 const DEFAULT_INDEX_HTML = require("./index-html.js");
-const DEFAULT_APP_JS = require("./app-js.js");
+const DEFAULT_INDEX_JS = require("./index-js.js");
 const STYLESHEET_REGEXP = /\.css$/i;
 
 /* Instances */
@@ -149,7 +149,7 @@ async function init(){
 		try{ await new Promise((resolve, reject) => fs.mkdir(getStaticPath(), err => err ? reject(err) : resolve())); }catch(ex){}
 		try{
 			await new Promise((resolve, reject) => fs.mkdir(appDirectory + "/src", err => err ? reject(err) : resolve()));
-			await new Promise((resolve, reject) => fs.writeFile(appDirectory + "/src/App.js", DEFAULT_APP_JS, {flag: "wx"}, err => err ? reject(err) : resolve()));
+			await new Promise((resolve, reject) => fs.writeFile(appDirectory + "/src/index.js", DEFAULT_INDEX_JS, {flag: "wx"}, err => err ? reject(err) : resolve()));
 		}catch(ex){}
 		try{ await new Promise((resolve, reject) => fs.writeFile(appDirectory + "/src/index.html", DEFAULT_INDEX_HTML, {flag: "wx"}, err => err ? reject(err) : resolve())); }catch(ex){}
 		config.watch();
