@@ -140,10 +140,10 @@ process.openStdin().on("data", function(data){
 
 async function init(){
 	try{
+		try{ await new Promise((resolve, reject) => fs.mkdir(appDirectory, err => err ? reject(err) : resolve())); }catch(ex){}
 		try{
 			await config.load();
 		}catch(exc){
-			try{ await new Promise((resolve, reject) => fs.mkdir(appDirectory, err => err ? reject(err) : resolve())); }catch(ex){}
 			await config.save();
 		}
 		try{ await new Promise((resolve, reject) => fs.mkdir(getStaticPath(), err => err ? reject(err) : resolve())); }catch(ex){}
