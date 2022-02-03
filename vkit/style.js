@@ -43,10 +43,10 @@ function removeStyle(docs, document){
 }
 
 function componentStyle(css){
-	var attr = "vkit-component" + (++styleCount);
+	var attr = "vkit-style" + (++styleCount);
 	var selector = "[" + attr + "]";
 	var docs = [];
-	return function(el){
+	function bind(el){
 		var document = el.ownerDocument;
 		unmount(function(){
 			removeStyle(docs, document);
@@ -57,7 +57,11 @@ function componentStyle(css){
 			addStyle(docs, document, css, selector);
 			el.setAttribute(attr, "true");
 		});
+	}
+	bind.toString = function(){
+		return selector;
 	};
+	return bind;
 }
 
 $.style = componentStyle;
