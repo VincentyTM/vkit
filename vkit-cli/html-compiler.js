@@ -184,11 +184,26 @@ const RELOAD_SCRIPT = `<script type="text/javascript" language="javascript">
 		return false;
 	}
 	
+	var unloaded = false;
+	
+	function onUnload(){
+		unloaded = true;
+	}
+	
+	if( window.addEventListener ){
+		window.addEventListener("beforeunload", onUnload);
+	}else if( window.attachEvent ){
+		window.attachEvent("onbeforeunload", onUnload);
+	}
+	
 	function sendRequest(){
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function(){
-			if( xhr.readyState==4 || xhr.readyState==0 ){
+			if( xhr.readyState === 4 || xhr.readyState === 0 ){
 				xhr.onreadystatechange = null;
+				if( unloaded ){
+					return;
+				}
 				if( xhr.status !== 200 ){
 					sendRequest();
 					return;
