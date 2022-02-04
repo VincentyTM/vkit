@@ -7,6 +7,7 @@ var createHistoryState = $.historyState;
 
 function createQueryParamsState(win){
 	if(!win) win = window;
+	var location = win.location;
 	var historyURL = createHistoryState(win).url;
 	var queryParamsState = url(historyURL).queryParams;
 	return function(name){
@@ -15,15 +16,21 @@ function createQueryParamsState(win){
 		queryParamsState.effect(function(queryParams){
 			set( queryParams.get(name) );
 		});
-		state.set = function(value){
+		function setValue(value){
 			set(value);
-			var queryParams = createQueryParams(win.location.search.substring(1));
+			var queryParams = createQueryParams(location.search.substring(1));
 			if( value === null || value === undefined ){
 				queryParams.del(name);
 			}else{
 				queryParams.set(name, value);
 			}
-			historyURL.set("?" + queryParams);
+			return queryParams;
+		}
+		state.set = function(value){
+			historyURL.set("?" + setValue(value) + location.hash);
+		};
+		state.push = function(value){
+			historyURL.push("?" + setValue(value) + location.hash);
 		};
 		return state;
 	};
