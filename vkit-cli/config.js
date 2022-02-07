@@ -12,6 +12,7 @@ class Config {
 		this.includeLibraries = true;
 		this.debugPath = "_dev_src";
 		this.environment = "dev";
+		this.loaded = false;
 	}
 	isRelease(){
 		return this.environment === "release";
@@ -28,7 +29,9 @@ class Config {
 			const port = json.port ? Math.min(65535, Math.max(0, json.port|0)) : 3000;
 			if( this.port !== port ){
 				this.port = port;
-				needsRestart = true;
+				if( this.loaded ){
+					needsRestart = true;
+				}
 			}
 			this.staticRoot = String(json.staticRoot || "www");
 			this.exportFile = String(json.exportFile || "index.html");
@@ -36,6 +39,7 @@ class Config {
 			this.includeLibraries = Boolean(json.includeLibraries);
 			this.debugPath = String(json.debugPath || "");
 			this.environment = String(json.environment).toLowerCase()==="dev" ? "dev" : "release";
+			this.loaded = true;
 			this.onLoad(needsRestart);
 		}catch(ex){
 			switch(ex.code){
