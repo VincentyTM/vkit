@@ -45,9 +45,7 @@ class FileCache {
 	async updateDirectory(directory){
 		try{
 			const files = await recursivelyIterate(directory);
-			for(const file of files){
-				await this.update(file);
-			}
+			await Promise.all(files.map(file => this.update(file)));
 		}catch(ex){
 			console.error("Error while loading directory '" + directory + "'.");
 		}
