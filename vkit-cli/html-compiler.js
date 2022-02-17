@@ -150,7 +150,9 @@ window.onerror = function(message, source, lineno, colno, error){
 		stack.length > 1 ? elem("details", [
 			elem("summary", ["Stack trace"]),
 			StackHiddenContents(stack)
-		]) : null
+		], {
+			cursor: "pointer"
+		}) : null
 	], {
 		fontFamily: "Helvetica, Arial, sans-serif",
 		padding: "0.2em 0.2em 1em 1em",
