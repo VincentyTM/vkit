@@ -104,7 +104,7 @@ window.onerror = function(message, source, lineno, colno, error){
 		var secondLastColonPos = sourceWithNumbers.lastIndexOf(":", lastColonPos - 1);
 		var ln = parseInt(sourceWithNumbers.substring(secondLastColonPos + 1, lastColonPos));
 		var cn = parseInt(sourceWithNumbers.substring(lastColonPos + 1));
-		var src = sourceWithNumbers.substring(0, secondLastColonPos);
+		var src = sourceWithNumbers.substring(0, secondLastColonPos).replace(/\\[[^\\]]+\\]\\s*\\(?/g, "");
 		if( ln > 0 && cn > 0 ){
 			return FormattedCode(functionName, src, ln, cn, lineColor, blockColor);
 		}else{
