@@ -62,6 +62,9 @@ const withoutQuery = url => {
 /* Request listener */
 
 async function requestListener(req, res){
+	while(!loadedAll){
+		await new Promise(resolve => setTimeout(resolve, 1000));
+	}
 	const path = withoutQuery(req.url);
 	if( path === "/reload" ){
 		reloader.subscribe(res);
