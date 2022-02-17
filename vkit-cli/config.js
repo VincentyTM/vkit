@@ -37,7 +37,7 @@ class Config {
 			this.exportFile = String(json.exportFile || "index.html");
 			this.autoExport = Boolean(json.autoExport);
 			this.includeLibraries = Boolean(json.includeLibraries);
-			this.debugPath = String(json.debugPath || "");
+			this.debugPath = String(json.debugPath || this.debugPath);
 			this.environment = String(json.environment).toLowerCase()==="dev" ? "dev" : "release";
 			this.loaded = true;
 			this.onLoad(needsRestart);
