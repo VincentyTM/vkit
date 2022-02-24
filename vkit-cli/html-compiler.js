@@ -148,11 +148,11 @@ window.onerror = function(message, source, lineno, colno, error){
 		}),
 		stack.length > 0 ? StackLine(stack[0], "#ffcccc", "#ffeeee") : FormattedCode("", source, lineno, colno, "#ffcccc", "#ffeeee"),
 		stack.length > 1 ? elem("details", [
-			elem("summary", ["Stack trace"]),
+			elem("summary", ["Stack trace"], {
+				cursor: "pointer"
+			}),
 			StackHiddenContents(stack)
-		], {
-			cursor: "pointer"
-		}) : null
+		]) : null
 	], {
 		fontFamily: "Helvetica, Arial, sans-serif",
 		padding: "0.2em 0.2em 1em 1em",
