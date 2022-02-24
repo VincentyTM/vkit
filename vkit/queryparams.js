@@ -85,6 +85,7 @@ function queryParams(search){
 		set: set,
 		has: has,
 		del: del,
+		add: add,
 		each: each,
 		clear: clear,
 		clone: clone,
