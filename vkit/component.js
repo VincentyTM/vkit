@@ -63,7 +63,7 @@ function getViewOf(getData, getView, immutable, onRender){
 	}
 }
 
-function mapViewsOf(array, getView, immutable, onRender){
+function getViewsOf(array, getView, immutable, onRender){
 	var oldArray = typeof array === "function" ? array() : array;
 	var items = toArray.call(oldArray);
 	var prev = currentComponent;
@@ -249,8 +249,8 @@ $.withComponent = withComponent;
 $.component = getCurrentComponent;
 $.component.render = renderComponents;
 $.unmount = unmount;
-$.is = getViewOf;
-$.map = mapViewsOf;
+$.view = getViewOf;
+$.views = getViewsOf;
 $.inject = inject;
 $.provide = provide;
 

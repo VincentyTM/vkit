@@ -1,11 +1,11 @@
 (function($){
 
-var isView = $.is;
+var toView = $.view;
 
 function getConditionalView(condition, getView){
 	return typeof condition.map === "function"
 		? condition.map(Boolean).view(getView)
-		: isView(function(){ return !!condition() }, getView);
+		: toView(function(){ return !!condition() }, getView);
 }
 
 function ifElseSlice(args, offset, argsCount){

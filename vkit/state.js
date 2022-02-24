@@ -2,8 +2,8 @@
 
 var createObservable = $.observable;
 var getComponent = $.component;
-var isView = $.is;
-var mapView = $.map;
+var toView = $.view;
+var toViews = $.views;
 var unmount = $.unmount;
 var stateUpdates = [];
 
@@ -104,11 +104,11 @@ function effect(action){
 }
 
 function getStateView(getView, immutable){
-	return isView(this.get(), getView, immutable, this.onChange);
+	return toView(this.get(), getView, immutable, this.onChange);
 }
 
-function mapStateView(getView, immutable){
-	return mapView(this.get(), getView, immutable, this.onChange);
+function getStateViews(getView, immutable){
+	return toViews(this.get(), getView, immutable, this.onChange);
 }
 
 function createState(value){
@@ -170,7 +170,7 @@ function createState(value){
 		style: style,
 		effect: effect,
 		view: getStateView,
-		views: mapStateView,
+		views: getStateViews,
 		component: getComponent()
 	};
 }
@@ -242,7 +242,7 @@ function combineStates(func){
 		style: style,
 		effect: effect,
 		view: getStateView,
-		views: mapStateView,
+		views: getStateViews,
 		unsubscribe: unsubscribe,
 		component: component
 	};

@@ -213,7 +213,7 @@ setInterval(() => {
 
 ## Conditional Rendering
 
-Sometimes, modifying DOM nodes is not enough; you may need to replace a whole subtree based on a value. This is exactly what `$.is` is for.
+Sometimes, modifying DOM nodes is not enough; you may need to replace a whole subtree based on a value. This is exactly what `$.view` is for.
 ```javascript
 function ToggleComponent(){
     let shown = false;
@@ -222,7 +222,7 @@ function ToggleComponent(){
             value: () => shown ? "Hide" : "Show",
             onclick: () => shown = !shown,
         },
-        $.is(() => shown,
+        $.view(() => shown,
             isShown => isShown
                 ? $.html('<p>This text is currently shown.</p>')
                 : $.html()
@@ -249,7 +249,7 @@ function TabsComponent(){
         Tab("Home", HomeComponent),
         Tab("About", AboutComponent),
         '<hr>',
-        $.is(() => currentComponent, component => component())
+        $.view(() => currentComponent, component => component())
     );
 }
 ```
@@ -272,7 +272,7 @@ $.ifElse(
 
 ## Mapping an Array
 
-Arrays that can dynamically change can be mapped to a view with the `$.map` function.
+Arrays that can dynamically change can be mapped to a view with the `$.views` function.
 ```javascript
 function BooksTable(books){
     return $.html(
@@ -283,7 +283,7 @@ function BooksTable(books){
                 '<th scope="col">Year</th>',
             '</tr></thead>',
             '<tbody>',
-                $.map(books, book => $.html('<tr>',
+                $.views(books, book => $.html('<tr>',
                     '<td>', $.text(() => book.title), '</td>',
                     '<td>', $.text(() => book.author), '</td>',
                     '<td>', $.text(() => book.year), '</td>',
@@ -293,11 +293,11 @@ function BooksTable(books){
     );
 }
 ```
-Instead of an array (or array-like object), you can pass a function to `$.map` as the first argument that returns an array.
+Instead of an array (or array-like object), you can pass a function to `$.views` as the first argument that returns an array.
 
 ## Component Lifecycle
 
-Components can disappear from the tree when the value of `$.is` changes or the corresponding item is no longer in the array used in `$.map`. When this happens, all side effects caused by creating the component must be reverted. This includes all timeouts, AJAX requests, external state changes initiated by the component.
+Components can disappear from the tree when the value of `$.view` changes or the corresponding item is no longer in the array used in `$.views`. When this happens, all side effects caused by creating the component must be reverted. This includes all timeouts, AJAX requests, external state changes initiated by the component.
 
 Fortunately, the `$.unmount` function can be used here.
 ```javascript
@@ -371,7 +371,7 @@ function DownloadListComponent(){
         )
     );
     return $.html(
-        $.map(downloadedBlobs, FileComponent)
+        $.views(downloadedBlobs, FileComponent)
     );
 }
 ```
