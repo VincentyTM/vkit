@@ -15,6 +15,16 @@ function subscribe(state, callback){
 	return unsubscribe;
 }
 
+function getOnChange(state){
+	if( state.component === getComponent() ){
+		return state.onChange;
+	}else{
+		var onChange = createObservable();
+		unmount(state.onChange.subscribe(onChange));
+		return onChange;
+	}
+}
+
 function map(){
 	var args = arguments, n = args.length;
 	function transform(x){
@@ -104,11 +114,11 @@ function effect(action){
 }
 
 function getStateView(getView, immutable){
-	return toView(this.get(), getView, immutable, this.onChange);
+	return toView(this.get(), getView, immutable, getOnChange(this));
 }
 
 function getStateViews(getView, immutable){
-	return toViews(this.get(), getView, immutable, this.onChange);
+	return toViews(this.get(), getView, immutable, getOnChange(this));
 }
 
 function createState(value){
