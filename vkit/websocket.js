@@ -26,6 +26,7 @@ function createWebSocket(url, options){
 	function onError(err){
 		close();
 		emitter.throwError(err);
+		render();
 	}
 
 	function onClose(e){
@@ -73,6 +74,7 @@ function createWebSocket(url, options){
 			ws.close();
 			ws = null;
 			emitter.socket = null;
+			isOpen.set(false);
 		}
 		return this;
 	}
@@ -80,8 +82,10 @@ function createWebSocket(url, options){
 	function setURL(newURL){
 		if( url !== newURL ){
 			url = newURL;
-			close();
-			open();
+			if( ws ){
+				close();
+				open();
+			}
 		}
 		return this;
 	}
