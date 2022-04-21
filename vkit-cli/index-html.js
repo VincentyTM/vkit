@@ -10,5 +10,6 @@ module.exports = `<!DOCTYPE html>
 {{style}}
 </head>
 <body>
+<noscript>You need to enable JavaScript to run this app.</noscript>
 {{body}}
 </body></html>`;
