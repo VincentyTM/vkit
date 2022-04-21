@@ -72,6 +72,7 @@ async function requestListener(req, res){
 	}
 	if( path === "/" ){
 		res.setHeader('content-type', 'text/html; charset=utf-8');
+		res.setHeader('cache-control', 'no-store');
 		res.end(await htmlCompiler.compile(
 			config.isRelease() ? null : src => transformSRC(src) + cache.getVersionString(src),
 			true
