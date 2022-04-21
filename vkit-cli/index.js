@@ -66,7 +66,7 @@ async function requestListener(req, res){
 		await new Promise(resolve => setTimeout(resolve, 1000));
 	}
 	const path = withoutQuery(req.url);
-	if( path === "/reload" ){
+	if( path === "/reload" && req.method === "POST" ){
 		reloader.subscribe(res);
 		return;
 	}

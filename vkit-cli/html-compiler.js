@@ -225,7 +225,7 @@ const RELOAD_SCRIPT = `<script type="text/javascript" language="javascript">
 				}
 			}
 		};
-		xhr.open("GET", "/reload", true);
+		xhr.open("POST", "/reload", true);
 		xhr.send();
 	}
 	setTimeout(sendRequest, 0);
