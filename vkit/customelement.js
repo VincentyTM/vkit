@@ -1,4 +1,4 @@
-(function($, undefined){
+(function($, window, undefined){
 
 var group = $.group;
 var append = $.append;
@@ -17,7 +17,7 @@ function setPrototypeOf(obj, proto){
 
 function createCustomElement(name, component, options){
 	function CustomElement(){
-		var el = Reflect.construct(HTMLElement, [], CustomElement);
+		var el = Reflect.construct(win.HTMLElement, [], CustomElement);
 		var attrs = {};
 		el.data = {attributes: attrs};
 
@@ -61,9 +61,6 @@ function createCustomElement(name, component, options){
 		return el;
 	}
 
-	setPrototypeOf(CustomElement.prototype, HTMLElement.prototype);
-	setPrototypeOf(CustomElement, HTMLElement);
-
 	function onAttr(name, oldValue, newValue){
 		var attr = this.data.attributes[name];
 		if( attr ){
@@ -73,8 +70,10 @@ function createCustomElement(name, component, options){
 	}
 
 	var proto = CustomElement.prototype;
+	var win = window;
 
 	if( options ){
+		if( options.window ) win = options.window;
 		if( options.adopt ) proto.adoptedCallback = options.adopt;
 		if( options.connect ) proto.connectedCallback = options.connect;
 		if( options.disconnect ) proto.disconnectedCallback = options.disconnect;
@@ -84,11 +83,14 @@ function createCustomElement(name, component, options){
 		}
 	}
 
-	customElements.define(name, CustomElement);
+	setPrototypeOf(CustomElement.prototype, win.HTMLElement.prototype);
+	setPrototypeOf(CustomElement, win.HTMLElement);
+
+	win.customElements.define(name, CustomElement);
 
 	return component;
 }
 
 $.customElement = createCustomElement;
 
-})($);
+})($, window);
