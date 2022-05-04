@@ -44,23 +44,6 @@ function pipe(state, transform){
 	return this;
 }
 
-function select(prop){
-	if( prop === undefined ){
-		if( typeof Proxy !== "function" ){
-			throw new ReferenceError("Proxy is not supported in your browser!");
-		}
-		var state = this;
-		return new Proxy({}, {
-			get: function(target, prop, receiver){
-				return state.select(prop);
-			}
-		});
-	}
-	return map.call(this, function(value){
-		return value ? value[prop] : undefined;
-	});
-}
-
 function add(value){
 	this.set(this.get() + value);
 }
@@ -171,7 +154,6 @@ function createState(value){
 		get: get,
 		map: map,
 		pipe: pipe,
-		select: select,
 		onChange: onChange,
 		enqueue: enqueue,
 		dequeue: dequeue,
@@ -243,7 +225,6 @@ function combineStates(func){
 		get: getValue,
 		map: map,
 		pipe: pipe,
-		select: select,
 		update: update,
 		onChange: onChange,
 		addDependency: addDependency,
