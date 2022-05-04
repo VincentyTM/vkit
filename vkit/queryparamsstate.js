@@ -36,6 +36,11 @@ function createQueryParamsState(win){
 	};
 };
 
+function param(name, win){
+	return createQueryParamsState(win)(name);
+}
+
 $.queryParamsState = createQueryParamsState;
+$.param = param;
 
 })($, window);
