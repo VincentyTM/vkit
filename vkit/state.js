@@ -38,7 +38,7 @@ function map(){
 
 function pipe(state, transform){
 	function update(value){
-		state.set(transform ? transform(value) : value);
+		state.set(transform ? transform(value, state.get()) : value);
 	}
 	this.effect(update);
 	return this;
