@@ -56,14 +56,7 @@ function sendXHR(method, url, options){
 	http.readyState = createState(0);
 	http.progress = createState({loaded: 0, total: 0, lengthComputable: false});
 	http.upload = {
-		progress: createState({loaded: 0, total: 0, lengthComputable: false}),
-		aborted: false,
-		abort: function(){
-			if( xhr.upload ){
-				xhr.upload.abort();
-			}
-			http.upload.aborted = true;
-		}
+		progress: createState({loaded: 0, total: 0, lengthComputable: false})
 	};
 	http.aborted = false;
 	http.abort = function(){
