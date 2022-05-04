@@ -3,6 +3,7 @@
 var render = $.render;
 var createState = $.state;
 var createEmitter = $.emitter;
+var createObservable = $.observable;
 
 var defaultConfig = {
 	async: true,
@@ -49,6 +50,7 @@ function getConfig(options){
 
 function sendXHR(method, url, options){
 	options = getConfig(options);
+	var onAbort = createObservable();
 	var headers = options.headers;
 	var http = createEmitter();
 	http.status = 0;
@@ -58,6 +60,7 @@ function sendXHR(method, url, options){
 	http.upload = {
 		progress: createState({loaded: 0, total: 0, lengthComputable: false})
 	};
+	http.onAbort = onAbort;
 	http.aborted = false;
 	http.abort = function(){
 		http.aborted = true;
@@ -80,6 +83,11 @@ function sendXHR(method, url, options){
 	};
 	xhr.onprogress = function(e){
 		http.progress.set(e);
+		render();
+	};
+	xhr.onabort = function(){
+		http.aborted = true;
+		onAbort();
 		render();
 	};
 	if( xhr.upload ){
