@@ -118,8 +118,11 @@ function createEmitter(base){
 		return state;
 	}
 
-	function pipe(state){
+	function pipe(state, transform){
 		function onData(data){
+			if( transform ){
+				data = transform(data);
+			}
 			state.set(data);
 			render();
 		}
