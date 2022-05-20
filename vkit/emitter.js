@@ -32,11 +32,15 @@ function createEmitter(base){
 		return child;
 	}
 
-	function map(transform){
+	function map(){
 		var child = createEmitter(base);
+		var args = arguments, n = args.length;
 		function onData(data){
 			try{
-				child.emit(transform ? transform(data) : data);
+				for(var i=0; i<n; ++i){
+					data = args[i](data);
+				}
+				child.emit(data);
 			}catch(ex){
 				child.throwError(ex);
 			}
