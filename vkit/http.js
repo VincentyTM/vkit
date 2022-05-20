@@ -77,7 +77,12 @@ function sendXHR(method, url, options){
 		http.status = xhr.status;
 		http.readyState.set(xhr.readyState);
 		if( xhr.readyState === 4 || xhr.readyState === 0 ){
-			xhr.status >= 200 ? http.emit(http.response = xhr.response) : http.throwError(e || window.event);
+			xhr.status >= 200 ? http.emit({
+				status: xhr.status,
+				header: http.header,
+				headers: http.headers,
+				body: http.response = xhr.response
+			}) : http.throwError(e || window.event);
 		}
 		render();
 	};
