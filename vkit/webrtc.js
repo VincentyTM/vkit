@@ -1,192 +1,273 @@
 (function($, g){
 
-var emitLog=function(){}, emitError=console.error;
+var createObservable = $.observable;
+var render = $.render;
+
 var RTCSessionDescription = g.RTCSessionDescription || g.mozRTCSessionDescription || g.RTCSessionDescription;
 var RTCPeerConnection = g.RTCPeerConnection || g.mozRTCPeerConnection || g.webkitRTCPeerConnection;
 var RTCIceCandidate = g.RTCIceCandidate || g.mozRTCIceCandidate || g.RTCIceCandidate;
-var supported=RTCSessionDescription && RTCPeerConnection && RTCIceCandidate;
 
-var defaultOptions={
+function createPeer(peerConfig, peerOptions, manipulateSDP){
+	if(!peerOptions){
+		peerOptions = defaultPeerOptions;
+	}
+	var onError = createObservable();
+	var handleStreams = createObservable();
+	var sendSignal = createObservable();
+	var log = createObservable();
+	var onOpen = createObservable();
+	var onClose = createObservable();
+	var onMessage = createObservable();
+	var receiveChannel;
+	var sendChannel;
+	var negotiated = false;
+	var closed = false;
+	var opened = false;
+	
+	function onOpenOnce(){
+		if(!opened){
+			opened = true;
+			onOpen();
+		}
+	}
+	
+	function onCloseOnce(){
+		if(!closed){
+			closed = true;
+			onClose();
+		}
+	}
+	
+	function receiveSignal(signal){
+		if(!signal){
+			return;
+		}
+		switch( signal.type ){
+			case "offer": createAnswer(signal.data); break;
+			case "answer": finishNegotiation(signal.data); break;
+			case "ice":
+				var candidate = signal.data;
+				peer.addIceCandidate( new RTCIceCandidate(candidate) ).then(null, onError);
+				break;
+		}
+	}
+	
+	function send(message){
+		if( sendChannel ){
+			if( sendChannel.readyState === "open" ){
+				sendChannel.send(message);
+			}else{
+				onError("Send channel is in state " + sendChannel.readyState);
+			}
+		}else{
+			onError("No send channel while sending message");
+		}
+		return this;
+	}
+	
+	function close(){
+		if( sendChannel ){
+			sendChannel.close();
+		}
+		if( receiveChannel ){
+			receiveChannel.close();
+		}
+		peer.close();
+		return this;
+	}
+
+	function addTrack(track, stream){
+		negotiated = false;
+		var sender = peer.addTrack(track, stream);
+		return function(){
+			negotiated = false;
+			if( peer.signalingState !== "closed" ){
+				peer.removeTrack(sender);
+			}
+		};
+	}
+	
+	function addStream(stream){
+		negotiated = false;
+		var senders = [];
+		stream.getTracks().forEach(function(track){
+			senders.push( peer.addTrack(track, stream) );
+		});
+		return function(){
+			negotiated = false;
+			senders.forEach(function(sender){
+				if( peer.signalingState !== "closed" ){
+					peer.removeTrack(sender);
+				}
+			});
+		};
+	}
+	
+	function start(){
+		peer.onnegotiationneeded = onNegotiationNeeded;
+		onNegotiationNeeded();
+		return this;
+	}
+	
+	function onNegotiationNeeded(){
+		if(!negotiated){
+			negotiated = true;
+			createOffer();
+		}
+	}
+	
+	function createOffer(){
+		peer.createOffer().then(function(offer){
+			if( manipulateSDP ){
+				manipulateSDP(offer, false);
+			}
+			peer.setLocalDescription(offer).then(function(){
+				sendSignal({
+					"type": "offer",
+					"data": offer
+				});
+			}, onError);
+		}, onError);
+	}
+		
+	function createAnswer(offer){
+		peer.setRemoteDescription( new RTCSessionDescription(offer) ).then(function(){
+			return peer.createAnswer();
+		}).then(function(answer){
+			if( manipulateSDP ){
+				manipulateSDP(answer, true);
+			}
+			peer.setLocalDescription(answer).then(function(){
+				sendSignal({
+					"type": "answer",
+					"data": answer
+				});
+			}, onError);
+		}, onError);
+	}
+
+	function finishNegotiation(answer){
+		peer.setRemoteDescription( new RTCSessionDescription(answer) );
+	}
+
+	var peer = new RTCPeerConnection(peerConfig, peerOptions);
+	
+	peer.ontrack = function(e){
+		log("OnTrack event fired");
+		handleStreams(e.streams);
+		render();
+	};
+	
+	peer.ondatachannel = function(e){
+		receiveChannel = e.channel;
+		receiveChannel.binaryType = "arraybuffer";
+		receiveChannel.onopen = function(){
+			log("Receive channel is open");
+			start();
+			onOpenOnce();
+			render();
+		};
+		receiveChannel.onclose = function(){
+			log("Receive channel is closed");
+			close();
+			onCloseOnce();
+			render();
+		};
+		receiveChannel.onerror = function(error){
+			onError(error);
+			render();
+		};
+		receiveChannel.onmessage = function(e){
+			onMessage(e.data);
+			render();
+		};
+		log("OnDataChannel event fired");
+	};
+	
+	peer.onconnectionstatechange = function(){
+		var state = this.connectionState;
+		if( state === "disconnected" || state === "failed" || state === "closed" ){
+			if( receiveChannel ){
+				receiveChannel.close();
+			}
+			this.close();
+			onCloseOnce();
+		}
+		render();
+	};
+	
+	peer.oniceconnectionstatechange = function(){
+		var state = this.iceConnectionState;
+		if( state === "failed" || state === "disconnected" ){
+			if( peer.restartIce ){
+				peer.restartIce();
+			}
+		}else{
+			log("IceConnectionState changed to " + this.iceConnectionState);
+		}
+	};
+	
+	peer.onicecandidate = function(e){
+		var candidate = e.candidate;
+		if( candidate ){
+			sendSignal({
+				"type": "ice",
+				"data": candidate
+			});
+		}
+	};
+
+	function createSendChannel(){
+		if( sendChannel ){
+			sendChannel.close();
+		}
+		if( peer.signalingState === "closed" ){
+			return;
+		}
+		sendChannel = peer.createDataChannel("sendDataChannel", {
+			ordered: true
+		});
+		sendChannel.binaryType = "arraybuffer";
+		sendChannel.onopen = function(){
+			log("Send channel open");
+			render();
+		};
+		sendChannel.onclose = function(){
+			log("Send channel closed");
+			sendChannel = null;
+			createSendChannel();
+			render();
+		};
+		sendChannel.onerror = onError;
+	}
+	
+	createSendChannel();
+	
+	return {
+		connection: peer,
+		onLog: log,
+		onError: onError,
+		onStreams: handleStreams,
+		onSignal: sendSignal,
+		onOpen: onOpen,
+		onClose: onClose,
+		onMessage: onMessage,
+		signal: receiveSignal,
+		addTrack: addTrack,
+		addStream: addStream,
+		start: start,
+		send: send,
+		close: close
+	};;
+}
+
+var defaultPeerOptions = {
 	"optional": [
 		{"DtlsSrtpKeyAgreement": true}
 	]
 };
 
-function createPeer(rtcInterface, config, options){
-	var receiveChannel;
-	var peer=new RTCPeerConnection(config, options || defaultOptions);
-	peer.ontrack=function(e){
-		rtcInterface.handleStreams(e.streams);
-	};
-	peer.ondatachannel=function(e){
-		var receiveChannel=e.channel;
-		receiveChannel.onopen=function(){
-			setNegotiationHandler(peer, rtcInterface);
-			rtcInterface.open();
-			emitLog("Receive channel open!");
-		};
-		receiveChannel.onclose=function(){
-			rtcInterface.close();
-			emitLog("Receive channel closed...");
-		};
-		receiveChannel.onerror=emitError;
-		receiveChannel.onmessage=function(e){
-			rtcInterface.receiveText(e.data);
-		};
-		emitLog("Receive channel received!");
-	};
-	peer.onconnectionstatechange=function(e){
-		switch( this.connectionState ){
-			case "disconnected": case "failed": case "closed":
-				receiveChannel && receiveChannel.close();
-				this.close();
-				break;
-		}
-	};
-	peer.oniceconnectionstatechange=function(){
-		switch( this.iceConnectionState ){
-			case "failed":
-				if( peer.restartIce ){
-					peer.restartIce();
-				}
-				break;
-			default:
-				emitLog("Changed to ", this.iceConnectionState);
-		}
-	};
-	peer.onicecandidate=function(e){
-		if( e.candidate ){
-			rtcInterface.sendSignal("ice", e.candidate);
-		}
-	};
-	return peer;
-}
-
-function setNegotiationHandler(peer, rtcInterface){
-	peer.onnegotiationneeded=function(){
-		if(!rtcInterface.negotiated){
-			rtcInterface.negotiated=true;
-			createOffer(this, rtcInterface);
-		}
-	};
-	if(!rtcInterface.negotiated){
-		rtcInterface.negotiated=true;
-		createOffer(peer, rtcInterface);
-	}
-}
-
-function createSendChannel(peer){
-	var sendChannel=peer.createDataChannel("sendDataChannel", {
-		ordered: true
-	});
-	sendChannel.onopen=function(){ emitLog("Send channel open"); };
-	sendChannel.onclose=function(){ emitLog("Send channel closed"); };
-	sendChannel.onerror=emitError;
-	return sendChannel;
-}
-
-function createOffer(peer, rtcInterface){
-	peer.createOffer().then(function(offer){
-		peer.setLocalDescription(offer).then(function(){
-			rtcInterface.sendSignal("offer", offer);
-		}, emitError);
-	}, emitError);
-}
-
-function addIce(peer, remoteICE){
-	peer.addIceCandidate( new RTCIceCandidate(remoteICE) ).then(null, emitError);
-}
-
-function createAnswer(peer, offer, rtcInterface){
-	peer.setRemoteDescription( new RTCSessionDescription(offer) ).then(function(){
-		peer.createAnswer().then(function(answer){
-			peer.setLocalDescription(answer).then(function(){
-				rtcInterface.sendSignal("answer", answer);
-			}, emitError);
-		}, emitError);
-	}, emitError);
-}
-
-function finishNegotiation(peer, answer){
-	peer.setRemoteDescription( new RTCSessionDescription(answer) ).then(function(e){
-		emitLog("SDP negotiation done");
-	}, emitError);
-}
-
-function RTCInterface(sendSignal, streamHandler, config, options){
-	var instance=this;
-	var rtcInterface={
-		handleStreams: streamHandler || function(){},
-		sendSignal: function(type, data){
-			emitLog("Signal: ", type, data);
-			sendSignal(JSON.stringify({
-				type: type,
-				data: data
-			}), type);
-		},
-		open: function(){
-			instance.onopen && instance.onopen();
-		},
-		close: function(){
-			instance.onclose && instance.onclose();
-		},
-		receiveText: function(msg){
-			instance.onmessage && instance.onmessage(msg);
-		},
-		negotiated: false
-	};
-	var peer=createPeer(rtcInterface, config, options);
-	var sendChannel=createSendChannel(peer);
-	this.send=function(msg){
-		if( sendChannel.readyState==="open" ){
-			sendChannel.send(msg);
-		}
-		return this;
-	};
-	this.close=function(){
-		sendChannel.close();
-		peer.close();
-		return this;
-	};
-	this.signal=function(signal){
-		if(!signal){
-			return;
-		}
-		try{
-			var msg=JSON.parse(signal);
-			switch( msg.type ){
-				case "offer": createAnswer(peer, msg.data, rtcInterface); break;
-				case "answer": finishNegotiation(peer, msg.data); break;
-				case "ice": addIce(peer, msg.data); break;
-			}
-		}catch(err){
-			emitError(err);
-		}
-		return this;
-	};
-	this.start=function(){
-		setNegotiationHandler(peer, rtcInterface);
-		return this;
-	};
-	var senders=[];
-	this.addTracks=function(tracks, stream){
-		rtcInterface.negotiated=false;
-		tracks.forEach(function(track){
-			senders.push( peer.addTrack(track, stream) );
-		});
-		return this;
-	};
-	this.removeTracks=function(){
-		rtcInterface.negotiated=false;
-		while( senders.length ){
-			peer.removeTrack( senders.pop() );
-		}
-		return this;
-	};
-}
-
-$.rtc=function(sendSignal, streamHandler, config, options){
-	return new RTCInterface(sendSignal, streamHandler, config, options);
-};
+$.webrtcPeer = createPeer;
+$.webrtcPeer.isSupported = !!(RTCSessionDescription && RTCPeerConnection && RTCIceCandidate);
 
 })($, this);
