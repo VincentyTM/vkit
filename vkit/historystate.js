@@ -14,7 +14,7 @@ function getValue(win){
 }
 
 function withoutOrigin(win, url){
-	return decodeURIComponent(url.replace(win.location.origin, ""));
+	return url.replace(win.location.origin, "");
 }
 
 function getURL(value){
