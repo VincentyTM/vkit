@@ -2,20 +2,21 @@
 
 var queryParams = $.queryParams;
 
+function removeHash(url){
+	var hmp = url.indexOf("#");
+	return hmp === -1 ? url : url.substring(0, hmp);
+}
+
 function getBase(url){
+	url = removeHash(url);
 	var qmp = url.indexOf("?");
-	if( qmp === -1 ){
-		return url;
-	}
-	return url.substring(0, qmp);
+	return qmp === -1 ? url : url.substring(0, qmp);
 }
 
 function getQueryParams(url){
+	url = removeHash(url);
 	var qmp = url.indexOf("?");
-	if( qmp === -1 ){
-		return queryParams("");
-	}
-	return queryParams(url.substring(qmp+1));
+	return queryParams(qmp === -1 ? "" : url.substring(qmp+1));
 }
 
 function URL(url){
