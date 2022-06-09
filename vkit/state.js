@@ -257,9 +257,28 @@ function renderStates(){
 	}
 }
 
+function getArgs(){
+	return arguments;
+}
+
+function combineView(getView){
+	return this.map(getArgs).view(function(args){
+		return getView.apply(null, args);
+	});
+}
+
+function combineEffect(action){
+	this.map(getArgs).effect(function(args){
+		action.apply(null, args);
+	});
+	return this;
+}
+
 $.state = createState;
 $.state.render = renderStates;
 $.state.updateQueue = stateUpdates;
 $.fn.map = combineStates;
+$.fn.view = combineView;
+$.fn.effect = combineEffect;
 
 })($, document);
