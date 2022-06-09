@@ -45,11 +45,11 @@ function pipe(state, transform){
 }
 
 function add(value){
-	this.set(this.get() + value);
+	return this.set(this.get() + value);
 }
 
 function toggle(){
-	this.set(!this.get());
+	return this.set(!this.get());
 }
 
 function apply(){
@@ -58,7 +58,7 @@ function apply(){
 	for(var i=0; i<n; ++i){
 		value = arguments[i].call(this, value);
 	}
-	this.set(value);
+	return this.set(value);
 }
 
 function text(){
@@ -94,6 +94,7 @@ function style(key){
 function effect(action){
 	action(this.get());
 	subscribe(this, action);
+	return this;
 }
 
 function getStateView(getView, immutable){
@@ -125,6 +126,7 @@ function createState(value){
 			update.queued = true;
 			stateUpdates.push(update);
 		}
+		return this;
 	}
 	
 	function dequeue(){
@@ -137,6 +139,7 @@ function createState(value){
 				}
 			}
 		}
+		return this;
 	}
 	
 	function set(newValue){
@@ -144,6 +147,7 @@ function createState(value){
 			value = newValue;
 			enqueue();
 		}
+		return this;
 	}
 	
 	return {
@@ -182,6 +186,7 @@ function combineStates(func){
 		if( value !== newValue ){
 			onChange(value = newValue);
 		}
+		return this;
 	}
 	
 	function unsubscribe(){
@@ -189,6 +194,7 @@ function combineStates(func){
 		for(var i=0; i<n; ++i){
 			unsubscribes[i]();
 		}
+		return this;
 	}
 	
 	function addDependency(){
