@@ -398,12 +398,12 @@ function Counter(){
 }
 ```
 
-States are container objects. Upon rendering, their descendants ― the so-called derived states ― will be updated up to view level. Multiple states can be combined with pure functions:
+States are container objects. Upon rendering, their descendants ― the so-called computed states ― will be updated up to view level. Note that computed states cannot be set. Multiple states can be combined with pure functions:
 
 ```javascript
 const a = $.state(3);
 const b = $.state(4);
-const aPlusB = $(a, b).combine((a, b) => a + b);
+const aPlusB = $(a, b).map((a, b) => a + b);
 //aPlusB.get() === 7
 a.set(5);
 //aPlusB.get() === 7
@@ -411,7 +411,7 @@ $.render();
 //aPlusB.get() === 9
 ```
 
-If you want to transform a single state, you can use `map` instead of `combine`. Note that derived states cannot be set.
+You can also map a single state to another value:
 
 ```javascript
 const x = $.state(5);

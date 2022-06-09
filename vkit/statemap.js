@@ -1,6 +1,6 @@
 (function($){
 
-var combineStates = $.fn.combine;
+var combineStates = $.fn.map;
 
 function createConstState(value){
 	function get(){

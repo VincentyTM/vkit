@@ -2,7 +2,7 @@
 
 var input = $.input;
 var unmount = $.unmount;
-var combine = $.fn.combine;
+var combine = $.fn.map;
 
 function memo(obj, props, func){
 	var n = props.length;

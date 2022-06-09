@@ -33,7 +33,7 @@ function map(){
 		}
 		return x;
 	}
-	return $(this).combine(n === 1 ? args[0] : transform);
+	return $(this).map(n === 1 ? args[0] : transform);
 }
 
 function pipe(state, transform){
@@ -260,6 +260,6 @@ function renderStates(){
 $.state = createState;
 $.state.render = renderStates;
 $.state.updateQueue = stateUpdates;
-$.fn.combine = combineStates;
+$.fn.map = combineStates;
 
 })($, document);
