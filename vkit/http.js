@@ -1,8 +1,6 @@
 (function($){
 
 var render = $.render;
-var createState = $.state;
-var createEmitter = $.emitter;
 var createObservable = $.observable;
 
 var defaultConfig = {
@@ -50,57 +48,31 @@ function getConfig(options){
 
 function sendXHR(method, url, options){
 	options = getConfig(options);
-	var onAbort = createObservable();
+	var onComplete = createObservable();
+	var onError = createObservable();
 	var headers = options.headers;
-	var http = createEmitter();
-	http.status = 0;
-	http.response = "";
-	http.readyState = createState(0);
-	http.progress = createState({loaded: 0, total: 0, lengthComputable: false});
-	http.upload = {
-		progress: createState({loaded: 0, total: 0, lengthComputable: false})
-	};
-	http.onAbort = onAbort;
-	http.aborted = false;
-	http.abort = function(){
-		http.aborted = true;
-		xhr.abort();
-	};
-	http.header = function(name){
-		return xhr.getResponseHeader(name);
-	};
-	http.headers = function(){
-		return xhr.getAllResponseHeaders();
+	var progress = options.progress;
+	var uploadProgress = options.uploadProgress;
+	var readyState = options.readyState;
+	var abortHandler = options.onAbort;
+	var http = {
+		then: then,
+		abort: abort,
+		status: 0,
+		header: getHeader,
+		headers: getHeaders
 	};
 	var xhr = new XMLHttpRequest();
-	xhr.onreadystatechange = function(e){
-		http.status = xhr.status;
-		http.readyState.set(xhr.readyState);
-		if( xhr.readyState === 4 || xhr.readyState === 0 ){
-			xhr.status >= 200 ? http.emit({
-				status: xhr.status,
-				header: http.header,
-				headers: http.headers,
-				body: http.response = xhr.response
-			}) : http.throwError(e || window.event);
-		}
-		render();
-	};
-	xhr.onprogress = function(e){
-		http.progress.set(e);
-		render();
-	};
-	xhr.onabort = function(){
-		http.aborted = true;
-		onAbort();
-		render();
-	};
-	if( xhr.upload ){
-		xhr.upload.onprogress = function(e){
-			http.upload.progress.set(e);
-			render();
-		};
+	if( progress ){
+		xhr.onprogress = onProgress;
 	}
+	if( uploadProgress && xhr.upload ){
+		xhr.upload.onprogress = onUploadProgress;
+	}
+	if( abortHandler ){
+		xhr.onabort = onAbort;
+	}
+	xhr.onreadystatechange = onReadyStateChange;
 	xhr.open(method, url, options.async, options.user, options.password);
 	xhr.responseType = options.responseType;
 	if( headers ){
@@ -110,7 +82,60 @@ function sendXHR(method, url, options){
 	}
 	xhr.send(options.body);
 	return http;
-};
+	
+	function abort(){
+		xhr.abort();
+	}
+	
+	function getHeader(name){
+		return xhr.getResponseHeader(name);
+	}
+	
+	function getHeaders(){
+		return xhr.getAllResponseHeaders();
+	}
+	
+	function then(resolve, reject){
+		if( resolve ){
+			onComplete.subscribe(resolve);
+		}
+		if( reject ){
+			onError.subscribe(reject);
+		}
+	}
+	
+	function onProgress(e){
+		progress.set(e);
+		render();
+	}
+	
+	function onUploadProgress(e){
+		uploadProgress.set(e);
+		render();
+	}
+	
+	function onAbort(){
+		abortHandler();
+		render();
+	}
+	
+	function onReadyStateChange(e){
+		http.status = xhr.status;
+		if( readyState ){
+			readyState.set(xhr.readyState);
+		}
+		if( xhr.readyState === 4 || xhr.readyState === 0 ){
+			var data = {
+				status: xhr.status,
+				header: getHeader,
+				headers: getHeaders,
+				body: typeof xhr.response !== "undefined" ? xhr.response : xhr.responseText
+			};
+			xhr.status >= 200 ? onComplete(data) : onError(data);
+		}
+		render();
+	}
+}
 
 $.http = createRequest;
 $.http.config = defaultConfig;
