@@ -9,11 +9,19 @@ function noop(){}
 var rootComponent = createComponent(null);
 var currentComponent = rootComponent;
 
+function contextGuard(){
+	if(!currentComponent){
+		throw new Error("This function can only be called synchronously from a component");
+	}
+}
+
 function unmount(func){
+	contextGuard();
 	return currentComponent !== rootComponent ? currentComponent.onDestroy.subscribe(func) : noop;
 }
 
 function withComponent(func, component){
+	contextGuard();
 	var provider = currentProvider;
 	if(!component) component = currentComponent;
 	return function(){
@@ -33,7 +41,12 @@ function withComponent(func, component){
 }
 
 function getCurrentComponent(){
+	contextGuard();
 	return currentComponent;
+}
+
+function setCurrentComponent(component){
+	currentComponent = component;
 }
 
 function renderComponents(){
@@ -41,6 +54,7 @@ function renderComponents(){
 }
 
 function getViewOf(getData, getView, immutable, onRender){
+	contextGuard();
 	var A = onRender ? getData : getData();
 	var prev = currentComponent;
 	var component = currentComponent = createComponent(prev, immutable);
@@ -64,6 +78,7 @@ function getViewOf(getData, getView, immutable, onRender){
 }
 
 function getViewsOf(array, getView, immutable, onRender){
+	contextGuard();
 	var oldArray = typeof array === "function" ? array() : array;
 	var items = toArray.call(oldArray);
 	var prev = currentComponent;
@@ -208,6 +223,7 @@ Provider.prototype.getContainer = function(service){
 };
 
 function inject(service){
+	contextGuard();
 	var provider = currentProvider;
 	var container = null;
 	while( provider && !(container = provider.getContainer(service))){
@@ -223,6 +239,7 @@ function inject(service){
 }
 
 function provide(services, getContent){
+	contextGuard();
 	if( supportsWeakMap ){
 		var containers = new WeakMap();
 		services.forEach(function(service){
@@ -247,6 +264,7 @@ function provide(services, getContent){
 
 $.withComponent = withComponent;
 $.component = getCurrentComponent;
+$.component.set = setCurrentComponent;
 $.component.render = renderComponents;
 $.unmount = unmount;
 $.view = getViewOf;
