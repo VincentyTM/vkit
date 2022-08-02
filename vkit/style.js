@@ -16,10 +16,18 @@ function addStyle(docs, document, css, selector){
 	}
 	var head = document.getElementsByTagName("head")[0];
 	var style = document.createElement("style");
-	style.appendChild(typeof css.map === "function"
-		? css.map(replace).text()
-		: document.createTextNode(replace(css))
+	try{
+		style.appendChild(typeof css.map === "function"
+			? css.map(replace).text()
+			: document.createTextNode(replace(css))
 	);
+	}catch(ex){
+		if( typeof css.map === "function" ){
+			css.map(replace).prop("innerText")(style);
+		}else{
+			style.innerText = replace(css);
+		}
+	}
 	head.appendChild(style);
 	docs.push({
 		document: document,
