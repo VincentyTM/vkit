@@ -1,6 +1,7 @@
 (function($){
 
 var unmount = $.unmount;
+var withComponent = $.withComponent;
 var afterRender = $.afterRender;
 var styleCount = 0;
 
@@ -60,11 +61,11 @@ function componentStyle(css){
 			removeStyle(docs, document);
 			el.removeAttribute(attr);
 		});
-		afterRender(function(){
+		afterRender(withComponent(function(){
 			document = el.ownerDocument;
 			addStyle(docs, document, css, selector);
 			el.setAttribute(attr, "true");
-		});
+		}));
 	}
 	bind.toString = function(){
 		return selector;
