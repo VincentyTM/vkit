@@ -218,14 +218,14 @@ const RELOAD_SCRIPT = `<script type="text/javascript" language="javascript">
 						return;
 					}
 				}
-				if( location.pathname === "/" ){
+				if( location.pathname === "{{appPath}}" ){
 					location.reload();
 				}else{
-					location.replace("/" + location.hash);
+					location.replace("{{appPath}}" + location.hash);
 				}
 			}
 		};
-		xhr.open("POST", "/reload", true);
+		xhr.open("POST", "{{reloadPath}}", true);
 		xhr.send();
 	}
 	setTimeout(sendRequest, 0);
@@ -238,13 +238,25 @@ class HTMLCompiler {
 		this.fileName = fileName;
 		this.libraryContainer = libraryContainer;
 	}
-	async compile(transformSrc, allowDebugScripts = true, includeLibraries = true){
+	async compile(
+		transformSrc,
+		allowDebugScripts = true,
+		includeLibraries = true,
+		appPath = "/",
+		reloadPath = "/reload"
+	){
 		const cachedItem = this.cache.get(this.fileName);
 		if(!cachedItem){
 			return '';
 		}
 		const style = this.getStyles(transformSrc);
-		const body = this.getBodyContents(transformSrc, allowDebugScripts, includeLibraries);
+		const body = this.getBodyContents(
+			transformSrc,
+			allowDebugScripts,
+			includeLibraries,
+			appPath,
+			reloadPath
+		);
 		return cachedItem
 			.replace("{{style}}", style)
 			.replace("{{body}}", body);
@@ -258,11 +270,12 @@ class HTMLCompiler {
 		const compiledScript = scripts.map(src => this.transformScript(cache.get(src))).join('\n');
 		return (includeLibraries ? this.getLibraries(compiledScript) + '\n' : '') + compiledScript;
 	}
-	getBodyContents(transformSrc, allowDebugScripts, includeLibraries){
-		return (allowDebugScripts ? this.getDebugScripts() + '\n' : '') + this.getScripts(transformSrc, includeLibraries);
+	getBodyContents(transformSrc, allowDebugScripts, includeLibraries, appPath, reloadPath){
+		return (allowDebugScripts ? this.getDebugScripts(appPath, reloadPath) + '\n' : '') +
+			this.getScripts(transformSrc, includeLibraries);
 	}
-	getDebugScripts(){
-		return DEBUG_SCRIPT + '\n' + RELOAD_SCRIPT;
+	getDebugScripts(appPath, reloadPath){
+		return DEBUG_SCRIPT + '\n' + RELOAD_SCRIPT.replace(/\{\{appPath\}\}/g, appPath).replace(/\{\{reloadPath\}\}/g, reloadPath);
 	}
 	getStyles(transformSrc){
 		const cache = this.cache;

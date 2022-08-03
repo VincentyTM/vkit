@@ -10,7 +10,8 @@ class Config {
 		this.exportFile = "export.html";
 		this.autoExport = false;
 		this.includeLibraries = true;
-		this.debugPath = "_dev_src";
+		this.appPath = "/";
+		this.debugPath = "/_dev_src/";
 		this.environment = "dev";
 		this.loaded = false;
 	}
@@ -37,8 +38,25 @@ class Config {
 			this.exportFile = String(json.exportFile || "index.html");
 			this.autoExport = Boolean(json.autoExport);
 			this.includeLibraries = Boolean(json.includeLibraries);
-			this.debugPath = String(json.debugPath || this.debugPath);
-			this.environment = String(json.environment).toLowerCase()==="dev" ? "dev" : "release";
+			let appPath = String(json.appPath || this.appPath);
+			if(!appPath.startsWith("/")){
+				appPath = "/" + appPath;
+			}
+			if( this.appPath !== appPath ){
+				this.appPath = appPath;
+				if( this.loaded ){
+					needsRestart = true;
+				}
+			}
+			let debugPath = String(json.debugPath || this.debugPath);
+			if(!debugPath.startsWith("/")){
+				debugPath = "/" + debugPath;
+			}
+			if(!debugPath.endsWith("/")){
+				debugPath += "/";
+			}
+			this.debugPath = debugPath;
+			this.environment = String(json.environment).toLowerCase() === "dev" ? "dev" : "release";
 			this.loaded = true;
 			this.onLoad(needsRestart);
 		}catch(ex){
@@ -72,6 +90,7 @@ class Config {
 					exportFile: this.exportFile,
 					autoExport: this.autoExport,
 					includeLibraries: this.includeLibraries,
+					appPath: this.appPath,
 					debugPath: this.debugPath,
 					environment: this.environment
 				}, null, 4), err => err ? reject(err) : resolve())

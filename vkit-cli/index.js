@@ -17,6 +17,7 @@ const getMimeType = require("./get-mime-type.js");
 const DEFAULT_INDEX_HTML = require("./index-html.js");
 const DEFAULT_INDEX_JS = require("./index-js.js");
 const STYLESHEET_REGEXP = /\.css$/i;
+const RELOAD_PATH = "/reload";
 
 /* Instances */
 
@@ -25,7 +26,7 @@ const appDirectory = process.argv.slice(2).join(" ").trim() || ".";
 const configFile = appDirectory + "/config.json";
 const reloader = new Reloader();
 const server = new Server(requestListener);
-const transformSRC = src => config.debugPath + "/" + src.replace(config.appDirectory + "/src/", "");
+const transformSRC = src => config.debugPath + src.replace(config.appDirectory + "/src/", "");
 const getExportPath = () => path.isAbsolute(config.exportFile) ? config.exportFile : config.appDirectory + "/" + config.exportFile;
 const getStaticPath = () => path.isAbsolute(config.staticRoot) ? config.staticRoot : config.appDirectory + "/" + config.staticRoot;
 const cache = new FileCache(
@@ -45,7 +46,7 @@ const config = new Config(appDirectory, configFile, async needsRestart => {
 	if( needsRestart ){
 		await commands.startServer(config.port);
 		await commands.build();
-		commands.startBrowser(config.port);
+		commands.startBrowser(config.port, config.appPath);
 	}else{
 		await commands.build();
 		commands.reload();
@@ -66,21 +67,24 @@ async function requestListener(req, res){
 		await new Promise(resolve => setTimeout(resolve, 1000));
 	}
 	const path = withoutQuery(req.url);
-	if( path === "/reload" && req.method === "POST" ){
+	if( path === RELOAD_PATH && req.method === "POST" ){
 		reloader.subscribe(res);
 		return;
 	}
-	if( path === "/" ){
+	if( path === config.appPath ){
 		res.setHeader('content-type', 'text/html; charset=utf-8');
 		res.setHeader('cache-control', 'no-store');
 		res.end(await htmlCompiler.compile(
 			config.isRelease() ? null : src => transformSRC(src) + cache.getVersionString(src),
-			true
+			true,
+			true,
+			config.appPath,
+			RELOAD_PATH
 		));
 		return;
 	}
-	if( path.startsWith("/" + config.debugPath + "/") ){
-		const cachedPath = decodeURIComponent(path.replace("/" + config.debugPath + "/", config.appDirectory + "/src/"));
+	if( path.startsWith(config.debugPath) ){
+		const cachedPath = decodeURIComponent(path.replace(config.debugPath, config.appDirectory + "/src/"));
 		const cached = cache.get(cachedPath);
 		if( cached ){
 			const lastModified = cache.getVersion(cachedPath);
@@ -130,7 +134,7 @@ process.openStdin().on("data", function(data){
 			console.log("  start: Start application in browser");
 			break;
 		case "exit": process.exit(); break;
-		case "start": commands.startBrowser(config.port); break;
+		case "start": commands.startBrowser(config.port, config.appPath); break;
 		case "reload": commands.reload(); break;
 		case "config": commands.loadConfig(); break;
 		case "build": commands.rebuild(); break;
@@ -176,7 +180,7 @@ async function init(){
 			initConfig()
 		]);
 		loadedAll = true;
-		commands.startBrowser(config.port);
+		commands.startBrowser(config.port, config.appPath);
 	}catch(ex){
 		console.error("Error:", ex);
 	}
