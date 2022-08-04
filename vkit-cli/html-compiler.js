@@ -238,6 +238,16 @@ class HTMLCompiler {
 		this.fileName = fileName;
 		this.libraryContainer = libraryContainer;
 	}
+	static stringEncode(str){
+		return str
+			.replace(/\\/g, "\\\\")
+			.replace(/"/g, "\\\"")
+			.replace(/\f/g, "\\f")
+			.replace(/\n/g, "\\n")
+			.replace(/\r/g, "\\r")
+			.replace(/\t/g, "\\t")
+			.replace(/\v/g, "\\v");
+	}
 	async compile(
 		transformSrc,
 		allowDebugScripts = true,
@@ -267,8 +277,11 @@ class HTMLCompiler {
 			src = src.toLowerCase();
 			return src.endsWith(".js") && !src.endsWith(".test.js");
 		}).sort(PathComparator);
+		const dataFiles = this.getDataFiles();
 		const compiledScript = scripts.map(src => this.transformScript(cache.get(src))).join('\n');
-		return (includeLibraries ? this.getLibraries(compiledScript) + '\n' : '') + compiledScript;
+		return (includeLibraries ? this.getLibraries(compiledScript) + '\n' : '') +
+			(dataFiles.length > 0 ? dataFiles.join('\n') + '\n' : '') +
+			compiledScript;
 	}
 	getBodyContents(transformSrc, allowDebugScripts, includeLibraries, appPath, reloadPath){
 		return (allowDebugScripts ? this.getDebugScripts(appPath, reloadPath) + '\n' : '') +
@@ -276,6 +289,35 @@ class HTMLCompiler {
 	}
 	getDebugScripts(appPath, reloadPath){
 		return DEBUG_SCRIPT + '\n' + RELOAD_SCRIPT.replace(/\{\{appPath\}\}/g, appPath).replace(/\{\{reloadPath\}\}/g, reloadPath);
+	}
+	getDataFiles(){
+		const cache = this.cache;
+		const data = [];
+		for(const src of cache.getKeys()){
+			const lowerSrc = src.toLowerCase();
+			if( lowerSrc.endsWith(".txt") ){
+				data.push(
+					'$.data["' +
+						HTMLCompiler.stringEncode(src.replace(/\\/g, "/")) + '"] = "' +
+						HTMLCompiler.stringEncode(cache.get(src)) +
+					'";'
+				);
+			}else if( lowerSrc.endsWith(".json") ){
+				try{
+					const json = cache.get(src);
+					JSON.parse(json);
+					data.push(
+						'$.data["' +
+							HTMLCompiler.stringEncode(src.replace(/\\/g, "/")) + '"] = ' +
+							json +
+						';'
+					);
+				}catch(ex){
+					console.error("Invalid JSON in '" + src + "'");
+				}
+			}
+		}
+		return data;
 	}
 	getStyles(transformSrc){
 		const cache = this.cache;
@@ -291,8 +333,10 @@ class HTMLCompiler {
 		const cache = this.cache;
 		if( transformSrc ){
 			const scripts = cache.getKeys().filter(src => src.toLowerCase().endsWith(".js")).sort(PathComparator);
+			const dataFiles = this.getDataFiles();
 			return '<script type="text/javascript" language="javascript">\n"use strict";\n' +
 				this.getLibraries(scripts.map(src => cache.get(src)).join('\n')) +
+				(dataFiles.length > 0 ? '\n' + dataFiles.join('\n') : '') +
 			'\n</script>\n' +
 			scripts.map(src => '<script type="text/javascript" language="javascript" src="' + transformSrc(src) + '"></script>').join('\n');
 		}else{
