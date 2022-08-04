@@ -15,6 +15,10 @@ function subscribe(state, callback){
 	return unsubscribe;
 }
 
+function subscribeToThis(callback){
+	return subscribe(this, callback);
+}
+
 function getOnChange(state){
 	if( state.component === getComponent() ){
 		return state.onChange;
@@ -167,6 +171,7 @@ function createState(value){
 		effect: effect,
 		view: getStateView,
 		views: getStateViews,
+		subscribe: subscribeToThis,
 		component: getComponent()
 	};
 }
@@ -240,6 +245,7 @@ function combineStates(func){
 		effect: effect,
 		view: getStateView,
 		views: getStateViews,
+		subscribe: subscribeToThis,
 		unsubscribe: unsubscribe,
 		component: component
 	};
