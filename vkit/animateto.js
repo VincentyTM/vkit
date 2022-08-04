@@ -21,16 +21,14 @@ function animateTo(state, duration, options){
 		}
 		render();
 	}
-	unmount(
-		state.onChange.subscribe(function(value){
-			if( currentAnimation ){
-				currentAnimation.stop();
-			}
-			start = latest;
-			end = +value;
-			currentAnimation = animate(animationLoop, duration * Math.abs(end - start));
-		})
-	);
+	state.subscribe(function(value){
+		if( currentAnimation ){
+			currentAnimation.stop();
+		}
+		start = latest;
+		end = +value;
+		currentAnimation = animate(animationLoop, duration * Math.abs(end - start));
+	});
 	return currentState;
 }
 

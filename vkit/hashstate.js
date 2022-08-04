@@ -8,11 +8,9 @@ function createHashState(win){
 	if(!win) win = window;
 	var location = win.location;
 	var state = createState(decodeURIComponent(location.hash.substring(1)));
-	unmount(
-		state.onChange.subscribe(function(value){
-			location.replace("#" + encodeURIComponent(value));
-		})
-	);
+	state.onChange.subscribe(function(value){
+		location.replace("#" + encodeURIComponent(value));
+	});
 	unmount(
 		onEvent(win, "hashchange", function(){
 			state.set(decodeURIComponent(location.hash.substring(1)));

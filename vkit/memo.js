@@ -1,7 +1,6 @@
 (function($){
 
 var input = $.input;
-var unmount = $.unmount;
 var combine = $.fn.map;
 
 function memo(obj, props, func){

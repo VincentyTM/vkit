@@ -2,7 +2,6 @@
 
 var createState = $.state;
 var onChange = $.onChange;
-var unmount = $.unmount;
 
 function observe(obj, prop){
 	if( prop === undefined ){
@@ -24,9 +23,9 @@ function observe(obj, prop){
 	state.set = function(value){
 		obj[prop] = value;
 	};
-	unmount(observable.subscribe(function(value){
+	observable.subscribe(function(value){
 		set.call(state, value);
-	}));
+	});
 	return state;
 }
 
