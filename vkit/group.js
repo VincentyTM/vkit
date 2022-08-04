@@ -1,7 +1,7 @@
 (function($, document, undefined){
 
 function deepPush(array, item, context, setProps){
-	if( item === null || item === undefined ){
+	if( item === null || item === undefined || typeof item === "boolean" ){
 	}else if( typeof item !== "object" ){
 		if( typeof item === "function" ){
 			item(context);
