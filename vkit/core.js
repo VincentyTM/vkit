@@ -3,9 +3,10 @@
 "use strict"; var _$, UNSET={};
 
 function vKit(args){
-	this.end=this;
-	for(var i=0, l=this.length=args.length; i<l; ++i){
-		this[i]=args[i];
+	this.end = this;
+	var n = this.length = args.length;
+	for(var i=0; i<n; ++i){
+		this[i] = args[i];
 	}
 }
 
@@ -13,93 +14,110 @@ function $(){
 	return new vKit(arguments);
 }
 
-if( typeof module=="object" ){
-	module.exports=$;
+if( typeof module === "object" ){
+	module.exports = $;
 }
 
-$.fn=vKit.prototype;
-$.global=global;
-$.version="1.0.7";
+install();
 
-$.own=function(e,p){
+function hasOwnProperty(e, p){
 	var o;p=String(p);return p in e&&(o=e.__proto__||e.constructor.prototype,!(p in o)||e[p]!==o[p]);
-};
+}
 
-$.install=function(){
-	_$=$.own(global, "$") ? global.$ : UNSET;
-	global.$=$;
+function install(){
+	_$ = hasOwnProperty(global, "$") ? global.$ : UNSET;
+	global.$ = $;
 	return $;
-};
+}
 
-$.uninstall=function(){
-	if( _$===UNSET ){
+function uninstall(){
+	if( _$ === UNSET ){
 		delete global.$;
 	}else{
-		global.$=_$;
+		global.$ = _$;
 	}
 	return $;
-};
+}
 
-$.fn.push=function(){
-	for(var i=0, l=arguments.length; i<l; ++i){
-		this[this.length++]=arguments[i];
+function push(){
+	var n = arguments.length;
+	for(var i=0; i<n; ++i){
+		this[this.length++] = arguments[i];
 	}
 	return this;
-};
+}
 
-$.fn.pop=function(){
-	var item=this[--this.length];
+function pop(){
+	var item = this[--this.length];
 	delete this[this.length];
 	return item;
-};
+}
 
-$.fn.toArray=function(){
-	var a=[];
-	for(var i=0, l=this.length; i<l; ++i){
-		a.push(this[i]);
+function toArray(){
+	var n = this.length;
+	var a = new Array(n);
+	for(var i=0; i<n; ++i){
+		a[i] = this[i];
 	}
 	return a;
-};
+}
 
-$.fn.each=function(fn){
-	for(var i=0, l=this.length; i<l; ++i){
-		if( fn.call(this, this[i], i)===false ){
+function each(fn){
+	var n = this.length;
+	for(var i=0; i<n; ++i){
+		if( fn.call(this, this[i], i) === false ){
 			break;
 		}
 	}
 	return this;
-};
+}
 
-$.fn.forEach=function(array, fn){
-	for(var i=0, l=array.length; i<l; ++i){
-		if( fn.call(this, array[i], i, array)===false ){
+function forEach(array, fn){
+	var n = this.length;
+	for(var i=0; i<n; ++i){
+		if( fn.call(this, array[i], i, array) === false ){
 			break;
 		}
 	}
 	return this;
-};
+}
 
-$.fn.on=function(key, callback){
-	key="on"+key;
-	for(var i=0; i in this; ++i){
-		var item=this[i], before=item[key];
-		item[key]=typeof before=="function" ? function(){
+function on(key, callback){
+	key = "on" + key;
+	var n = this.length;
+	for(var i=0; i<n; ++i){
+		var item = this[i], before = item[key];
+		item[key] = typeof before === "function" ? function(){
 			before.apply(this, arguments);
 			return callback.apply(this, arguments);
 		} : callback;
 	}
 	return this;
-};
+}
 
-$.fn.extend=function(data){
-	for(var i=0; i in this; ++i){
-		var item=this[i]; for(var key in data){
-			item[key]=data[key];
+function extend(data){
+	var n = this.length;
+	for(var i=0; i<n; ++i){
+		var item = this[i];
+		for(var key in data){
+			item[key] = data[key];
 		}
 	}
 	return this;
-};
+}
 
-$.install();
+$.fn = vKit.prototype;
+$.global = global;
+$.version = "1.0.7";
+$.data = {};
+$.install = install;
+$.uninstall = uninstall;
+$.fn.push = push;
+$.fn.pop = pop;
+$.fn.toArray = toArray;
+$.fn.each = each;
+$.fn.forEach = forEach;
+$.fn.on = on;
+$.fn.extend = extend;
 
 })(this);
