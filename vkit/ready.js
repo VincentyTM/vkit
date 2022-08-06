@@ -10,7 +10,7 @@ function ready(){
 	var n = callbacks.length;
 	var cbs = callbacks.splice(0, n);
 	for(var i=0; i<n; ++i){
-		callbacks[i].apply(null, arguments);
+		cbs[i].apply(null, arguments);
 	}
 }
 
