@@ -298,7 +298,9 @@ class HTMLCompiler {
 			if( lowerSrc.endsWith(".txt") ){
 				data.push(
 					'$.data["' +
-						HTMLCompiler.stringEncode(src.replace(/\\/g, "/")) + '"] = "' +
+						HTMLCompiler.stringEncode(
+							src.replace(/\\/g, "/").replace("./src/", "")
+						) + '"] = "' +
 						HTMLCompiler.stringEncode(cache.get(src)) +
 					'";'
 				);
@@ -308,7 +310,9 @@ class HTMLCompiler {
 					JSON.parse(json);
 					data.push(
 						'$.data["' +
-							HTMLCompiler.stringEncode(src.replace(/\\/g, "/")) + '"] = ' +
+							HTMLCompiler.stringEncode(
+								src.replace(/\\/g, "/").replace("./src/", "")
+							) + '"] = ' +
 							json +
 						';'
 					);
