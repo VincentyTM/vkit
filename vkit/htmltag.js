@@ -1,12 +1,12 @@
 (function($, document){
 
 var append = $.append;
-var setProps = $.setProps;
+var bind = $.bind;
 
 function createHTMLTag(tagName){
 	return function(){
 		var el = document.createElement(tagName);
-		append(el, arguments, el, setProps);
+		append(el, arguments, el, bind);
 		return el;
 	};
 }

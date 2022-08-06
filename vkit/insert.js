@@ -2,7 +2,7 @@
 
 var append = $.append;
 
-function insert(children, nextSibling, context, setProps){
+function insert(children, nextSibling, context, bind){
 	var parent = nextSibling.parentNode;
 	if(!parent){
 		return;
@@ -10,7 +10,7 @@ function insert(children, nextSibling, context, setProps){
 	function insertBefore(node){
 		parent.insertBefore(node, nextSibling);
 	}
-	append({appendChild: insertBefore}, children, context, setProps);
+	append({appendChild: insertBefore}, children, context, bind);
 }
 
 $.insert = insert;

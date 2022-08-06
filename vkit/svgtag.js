@@ -1,7 +1,7 @@
 (function($, document){
 
 var on = $.on;
-var setStyle = $.bind.style;
+var bindStyle = $.bindStyle;
 var addEffect = $.effect;
 var append = $.append;
 var xmlns = "http://www.w3.org/2000/svg";
@@ -29,7 +29,7 @@ function setAttrs(el, attrs){
 			for(var cssProp in val){
 				var cssVal = val[cssProp];
 				if( typeof cssVal === "function" ){
-					setStyle(cssProp, cssVal)(el);
+					bindStyle(cssProp, cssVal)(el);
 				}else if( cssVal && cssVal.style ){
 					cssVal.style(cssProp)(el);
 				}else{

@@ -3,7 +3,7 @@
 var group = $.group;
 var append = $.append;
 var render = $.render;
-var setProps = $.setProps;
+var bind = $.bind;
 var createState = $.state;
 var syncState = $.sync;
 
@@ -57,7 +57,7 @@ function createCustomElement(name, component, options){
 		}
 
 		var view = component(el, attr);
-		append(el, view, el, setProps);
+		append(el, view, el, bind);
 		return el;
 	}
 

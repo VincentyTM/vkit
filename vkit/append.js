@@ -2,7 +2,7 @@
 
 var deepPush = $.deepPush;
 
-function append(parent, children, context, setProps){
+function append(parent, children, context, bind){
 	function push(node){
 		parent.appendChild(node);
 	}
@@ -10,12 +10,12 @@ function append(parent, children, context, setProps){
 	if( document.createDocumentFragment ){
 		var container = parent;
 		parent = document.createDocumentFragment();
-		deepPush(pusher, children, context, setProps);
+		deepPush(pusher, children, context, bind);
 		if( parent.firstChild ){
 			container.appendChild(parent);
 		}
 	}else{
-		deepPush(pusher, children, context, setProps);
+		deepPush(pusher, children, context, bind);
 	}
 }
 

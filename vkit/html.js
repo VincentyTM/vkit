@@ -2,7 +2,7 @@
 
 var group = $.group;
 var insert = $.insert;
-var setProps = $.setProps;
+var bind = $.bind;
 
 function findNodes(result, container, type, count){
 	if( container.nodeType === type ){
@@ -73,7 +73,7 @@ function html(){
 			if( context === container ){
 				context = null;
 			}
-			insert(operator, comment, context, setProps);
+			insert(operator, comment, context, bind);
 			comment.parentNode.removeChild(comment);
 		}
 	}
