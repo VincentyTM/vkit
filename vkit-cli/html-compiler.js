@@ -259,6 +259,7 @@ class HTMLCompiler {
 		if(!cachedItem){
 			return '';
 		}
+		this.checkFiles();
 		const style = this.getStyles(transformSrc);
 		const body = this.getBodyContents(
 			transformSrc,
@@ -271,12 +272,33 @@ class HTMLCompiler {
 			.replace("{{style}}", style)
 			.replace("{{body}}", body);
 	}
-	getScriptsRaw(includeLibraries = true){
+	checkFiles(){
 		const cache = this.cache;
-		const scripts = cache.getKeys().filter(src => {
+		for(const src of this.getExportableJSFiles()){
+			if( /<\/script>/i.test(cache.get(src)) ){
+				console.warn("Warning: </script> found in '" + src + "'");
+			}
+		}
+		for(const src of this.getCSSFiles()){
+			if( /<\/style>/i.test(cache.get(src)) ){
+				console.warn("Warning: </style> found in '" + src + "'");
+			}
+		}
+	}
+	getCSSFiles(){
+		return this.cache.getKeys().filter(src =>
+			src.toLowerCase().endsWith(".css")
+		).sort(PathComparator);
+	}
+	getExportableJSFiles(){
+		return this.cache.getKeys().filter(src => {
 			src = src.toLowerCase();
 			return src.endsWith(".js") && !src.endsWith(".test.js");
 		}).sort(PathComparator);
+	}
+	getScriptsRaw(includeLibraries = true){
+		const cache = this.cache;
+		const scripts = this.getExportableJSFiles();
 		const dataFiles = this.getDataFiles();
 		const compiledScript = scripts.map(src => this.transformScript(cache.get(src))).join('\n');
 		return (includeLibraries ? this.getLibraries(compiledScript) + '\n' : '') +
