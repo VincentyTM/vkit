@@ -169,16 +169,19 @@ const RELOAD_SCRIPT = `<script type="text/javascript" language="javascript">
 	function applyStyle(src){
 		var stylesheets = document.styleSheets;
 		for(var i=stylesheets.length; i--;){
-			var curr = stylesheets[i].href;
-			if(!curr){
+			var href = stylesheets[i].href;
+			if(!href){
 				continue;
 			}
-			var pos = curr.indexOf("?");
+			var pos = href.indexOf("?");
 			if(~pos){
-				curr = curr.substring(0, pos);
+				href = href.substring(0, pos);
 			}
-			curr = curr.replace(location.href, "");
-			if( curr === src ){
+			href = href.replace(location.href, "");
+			if( href.charAt(0) !== "/" ){
+				href = "/" + href;
+			}
+			if( href === src ){
 				stylesheets[i].ownerNode.href = src + "?v=" + new Date().getTime();
 				return true;
 			}
@@ -212,11 +215,15 @@ const RELOAD_SCRIPT = `<script type="text/javascript" language="javascript">
 				}
 				var res = xhr.responseText.split(":");
 				var n = res.length;
+				var onlyStyles = true;
 				for(var i=1; i<n; ++i){
-					if( applyStyle(res[i]) ){
-						sendRequest();
-						return;
+					if(!applyStyle(res[i])){
+						onlyStyles = false;
 					}
+				}
+				if( onlyStyles ){
+					sendRequest();
+					return;
 				}
 				if( location.pathname === "{{appPath}}" ){
 					location.reload();
