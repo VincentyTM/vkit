@@ -40,8 +40,10 @@ function withComponent(func, component){
 	};
 }
 
-function getCurrentComponent(){
-	contextGuard();
+function getCurrentComponent(allowNull){
+	if(!allowNull){
+		contextGuard();
+	}
 	return currentComponent;
 }
 
