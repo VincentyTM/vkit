@@ -1,14 +1,19 @@
 (function($, d){
 
+var render = $.render;
+var createObservable = $.observable;
+var getCurrentScript = $.currentScript;
+
 function exportData(response){
-	$.currentScript().request.resolve(response);
+	getCurrentScript().request.resolve(response);
 }
 
 function createScript(url, options){
-	if(!url) return $.currentScript().request;
+	if(!url) return getCurrentScript().request;
 	if(!options) options = {};
 	
-	var emitter = $.emitter();
+	var onLoad = createObservable();
+	var onError = createObservable();
 	var t = d.getElementsByTagName("script")[0];
 	var p = t.parentNode;
 	var s = d.createElement("script");
@@ -21,20 +26,28 @@ function createScript(url, options){
 	
 	function reject(error){
 		reset();
-		emitter.throwError(error);
+		onError(error);
+		render();
 	}
 	
 	function resolve(data){
 		reset();
-		emitter.emit(data);
+		onLoad(data);
+		render();
 	}
 	
 	function onLoad(){
 		var r = s.readyState;
 		if(!r || r === "loaded" || r === "complete"){
 			reset();
-			emitter.emit();
+			onLoad();
+			render();
 		}
+	}
+	
+	function then(loadHandler, errorHandler){
+		if( loadHandler ) onLoad.subscribe(loadHandler);
+		if( errorHandler ) onError.subscribe(errorHandler);
 	}
 	
 	s.request = {
@@ -58,7 +71,9 @@ function createScript(url, options){
 	
 	p.insertBefore(s,t);
 	
-	return emitter;
+	return {
+		then: then
+	};
 }
 
 $.exports = exportData;
