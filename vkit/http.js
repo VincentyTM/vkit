@@ -1,6 +1,7 @@
 (function($){
 
 var render = $.render;
+var createState = $.state;
 var createObservable = $.observable;
 
 var defaultConfig = {
@@ -50,23 +51,31 @@ function sendXHR(method, url, options){
 	options = getConfig(options);
 	var onComplete = createObservable();
 	var onError = createObservable();
-	var headers = options.headers;
-	var progress = options.progress;
-	var uploadProgress = options.uploadProgress;
-	var readyState = options.readyState;
+	var progress = createState({
+		total: 0,
+		loaded: 0,
+		lengthComputable: false
+	});
+	var uploadProgress = createState({
+		total: 0,
+		loaded: 0,
+		lengthComputable: false
+	});
+	var readyState = createState(0);
 	var abortHandler = options.onAbort;
 	var http = {
 		then: then,
 		abort: abort,
 		status: 0,
 		header: getHeader,
-		headers: getHeaders
+		headers: getHeaders,
+		progress: progress,
+		uploadProgress: uploadProgress,
+		readyState: readyState
 	};
 	var xhr = new XMLHttpRequest();
-	if( progress ){
-		xhr.onprogress = onProgress;
-	}
-	if( uploadProgress && xhr.upload ){
+	xhr.onprogress = onProgress;
+	if( xhr.upload ){
 		xhr.upload.onprogress = onUploadProgress;
 	}
 	if( abortHandler ){
@@ -75,6 +84,7 @@ function sendXHR(method, url, options){
 	xhr.onreadystatechange = onReadyStateChange;
 	xhr.open(method, url, options.async, options.user, options.password);
 	xhr.responseType = options.responseType;
+	var headers = options.headers;
 	if( headers ){
 		for(var name in headers){
 			xhr.setRequestHeader(name, headers[name]);
