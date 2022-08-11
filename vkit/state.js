@@ -9,7 +9,11 @@ var stateUpdates = [];
 
 function subscribe(state, callback){
 	var unsubscribe = state.onChange.subscribe(callback);
-	if( state.component !== getComponent() ){
+	var component = getComponent(true);
+	if( state.component !== component ){
+		if(!component){
+			throw new Error("Some source states are created in components, but not the destination");
+		}
 		unmount(unsubscribe);
 	}
 	return unsubscribe;
@@ -20,9 +24,13 @@ function subscribeToThis(callback){
 }
 
 function getOnChange(state){
-	if( state.component === getComponent() ){
+	var component = getComponent(true);
+	if( state.component === component ){
 		return state.onChange;
 	}else{
+		if(!component){
+			throw new Error("Some source states are created in components, but not the destination view");
+		}
 		var onChange = createObservable();
 		unmount(state.onChange.subscribe(onChange));
 		return onChange;
@@ -172,7 +180,7 @@ function createState(value){
 		view: getStateView,
 		views: getStateViews,
 		subscribe: subscribeToThis,
-		component: getComponent()
+		component: getComponent(true)
 	};
 }
 
@@ -215,7 +223,7 @@ function combineStates(func){
 	var value = getValue();
 	var onChange = createObservable();
 	var unsubscribes = [];
-	var component = getComponent();
+	var component = getComponent(true);
 	var autoUnsubscribe = false;
 	
 	for(var i=0; i<n; ++i){
@@ -229,6 +237,9 @@ function combineStates(func){
 	}
 	
 	if( autoUnsubscribe ){
+		if(!component){
+			throw new Error("Some source states are created in components, but not the destination state");
+		}
 		unmount(unsubscribe);
 	}
 	
