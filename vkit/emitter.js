@@ -7,7 +7,7 @@ var unmount = $.unmount;
 var render = $.render;
 
 function createEmitter(base){
-	var component = getComponent();
+	var component = getComponent(true);
 	var dataChannel = createObservable();
 	var errorChannel = createObservable();
 
@@ -25,7 +25,11 @@ function createEmitter(base){
 		
 		child.unsubscribe = unsubscribe;
 		
-		if( component !== getComponent() ){
+		var currentComponent = getComponent(true);
+		if( component !== currentComponent ){
+			if(!currentComponent){
+				throw new Error("Source emitter is created in a component, but not the destination");
+			}
 			unmount(unsubscribe);
 		}
 		
