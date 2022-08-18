@@ -2,25 +2,20 @@
 
 var unmount = $.unmount;
 var render = $.render;
-var slice = Array.prototype.slice;
 
-function fixEvent(e){
-	e.preventDefault = function(){
-		e.returnValue = false;
-	};
-	e.stopPropagation = function(){
-		e.cancelBubble = true;
-	};
-	return e;
+function preventDefault(){
+	this.returnValue = false;
+}
+
+function stopPropagation(){
+	this.cancelBubble = true;
 }
 
 function onEvent(obj, type, fn){
-	function eventHandler(){
-		var args = slice.call(arguments);
-		if(!args[0]){
-			args[0] = fixEvent(window.event);
-		}
-		var ret = fn.apply(obj, args);
+	function eventHandler(e){
+		if(!e.preventDefault) e.preventDefault = preventDefault;
+		if(!e.stopPropagation) e.stopPropagation = stopPropagation;
+		var ret = fn.call(obj, e);
 		render();
 		return ret;
 	}
