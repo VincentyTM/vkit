@@ -98,6 +98,11 @@ $.validators = {
 			return true;
 		};
 	},
+	InstanceOf: function(c){
+		return function(x){
+			return x instanceof c;
+		};
+	},
 	Enum: function(){
 		var values = arguments, n = values.length;
 		return function(x){
