@@ -1,5 +1,7 @@
 (function($){
 
+var toString = Object.prototype.toString;
+
 function validate(type, data){
 	switch( type ){
 		case String: return typeof data === "string";
@@ -84,7 +86,7 @@ $.validators = {
 	},
 	ArrayOf: function(T){
 		return function(x){
-			if(!(x instanceof Array)){
+			if( toString.call(x) !== "[object Array]" ){
 				return false;
 			}
 			var n = x.length;
