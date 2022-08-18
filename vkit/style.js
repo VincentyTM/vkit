@@ -51,8 +51,10 @@ function removeStyle(docs, document){
 	}
 }
 
-function componentStyle(css){
-	var attr = "vkit-style" + (++styleCount);
+function componentStyle(css, attr){
+	if(!attr){
+		attr = "vkit-style" + (++styleCount);
+	}
 	var selector = "[" + attr + "]";
 	var docs = [];
 	function bind(el){
