@@ -258,7 +258,7 @@ function createPeer(peerConfig, peerOptions, manipulateSDP){
 		start: start,
 		send: send,
 		close: close
-	};;
+	};
 }
 
 var defaultPeerOptions = {
