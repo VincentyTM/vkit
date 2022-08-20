@@ -1,27 +1,31 @@
-(function($, document, navigator){
+(function($, window){
 
 var createObservable = $.observable;
 var delay = typeof Promise === "function" && typeof Promise.resolve === "function" ? function(fn){
 	Promise.resolve().then(fn);
 } : setTimeout;
 
-function selectElement(el, doc){
+function selectElement(el, win, doc){
 	if( el.select ){
 		el.select();
 	}else if( doc.selection ){
 		var range = doc.body.createTextRange();
 		range.moveToElementText(el);
 		range.select();
-	}else if( window.getSelection ){
+	}else if( win.getSelection ){
 		var range = doc.createRange();
 		range.selectNode(el);
-		window.getSelection().removeAllRanges();
-		window.getSelection().addRange(range);
+		win.getSelection().removeAllRanges();
+		win.getSelection().addRange(range);
 	}
 }
 
-function writeToClipboard(text, doc){
-	if(!doc) doc = document;
+function writeToClipboard(text, win){
+	if(!win){
+		win = window;
+	}
+	var doc = win.document;
+	var nav = win.navigator;
 	var resolve = createObservable();
 	var reject = createObservable();
 	function exec(){
@@ -40,14 +44,14 @@ function writeToClipboard(text, doc){
 	}
 	if( text.nodeType ){
 		try{
-			selectElement(text, doc);
+			selectElement(text, win, doc);
 			doc.execCommand("copy");
 			delay(resolve);
 		}catch(ex){
 			delay(function(){ reject(ex) });
 		}
-	}else if( navigator.clipboard ){
-		navigator.clipboard.writeText(text).then(resolve, exec);
+	}else if( nav.clipboard ){
+		nav.clipboard.writeText(text).then(resolve, exec);
 	}else{
 		exec();
 	}
@@ -61,4 +65,4 @@ function writeToClipboard(text, doc){
 
 $.copy = writeToClipboard;
 
-})($, document, navigator);
+})($, window);
