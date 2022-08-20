@@ -330,7 +330,8 @@ class HTMLCompiler {
 						HTMLCompiler.stringEncode(
 							src.replace(/\\/g, "/").replace("./src/", "")
 						) + '"] = "' +
-						HTMLCompiler.stringEncode(cache.get(src)) +
+						HTMLCompiler.stringEncode(cache.get(src))
+							.replace(/<\/script>/gi, '</scr"+"ipt>') +
 					'";'
 				);
 			}else if( lowerSrc.endsWith(".json") ){
@@ -342,7 +343,7 @@ class HTMLCompiler {
 							HTMLCompiler.stringEncode(
 								src.replace(/\\/g, "/").replace("./src/", "")
 							) + '"] = ' +
-							json +
+							json.replace(/<\/script>/gi, '</scr"+"ipt>') +
 						';'
 					);
 				}catch(ex){
