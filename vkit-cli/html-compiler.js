@@ -303,6 +303,17 @@ class HTMLCompiler {
 			return src.endsWith(".js") && !src.endsWith(".test.js");
 		}).sort(PathComparator);
 	}
+	getScriptsAsModule(includeLibraries, moduleFile, moduleSymbol){
+		const module = this.cache.get(moduleFile);
+		if( module ){
+			return module.replace(
+				moduleSymbol,
+				this.getScriptsRaw(includeLibraries, file => file !== moduleFile)
+			);
+		}else{
+			return this.getScriptsRaw(includeLibraries);
+		}
+	}
 	getScriptsRaw(includeLibraries = true, filter){
 		const cache = this.cache;
 		let scripts = this.getExportableJSFiles();

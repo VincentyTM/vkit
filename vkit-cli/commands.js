@@ -26,7 +26,11 @@ class Commands {
 				fs.writeFile(
 					src,
 					src.toLowerCase().endsWith(".js")
-						? this.htmlCompiler.getScriptsRaw(includeLibraries)
+						? this.htmlCompiler.getScriptsAsModule(
+							includeLibraries,
+							this.config.appDirectory + "/src/" + this.config.moduleFile,
+							this.config.moduleSymbol
+						)
 						: await this.htmlCompiler.compile(null, false, includeLibraries),
 					{ flag: "w" },
 					err => err ? reject(err) : resolve()

@@ -13,6 +13,8 @@ class Config {
 		this.appPath = "/";
 		this.debugPath = "/_dev_src/";
 		this.environment = "dev";
+		this.moduleFile = "module.js";
+		this.moduleSymbol = "/*{script}*/";
 		this.loaded = false;
 	}
 	isRelease(){
@@ -38,6 +40,8 @@ class Config {
 			this.exportFile = String(json.exportFile || "index.html");
 			this.autoExport = Boolean(json.autoExport);
 			this.includeLibraries = Boolean(json.includeLibraries);
+			this.moduleFile = String(json.moduleFile || "module.js");
+			this.moduleSymbol = String(json.moduleSymbol || "/*{script}*/");
 			let appPath = String(json.appPath || this.appPath);
 			if(!appPath.startsWith("/")){
 				appPath = "/" + appPath;
@@ -92,7 +96,9 @@ class Config {
 					includeLibraries: this.includeLibraries,
 					appPath: this.appPath,
 					debugPath: this.debugPath,
-					environment: this.environment
+					environment: this.environment,
+					moduleFile: this.moduleFile,
+					moduleSymbol: this.moduleSymbol
 				}, null, 4), err => err ? reject(err) : resolve())
 			);
 		}catch(ex){
