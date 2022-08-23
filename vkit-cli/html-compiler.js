@@ -303,9 +303,15 @@ class HTMLCompiler {
 			return src.endsWith(".js") && !src.endsWith(".test.js");
 		}).sort(PathComparator);
 	}
-	getScriptsRaw(includeLibraries = true){
+	getScriptsRaw(includeLibraries = true, filter){
 		const cache = this.cache;
-		const scripts = this.getExportableJSFiles();
+		let scripts = this.getExportableJSFiles();
+		if( filter ){
+			scripts = scripts.filter(filter);
+		}
+		if(!includeLibraries){
+			scripts = scripts.filter(src => !src.toLowerCase().endsWith(".lib.js"));
+		}
 		const dataFiles = this.getDataFiles();
 		const compiledScript = scripts.map(src => this.transformScript(cache.get(src))).join('\n');
 		return (includeLibraries ? this.getLibraries(compiledScript) + '\n' : '') +
