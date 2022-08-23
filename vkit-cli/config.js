@@ -7,7 +7,7 @@ class Config {
 		this.onLoad = onLoad;
 		this.port = 3000;
 		this.staticRoot = "www";
-		this.exportFile = "export.html";
+		this.exportFile = "www/index.html";
 		this.autoExport = false;
 		this.includeLibraries = true;
 		this.appPath = "/";
