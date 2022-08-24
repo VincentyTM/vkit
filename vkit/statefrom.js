@@ -3,7 +3,7 @@
 var effect = $.effect;
 var createState = $.state;
 
-function stateOf(get, set){
+function stateFrom(get, set){
 	var isFunction = typeof get === "function";
 	var state = createState(isFunction ? get() : get[set]);
 	state.get = isFunction ? get : function(){
@@ -28,6 +28,6 @@ function stateOf(get, set){
 	return state;
 }
 
-$.stateOf = stateOf;
+$.stateFrom = stateFrom;
 
 })($);
