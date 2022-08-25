@@ -7,7 +7,7 @@ function useKey(arrayState, getKey){
 	var recordsState = createState({});
 	var keysState = arrayState.map(function(array){
 		var records = {};
-		var n = array.length;
+		var n = array ? array.length : 0;
 		var keys = new Array(n);
 		for(var i=0; i<n; ++i){
 			var value = array[i];
