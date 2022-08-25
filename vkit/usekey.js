@@ -22,15 +22,21 @@ function useKey(arrayState, getKey){
 		return keys;
 	});
 	
+	function select(key){
+		var state = recordsState.map(function(records){
+			return records[key];
+		});
+		return state;
+	}
+	
 	function getStateViews(getView){
 		return keysState.views(function(key){
-			return getView(recordsState.map(function(records){
-				return records[key];
-			}));
+			return getView(select(key));
 		});
 	}
 	
 	return {
+		select: select,
 		views: getStateViews
 	};
 }
