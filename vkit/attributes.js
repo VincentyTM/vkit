@@ -1,23 +1,33 @@
 (function($){
 
+var effect = $.effect;
+
+function setAttribute(el, name, value){
+	if( typeof value === "number" ){
+		value = value.toString();
+	}
+	if( typeof value === "string" ){
+		el.setAttribute(name, value);
+	}else if( value ){
+		el.setAttribute(name, "");
+	}else{
+		el.removeAttribute(name);
+	}
+}
+
 function bindAttribute(el, name, value){
 	if( typeof value === "number" ){
 		value = value.toString();
 	}
 	if( typeof value === "string" ){
 		el.setAttribute(name, value);
+	}else if( typeof value === "function" ){
+		effect(function(){
+			setAttribute(el, name, value());
+		});
 	}else if( value && typeof value.effect === "function" ){
 		value.effect(function(val){
-			if( typeof val === "number" ){
-				val = val.toString();
-			}
-			if( typeof val === "string" ){
-				el.setAttribute(name, val);
-			}else if( val ){
-				el.setAttribute(name, "");
-			}else{
-				el.removeAttribute(name);
-			}
+			setAttribute(el, name, val);
 		});
 	}else if( value ){
 		el.setAttribute(name, "");
