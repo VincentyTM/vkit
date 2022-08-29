@@ -4,7 +4,7 @@ var render = $.render;
 var createObservable = $.observable;
 var getCurrentScript = $.currentScript;
 
-function exportData(response){
+function respond(response){
 	getCurrentScript().request.resolve(response);
 }
 
@@ -76,7 +76,7 @@ function createScript(url, options){
 	};
 }
 
-$.exports = exportData;
+$.respond = respond;
 $.script = createScript;
 
 })($, document);
