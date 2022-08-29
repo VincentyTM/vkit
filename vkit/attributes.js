@@ -1,6 +1,6 @@
 (function($){
 
-var effect = $.effect;
+var getCurrentComponent = $.component;
 
 function setAttribute(el, name, value){
 	if( typeof value === "number" ){
@@ -22,8 +22,14 @@ function bindAttribute(el, name, value){
 	if( typeof value === "string" ){
 		el.setAttribute(name, value);
 	}else if( typeof value === "function" ){
-		effect(function(){
-			setAttribute(el, name, value());
+		var oldValue = value();
+		setAttribute(el, name, oldValue);
+		getCurrentComponent().subscribe(function(){
+			var newValue = value();
+			if( oldValue !== newValue ){
+				oldValue = newValue;
+				setAttribute(el, name, newValue);
+			}
 		});
 	}else if( value && typeof value.effect === "function" ){
 		value.effect(function(val){
