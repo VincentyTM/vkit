@@ -94,6 +94,6 @@ function createComponent(parent, stopRender){
 	};
 }
 
-$.createComponent = createComponent;
+$.component = createComponent;
 
 })($);

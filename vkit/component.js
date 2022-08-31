@@ -2,7 +2,7 @@
 
 var group = $.group;
 var toArray = $.fn.toArray;
-var createComponent = $.createComponent;
+var createComponent = $.component;
 
 function noop(){}
 
