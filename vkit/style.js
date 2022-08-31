@@ -1,7 +1,7 @@
 (function($){
 
 var unmount = $.unmount;
-var withComponent = $.withComponent;
+var withContext = $.withContext;
 var afterRender = $.afterRender;
 var styleCount = 0;
 
@@ -63,7 +63,7 @@ function componentStyle(css, attr){
 			removeStyle(docs, document);
 			el.removeAttribute(attr);
 		});
-		afterRender(withComponent(function(){
+		afterRender(withContext(function(){
 			document = el.ownerDocument;
 			addStyle(docs, document, css, selector);
 			el.setAttribute(attr, "true");

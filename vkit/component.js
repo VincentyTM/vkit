@@ -20,7 +20,7 @@ function unmount(func){
 	return currentComponent !== rootComponent ? currentComponent.onDestroy.subscribe(func) : noop;
 }
 
-function withComponent(func, component){
+function withContext(func, component){
 	contextGuard();
 	var provider = currentProvider;
 	if(!component) component = currentComponent;
@@ -63,7 +63,7 @@ function getViewOf(getData, getView, immutable, onRender){
 	try{
 		var view = getView ? getView(A) : A;
 		prev.children.push(component);
-		(onRender || component).subscribe(withComponent(function(newData){
+		(onRender || component).subscribe(withContext(function(newData){
 			var B = onRender ? newData : getData();
 			if( A === B ){
 				return;
@@ -114,7 +114,7 @@ function getViewsOf(array, getView, immutable, onRender){
 		}
 	}
 	
-	(onRender || container).subscribe(withComponent(function(newArray){
+	(onRender || container).subscribe(withContext(function(newArray){
 		if(!newArray) newArray = typeof array === "function" ? array() : array;
 		if( immutable && newArray === oldArray ){
 			return;
@@ -198,7 +198,7 @@ Container.prototype.getInstance = function(component){
 	if( this.instanceCreated ){
 		return this.instance;
 	}
-	this.instance = withComponent(this.createInstance, component)(this.serviceOrConfig);
+	this.instance = withContext(this.createInstance, component)(this.serviceOrConfig);
 	this.instanceCreated = true;
 	return this.instance;
 };
@@ -264,10 +264,10 @@ function provide(services, getContent){
 	}
 }
 
-$.withComponent = withComponent;
 $.component = getCurrentComponent;
 $.component.set = setCurrentComponent;
 $.component.render = renderComponents;
+$.withContext = withContext;
 $.unmount = unmount;
 $.view = getViewOf;
 $.views = getViewsOf;
