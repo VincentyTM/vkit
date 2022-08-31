@@ -38,13 +38,25 @@ function createNodeRange(){
 		}
 	}
 	
+	function getNodes(){
+		var nodes = $();
+		var parent = start.parentNode;
+		if( parent ){
+			for(var el = start; el && el !== end; el = el.nextSibling){
+				nodes.push(el);
+			}
+		}
+		return nodes;
+	}
+	
 	return {
 		start: start,
 		end: end,
 		clear: clear,
 		remove: remove,
 		append: append,
-		insertBefore: insertBefore
+		insertBefore: insertBefore,
+		getNodes: getNodes
 	};
 }
 
