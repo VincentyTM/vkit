@@ -1,8 +1,8 @@
 (function($){
 
-var renderStates = $.state.render;
-var stateUpdates = $.state.updateQueue;
 var renderComponentTree = $.renderComponents;
+var renderStates = $.renderStates;
+var stateUpdates = $.stateUpdateQueue;
 var afterRender = [];
 
 function addAfterRender(func){

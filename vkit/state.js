@@ -292,8 +292,8 @@ function combineEffect(action){
 }
 
 $.state = createState;
-$.state.render = renderStates;
-$.state.updateQueue = stateUpdates;
+$.renderStates = renderStates;
+$.stateUpdateQueue = stateUpdates;
 $.fn.map = combineStates;
 $.fn.view = combineView;
 $.fn.effect = combineEffect;
