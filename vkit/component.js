@@ -264,10 +264,10 @@ function provide(services, getContent){
 	}
 }
 
-$.component = getCurrentComponent;
-$.component.set = setCurrentComponent;
-$.component.render = renderComponents;
 $.withContext = withContext;
+$.currentComponent = getCurrentComponent;
+$.setCurrentComponent = setCurrentComponent;
+$.renderComponents = renderComponents;
 $.unmount = unmount;
 $.view = getViewOf;
 $.views = getViewsOf;

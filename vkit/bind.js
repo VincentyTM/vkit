@@ -1,6 +1,6 @@
 (function($){
 
-var getCurrentComponent = $.component;
+var getCurrentComponent = $.currentComponent;
 var on = $.on;
 
 function bindStyle(prop, getter){

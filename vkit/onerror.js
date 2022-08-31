@@ -2,7 +2,7 @@
 
 var unmount = $.unmount;
 var createObservable = $.observable;
-var getCurrentComponent = $.component;
+var getCurrentComponent = $.currentComponent;
 
 function onError(errorHandler){
 	var component = getCurrentComponent();

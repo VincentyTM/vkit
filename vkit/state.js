@@ -1,7 +1,7 @@
 (function($, document, undefined){
 
 var createObservable = $.observable;
-var getComponent = $.component;
+var getComponent = $.currentComponent;
 var toView = $.view;
 var toViews = $.views;
 var unmount = $.unmount;

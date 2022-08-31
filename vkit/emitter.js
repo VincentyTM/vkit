@@ -1,6 +1,6 @@
 (function($){
 
-var getComponent = $.component;
+var getComponent = $.currentComponent;
 var createObservable = $.observable;
 var createState = $.state;
 var unmount = $.unmount;

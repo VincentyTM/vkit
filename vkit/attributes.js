@@ -1,6 +1,6 @@
 (function($){
 
-var getCurrentComponent = $.component;
+var getCurrentComponent = $.currentComponent;
 
 function setAttribute(el, name, value){
 	if( typeof value === "number" ){
