@@ -1,51 +1,58 @@
 (function($, document){
 
 var on = $.on;
-var bindStyle = $.bindStyle;
+var bind = $.bind;
 var addEffect = $.effect;
 var append = $.append;
 var xmlns = "http://www.w3.org/2000/svg";
 
-function setAttr(el, attr, val){
-	if( typeof val === "function" ){
-		addEffect(function(){
-			el.setAttributeNS(null, attr, val());
-		});
-	}else if( val && val.effect ){
-		val.effect(function(value){
-			el.setAttributeNS(null, attr, value);
-		});
+function setAttribute(el, name, value){
+	if( value === null ){
+		el.removeAttributeNS(null, name);
 	}else{
-		el.setAttributeNS(null, attr, val);
+		el.setAttributeNS(null, name, value);
 	}
 }
 
-function setAttrs(el, attrs){
-	for(var attr in attrs){
-		var val = attrs[attr];
-		if( attr.indexOf("on") === 0 ){
-			on(attr.substring(2), val)(el);
-		}else if( attr === "style" ){
-			for(var cssProp in val){
-				var cssVal = val[cssProp];
-				if( typeof cssVal === "function" ){
-					bindStyle(cssProp, cssVal)(el);
-				}else if( cssVal && cssVal.style ){
-					cssVal.style(cssProp)(el);
-				}else{
-					el.style[cssProp] = cssVal;
-				}
+function bindAttribute(el, name, value){
+	if( value === true ) value = "";
+	if( value === false ) value = null;
+	switch( typeof value ){
+		case "object":
+			if(!value){
+				setAttribute(el, name, value);
+			}else if( value.effect ){
+				value.effect(function(v){
+					setAttribute(el, name, v);
+				});
+			}else{
+				bind(el[name], value);
 			}
-		}else{
-			setAttr(el, attr, val);
-		}
+			break;
+		case "function":
+			if( name.indexOf("on") === 0 ){
+				on(name.substring(2), value)(el);
+			}else{
+				addEffect(function(){
+					setAttribute(el, name, value());
+				});
+			}
+			break;
+		default:
+			setAttribute(el, name, value);
+	}
+}
+
+function bindAttributes(el, attributes){
+	for(var name in attributes){
+		bindAttribute(el, name, attributes[name]);
 	}
 }
 
 function createSVGTag(tagName){
 	return function(){
 		var el = document.createElementNS(xmlns, tagName);
-		append(el, arguments, el, setAttrs);
+		append(el, arguments, el, bindAttributes);
 		return el;
 	};
 }
