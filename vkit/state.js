@@ -92,17 +92,6 @@ function prop(key){
 	};
 }
 
-function style(key){
-	var value = this.get();
-	var state = this;
-	return function(node){
-		node.style[key] = value;
-		subscribe(state, function(value){
-			node.style[key] = value;
-		});
-	};
-}
-
 function effect(action){
 	action(this.get());
 	subscribe(this, action);
@@ -175,7 +164,6 @@ function createState(value){
 		dequeue: dequeue,
 		text: text,
 		prop: prop,
-		style: style,
 		effect: effect,
 		view: getStateView,
 		views: getStateViews,
@@ -252,7 +240,6 @@ function combineStates(func){
 		addDependency: addDependency,
 		text: text,
 		prop: prop,
-		style: style,
 		effect: effect,
 		view: getStateView,
 		views: getStateViews,
