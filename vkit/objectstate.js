@@ -28,8 +28,8 @@ function createObjectState(initialValue, reducer){
 		onMutate();
 	}
 	
-	function create(value){
-		var child = createObjectState(value);
+	function create(value, reducer){
+		var child = createObjectState(value, reducer);
 		child.onChange.subscribe(function(value){
 			parent.onChange(parent.get());
 		});
@@ -37,12 +37,14 @@ function createObjectState(initialValue, reducer){
 		if( parent.component !== child.component ){
 			unmount(unsubscribe);
 		}
-		child.dispatch = dispatch;
+		if(!reducer){
+			child.dispatch = dispatch;
+		}
 		return child;
 	}
 	
-	function select(key){
-		var child = createObjectState();
+	function select(key, reducer){
+		var child = createObjectState(undefined, reducer);
 		child.onChange.subscribe(function(value){
 			var object = parent.get();
 			object[key] = value;
@@ -58,7 +60,9 @@ function createObjectState(initialValue, reducer){
 		if( parent.component !== child.component ){
 			unmount(unsubscribe);
 		}
-		child.dispatch = dispatch;
+		if(!reducer){
+			child.dispatch = dispatch;
+		}
 		return child;
 	}
 	
