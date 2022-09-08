@@ -56,24 +56,33 @@ function createObjectState(parent, methods){
 		return child;
 	}
 	
-	function select(key, reducer){
+	function select(key, initialValue, reducer){
 		if( key === undefined || key === null ){
 			if( typeof Proxy !== "function" ){
 				throw new ReferenceError("Proxy is not supported in your browser!");
 			}
 			return new Proxy({}, {
 				get: function(target, prop, receiver){
-					return select(prop, reducer);
+					return select(prop, initialValue, reducer);
 				}
 			});
 		}
-		var child = createObjectState(undefined, reducer);
+		if(!reducer){
+			reducer = initialValue;
+			initialValue = undefined;
+		}
+		var object = parent.get();
+		var value = object[key];
+		if( value === undefined ){
+			object[key] = value = initialValue;
+		}
+		var child = createObjectState(value, reducer);
 		child.onChange.subscribe(function(value){
 			var object = parent.get();
 			object[key] = value;
 			parent.onChange(object);
 		});
-		parent.effect(function(object){
+		parent.subscribe(function(object){
 			child.set(object[key]);
 		});
 		var unsubscribe = onMutate.subscribe(function(){
