@@ -12,13 +12,24 @@ function createObjectState(parent, methods){
 	var views = parent.views;
 	var onMutate = createObservable();
 	
-	function dispatch(action){
-		var result = reducer(parent.get(), action, this.get());
-		if( result === undefined ){
-			mutate();
-		}else{
-			parent.set(result);
-		}
+	function Dispatch(){}
+	if( parent.dispatch ){
+		Dispatch.prototype = parent.dispatch;
+	}
+	var dispatch = new Dispatch();
+	for(var k in methods){
+		dispatch[k] = patchMethod(methods[k]);
+	}
+	
+	function patchMethod(method){
+		return function(){
+			var result = method.apply(parent.get(), arguments);
+			if( result === undefined ){
+				mutate();
+			}else{
+				parent.set(result);
+			}
+		};
 	}
 	
 	function mutate(modify){
