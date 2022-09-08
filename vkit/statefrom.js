@@ -5,6 +5,9 @@ var createState = $.state;
 
 function stateFrom(get, set){
 	var isFunction = typeof get === "function";
+	if(!isFunction && !set){
+		return get && typeof get.get === "function" ? get : createState(get);
+	}
 	var state = createState(isFunction ? get() : get[set]);
 	state.get = isFunction ? get : function(){
 		return get[set];
@@ -20,7 +23,7 @@ function stateFrom(get, set){
 			_set(value);
 		};
 	}else{
-		delete state.set;
+		state.set = null;
 	}
 	effect(function(){
 		_set(isFunction ? get() : get[set]);
