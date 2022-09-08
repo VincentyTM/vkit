@@ -46,6 +46,16 @@ function createObjectState(parent, methods){
 	}
 	
 	function select(key, reducer){
+		if( key === undefined || key === null ){
+			if( typeof Proxy !== "function" ){
+				throw new ReferenceError("Proxy is not supported in your browser!");
+			}
+			return new Proxy({}, {
+				get: function(target, prop, receiver){
+					return select(prop, reducer);
+				}
+			});
+		}
 		var child = createObjectState(undefined, reducer);
 		child.onChange.subscribe(function(value){
 			var object = parent.get();
