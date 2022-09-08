@@ -33,5 +33,6 @@ function render(){
 
 $.afterRender = addAfterRender;
 $.render = render;
+$.tick = addAfterRender;
 
 })($);
