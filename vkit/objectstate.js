@@ -4,8 +4,10 @@ var unmount = $.unmount;
 var createState = $.state;
 var createObservable = $.observable;
 
-function createObjectState(initialValue, reducer){
-	var parent = createState(initialValue);
+function createObjectState(parent, methods){
+	if(!parent || typeof parent.get !== "function"){
+		parent = createState(parent);
+	}
 	var view = parent.view;
 	var views = parent.views;
 	var onMutate = createObservable();
