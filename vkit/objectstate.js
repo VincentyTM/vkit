@@ -8,7 +8,6 @@ function createObjectState(parent, methods){
 	if(!parent || typeof parent.get !== "function"){
 		parent = createState(parent);
 	}
-	var view = parent.view;
 	var views = parent.views;
 	var onMutate = createObservable();
 	
@@ -98,19 +97,12 @@ function createObjectState(parent, methods){
 		return child;
 	}
 	
-	function getStateView(getView){
-		return view.call(parent, function(value){
-			return getView(parent);
-		});
-	}
-	
 	function getStateViews(getView){
 		return views.call(parent, function(item){
 			return getView(create(item));
 		});
 	}
 	
-	parent.view = getStateView;
 	parent.views = getStateViews;
 	parent.dispatch = dispatch;
 	parent.create = create;
