@@ -39,7 +39,7 @@ function createObjectState(parent, methods){
 		onMutate();
 	}
 	
-	function create(value, reducer){
+	function item(value, reducer){
 		var child = createObjectState(value, reducer);
 		child.onChange.subscribe(function(value){
 			parent.onChange(parent.get());
@@ -97,7 +97,7 @@ function createObjectState(parent, methods){
 	}
 	
 	parent.dispatch = dispatch;
-	parent.create = create;
+	parent.item = item;
 	parent.select = select;
 	parent.mutate = mutate;
 	parent.onMutate = onMutate;
