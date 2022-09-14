@@ -26,6 +26,9 @@ function useKey(arrayState, getKey){
 		var state = recordsState.map(function(records){
 			return records[key];
 		});
+		if( typeof arrayState.item === "function" ){
+			arrayState.item(state);
+		}
 		state.key = key;
 		return state;
 	}
