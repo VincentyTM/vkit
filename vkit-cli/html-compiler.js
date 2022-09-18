@@ -427,14 +427,4 @@ class HTMLCompiler {
 	}
 }
 
-const escapeHTMLMap={
-	'&': '&amp;',
-	'<': '&lt;',
-	'>': '&gt;',
-	'"': '&quot;',
-	"'": '&#039;'
-};
-const escapeHTMLReplacer = m => escapeHTMLMap[m];
-const escapeHTML = html => String(html).replace(/[&<>"']/g, escapeHTMLReplacer);
-
 module.exports = HTMLCompiler;
