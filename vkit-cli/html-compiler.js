@@ -177,7 +177,7 @@ const RELOAD_SCRIPT = `<script type="text/javascript" language="javascript">
 			if(~pos){
 				href = href.substring(0, pos);
 			}
-			href = href.replace(location.href, "");
+			href = href.replace(location.origin, "");
 			if( href.charAt(0) !== "/" ){
 				href = "/" + href;
 			}
