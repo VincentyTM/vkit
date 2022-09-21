@@ -1,11 +1,11 @@
 (function($){
 
-var stateMap = $.stateMap;
+var map = $.map;
 
 function concat(){
 	return Array.prototype.join.call(arguments, "");
 }
 
-$.concat = stateMap(concat);
+$.concat = map(concat);
 
 })($);

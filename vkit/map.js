@@ -10,7 +10,7 @@ function createConstState(value){
 }
 
 function mapStates(transform){
-	return function(){
+	function map(){
 		var n = arguments.length;
 		var a = new Array(n);
 		for(var i=0; i<n; ++i){
@@ -18,9 +18,11 @@ function mapStates(transform){
 			a[i] = state && typeof state.get === "function" ? state : createConstState(state);
 		}
 		return combineStates.call(a, transform);
-	};
+	}
+	map.get = transform;
+	return map;
 }
 
-$.stateMap = mapStates;
+$.map = mapStates;
 
 })($);
