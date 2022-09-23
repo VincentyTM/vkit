@@ -14,9 +14,7 @@ function save(blob, name){
 	var a = document.createElement("a");
 	a.href = url;
 	a.download = name || blob.name || "file";
-	document.body.appendChild(a);
 	a.click();
-	document.body.removeChild(a);
 	URL.revokeObjectURL(url);
 }
 
