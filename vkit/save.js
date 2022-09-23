@@ -1,8 +1,12 @@
-(function($, document, global){
+(function($, document, navigator, global){
 
 var URL = global.URL || global.webkitURL;
 
 function save(blob, name){
+	if( navigator.msSaveOrOpenBlob ){
+		navigator.msSaveOrOpenBlob(blob, name);
+		return;
+	}
 	if(!URL){
 		throw new ReferenceError("URL is not supported");
 	}
@@ -18,4 +22,4 @@ function save(blob, name){
 
 $.save = save;
 
-})($, document, this);
+})($, document, navigator, this);
