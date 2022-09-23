@@ -23,7 +23,9 @@ function useKey(arrayState, getKey){
 	});
 	
 	function select(key){
-		var state = recordsState.map(function(records){
+		var state = key.map ? $(recordsState, key).map(function(records, key){
+			return records[key];
+		}) : recordsState.map(function(records){
 			return records[key];
 		});
 		if( typeof arrayState.item === "function" ){
