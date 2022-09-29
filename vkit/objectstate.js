@@ -41,7 +41,7 @@ function createObjectState(parent, methods){
 	
 	function item(value, reducer){
 		var child = createObjectState(value, reducer);
-		child.onChange.subscribe(function(value){
+		child.subscribe(function(value){
 			parent.onChange(parent.get());
 		});
 		var unsubscribe = onMutate.subscribe(child.onMutate);
@@ -75,7 +75,7 @@ function createObjectState(parent, methods){
 			object[key] = value = initialValue;
 		}
 		var child = createObjectState(value, reducer);
-		child.onChange.subscribe(function(value){
+		child.subscribe(function(value){
 			var object = parent.get();
 			object[key] = value;
 			parent.onChange(object);
