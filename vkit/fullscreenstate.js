@@ -19,14 +19,19 @@ function createFullScreenState(doc){
 		);
 	}
 	updateState();
-	state.effect(function(el){
+	state.subscribe(function(el){
 		if( el ){
 			el.requestFullscreen ? el.requestFullscreen() :
 			el.mozRequestFullScreen ? el.mozRequestFullScreen() :
 			el.webkitRequestFullscreen ? el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT) :
 			el.webkitEnterFullscreen ? el.webkitEnterFullscreen() :
 			state.set(null);
-		}else{
+		}else if(
+			doc.fullscreenElement ||
+			doc.mozFullScreenElement ||
+			doc.webkitFullscreenElement ||
+			doc.webkitCurrentFullScreenElement
+		){
 			doc.cancelFullScreen ? doc.cancelFullScreen() :
 			doc.mozCancelFullScreen ? doc.mozCancelFullScreen() :
 			doc.webkitCancelFullScreen ? doc.webkitCancelFullScreen() :
