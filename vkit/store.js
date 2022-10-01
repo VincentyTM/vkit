@@ -15,10 +15,9 @@ function select(){
 	return inject(Store).state.select.apply(null, arguments);
 }
 
-$.store = {
-	provider: Store,
-	map: map,
-	select: select
-};
+$.store = createObjectState;
+$.store.provider = Store;
+$.store.map = map;
+$.store.select = select;
 
 })($);
