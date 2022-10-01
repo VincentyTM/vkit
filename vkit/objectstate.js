@@ -9,6 +9,9 @@ function createObjectState(parent, methods){
 	if(!parent || typeof parent.get !== "function"){
 		parent = createState(parent);
 	}
+	if(!methods){
+		methods = {};
+	}
 	var onMutate = createObservable();
 	
 	function Dispatch(){}
