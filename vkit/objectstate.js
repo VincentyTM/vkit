@@ -1,5 +1,6 @@
 (function($, undefined){
 
+var map = $.map;
 var unmount = $.unmount;
 var createState = $.state;
 var createObservable = $.observable;
@@ -73,6 +74,14 @@ function createObjectState(parent, methods){
 		var value = object[key];
 		if( value === undefined ){
 			object[key] = value = initialValue;
+		}
+		if( typeof value === "function" ){
+			var func = map(function(value){
+				return value[key].apply(value, Array.prototype.slice.call(arguments, 1));
+			});
+			return function(){
+				return func.apply(null, [parent].concat(Array.prototype.slice.call(arguments)));
+			};
 		}
 		var child = createObjectState(value, reducer);
 		child.subscribe(function(value){
