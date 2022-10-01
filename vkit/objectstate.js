@@ -14,13 +14,13 @@ function createObjectState(parent, methods){
 	}
 	var onMutate = createObservable();
 	
-	function Dispatch(){}
-	if( parent.dispatch ){
-		Dispatch.prototype = parent.dispatch;
+	function Actions(){}
+	if( parent.actions ){
+		Actions.prototype = parent.actions;
 	}
-	var dispatch = new Dispatch();
+	var actions = new Actions();
 	for(var k in methods){
-		dispatch[k] = patchMethod(methods[k]);
+		actions[k] = patchMethod(methods[k]);
 	}
 	
 	function patchMethod(method){
@@ -53,7 +53,7 @@ function createObjectState(parent, methods){
 			unmount(unsubscribe);
 		}
 		if(!reducer){
-			child.dispatch = dispatch;
+			child.actions = actions;
 		}
 		return child;
 	}
@@ -103,12 +103,12 @@ function createObjectState(parent, methods){
 			unmount(unsubscribe);
 		}
 		if(!reducer){
-			child.dispatch = dispatch;
+			child.actions = actions;
 		}
 		return child;
 	}
 	
-	parent.dispatch = dispatch;
+	parent.actions = actions;
 	parent.item = item;
 	parent.select = select;
 	parent.mutate = mutate;
