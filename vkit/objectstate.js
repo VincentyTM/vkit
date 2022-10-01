@@ -69,6 +69,9 @@ function createObjectState(parent, methods){
 				}
 			});
 		}
+		if( key in methods ){
+			return actions[key];
+		}
 		if(!reducer){
 			reducer = initialValue;
 			initialValue = undefined;
