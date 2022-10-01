@@ -96,7 +96,11 @@ function createObjectState(parent, methods){
 			child.set(object[key]);
 		});
 		var unsubscribe = onMutate.subscribe(function(){
-			child.set(parent.get()[key]);
+			var newValue = parent.get()[key];
+			child
+				.set(newValue)
+				.dequeue()
+				.onChange(newValue);
 			child.onMutate();
 		});
 		if( parent.component !== child.component ){
