@@ -13,6 +13,7 @@ function createObjectState(parent, methods){
 		methods = {};
 	}
 	var onMutate = createObservable();
+	var set = parent.set;
 	
 	function Actions(){}
 	if( parent.actions ){
@@ -20,7 +21,7 @@ function createObjectState(parent, methods){
 	}
 	var actions = new Actions();
 	for(var k in methods){
-		actions[k] = patchMethod(methods[k]);
+		parent[k] = actions[k] = patchMethod(methods[k]);
 	}
 	
 	function patchMethod(method){
@@ -29,7 +30,7 @@ function createObjectState(parent, methods){
 			if( result === undefined ){
 				mutate();
 			}else{
-				parent.set(result);
+				set.call(parent, result);
 			}
 		};
 	}
@@ -68,9 +69,6 @@ function createObjectState(parent, methods){
 					return select(prop, initialValue, reducer);
 				}
 			});
-		}
-		if( key in methods ){
-			return actions[key];
 		}
 		if(!reducer){
 			reducer = initialValue;
