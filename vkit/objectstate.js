@@ -84,7 +84,7 @@ function createObjectState(parent, methods){
 				return value[key].apply(value, Array.prototype.slice.call(arguments, 1));
 			});
 			return function(){
-				return func.apply(null, [parent].concat(Array.prototype.slice.call(arguments)));
+				return item(func.apply(null, [parent].concat(Array.prototype.slice.call(arguments))));
 			};
 		}
 		var child = createObjectState(value, reducer);
