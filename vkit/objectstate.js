@@ -2,6 +2,7 @@
 
 var map = $.map;
 var unmount = $.unmount;
+var onChange = $.onChange;
 var createState = $.state;
 var createObservable = $.observable;
 
@@ -100,6 +101,20 @@ function createObjectState(parent, methods){
 		});
 		parent.subscribe(function(object){
 			child.set(object[key]);
+		});
+		var stopObserving = null;
+		parent.effect(function(object){
+			if( stopObserving ){
+				stopObserving();
+			}
+			stopObserving = onChange(object, key).subscribe(function(value){
+				child.set(value);
+			});
+		});
+		unmount(function(){
+			if( stopObserving ){
+				stopObserving();
+			}
 		});
 		var unsubscribe = onMutate.subscribe(function(){
 			var newValue = parent.get()[key];
