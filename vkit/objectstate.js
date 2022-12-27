@@ -49,7 +49,10 @@ function createObjectState(parent, methods){
 		child.subscribe(function(value){
 			parent.onChange(parent.get());
 		});
-		var unsubscribe = onMutate.subscribe(child.onMutate);
+		var unsubscribe = onMutate.subscribe(function(){
+			child.onChange(child.get());
+			child.onMutate();
+		});
 		if( parent.component !== child.component ){
 			unmount(unsubscribe);
 		}
