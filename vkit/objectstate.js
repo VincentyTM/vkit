@@ -17,13 +17,8 @@ function createObjectState(parent, methods){
 	}
 	var set = parent.set;
 	
-	function Actions(){}
-	if( parent.actions ){
-		Actions.prototype = parent.actions;
-	}
-	var actions = new Actions();
 	for(var k in methods){
-		parent[k] = actions[k] = patchMethod(methods[k]);
+		parent[k] = patchMethod(methods[k]);
 	}
 	
 	function patchMethod(method){
@@ -40,9 +35,6 @@ function createObjectState(parent, methods){
 		child.subscribe(function(value){
 			parent.onChange(parent.get());
 		});
-		if(!reducer){
-			child.actions = actions;
-		}
 		return child;
 	}
 	
@@ -97,13 +89,9 @@ function createObjectState(parent, methods){
 				stopObserving();
 			}
 		});
-		if(!reducer){
-			child.actions = actions;
-		}
 		return child;
 	}
 	
-	parent.actions = actions;
 	parent.item = item;
 	parent.select = select;
 	
