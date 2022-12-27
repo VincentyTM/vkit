@@ -15,7 +15,6 @@ function createObjectState(parent, methods){
 	if(!methods){
 		methods = {};
 	}
-	var onMutate = createObservable();
 	var set = parent.set;
 	
 	function Actions(){}
@@ -30,21 +29,10 @@ function createObjectState(parent, methods){
 	function patchMethod(method){
 		return function(){
 			var result = method.apply(parent.get(), arguments);
-			if( result === undefined ){
-				mutate();
-			}else{
+			if( result !== undefined ){
 				set.call(parent, result);
 			}
 		};
-	}
-	
-	function mutate(modify){
-		var value = parent.get();
-		if( modify ){
-			modify(value);
-		}
-		parent.onChange(value);
-		onMutate();
 	}
 	
 	function item(value, reducer){
@@ -52,13 +40,6 @@ function createObjectState(parent, methods){
 		child.subscribe(function(value){
 			parent.onChange(parent.get());
 		});
-		var unsubscribe = onMutate.subscribe(function(){
-			child.onChange(child.get());
-			child.onMutate();
-		});
-		if( parent.component !== child.component ){
-			unmount(unsubscribe);
-		}
 		if(!reducer){
 			child.actions = actions;
 		}
@@ -116,17 +97,6 @@ function createObjectState(parent, methods){
 				stopObserving();
 			}
 		});
-		var unsubscribe = onMutate.subscribe(function(){
-			var newValue = parent.get()[key];
-			child
-				.set(newValue)
-				.dequeue()
-				.onChange(newValue);
-			child.onMutate();
-		});
-		if( parent.component !== child.component ){
-			unmount(unsubscribe);
-		}
 		if(!reducer){
 			child.actions = actions;
 		}
@@ -136,8 +106,6 @@ function createObjectState(parent, methods){
 	parent.actions = actions;
 	parent.item = item;
 	parent.select = select;
-	parent.mutate = mutate;
-	parent.onMutate = onMutate;
 	
 	return parent;
 }
