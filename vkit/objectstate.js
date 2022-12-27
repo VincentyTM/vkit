@@ -6,7 +6,9 @@ var createState = $.state;
 var createObservable = $.observable;
 
 function createObjectState(parent, methods){
-	if(!parent || typeof parent.get !== "function"){
+	if( typeof parent === "function" ){
+		parent = createState(parent());
+	}else if(!parent || typeof parent.get !== "function"){
 		parent = createState(parent);
 	}
 	if(!methods){
