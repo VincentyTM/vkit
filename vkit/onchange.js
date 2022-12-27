@@ -1,6 +1,8 @@
 (function($){
 
-$.onChange = function(obj, prop){
+var createObservable = $.observable;
+
+function onChange(obj, prop){
 	var desc = Object.getOwnPropertyDescriptor(obj, prop);
 	if(!desc){
 		return null;
@@ -12,7 +14,7 @@ $.onChange = function(obj, prop){
 	function get(){
 		return value;
 	}
-	get.onChange = $.observable();
+	get.onChange = createObservable();
 	Object.defineProperty(obj, prop, {
 		get: get,
 		set: function(v){
@@ -22,6 +24,8 @@ $.onChange = function(obj, prop){
 		}
 	});
 	return get.onChange;
-};
+}
+
+$.onChange = onChange;
 
 })($);
