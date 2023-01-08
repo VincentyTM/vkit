@@ -1,7 +1,8 @@
 (function($){
 
 var getCurrentComponent = $.currentComponent;
-var on = $.on;
+var onEvent = $.onEvent;
+var unmount = $.unmount;
 
 function bindProp(prop, getter){
 	return function(element){
@@ -32,7 +33,7 @@ function createEffect(setter){
 	getCurrentComponent().subscribe(setter);
 }
 
-function bind(el, props){
+function bind(el, props, persistent){
 	for(var prop in props){
 		var value = props[prop];
 		switch( typeof value ){
@@ -44,7 +45,7 @@ function bind(el, props){
 				}else{
 					var obj = el[prop];
 					if( obj ){
-						bind(obj, value);
+						bind(obj, value, persistent);
 					}else{
 						el[prop] = value;
 					}
@@ -52,7 +53,10 @@ function bind(el, props){
 				break;
 			case "function":
 				if( prop.indexOf("on") === 0 ){
-					on(prop.substring(2), value)(el);
+					var unsub = onEvent(el, prop.substring(2), value);
+					if(!persistent){
+						unmount(unsub);
+					}
 				}else{
 					bindProp(prop, value)(el);
 				}

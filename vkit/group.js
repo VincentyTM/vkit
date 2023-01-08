@@ -28,7 +28,7 @@ function deepPush(array, item, context, bind){
 				deepPush(array, a[i], context, bind);
 			}
 		}else if( bind ){
-			bind(context, item);
+			bind(context, item, true);
 		}
 	}
 	return array;
