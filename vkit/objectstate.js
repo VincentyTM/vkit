@@ -33,7 +33,7 @@ function createObjectState(parent, methods){
 	function item(value, reducer){
 		var child = createObjectState(value, reducer);
 		child.subscribe(function(){
-			parent.onChange(parent.get());
+			parent.mutate(parent.get());
 		});
 		return child;
 	}
@@ -74,7 +74,7 @@ function createObjectState(parent, methods){
 			var object = parent.get();
 			if( object ){
 				object[key] = value;
-				parent.onChange(object);
+				parent.mutate(object);
 			}
 		});
 		parent.subscribe(function(object){
