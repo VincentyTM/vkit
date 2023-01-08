@@ -151,6 +151,11 @@ function createState(value){
 		return this;
 	}
 	
+	function mutate(newValue){
+		oldValue = NaN;
+		return this.set(newValue);
+	}
+	
 	return {
 		set: set,
 		apply: apply,
@@ -159,6 +164,7 @@ function createState(value){
 		get: get,
 		map: map,
 		pipe: pipe,
+		mutate: mutate,
 		onChange: onChange,
 		enqueue: enqueue,
 		dequeue: dequeue,
@@ -207,6 +213,10 @@ function combineStates(func){
 		return this;
 	}
 	
+	function mutate(){
+		value = NaN;
+	}
+	
 	var states = this, n = states.length;
 	var value = getValue();
 	var onChange = createObservable();
@@ -235,6 +245,7 @@ function combineStates(func){
 		get: getValue,
 		map: map,
 		pipe: pipe,
+		mutate: mutate,
 		update: update,
 		onChange: onChange,
 		addDependency: addDependency,
