@@ -32,7 +32,7 @@ function createObjectState(parent, methods){
 	
 	function item(value, reducer){
 		var child = createObjectState(value, reducer);
-		child.subscribe(function(value){
+		child.subscribe(function(){
 			parent.onChange(parent.get());
 		});
 		return child;
