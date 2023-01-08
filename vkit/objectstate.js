@@ -54,13 +54,16 @@ function createObjectState(parent, methods){
 			initialValue = undefined;
 		}
 		var object = parent.get();
-		var value = object[key];
+		var value = object ? object[key] : undefined;
 		if( value === undefined ){
-			object[key] = value = initialValue;
+			value = initialValue;
+			if( object ){
+				object[key] = value;
+			}
 		}
 		if( typeof value === "function" ){
-			var func = map(function(value){
-				return value[key].apply(value, Array.prototype.slice.call(arguments, 1));
+			var func = map(function(object){
+				return object ? object[key].apply(object, Array.prototype.slice.call(arguments, 1)) : undefined;
 			});
 			return function(){
 				return item(func.apply(null, [parent].concat(Array.prototype.slice.call(arguments))));
@@ -69,23 +72,34 @@ function createObjectState(parent, methods){
 		var child = createObjectState(value, reducer);
 		child.subscribe(function(value){
 			var object = parent.get();
-			object[key] = value;
-			parent.onChange(object);
+			if( object ){
+				object[key] = value;
+				parent.onChange(object);
+			}
 		});
 		parent.subscribe(function(object){
-			child.set(object[key]);
-		});
-		var stopObserving = null;
-		parent.effect(function(object){
-			if( stopObserving ){
-				stopObserving();
+			if( object ){
+				child.set(object[key]);
 			}
-			stopObserving = onChange(object, key).subscribe(function(value){
-				child.set(value);
-			});
+		});
+		var stopObserving = createObservable();
+		parent.effect(function(object){
+			stopObserving();
+			stopObserving.clear();
+			if( object ){
+				stopObserving.subscribe(
+					onChange(object, key).subscribe(function(value){
+						child.set(value);
+					})
+				);
+			}
 		});
 		unmount(function(){
-			if( stopObserving ){
+			stopObserving();
+			stopObserving.clear();
+		});
+		return child;
+	}
 				stopObserving();
 			}
 		});
