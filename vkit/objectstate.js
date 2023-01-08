@@ -100,14 +100,63 @@ function createObjectState(parent, methods){
 		});
 		return child;
 	}
-				stopObserving();
+	
+	function selectEach(key, reducer){
+		if( key === undefined || key === null ){
+			if( typeof Proxy !== "function" ){
+				throw new ReferenceError("Proxy is not supported in your browser!");
 			}
+			return new Proxy({}, {
+				get: function(target, prop, receiver){
+					return selectEach(prop, reducer);
+				}
+			});
+		}
+				
+		function addChangeHandler(object, i){
+			stopObserving.subscribe(
+				onChange(object, key).subscribe(function(value){
+					var values = child.get();
+					child.set(values.slice(0, i).concat([value]).concat(values.slice(i + 1)));
+				})
+			);
+		}
+
+		function addChangeHandlers(array){
+			stopObserving.clear();
+			if(!array){
+				return undefined;
+			}
+			var n = array.length;
+			var value = new Array(n);
+			for(var i=0; i<n; ++i){
+				var object = array[i];
+				value[i] = object[key];
+				addChangeHandler(object, i);
+			}
+			return value;
+		}
+		
+		var stopObserving = createObservable();
+		var child = item(addChangeHandlers(parent.get()), reducer);
+		var value = parent.get();
+		parent.subscribe(function(array){
+			if( value !== array ){
+				value = array;
+				stopObserving();
+				child.set(addChangeHandlers(array));
+			}
+		});
+		unmount(function(){
+			stopObserving();
+			stopObserving.clear();
 		});
 		return child;
 	}
 	
 	parent.item = item;
 	parent.select = select;
+	parent.selectEach = selectEach;
 	
 	return parent;
 }
