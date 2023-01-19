@@ -19,6 +19,14 @@ function queryParams(search){
 	}else if( search && typeof search.clone === "function" ){
 		return search.clone();
 	}
+	function getAsString(name){
+		var value = data[name];
+		if( value && typeof value === "object" ){
+			return value[0];
+		}else{
+			return value || "";
+		}
+	}
 	function get(name){
 		return data[name] || "";
 	}
@@ -81,6 +89,7 @@ function queryParams(search){
 		return array.join("&");
 	}
 	return {
+		getAsString: getAsString,
 		get: get,
 		set: set,
 		has: has,
