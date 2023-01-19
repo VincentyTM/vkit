@@ -24,6 +24,11 @@ function createPeer(peerConfig, peerOptions, manipulateSDP){
 	var closed = false;
 	var opened = false;
 	
+	function handleError(error){
+		onError(error);
+		render();
+	}
+	
 	function onOpenOnce(){
 		if(!opened){
 			opened = true;
@@ -47,7 +52,7 @@ function createPeer(peerConfig, peerOptions, manipulateSDP){
 			case "answer": finishNegotiation(signal.data); break;
 			case "ice":
 				var candidate = signal.data;
-				peer.addIceCandidate( new RTCIceCandidate(candidate) ).then(null, onError);
+				peer.addIceCandidate( new RTCIceCandidate(candidate) ).then(null, handleError);
 				break;
 		}
 	}
@@ -57,10 +62,10 @@ function createPeer(peerConfig, peerOptions, manipulateSDP){
 			if( sendChannel.readyState === "open" ){
 				sendChannel.send(message);
 			}else{
-				onError("Send channel is in state " + sendChannel.readyState);
+				handleError("Send channel is in state " + sendChannel.readyState);
 			}
 		}else{
-			onError("No send channel while sending message");
+			handleError("No send channel while sending message");
 		}
 		return this;
 	}
@@ -126,8 +131,8 @@ function createPeer(peerConfig, peerOptions, manipulateSDP){
 					"type": "offer",
 					"data": offer
 				});
-			}, onError);
-		}, onError);
+			}, handleError);
+		}, handleError);
 	}
 		
 	function createAnswer(offer){
@@ -142,8 +147,8 @@ function createPeer(peerConfig, peerOptions, manipulateSDP){
 					"type": "answer",
 					"data": answer
 				});
-			}, onError);
-		}, onError);
+			}, handleError);
+		}, handleError);
 	}
 
 	function finishNegotiation(answer){
@@ -173,10 +178,7 @@ function createPeer(peerConfig, peerOptions, manipulateSDP){
 			onCloseOnce();
 			render();
 		};
-		receiveChannel.onerror = function(error){
-			onError(error);
-			render();
-		};
+		receiveChannel.onerror = handleError;
 		receiveChannel.onmessage = function(e){
 			onMessage(e.data);
 			render();
@@ -238,7 +240,7 @@ function createPeer(peerConfig, peerOptions, manipulateSDP){
 			createSendChannel();
 			render();
 		};
-		sendChannel.onerror = onError;
+		sendChannel.onerror = handleError;
 	}
 	
 	createSendChannel();
