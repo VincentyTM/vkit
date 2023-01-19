@@ -190,6 +190,13 @@ function combineStates(func){
 		return func.apply(null, values);
 	}
 	
+	function enqueue(){
+		if(!update.queued){
+			update.queued = true;
+			stateUpdates.push(update);
+		}
+	}
+	
 	function update(){
 		var newValue = getValue();
 		if( value !== newValue ){
@@ -197,6 +204,8 @@ function combineStates(func){
 		}
 		return this;
 	}
+	
+	update.queued = false;
 	
 	function unsubscribe(){
 		var n = unsubscribes.length;
@@ -210,7 +219,7 @@ function combineStates(func){
 		var n = arguments.length;
 		for(var i=0; i<n; ++i){
 			var arg = arguments[i];
-			unsubscribes.push(arg.subscribe ? arg.subscribe(update) : arg.onChange.subscribe(update));
+			unsubscribes.push(arg.subscribe ? arg.subscribe(enqueue) : arg.onChange.subscribe(enqueue));
 		}
 		return this;
 	}
@@ -229,7 +238,7 @@ function combineStates(func){
 	for(var i=0; i<n; ++i){
 		var state = states[i];
 		if( state && state.onChange && typeof state.onChange.subscribe === "function" ){
-			unsubscribes.push(state.onChange.subscribe(update));
+			unsubscribes.push(state.onChange.subscribe(enqueue));
 			if( state.component !== component ){
 				autoUnsubscribe = true;
 			}
