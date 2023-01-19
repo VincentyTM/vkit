@@ -28,10 +28,14 @@ function queryParams(search){
 		}
 	}
 	function get(name){
-		return data[name] || "";
+		return name in data ? data[name] : null;
 	}
 	function set(name, value){
-		data[name] = value;
+		if( typeof value === "string" || typeof value === "number" ){
+			data[name] = String(value);
+		}else{
+			delete data[name];
+		}
 		return this;
 	}
 	function has(name){
@@ -42,6 +46,7 @@ function queryParams(search){
 		return this;
 	}
 	function add(name, value){
+		value = String(value);
 		if( name in data ){
 			if( typeof data[name] === "object" ){
 				data[name].push(value);
