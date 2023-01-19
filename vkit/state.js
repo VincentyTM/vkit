@@ -153,7 +153,9 @@ function createState(value){
 	
 	function mutate(newValue){
 		oldValue = NaN;
-		return this.set(newValue);
+		value = newValue;
+		enqueue();
+		return this;
 	}
 	
 	return {
