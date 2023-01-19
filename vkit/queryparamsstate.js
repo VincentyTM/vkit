@@ -10,9 +10,11 @@ function createQueryParamsState(win){
 	var location = win.location;
 	var historyURL = createHistoryState(win).url;
 	var queryParamsState = url(historyURL).queryParams;
-	return function(name){
-		var state = queryParamsState.map(function(queryParams){
+	return function(name, allowObject){
+		var state = queryParamsState.map(allowObject ? function(queryParams){
 			return queryParams.get(name);
+		} : function(queryParams){
+			return queryParams.getAsString(name);
 		});
 		state.set = function(value){
 			historyURL.set(getQuery(value) + location.hash);
@@ -22,13 +24,9 @@ function createQueryParamsState(win){
 		};
 		function getQuery(value){
 			var queryParams = createQueryParams(location.search.substring(1));
-			if( value === null || value === undefined ){
-				queryParams.del(name);
-			}else{
-				queryParams.set(name, value);
-			}
+			queryParams.set(name, value);
 			var params = queryParams.toString();
-			return params ? "?" + params : "";
+			return params ? "?" + params : location.pathname;
 		}
 		return state;
 	};
