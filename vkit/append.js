@@ -20,7 +20,7 @@ function append(parent, children, context, bind){
 }
 
 function appendToThis(){
-	append(this[0], arguments);
+	append(this[0], arguments, this[0]);
 	return this;
 }
 
