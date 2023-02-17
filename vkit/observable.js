@@ -29,8 +29,10 @@ function createObservable(){
 	}
 	
 	function clear(){
-		callbacks.splice(0, n);
-		n = 0;
+		if( n > 0 ){
+			callbacks.splice(0, n);
+			n = 0;
+		}
 	}
 	
 	observable.subscribe = subscribe;
