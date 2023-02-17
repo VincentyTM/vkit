@@ -1,6 +1,5 @@
 (function($, document){
 
-var group = $.group;
 var toArray = $.fn.toArray;
 var createComponent = $.component;
 
@@ -73,7 +72,7 @@ function getViewOf(getData, getView, immutable, onRender){
 			component.replaceView(getView ? getView(B) : B);
 			A = B;
 		}, component));
-		return group(component.start, view, component.end);
+		return [component.start, view, component.end];
 	}finally{
 		currentComponent = prev;
 	}
@@ -161,7 +160,7 @@ function getViewsOf(array, getView, immutable, onRender){
 		}
 	}));
 	
-	return group(container.start, views, container.end);
+	return [container.start, views, container.end];
 }
 
 var supportsWeakMap = typeof WeakMap === "function";
@@ -258,7 +257,7 @@ function provide(services, getContent){
 	try{
 		var previousProvider = currentProvider;
 		currentProvider = new Provider(currentProvider, containers, currentComponent);
-		return group(getContent());
+		return getContent();
 	}finally{
 		currentProvider = previousProvider;
 	}

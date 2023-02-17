@@ -81,11 +81,11 @@ function createComponent(parent, stopRender){
 			}
 		},
 		insertView: function(view, anchor){
-			insert([start, view, end], anchor);
+			insert([start, view, end], anchor, anchor.parentNode);
 		},
 		replaceView: function(view){
 			this.clearView();
-			insert(view, end);
+			insert(view, end, end.parentNode);
 		},
 		getChildStart: function(index){
 			var child = children[index];
