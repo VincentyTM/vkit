@@ -41,9 +41,15 @@ function useKey(arrayState, getKey){
 		});
 	}
 	
+	function getItem(key){
+		return recordsState.get()[key];
+	}
+	
 	return {
 		select: select,
-		views: getStateViews
+		views: getStateViews,
+		records: recordsState,
+		getItem: getItem
 	};
 }
 
