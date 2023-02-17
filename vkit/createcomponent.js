@@ -31,7 +31,7 @@ function createComponent(parent, stopRender){
 				children[i].unmount();
 			}
 			this.onDestroy();
-			this.onDestroy = createObservable();
+			this.onDestroy.clear();
 		},
 		render: function(){
 			if(!this.shouldRender){
