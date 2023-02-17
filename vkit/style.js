@@ -62,6 +62,7 @@ function createStyle(css, attr){
 					textNode = null;
 				}
 				container = root.styleContainer = {
+					root: root,
 					element: style,
 					textNode: textNode,
 					controllers: {},
@@ -107,11 +108,15 @@ function createStyle(css, attr){
 						break;
 					}
 				}
+				delete container.controllers[attr];
+				styleController = null;
+				for(var k in container.controllers){
+					return;
+				}
+				delete container.root.styleContainer;
 				if( container.element.parentNode ){
 					container.element.parentNode.removeChild(container.element);
 				}
-				delete container.controllers[attr];
-				styleController = null;
 			}
 		});
 	}
