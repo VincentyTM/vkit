@@ -54,7 +54,7 @@ function ParseTree(operators){
 	this.openingParenthesis = openingParenthesis;
 	this.closingParenthesis = closingParenthesis;
 	this.root = new BinaryNode(ROOT, null);
-	this.curr = this.root;
+	this.current = this.root;
 }
 
 ParseTree.prototype.isOpeningParenthesis = function(node){
@@ -66,7 +66,7 @@ ParseTree.prototype.isClosingParenthesis = function(node){
 };
 
 ParseTree.prototype.compare = function(node1, node2){
-	if(!node1 || node1.type===ROOT || this.isOpeningParenthesis(node1)){
+	if(!node1 || node1.type === ROOT || this.isOpeningParenthesis(node1)){
 		return false;
 	}
 	var precedence = this.precedence;
@@ -79,8 +79,8 @@ ParseTree.prototype.compare = function(node1, node2){
 		if( precedence[A] < precedence[B] ){
 			return false;
 		}
-		if( precedence[A]===precedence[B] ){
-			if((A in this.left)!==(B in this.left)){
+		if( precedence[A] === precedence[B] ){
+			if((A in this.left) !== (B in this.left)){
 				throw new SyntaxError("Same precedence with different associativity is not allowed.");
 			}
 			return A in this.left;
@@ -93,7 +93,7 @@ ParseTree.prototype.compare = function(node1, node2){
 };
 
 ParseTree.prototype.findParent = function(node){
-	var parent = this.curr;
+	var parent = this.current;
 	while( this.compare(parent, node) ){
 		parent = parent.parent;
 	}
@@ -112,7 +112,7 @@ ParseTree.prototype.insertToRight = function(parent, node){
 	}
 	node.parent = parent;
 	parent.right = node;
-	this.curr = node;
+	this.current = node;
 };
 
 ParseTree.prototype.add = function(node){
@@ -133,7 +133,7 @@ ParseTree.prototype.add = function(node){
 };
 
 ParseTree.prototype.addClosingParenthesis = function(node){
-	var parent = this.curr;
+	var parent = this.current;
 	while( parent && !this.isOpeningParenthesis(parent) ){
 		parent = parent.parent;
 	}
@@ -145,22 +145,22 @@ ParseTree.prototype.addClosingParenthesis = function(node){
 			parent.right.parent = parent.parent;
 		}
 		parent.parent.right = parent.right;
-		this.curr = parent.parent;
+		this.current = parent.parent;
 	}
 };
 
 ParseTree.prototype.addOperand = function(node){
 	node = new BinaryNode(node.type, node.word);
-	node.parent = this.curr;
-	if( this.curr.left || this.curr.type==="ROOT" || !(this.curr.type in this.precedence) || this.curr.type in this.unary ){
-		if( this.curr.right ){
+	node.parent = this.current;
+	if( this.current.left || this.current.type === "ROOT" || !(this.current.type in this.precedence) || this.current.type in this.unary ){
+		if( this.current.right ){
 			throw new SyntaxError("Third argument for binary operator. Should not happen.");
 		}
-		this.curr.right = node;
+		this.current.right = node;
 	}else{
-		this.curr.left = node;
+		this.current.left = node;
 	}
-	this.curr = node;
+	this.current = node;
 };
 
 ParseTree.prototype.addBinaryOperator = function(node){
