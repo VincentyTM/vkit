@@ -58,8 +58,10 @@ function createCustomElement(name, getView, options){
 		if( options.observedAttributes ){
 			CustomElement.observedAttributes = options.observedAttributes;
 			proto.attributeChangedCallback = function(name, oldValue, newValue){
-				this.observedAttributes[name] = newValue;
-				render();
+				if( this.observedAttributes[name] !== newValue ){
+					this.observedAttributes[name] = newValue;
+					render();
+				}
 			};
 		}
 	}
