@@ -1,7 +1,6 @@
 (function($, window, undefined){
 
 var bind = $.bind;
-var group = $.group;
 var append = $.append;
 var render = $.render;
 var createComponent = $.component;
