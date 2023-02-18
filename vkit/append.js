@@ -1,4 +1,4 @@
-(function($, document){
+(function($){
 
 var deepPush = $.deepPush;
 
@@ -6,16 +6,13 @@ function append(parent, children, context, bind){
 	function push(node){
 		parent.appendChild(node);
 	}
-	var pusher = {push: push};
-	if( document.createDocumentFragment ){
-		var container = parent;
-		parent = document.createDocumentFragment();
-		deepPush(pusher, children, context, bind);
-		if( parent.firstChild ){
-			container.appendChild(parent);
-		}
+	
+	if( parent.append ){
+		var array = [];
+		deepPush(array, children, context, bind);
+		parent.append.apply(parent, array);
 	}else{
-		deepPush(pusher, children, context, bind);
+		deepPush({push: push}, children, context, bind);
 	}
 }
 
@@ -27,4 +24,4 @@ function appendToThis(){
 $.append = append;
 $.fn.append = appendToThis;
 
-})($, document);
+})($);
