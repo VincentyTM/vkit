@@ -14,9 +14,9 @@ function contextGuard(){
 	}
 }
 
-function unmount(func){
+function unmount(callback){
 	contextGuard();
-	return currentComponent !== rootComponent ? currentComponent.onDestroy.subscribe(func) : noop;
+	return currentComponent !== rootComponent ? currentComponent.onDestroy.subscribe(callback) : noop;
 }
 
 function withContext(func, component){
