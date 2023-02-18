@@ -228,11 +228,10 @@ function inject(service){
 	contextGuard();
 	var provider = currentProvider;
 	var container = null;
-	while( provider && !(container = provider.getContainer(service))){
+	while(!(container = provider.getContainer(service)) && provider.parent){
 		provider = provider.parent;
 	}
 	if(!container){
-		provider = rootProvider;
 		container = new Container(service, service);
 		var containers = provider.containers;
 		containers.set ? containers.set(service, container) : containers.push(container);
@@ -242,22 +241,27 @@ function inject(service){
 
 function provide(services, getContent){
 	contextGuard();
-	if( supportsWeakMap ){
-		var containers = new WeakMap();
-		services.forEach(function(service){
-			var key = typeof service === "object" ? service.provide : service;
-			containers.set(key, new Container(key, service));
-		});
-	}else{
-		var containers = new Array(services.length);
-		for(var i=services.length; i--;){
-			var service = services[i];
-			containers[i] = new Container(typeof service === "object" ? service.provide : service, service);
+	var containers;
+	if( services ){
+		if( supportsWeakMap ){
+			containers = new WeakMap();
+			services.forEach(function(service){
+				var key = typeof service === "object" ? service.provide : service;
+				containers.set(key, new Container(key, service));
+			});
+		}else{
+			containers = new Array(services.length);
+			for(var i=services.length; i--;){
+				var service = services[i];
+				containers[i] = new Container(typeof service === "object" ? service.provide : service, service);
+			}
 		}
+	}else{
+		containers = supportsWeakMap ? new WeakMap() : [];
 	}
 	try{
 		var previousProvider = currentProvider;
-		currentProvider = new Provider(currentProvider, containers, currentComponent);
+		currentProvider = new Provider(services ? currentProvider : null, containers, currentComponent);
 		return getContent();
 	}finally{
 		currentProvider = previousProvider;
