@@ -47,7 +47,7 @@ function createStyle(css, attr){
 		}
 		
 		afterRender(function addStyle(){
-			if(!el.parentNode){
+			if(!el.parentNode && el.nodeType !== 11){
 				afterRender(addStyle);
 				return;
 			}
