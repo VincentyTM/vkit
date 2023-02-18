@@ -34,6 +34,13 @@ function createCustomElement(name, getView, options){
 	var win = window;
 	
 	proto.connectedCallback = function(){
+		var el = this;
+		while( el.parentNode !== null ){
+			el = el.parentNode;
+		}
+		if( el.nodeType !== 9 && el.nodeType !== 11 ){
+			return;
+		}
 		var component = this.component;
 		var prev = getCurrentComponent();
 		setCurrentComponent(component);
