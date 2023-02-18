@@ -64,8 +64,8 @@ function createComponent(parent, stopRender){
 		removeChild: function(index){
 			var removed = children.splice(index, 1)[0];
 			if( removed ){
-				removed.unmount();
 				removed.removeView();
+				removed.unmount();
 			}
 		},
 		removeView: function(){
@@ -83,9 +83,12 @@ function createComponent(parent, stopRender){
 		insertView: function(view, anchor){
 			insert([start, view, end], anchor, anchor.parentNode);
 		},
+		appendView: function(view){
+			insert(view, end, end.parentNode);
+		},
 		replaceView: function(view){
 			this.clearView();
-			insert(view, end, end.parentNode);
+			this.appendView(view);
 		},
 		getChildStart: function(index){
 			var child = children[index];

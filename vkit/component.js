@@ -67,9 +67,10 @@ function getViewOf(getData, getView, immutable, onRender){
 			if( A === B ){
 				return;
 			}
+			component.clearView();
 			component.unmount();
 			component.children.splice(0, component.children.length);
-			component.replaceView(getView ? getView(B) : B);
+			component.appendView(getView ? getView(B) : B);
 			A = B;
 		}, component));
 		return [component.start, view, component.end];
