@@ -19,17 +19,17 @@ function unmount(callback){
 	return currentComponent !== rootComponent ? currentComponent.onDestroy.subscribe(callback) : noop;
 }
 
-function withContext(func, component){
+function withContext(getView){
 	contextGuard();
 	var provider = currentProvider;
-	if(!component) component = currentComponent;
+	var component = currentComponent;
 	return function(){
 		var prevProvider = currentProvider;
 		var prevComponent = currentComponent;
 		try{
 			currentProvider = provider;
 			currentComponent = component;
-			return func.apply(this, arguments);
+			return getView.apply(this, arguments);
 		}catch(ex){
 			component.throwError(ex);
 		}finally{
