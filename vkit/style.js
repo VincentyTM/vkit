@@ -46,9 +46,17 @@ function createStyle(css, attr){
 			el.setAttribute(attr, "");
 		}
 		
-		afterRender(function(){
-			var root = getRootNode(el);
+		afterRender(function addStyle(){
+			if(!el.parentNode){
+				afterRender(addStyle);
+				return;
+			}
 			var doc = el.ownerDocument;
+			var root = getRootNode(el);
+			if( root !== doc && root.nodeType !== 11 ){
+				afterRender(addStyle);
+				return;
+			}
 			var container = root.styleContainer;
 			if(!container){
 				var head = root.getElementsByTagName ? (root.getElementsByTagName("head")[0] || root) : root;
