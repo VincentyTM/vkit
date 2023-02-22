@@ -17,8 +17,8 @@ class Commands {
 			console.error("Error while starting server:", ex);
 		}
 	}
-	startBrowser(port, path = "/"){
-		startBrowser("http://localhost:" + port + path);
+	startBrowser(secure, port, path = "/"){
+		startBrowser("http" + (secure ? "s" : "") + "://localhost:" + port + path);
 	}
 	async exportApplication(src, includeLibraries){
 		try{

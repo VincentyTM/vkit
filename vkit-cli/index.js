@@ -46,7 +46,11 @@ const config = new Config(appDirectory, configFile, async needsRestart => {
 	if( needsRestart ){
 		await commands.startServer();
 		await commands.build();
-		commands.startBrowser(config.port, config.appPath);
+		commands.startBrowser(
+			config.secure,
+			config.port,
+			config.appPath
+		);
 	}else{
 		await commands.build();
 		commands.reload();
@@ -134,7 +138,13 @@ process.openStdin().on("data", function(data){
 			console.log("  start: Start application in browser");
 			break;
 		case "exit": process.exit(); break;
-		case "start": commands.startBrowser(config.port, config.appPath); break;
+		case "start":
+			commands.startBrowser(
+				config.secure,
+				config.port,
+				config.appPath
+			);
+			break;
 		case "reload": commands.reload(); break;
 		case "config": commands.loadConfig(); break;
 		case "build": commands.rebuild(); break;
@@ -180,7 +190,11 @@ async function init(){
 			initConfig()
 		]);
 		loadedAll = true;
-		commands.startBrowser(config.port, config.appPath);
+		commands.startBrowser(
+			config.secure,
+			server.port,
+			config.appPath
+		);
 	}catch(ex){
 		console.error("Error:", ex);
 	}
