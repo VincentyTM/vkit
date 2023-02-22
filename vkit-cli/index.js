@@ -1,6 +1,6 @@
 /* Requirements */
 
-const fs = require("fs");
+const {promises: fs} = require("fs");
 const process = require("process");
 const path = require("path");
 const Server = require("./server.js");
@@ -14,15 +14,24 @@ const recursivelyIterate = require("./recursively-iterate.js");
 const sanitizePath = require("./sanitize-path.js");
 const serveFile = require("./serve-file.js");
 const getMimeType = require("./get-mime-type.js");
-const DEFAULT_INDEX_HTML = require("./index-html.js");
-const DEFAULT_INDEX_JS = require("./index-js.js");
 const STYLESHEET_REGEXP = /\.css$/i;
 const RELOAD_PATH = "/reload";
 
 /* Instances */
 
+let templateName = "default";
 let loadedAll = false;
-const appDirectory = process.argv.slice(2).join(" ").trim() || ".";
+const args = process.argv.slice(2);
+while( args.length > 0 ){
+	const arg = args[0];
+	if( /^t:[a-zA-Z0-9_]+$/.test(arg) ){
+		templateName = arg.substring(2);
+		args.shift();
+	}else{
+		break;
+	}
+}
+const appDirectory = args.join(" ").trim() || ".";
 const configFile = appDirectory + "/config.json";
 const reloader = new Reloader();
 const server = new Server(requestListener);
@@ -153,16 +162,29 @@ process.openStdin().on("data", function(data){
 	}
 });
 
+async function copyDir(src, dest){
+	await fs.mkdir(dest, {recursive: false});
+	const entries = await fs.readdir(src, {withFileTypes: true});
+	await Promise.all(
+		entries.map(entry => (
+			(entry.isDirectory() ? copyDir : fs.copyFile)(
+				path.join(src, entry.name),
+				path.join(dest, entry.name)
+			)
+		))
+	);
+}
+
 async function initStaticDirectory(){
-	try{ await new Promise((resolve, reject) => fs.mkdir(getStaticPath(), err => err ? reject(err) : resolve())); }catch(ex){}
+	try{
+		await copyDir(__dirname + "/templates/" + templateName + "/www", getStaticPath());
+	}catch(ex){}
 }
 
 async function initSrcDirectory(){
 	try{
-		await new Promise((resolve, reject) => fs.mkdir(appDirectory + "/src", err => err ? reject(err) : resolve()));
-		await new Promise((resolve, reject) => fs.writeFile(appDirectory + "/src/index.js", DEFAULT_INDEX_JS, {flag: "wx"}, err => err ? reject(err) : resolve()));
+		await copyDir(__dirname + "/templates/" + templateName + "/src", appDirectory + "/src");
 	}catch(ex){}
-	try{ await new Promise((resolve, reject) => fs.writeFile(appDirectory + "/src/index.html", DEFAULT_INDEX_HTML, {flag: "wx"}, err => err ? reject(err) : resolve())); }catch(ex){}
 	config.watch();
 	cache.watchDirectory(config.appDirectory + "/src");
 	cache.updateDirectory(config.appDirectory + "/src");
@@ -170,7 +192,9 @@ async function initSrcDirectory(){
 }
 
 async function initConfig(){
-	try{ await new Promise((resolve, reject) => fs.mkdir(appDirectory, err => err ? reject(err) : resolve())); }catch(ex){}
+	try{
+		await fs.mkdir(appDirectory);
+	}catch(ex){}
 	try{
 		await config.load();
 	}catch(exc){
