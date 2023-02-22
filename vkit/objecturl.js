@@ -1,5 +1,7 @@
 (function($, global){
 
+var createState = $.state;
+var unmount = $.unmount;
 var URL = global.URL || global.webkitURL || global.mozURL;
 
 function createObjectURL(file){
@@ -12,7 +14,7 @@ function createObjectURL(file){
 	}
 	
 	if( file.effect ){
-		var urlState = $.state("");
+		var urlState = createState("");
 		
 		function revoke(){
 			var url = urlState.get();
@@ -26,14 +28,14 @@ function createObjectURL(file){
 			urlState.set(file ? URL.createObjectURL(file) : "");
 		});
 		
-		$.unmount(revoke);
+		unmount(revoke);
 		
 		return urlState;
 	}
 	
 	var url = URL.createObjectURL(file);
 	
-	$.unmount(function(){
+	unmount(function(){
 		URL.revokeObjectURL(url);
 	});
 	
