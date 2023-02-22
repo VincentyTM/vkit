@@ -9,10 +9,10 @@ class Commands {
 		this.config = config;
 		this.htmlCompiler = htmlCompiler;
 	}
-	async startServer(port){
+	async startServer(){
 		try{
-			await this.server.start(port);
 			console.log("Server is running on port " + port + ". Type 'help' for help.");
+			await this.server.start(this.config);
 		}catch(ex){
 			console.error("Error while starting server:", ex);
 		}

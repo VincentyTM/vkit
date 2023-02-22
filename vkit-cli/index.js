@@ -44,7 +44,7 @@ const cache = new FileCache(
 );
 const config = new Config(appDirectory, configFile, async needsRestart => {
 	if( needsRestart ){
-		await commands.startServer(config.port);
+		await commands.startServer();
 		await commands.build();
 		commands.startBrowser(config.port, config.appPath);
 	}else{
@@ -167,7 +167,7 @@ async function initConfig(){
 		await config.save();
 	}
 	await Promise.all([
-		commands.startServer(config.port),
+		commands.startServer(),
 		initSrcDirectory(),
 		initStaticDirectory()
 	]);

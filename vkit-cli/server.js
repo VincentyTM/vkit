@@ -5,8 +5,8 @@ class Server {
 		this.server = null;
 		this.requestListener = requestListener;
 	}
-	async start(port){
 		return new Promise((resolve, reject) => {
+	async start({port}){
 			this.stop();
 			this.server = http.createServer(this.requestListener).listen({port}, resolve).on("error", err => {
 				if( err.code === "EADDRINUSE" ){
