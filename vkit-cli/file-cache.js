@@ -88,7 +88,7 @@ class FileCache {
 					console.error("Error while reading '" + src + "'.");
 			}
 		}
-		if( --this.taskCount==0 ){
+		if( --this.taskCount === 0 ){
 			await this.onComplete(this.updated, this.deleted);
 			this.updated = {};
 			this.deleted = {};
@@ -99,11 +99,11 @@ class FileCache {
 		}
 	}
 	async readFile(src){
-		return await new Promise((resolve, reject) => 
+		return await new Promise((resolve, reject) => (
 			fs.readFile(src, (err, data) =>
 				err ? reject(err) : resolve(data.toString())
 			)
-		);
+		));
 	}
 }
 

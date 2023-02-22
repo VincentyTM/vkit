@@ -36,9 +36,9 @@ const mimeTypes = {
 };
 
 function getMimeType(path, defaultMimeType = "application/octet-stream"){
-	const ldot=path.lastIndexOf(".");
+	const ldot = path.lastIndexOf(".");
 	if(~ldot){
-		const ext = path.substring(ldot+1).toLowerCase();
+		const ext = path.substring(ldot + 1).toLowerCase();
 		return mimeTypes[ext] || defaultMimeType;
 	}
 	return defaultMimeType;
