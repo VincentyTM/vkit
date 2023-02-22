@@ -11,8 +11,8 @@ class Commands {
 	}
 	async startServer(){
 		try{
-			console.log("Server is running on port " + port + ". Type 'help' for help.");
 			await this.server.start(this.config);
+			console.log("Server is running on port " + this.server.port + ". Type 'help' for help.");
 		}catch(ex){
 			console.error("Error while starting server:", ex);
 		}
