@@ -6,6 +6,9 @@ class Config {
 		this.src = src;
 		this.onLoad = onLoad;
 		this.port = 3000;
+		this.secure = false;
+		this.privateKey = "";
+		this.certificate = "";
 		this.staticRoot = "www";
 		this.exportFile = "www/index.html";
 		this.autoExport = false;
@@ -32,6 +35,27 @@ class Config {
 			const port = json.port ? Math.min(65535, Math.max(0, json.port|0)) : 3000;
 			if( this.port !== port ){
 				this.port = port;
+				if( this.loaded ){
+					needsRestart = true;
+				}
+			}
+			const secure = Boolean(json.secure);
+			if( this.secure !== secure ){
+				this.secure = secure;
+				if( this.loaded ){
+					needsRestart = true;
+				}
+			}
+			const privateKey = String(json.privateKey || "");
+			if( this.privateKey !== privateKey ){
+				this.privateKey = privateKey;
+				if( this.loaded ){
+					needsRestart = true;
+				}
+			}
+			const certificate = String(json.certificate || "");
+			if( this.certificate !== certificate ){
+				this.certificate = certificate;
 				if( this.loaded ){
 					needsRestart = true;
 				}
@@ -87,9 +111,9 @@ class Config {
 			await new Promise((resolve, reject) =>
 				fs.writeFile(this.src, JSON.stringify({
 					port: this.port,
-					lang: this.lang,
-					themeColor: this.themeColor,
-					title: this.title,
+					secure: this.secure,
+					privateKey: this.privateKey,
+					certificate: this.certificate,
 					staticRoot: this.staticRoot,
 					exportFile: this.exportFile,
 					autoExport: this.autoExport,
