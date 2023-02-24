@@ -77,8 +77,8 @@ class LibraryContainer {
 		}
 	}
 	addLibrary(name){
-		if(!/^[a-z]+$/.test(name)){
-			throw "Library names must only contain [a-z]!";
+		if(!/^[a-zA-Z][a-zA-Z0-9]*$/.test(name)){
+			throw "Library names must match ^[a-zA-Z][a-zA-Z0-9]*$!";
 		}
 		if( name in this.libraries ){
 			throw "Library '" + name + "' already exists!";
