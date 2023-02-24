@@ -276,8 +276,8 @@ class HTMLCompiler {
 			reloadPath
 		);
 		return cachedItem
-			.replace(/{{style}}|<!--style-->/g, style)
-			.replace(/{{body}}|<!--body-->/g, body);
+			.split(/{{style}}|<!--style-->/).join(style)
+			.split(/{{body}}|<!--body-->/).join(body);
 	}
 	checkFiles(){
 		const cache = this.cache;
