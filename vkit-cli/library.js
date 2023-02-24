@@ -41,12 +41,9 @@ class Library {
 	}
 	findDependencies(){
 		const input = this.source;
-		const regex = /\$?\.[a-zA-Z_][a-zA-Z0-9_]*\b/g;
+		const regex = /\$(\.fn)?\.[a-zA-Z_][a-zA-Z0-9_]*\b/g;
 		for(let match; match = regex.exec(input);){
-			let dep = match[0];
-			if(!dep.startsWith("$.")){
-				dep = "$.fn" + dep;
-			}
+			const dep = match[0];
 			if(!(dep in this.definitions)){
 				this.addDependency(dep);
 			}
