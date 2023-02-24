@@ -6,7 +6,7 @@ var createComponent = $.component;
 function noop(){}
 
 var rootComponent = createComponent(null);
-var currentComponent = rootComponent;
+var currentComponent = null;
 
 function contextGuard(){
 	if(!currentComponent){
@@ -269,6 +269,7 @@ function provide(services, getContent){
 }
 
 $.withContext = withContext;
+$.rootComponent = rootComponent;
 $.currentComponent = getCurrentComponent;
 $.setCurrentComponent = setCurrentComponent;
 $.renderComponents = renderComponents;

@@ -1,2 +1,1 @@
-$(document.body).append(App());
-$.render();
+$(document.body).render(App);
