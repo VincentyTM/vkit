@@ -1,4 +1,5 @@
 const fs = require("fs");
+const {promises: fsp} = fs;
 
 class Config {
 	constructor(appDirectory, src, onLoad){
@@ -27,11 +28,10 @@ class Config {
 		try{
 			let needsRestart = false;
 			const src = this.src;
-			const json = JSON.parse(await new Promise((resolve, reject) => fs.readFile(
+			const json = JSON.parse(await fsp.readFile(
 				src,
-				"utf8",
-				(err, data) => err ? reject(err) : resolve(data)
-			)));
+				"utf8"
+			));
 			const port = json.port ? Math.min(65535, Math.max(0, json.port|0)) : 3000;
 			if( this.port !== port ){
 				this.port = port;
@@ -108,23 +108,21 @@ class Config {
 	}
 	async save(){
 		try{
-			await new Promise((resolve, reject) =>
-				fs.writeFile(this.src, JSON.stringify({
-					port: this.port,
-					secure: this.secure,
-					privateKey: this.privateKey,
-					certificate: this.certificate,
-					staticRoot: this.staticRoot,
-					exportFile: this.exportFile,
-					autoExport: this.autoExport,
-					includeLibraries: this.includeLibraries,
-					appPath: this.appPath,
-					debugPath: this.debugPath,
-					environment: this.environment,
-					moduleFile: this.moduleFile,
-					moduleSymbol: this.moduleSymbol
-				}, null, 4), err => err ? reject(err) : resolve())
-			);
+			await fsp.writeFile(this.src, JSON.stringify({
+				port: this.port,
+				secure: this.secure,
+				privateKey: this.privateKey,
+				certificate: this.certificate,
+				staticRoot: this.staticRoot,
+				exportFile: this.exportFile,
+				autoExport: this.autoExport,
+				includeLibraries: this.includeLibraries,
+				appPath: this.appPath,
+				debugPath: this.debugPath,
+				environment: this.environment,
+				moduleFile: this.moduleFile,
+				moduleSymbol: this.moduleSymbol
+			}, null, 4));
 		}catch(ex){
 			console.error("Error while saving config file.");
 		}
