@@ -57,7 +57,7 @@ const config = new Config(appDirectory, configFile, async needsRestart => {
 		await commands.build();
 		commands.startBrowser(
 			config.secure,
-			config.port,
+			server.port,
 			config.appPath
 		);
 	}else{
@@ -150,7 +150,7 @@ process.openStdin().on("data", function(data){
 		case "start":
 			commands.startBrowser(
 				config.secure,
-				config.port,
+				server.port,
 				config.appPath
 			);
 			break;
