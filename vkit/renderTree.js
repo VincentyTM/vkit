@@ -11,8 +11,11 @@ function renderTree(component){
 		setCurrentComponent(rootComponent);
 		var view = component();
 		var parent = this[0];
-		append(parent, view, parent, bind);
+		if( parent ){
+			append(parent, view, parent, bind);
+		}
 		render();
+		return view;
 	}finally{
 		setCurrentComponent(null);
 	}
