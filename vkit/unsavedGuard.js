@@ -17,6 +17,7 @@ function unsavedGuard(state, win){
 	function add(){
 		if(!unsubscribe){
 			unsubscribe = onEvent(win, "beforeunload", prevent);
+			++unsavedGuard.count;
 		}
 	}
 	
@@ -24,6 +25,7 @@ function unsavedGuard(state, win){
 		if( unsubscribe ){
 			unsubscribe();
 			unsubscribe = null;
+			--unsavedGuard.count;
 		}
 	}
 	
@@ -35,6 +37,8 @@ function unsavedGuard(state, win){
 	unmount(remove);
 	return state;
 }
+
+unsavedGuard.count = 0;
 
 $.unsavedGuard = unsavedGuard;
 
