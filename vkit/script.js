@@ -46,8 +46,8 @@ function createScript(url, options){
 	}
 	
 	function then(loadHandler, errorHandler){
-		if( loadHandler ) onLoad.subscribe(loadHandler);
-		if( errorHandler ) onError.subscribe(errorHandler);
+		if( typeof loadHandler === "function" ) onLoad.subscribe(loadHandler);
+		if( typeof errorHandler === "function" ) onError.subscribe(errorHandler);
 	}
 	
 	s.request = {
