@@ -5,6 +5,7 @@ var onEvent = $.onEvent;
 var createState = $.state;
 var syncState = $.sync;
 var createObservable = $.observable;
+var onStateUpdate = createObservable();
 
 function getValue(win){
 	return {
@@ -28,10 +29,6 @@ function getState(value){
 function createHistoryState(win){
 	if(!win) win = window;
 	var history = win.history;
-	if(!history.onStateUpdate){
-		history.onStateUpdate = createObservable();
-	}
-
 	var entry = createState(getValue(win));
 
 	entry.url = syncState(
@@ -87,16 +84,22 @@ function createHistoryState(win){
 			"",
 			value !== undefined ? value.url : oldValue.url
 		);
-		history.onStateUpdate();
+		onStateUpdate(history);
 	}
 
-	unmount( history.onStateUpdate.subscribe(onPopState) );
 	unmount( onEvent(win, "popstate", onPopState) );
+	unmount(
+		onStateUpdate.subscribe(function(h){
+			if( h === history ){
+				onPopState();
+			}
+		})
+	);
 	unmount(
 		entry.onChange.subscribe(function(value){
 			if(!setByEvent){
 				history.replaceState(value.state, "", value.url);
-				history.onStateUpdate();
+				onStateUpdate(history);
 			}
 		})
 	);
@@ -111,6 +114,8 @@ function createHistoryState(win){
 
 	return entry;
 }
+
+createHistoryState.onStateUpdate = onStateUpdate;
 
 $.historyState = createHistoryState;
 

@@ -1,5 +1,6 @@
 (function($, window){
 
+var historyState = $.historyState;
 var unsavedGuard = $.unsavedGuard;
 var navigationGuard = function(){ return false; };
 
@@ -26,9 +27,7 @@ function navigate(url, win){
 	if(!win) win = window;
 	var history = win.history;
 	history.pushState(null, "", typeof url.get === "function" ? url.get() : url);
-	if( history.onStateUpdate ){
-		history.onStateUpdate();
-	}
+	historyState.onStateUpdate(history);
 	win.scrollTo(0, 0);
 }
 
