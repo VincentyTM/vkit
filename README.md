@@ -35,6 +35,7 @@ $(document.body).render(CounterApp);
 ## Table of Contents
   * [Getting Started](#getting-started)
   * [Components](#components)
+  * [Styles](#styles)
   * [Dynamic UI](#dynamic-ui)
   * [Conditional Rendering](#conditional-rendering)
   * [Mapping an Array](#mapping-an-array)
@@ -45,6 +46,7 @@ $(document.body).render(CounterApp);
   * [Routing](#routing)
   * [References](#references)
   * [Serializing a Form](#serializing-a-form)
+  * [Custom Elements](#custom-elements)
   * [Cookies](#cookies)
   * [Dragging Elements](#dragging-elements)
   * [Text Selection](#text-selection)
@@ -104,7 +106,7 @@ const HelloComponent = name => $.html('<h1>Hello ', [name], '</h1>');
 As you can see, you can wrap any text in an array to safely insert it in HTML. Alternatively, you can use tagged templates with `$.htmlString`.
 
 ```javascript
-const HelloComponent = name => $.htmlString`<h1>Hello ${name}</h1>`);
+const HelloComponent = name => $.htmlString`<h1>Hello ${name}</h1>`;
 ```
 
 To render a component in `document.body`, just call `render` on it. This is what a typical application root looks like.
@@ -167,6 +169,40 @@ const myForm = Form(
 )
 ```
 
+## Styles
+
+The `$.style` method can be used with the special `::this` selector to apply CSS rules to DOM elements easily.
+
+```javascript
+const SpecialButtonStyle = $.style(`
+    ::this{
+        border: 0;
+        background-color: #ffffff;
+        color: #000000;
+        cursor: pointer;
+    }
+`);
+
+function SpecialButton(...args){
+    return $.htmlTags.Button(SpecialButtonStyle, args);
+}
+```
+
+In many cases, an element and its style can be defined as a component. The `$.styledHtmlTag` method is more useful in this case.
+
+```javascript
+const SpecialButton = $.styledHtmlTag("button", `
+    ::this{
+        border: 0;
+        background-color: #ffffff;
+        color: #000000;
+        cursor: pointer;
+    }
+`);
+
+const myButton = SpecialButton("Some label");
+```
+
 ## Dynamic UI
 
 Using plain objects and `$.text`, you can update DOM nodes dynamically.
@@ -194,7 +230,11 @@ Also, there is `$.effect`, which is called everytime a rerender happens and is n
 ```javascript
 function HelloWorldComponent(){
     let title = "Hello world";
-    $.effect(() => document.title = title);
+    
+    $.effect(() => {
+        document.title = title;
+    });
+    
     return "Hello world";
 }
 ```
@@ -296,7 +336,7 @@ $.ifElse(
 
 ## Mapping an Array
 
-Arrays that can dynamically change can be mapped to a view with the `$.views` function.
+Items of an array that can dynamically change can be mapped to views with the `$.views` function.
 
 ```javascript
 function BooksTable(books){
@@ -505,13 +545,17 @@ Conditional rendering and array mapping can even be more readable than without s
 ```javascript
 const isNotEmpty = $.map(array => array.length > 0);
 
-const {Ul, Li} = $.htmlTags;
+const {Li, Ul} = $.htmlTags;
 
 function DynamicList(arrayState = $.state([])){
     return $.ifElse(
         isNotEmpty(arrayState),
-        () => Ul(arrayState.views(Li)),
-        () => "There are no items in your array."
+        () => {
+            return Ul(arrayState.views(Li));
+        },
+        () => {
+            return "There are no items in your array.";
+        }
     );
 }
 ```
@@ -608,6 +652,33 @@ function MenuComponent(router){
 }
 ```
 
+A dynamic query parameter can be accessed with `$.param`. It can be useful for routing.
+
+```javascript
+function App(){
+    const router = $.router($.param("page"), [
+        {
+            path: "a",
+            component: () => "Page A"
+        },
+        {
+            path: "b",
+            component: () => "Page B"
+        }
+    ]);
+    
+    const {A, Li, Ul} = $.htmlTags;
+    
+    return [
+        Ul(
+            Li(A("Page A", $.href("?page=a"))),
+            Li(A("Page A", $.href("?page=b")))
+        ),
+        router
+    ]);
+}
+```
+
 ## References
 
 Although element (or other) references can be set with simple functions, there is a built-in `ref` function to create references.
@@ -646,6 +717,40 @@ function FormComponent(){
         Button("Submit")
     );
 }
+```
+
+## Custom Elements
+
+Custom elements can be registered with `$.customElement` to encapsulate some functionality. They have their own component tree and can be used by non-vKit applications.
+
+```javascript
+$.customElement("hello-element", function(){
+    const {name} = $.stateOf(this.observedAttributes);
+    
+    console.log("The <hello-element> is connected!");
+    
+    $.unmount(() => {
+        console.log("The <hello-element> is disconnected!");
+    });
+    
+    const {Div, H1} = $.htmlTags;
+    
+    return $.shadow(
+        H1("Hello ", name),
+        Div(this.childNodes)
+    );
+}, {
+    observedAttributes: ["name"]
+});
+
+const {Hello_Element, P} = $.htmlTags;
+const App = () => Hello_Element(
+    $.attributes({
+        name: "world"
+    }),
+    P("Some contents")
+);
+$(document.body).render(App);
 ```
 
 ## Cookies
@@ -763,8 +868,8 @@ const outputMessage = $.parse(
     
     // How to apply a rule (optional)
     function(expect, node, replacement){
-        if( expect==="EXPR" ){
-            if( node.type==="-" ){
+        if( expect === "EXPR" ){
+            if( node.type === "-" ){
                 node.type = "negation";
             }
         }
@@ -816,40 +921,40 @@ Operators can be configured such as:
 ```javascript
 const operators = {
     "^": {
-        precedence: 11
+        "precedence": 11
     },
     "*": {
-        precedence: 10,
-        left: true
+        "precedence": 10,
+        "left": true
     },
     "/": {
-        precedence: 10,
-        left: true
+        "precedence": 10,
+        "left": true
     },
     "+": {
-        precedence: 9,
-        left: true
+        "precedence": 9,
+        "left": true
     },
     "-": {
-        precedence: 9,
-        left: true
+        "precedence": 9,
+        "left": true
     },
     "negation": {
-        unary: true,
-        precedence: 9,
-        left: true
+        "unary": true,
+        "precedence": 9,
+        "left": true
     },
     "=": {
-        precedence: 6
+        "precedence": 6
     },
     ",": {
-        precedence: 5
+        "precedence": 5
     },
     "(": {
-        parenthesis: "opening"
+        "parenthesis": "opening"
     },
     ")": {
-        parenthesis: "closing"
+        "parenthesis": "closing"
     }
 };
 ```
