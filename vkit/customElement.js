@@ -49,6 +49,7 @@ function createCustomElement(name, getView, options){
 		}finally{
 			setCurrentComponent(prev);
 		}
+		render();
 	};
 	
 	proto.disconnectedCallback = function(){
@@ -56,6 +57,7 @@ function createCustomElement(name, getView, options){
 		component.removeView();
 		component.unmount();
 		component.children.splice(0, component.children.length);
+		render();
 	};
 	
 	if( options ){
