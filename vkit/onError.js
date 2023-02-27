@@ -2,10 +2,10 @@
 
 var unmount = $.unmount;
 var createObservable = $.observable;
-var getCurrentComponent = $.currentComponent;
+var getComponent = $.getComponent;
 
 function onError(errorHandler){
-	var component = getCurrentComponent();
+	var component = getComponent();
 	if(!component.onError){
 		component.onError = createObservable();
 	}

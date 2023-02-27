@@ -1,6 +1,6 @@
 (function($){
 
-var getCurrentComponent = $.currentComponent;
+var getComponent = $.getComponent;
 
 function setAttribute(el, name, value){
 	if( typeof value === "number" ){
@@ -24,7 +24,7 @@ function bindAttribute(el, name, value){
 	}else if( typeof value === "function" ){
 		var oldValue = value();
 		setAttribute(el, name, oldValue);
-		getCurrentComponent().subscribe(function(){
+		getComponent().subscribe(function(){
 			var newValue = value();
 			if( oldValue !== newValue ){
 				oldValue = newValue;

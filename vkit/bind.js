@@ -1,13 +1,13 @@
 (function($){
 
-var getCurrentComponent = $.currentComponent;
+var getComponent = $.getComponent;
 var onEvent = $.onEvent;
 var unmount = $.unmount;
 
 function bindProp(prop, getter){
 	return function(element){
 		var oldValue = element[prop] = getter(element);
-		getCurrentComponent().subscribe(function(){
+		getComponent().subscribe(function(){
 			var value = getter(element);
 			if( oldValue!==value ){
 				oldValue = element[prop] = value;
@@ -19,7 +19,7 @@ function bindProp(prop, getter){
 function createText(getter){
 	var oldValue = String(getter());
 	var node = document.createTextNode(oldValue);
-	getCurrentComponent().subscribe(function(){
+	getComponent().subscribe(function(){
 		var value = String(getter());
 		if( oldValue!==value ){
 			oldValue = node.nodeValue = value;
@@ -30,7 +30,7 @@ function createText(getter){
 
 function createEffect(setter){
 	setter();
-	getCurrentComponent().subscribe(setter);
+	getComponent().subscribe(setter);
 }
 
 function bind(el, props, persistent){

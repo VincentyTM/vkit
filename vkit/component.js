@@ -39,7 +39,7 @@ function withContext(getView){
 	};
 }
 
-function getCurrentComponent(allowNull){
+function getComponent(allowNull){
 	if(!allowNull){
 		contextGuard();
 	}
@@ -270,8 +270,8 @@ function provide(services, getContent){
 
 $.withContext = withContext;
 $.rootComponent = rootComponent;
-$.currentComponent = getCurrentComponent;
 $.setCurrentComponent = setCurrentComponent;
+$.getComponent = getComponent;
 $.renderComponents = renderComponents;
 $.unmount = unmount;
 $.view = getViewOf;
