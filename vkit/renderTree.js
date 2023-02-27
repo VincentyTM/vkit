@@ -4,11 +4,11 @@ var bind = $.bind;
 var append = $.append;
 var render = $.render;
 var rootComponent = $.rootComponent;
-var setCurrentComponent = $.setCurrentComponent;
+var setComponent = $.setComponent;
 
 function renderTree(component){
 	try{
-		setCurrentComponent(rootComponent);
+		setComponent(rootComponent);
 		var view = component();
 		var parent = this[0];
 		if( parent ){
@@ -17,7 +17,7 @@ function renderTree(component){
 		render();
 		return view;
 	}finally{
-		setCurrentComponent(null);
+		setComponent(null);
 	}
 }
 

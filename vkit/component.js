@@ -46,7 +46,7 @@ function getComponent(allowNull){
 	return currentComponent;
 }
 
-function setCurrentComponent(component){
+function setComponent(component){
 	currentComponent = component;
 }
 
@@ -270,8 +270,8 @@ function provide(services, getContent){
 
 $.withContext = withContext;
 $.rootComponent = rootComponent;
-$.setCurrentComponent = setCurrentComponent;
 $.getComponent = getComponent;
+$.setComponent = setComponent;
 $.renderComponents = renderComponents;
 $.unmount = unmount;
 $.view = getViewOf;
