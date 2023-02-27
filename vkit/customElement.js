@@ -1,4 +1,4 @@
-(function($, window, undefined){
+(function($, window){
 
 var bind = $.bind;
 var append = $.append;
@@ -41,7 +41,7 @@ function createCustomElement(name, getView, options){
 			return;
 		}
 		var component = this.component;
-		var prev = getCurrentComponent();
+		var prev = getCurrentComponent(true);
 		setCurrentComponent(component);
 		try{
 			var view = getView.call(this);
