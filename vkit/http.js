@@ -15,7 +15,7 @@ var defaultConfig = {
 
 function createRequest(url, options){
 	if( options ){
-		return sendXHR(options.method, url, options);
+		return sendXHR(options.method || "GET", url, options);
 	}
 	return {
 		get: function(options){
