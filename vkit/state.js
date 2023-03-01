@@ -235,8 +235,9 @@ function combineStates(func){
 	for(var i=0; i<n; ++i){
 		var state = states[i];
 		if( state && state.onChange && typeof state.onChange.subscribe === "function" ){
-			unsubscribes.push(state.onChange.subscribe(enqueue));
+			var unsub = state.onChange.subscribe(enqueue);
 			if( state.component !== component ){
+				unsubscribes.push(unsub);
 				autoUnsubscribe = true;
 			}
 		}
