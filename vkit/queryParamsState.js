@@ -11,17 +11,31 @@ function createQueryParamsState(win){
 	var historyHandler = createHistoryHandler(win);
 	var queryParamsState = url(historyHandler.url()).queryParams;
 	return function(name, allowObject){
-		var state = queryParamsState.map(allowObject ? function(queryParams){
-			return queryParams.get(name);
+		var mode = 0;
+		var state = createState();
+		var set = state.set;
+		queryParamsState.effect(allowObject ? function(queryParams){
+			mode = 0;
+			set.call(state, queryParams.get(name));
 		} : function(queryParams){
-			return queryParams.getAsString(name);
+			mode = 0;
+			set.call(state, queryParams.getAsString(name));
 		});
 		state.set = function(value){
-			historyHandler.replace(getQuery(value) + location.hash);
+			mode = 1;
+			set.call(state, value);
 		};
 		state.push = function(value){
-			historyHandler.push(getQuery(value) + location.hash);
+			mode = 2;
+			set.call(state, value);
 		};
+		state.onChange.subscribe(function(value){
+			if( mode === 1 ){
+				historyHandler.replace(getQuery(value) + location.hash);
+			}else if( mode === 2 ){
+				historyHandler.push(getQuery(value) + location.hash);
+			}
+		});
 		function getQuery(value){
 			var queryParams = createQueryParams(location.search.substring(1));
 			queryParams.set(name, value);
