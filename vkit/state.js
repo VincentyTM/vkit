@@ -246,7 +246,6 @@ function combineStates(func){
 		map: map,
 		pipe: pipe,
 		mutate: mutate,
-		update: update,
 		onChange: onChange,
 		text: text,
 		prop: prop,
