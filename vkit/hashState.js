@@ -3,7 +3,7 @@
 var unmount = $.unmount;
 var onEvent = $.onEvent;
 var createState = $.state;
-var createHistoryState = $.historyState;
+var createHistoryHandler = $.history;
 
 function getHash(url){
 	var pos = url.indexOf("#");
@@ -14,7 +14,7 @@ function createHashState(win){
 	if(!win) win = window;
 	var location = win.location;
 	var state = createState(decodeURIComponent(location.hash.substring(1)));
-	createHistoryState().url.map(getHash).pipe(state);
+	createHistoryHandler().url().map(getHash).pipe(state);
 	state.onChange.subscribe(function(value){
 		location.replace("#" + encodeURIComponent(value));
 	});

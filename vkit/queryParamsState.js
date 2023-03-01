@@ -3,13 +3,13 @@
 var url = $.url;
 var createState = $.state;
 var createQueryParams = $.queryParams;
-var createHistoryState = $.historyState;
+var createHistoryHandler = $.history;
 
 function createQueryParamsState(win){
 	if(!win) win = window;
 	var location = win.location;
-	var historyURL = createHistoryState(win).url;
-	var queryParamsState = url(historyURL).queryParams;
+	var historyHandler = createHistoryHandler(win);
+	var queryParamsState = url(historyHandler.url()).queryParams;
 	return function(name, allowObject){
 		var state = queryParamsState.map(allowObject ? function(queryParams){
 			return queryParams.get(name);
@@ -17,10 +17,10 @@ function createQueryParamsState(win){
 			return queryParams.getAsString(name);
 		});
 		state.set = function(value){
-			historyURL.set(getQuery(value) + location.hash);
+			historyHandler.replace(getQuery(value) + location.hash);
 		};
 		state.push = function(value){
-			historyURL.push(getQuery(value) + location.hash);
+			historyHandler.push(getQuery(value) + location.hash);
 		};
 		function getQuery(value){
 			var queryParams = createQueryParams(location.search.substring(1));

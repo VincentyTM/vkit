@@ -1,6 +1,6 @@
 (function($, window){
 
-var historyState = $.historyState;
+var createHistoryHandler = $.history;
 var unsavedGuard = $.unsavedGuard;
 var navigationGuard = function(){ return false; };
 
@@ -10,24 +10,22 @@ function canNavigate(guard){
 	}
 }
 
-function createHref(url){
+function createHref(url, win){
 	return {
 		href: url,
 		onclick: function(e){
 			e.preventDefault();
-			navigate(url);
+			navigate(url, win);
 		}
 	};
 }
 
 function navigate(url, win){
+	if(!win) win = window;
 	if( unsavedGuard.count > 0 && !navigationGuard(url, win) ){
 		return;
 	}
-	if(!win) win = window;
-	var history = win.history;
-	history.pushState(null, "", typeof url.get === "function" ? url.get() : url);
-	historyState.onStateUpdate(history);
+	createHistoryHandler(win).push(typeof url.get === "function" ? url.get() : url);
 	win.scrollTo(0, 0);
 }
 
