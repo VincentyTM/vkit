@@ -215,15 +215,6 @@ function combineStates(func){
 		return this;
 	}
 	
-	function addDependency(){
-		var n = arguments.length;
-		for(var i=0; i<n; ++i){
-			var arg = arguments[i];
-			unsubscribes.push(arg.subscribe ? arg.subscribe(enqueue) : arg.onChange.subscribe(enqueue));
-		}
-		return this;
-	}
-	
 	function mutate(){
 		value = NaN;
 	}
@@ -259,7 +250,6 @@ function combineStates(func){
 		mutate: mutate,
 		update: update,
 		onChange: onChange,
-		addDependency: addDependency,
 		text: text,
 		prop: prop,
 		effect: effect,
