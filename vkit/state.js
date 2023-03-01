@@ -181,7 +181,7 @@ function createState(value){
 }
 
 function combineStates(func){
-	function getValue(){
+	function computeValue(){
 		var n = states.length;
 		var values = new Array(n);
 		for(var i=0; i<n; ++i){
@@ -198,7 +198,7 @@ function combineStates(func){
 	}
 	
 	function update(){
-		var newValue = getValue();
+		var newValue = computeValue();
 		if( value !== newValue || mutated ){
 			mutated = false;
 			onChange(value = newValue);
@@ -220,8 +220,12 @@ function combineStates(func){
 		mutated = true;
 	}
 	
+	function getValue(){
+		return value;
+	}
+	
 	var states = this, n = states.length;
-	var value = getValue();
+	var value = computeValue();
 	var mutated = false;
 	var onChange = createObservable();
 	var unsubscribes = [];
