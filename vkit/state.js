@@ -199,7 +199,8 @@ function combineStates(func){
 	
 	function update(){
 		var newValue = getValue();
-		if( value !== newValue ){
+		if( value !== newValue || mutated ){
+			mutated = false;
 			onChange(value = newValue);
 		}
 		return this;
@@ -216,11 +217,12 @@ function combineStates(func){
 	}
 	
 	function mutate(){
-		value = NaN;
+		mutated = true;
 	}
 	
 	var states = this, n = states.length;
 	var value = getValue();
+	var mutated = false;
 	var onChange = createObservable();
 	var unsubscribes = [];
 	var component = getComponent(true);
