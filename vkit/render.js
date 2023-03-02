@@ -3,21 +3,7 @@
 var renderComponentTree = $.renderComponents;
 var renderStates = $.renderStates;
 var stateUpdates = $.stateUpdateQueue;
-var afterRender = [];
-
-function addAfterRender(func){
-	afterRender.push(func);
-}
-
-function callAfterRender(){
-	var n = afterRender.length;
-	if( n ){
-		var updates = afterRender.splice(0, n);
-		for(var i=0; i<n; ++i){
-			updates[i]();
-		}
-	}
-}
+var callTicks = $.callTicks;
 
 function render(){
 	var n = stateUpdates.length;
@@ -28,10 +14,9 @@ function render(){
 		renderComponentTree();
 		n = stateUpdates.length;
 	}while(n);
-	callAfterRender();
+	callTicks();
 }
 
 $.render = render;
-$.tick = addAfterRender;
 
 })($);
