@@ -1,7 +1,7 @@
 (function($){
 
 var unmount = $.unmount;
-var afterRender = $.afterRender;
+var tick = $.tick;
 var styleCount = 0;
 
 function getText(){
@@ -46,15 +46,15 @@ function createStyle(css, attr){
 			el.setAttribute(attr, "");
 		}
 		
-		afterRender(function addStyle(){
+		tick(function addStyle(){
 			if(!el.parentNode && el.nodeType !== 11){
-				afterRender(addStyle);
+				tick(addStyle);
 				return;
 			}
 			var doc = el.ownerDocument;
 			var root = getRootNode(el);
 			if( root !== doc && root.nodeType !== 11 ){
-				afterRender(addStyle);
+				tick(addStyle);
 				return;
 			}
 			var container = root.styleContainer;

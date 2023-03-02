@@ -4,7 +4,7 @@ var unmount = $.unmount;
 var onEvent = $.onEvent;
 var createState = $.state;
 var syncState = $.sync;
-var afterRender = $.afterRender;
+var tick = $.tick;
 
 function createScrollState(el){
 	var state = createState({
@@ -79,7 +79,7 @@ function createScrollState(el){
 				el.scrollTop = scroll.y;
 			}
 		);
-		afterRender(function(){
+		tick(function(){
 			onScroll.call(isWindow ? el.document : el);
 		});
 	}
