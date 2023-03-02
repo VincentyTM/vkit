@@ -1,6 +1,6 @@
 (function($){
 
-var renderComponentTree = $.renderComponents;
+var rootComponent = $.rootComponent;
 var renderStates = $.renderStates;
 var stateUpdates = $.stateUpdateQueue;
 var callTicks = $.callTicks;
@@ -11,7 +11,7 @@ function render(){
 		if( n ){
 			renderStates();
 		}
-		renderComponentTree();
+		rootComponent.render();
 		n = stateUpdates.length;
 	}while(n);
 	callTicks();
