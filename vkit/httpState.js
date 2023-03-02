@@ -23,8 +23,13 @@ function createHttpState(urlState, options){
 		if( request ){
 			request.abort();
 		}
-		request = http(url, options);
-		request.then(updateValue, options.onerror);
+		if( url ){
+			request = http(url, options);
+			request.then(updateValue, options.onerror);
+		}else{
+			request = null;
+			state.set(options.defaultValue);
+		}
 	});
 	
 	unmount(function(){
