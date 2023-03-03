@@ -2,6 +2,7 @@
 
 var createObservable = $.observable;
 var getComponent = $.getComponent;
+var setComponent = $.setComponent;
 var toView = $.view;
 var toViews = $.views;
 var unmount = $.unmount;
@@ -93,8 +94,11 @@ function prop(key){
 }
 
 function effect(action){
-	action(this.get());
 	subscribe(this, action);
+	var prev = getComponent(true);
+	setComponent(null);
+	action(this.get());
+	setComponent(prev);
 	return this;
 }
 
@@ -216,7 +220,6 @@ function combineStates(func){
 	}
 	
 	var states = this, n = states.length;
-	var value = computeValue();
 	var mutated = false;
 	var onChange = createObservable();
 	var unsubscribes = [];
@@ -240,6 +243,11 @@ function combineStates(func){
 		}
 		unmount(unsubscribe);
 	}
+	
+	var prev = getComponent(true);
+	setComponent(null);
+	var value = computeValue();
+	setComponent(prev);
 	
 	return {
 		get: getValue,
