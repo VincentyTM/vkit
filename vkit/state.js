@@ -94,12 +94,18 @@ function prop(key){
 }
 
 function effect(action){
-	subscribe(this, action);
-	var prev = getComponent(true);
+	var cleanup = createObservable();
+	unmount(cleanup);
+	var unsubscribe = subscribe(this, function(value){
+		cleanup();
+		cleanup.clear();
+		action(value, cleanup.subscribe);
+	});
+	var prev = getComponent();
 	setComponent(null);
-	action(this.get());
+	action(this.get(), cleanup.subscribe);
 	setComponent(prev);
-	return this;
+	return unsubscribe;
 }
 
 function getStateView(getView, immutable){
