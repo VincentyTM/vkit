@@ -1,36 +1,23 @@
 (function($){
 
 var getComponent = $.getComponent;
+var setComponent = $.setComponent;
 var onEvent = $.onEvent;
 var unmount = $.unmount;
 
 function bindProp(prop, getter){
 	return function(element){
+		var component = getComponent();
+		setComponent(null);
 		var oldValue = element[prop] = getter(element);
-		getComponent().subscribe(function(){
+		setComponent(component);
+		component.subscribe(function(){
 			var value = getter(element);
-			if( oldValue!==value ){
+			if( oldValue !== value ){
 				oldValue = element[prop] = value;
 			}
 		});
 	};
-}
-
-function createText(getter){
-	var oldValue = String(getter());
-	var node = document.createTextNode(oldValue);
-	getComponent().subscribe(function(){
-		var value = String(getter());
-		if( oldValue!==value ){
-			oldValue = node.nodeValue = value;
-		}
-	});
-	return node;
-}
-
-function createEffect(setter){
-	setter();
-	getComponent().subscribe(setter);
 }
 
 function bind(el, props, persistent){
@@ -75,8 +62,6 @@ function bindAll(props){
 	return this;
 }
 
-$.text = createText;
-$.effect = createEffect;
 $.bind = bind;
 $.bindProp = bindProp;
 $.fn.bind = bindAll;
