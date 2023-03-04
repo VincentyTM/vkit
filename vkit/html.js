@@ -24,7 +24,16 @@ function html(){
 		var arg = arguments[i];
 		if( arg === null || arg === undefined ) continue;
 		var type = typeof arg;
-		if( type === "string" || type === "number" || type === "bigint" ){
+		if( type === "string" ){
+			result.push(arg);
+			if( l > 1 ){
+				var index = arg.indexOf(placeholder);
+				while( index !== -1 ){
+					operators.push(document.createComment(""));
+					index = arg.indexOf(placeholder, index + placeholder.length);
+				}
+			}
+		}else if( type === "number" || type === "bigint" ){
 			result.push(arg);
 		}else if( type === "function" || type === "object" ){
 			result.push(placeholder);
