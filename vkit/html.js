@@ -4,14 +4,14 @@ var group = $.group;
 var insert = $.insert;
 var bind = $.bind;
 
-function findNodes(result, container, type, count){
-	if( container.nodeType === type ){
+function findNodes(result, container, type, value, count){
+	if( container.nodeType === type && container.nodeValue === value ){
 		result.push(container);
 		--count;
 	}
 	
 	for(var child = container.firstChild; 0 < count && child; child = child.nextSibling){
-		count = findNodes(result, child, type, count);
+		count = findNodes(result, child, type, value, count);
 	}
 	
 	return count;
@@ -59,7 +59,7 @@ function html(){
 	var n = operators.length;
 	if( n ){
 		var comments = [];
-		findNodes(comments, container, 8, n);
+		findNodes(comments, container, 8, "", n);
 		
 		for(i=0; i<n; ++i){
 			var operator = operators[i];
