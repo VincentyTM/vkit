@@ -22,12 +22,13 @@ function html(){
 	var placeholder = "<!---->";
 	for(var i=0, l=arguments.length; i<l; ++i){
 		var arg = arguments[i];
-		if( arg===null || arg===undefined ) continue;
-		if( typeof arg==="function" || typeof arg==="object" ){
+		if( arg === null || arg === undefined ) continue;
+		var type = typeof arg;
+		if( type === "string" || type === "number" || type === "bigint" ){
+			result.push(arg);
+		}else if( type === "function" || type === "object" ){
 			result.push(placeholder);
 			operators.push(arg);
-		}else{
-			result.push(arg);
 		}
 	}
 	
