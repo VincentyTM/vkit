@@ -20,8 +20,6 @@ function deepPush(array, item, context, bind){
 		}
 	}else if( typeof item.render === "function" ){
 		deepPush(array, item.render(), context, bind);
-	}else if( typeof item.text === "function" ){
-		deepPush(array, item.text(), context, bind);
 	}else if( typeof item.next === "function" ){
 		var x;
 		do{
