@@ -32,11 +32,6 @@ function deepPush(array, item, context, bind){
 	return array;
 }
 
-function group(){
-	return deepPush($(), arguments, null, null);
-}
-
 $.deepPush = deepPush;
-$.group = group;
 
 })($, document);
