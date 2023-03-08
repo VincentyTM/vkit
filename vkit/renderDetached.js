@@ -7,7 +7,7 @@ var createComponent = $.component;
 var getComponent = $.getComponent;
 var setComponent = $.setComponent;
 
-function renderContext(getView, parent){
+function renderDetached(getView, parent){
 	var prev = getComponent(true);
 	try{
 		var component = createComponent(null);
@@ -25,6 +25,6 @@ function renderContext(getView, parent){
 	}
 }
 
-$.renderContext = renderContext;
+$.renderDetached = renderDetached;
 
 })($);

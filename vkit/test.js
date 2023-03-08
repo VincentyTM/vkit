@@ -1,6 +1,6 @@
 (function($){
 
-var renderContext = $.renderContext;
+var renderDetached = $.renderDetached;
 var tests = [];
 
 function createTest(test){
@@ -8,7 +8,7 @@ function createTest(test){
 }
 
 function runTest(test, pass, fail, assert){
-	renderContext(function(unmount){
+	renderDetached(function(unmount){
 		try{
 			var result = test(typeof assert === "function" ? assert(test) : function(condition){
 				if(!condition){
