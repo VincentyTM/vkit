@@ -1,6 +1,6 @@
 (function($, document, undefined){
 
-var toArray = $.fn.toArray;
+var toArray = $.toArray;
 
 function deepPush(array, item, context, bind){
 	if( item === null || item === undefined || typeof item === "boolean" ){
@@ -14,7 +14,7 @@ function deepPush(array, item, context, bind){
 		array.push(item);
 	}else if( typeof item.length === "number" ){
 		var n = item.length;
-		var a = toArray.call(item);
+		var a = toArray(item);
 		for(var i=0; i<n; ++i){
 			deepPush(array, a[i], context, bind);
 		}
