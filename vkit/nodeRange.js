@@ -7,6 +7,10 @@ function createNodeRange(){
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
 	
+	function render(){
+		return [start, end];
+	}
+	
 	function clear(){
 		if(!start.nextSibling){
 			throw new Error("Cannot clear detached range");
@@ -64,6 +68,7 @@ function createNodeRange(){
 	}
 	
 	return {
+		render: render,
 		start: start,
 		end: end,
 		clear: clear,
