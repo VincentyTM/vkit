@@ -8,6 +8,9 @@ function createNodeRange(){
 	var end = document.createTextNode("");
 	
 	function clear(){
+		if(!start.nextSibling){
+			throw new Error("Cannot clear detached range");
+		}
 		var parent = start.parentNode;
 		if( parent ){
 			for(var el = end.previousSibling; el && el !== start; el = end.previousSibling){
@@ -23,10 +26,16 @@ function createNodeRange(){
 	}
 	
 	function append(){
+		if(!start.nextSibling){
+			throw new Error("Cannot append to detached range");
+		}
 		insert(arguments, end);
 	}
 	
 	function insertBefore(anchor){
+		if(!start.nextSibling){
+			throw new Error("Cannot insert detached range");
+		}
 		var parent = anchor.parentNode;
 		if( parent ){
 			var el = start;
@@ -40,6 +49,9 @@ function createNodeRange(){
 	}
 	
 	function getNodes(){
+		if(!start.nextSibling){
+			throw new Error("Cannot get nodes of detached range");
+		}
 		var nodes = $();
 		var parent = start.parentNode;
 		if( parent ){
