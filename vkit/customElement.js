@@ -6,6 +6,7 @@ var render = $.render;
 var createComponent = $.component;
 var getComponent = $.getComponent;
 var setComponent = $.setComponent;
+var stateOf = $.stateOf;
 
 function setPrototypeOf(obj, proto){
 	if( Object.setPrototypeOf ){
@@ -44,7 +45,7 @@ function createCustomElement(name, getView, options){
 		var prev = getComponent(true);
 		setComponent(component);
 		try{
-			var view = getView.call(this);
+			var view = getView.call(this, stateOf(this.observedAttributes), this);
 			append(this, [component.start, view, component.end], this, bind);
 		}finally{
 			setComponent(prev);
