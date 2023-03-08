@@ -31,8 +31,9 @@ function createNodeRange(){
 		if( parent ){
 			var el = start;
 			while( el && el !== end ){
+				var next = el.nextSibling;
 				parent.insertBefore(el, anchor);
-				el = el.nextSibling;
+				el = next;
 			}
 			parent.insertBefore(end, anchor);
 		}
