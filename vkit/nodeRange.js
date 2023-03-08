@@ -46,6 +46,7 @@ function createNodeRange(){
 			for(var el = start; el && el !== end; el = el.nextSibling){
 				nodes.push(el);
 			}
+			nodes.push(end);
 		}
 		return nodes;
 	}
