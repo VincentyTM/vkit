@@ -25,6 +25,12 @@ function renderDetached(getView, parent){
 	}
 }
 
+function renderDetachedToThis(getView){
+	renderDetached(getView, this[0]);
+	return this;
+}
+
 $.renderDetached = renderDetached;
+$.fn.renderDetached = renderDetachedToThis;
 
 })($);
