@@ -1,102 +1,77 @@
-(function($){
+(function($, undefined){
 
-var render = $.render;
-var createState = $.state;
 var createObservable = $.observable;
+var createState = $.state;
+var render = $.render;
+var unmount = $.unmount;
 
-var defaultConfig = {
-	async: true,
-	headers: {},
-	responseType: "text",
-	user: null,
-	password: null,
-	body: null
-};
-
-function createRequest(url, options){
-	if( options ){
-		return sendXHR(options.method || "GET", url, options);
-	}
-	return {
-		get: function(options){
-			return sendXHR("GET", url, options);
-		},
-		put: function(options){
-			return sendXHR("PUT", url, options);
-		},
-		del: function(options){
-			return sendXHR("DELETE", url, options);
-		},
-		post: function(options){
-			return sendXHR("POST", url, options);
-		},
-		patch: function(options){
-			return sendXHR("PATCH", url, options);
+function createRequest(data){
+	if(!data) data = {};
+	var request = {
+		url: null,
+		method: "GET",
+		async: true,
+		headers: {},
+		responseType: "text",
+		user: null,
+		password: null,
+		body: null,
+		abortable: true
+	};
+	if( typeof data === "string" ){
+		request.url = data;
+	}else if( data && typeof data === "object" ){
+		for(var key in data){
+			if( key in request ){
+				request[key] = data[key];
+			}
 		}
-	};
+	}
+	return request;
 }
 
-function getConfig(options){
-	if(!options){
-		return defaultConfig;
+function sendRequest(request, pendingResponse, responseState, complete){
+	if( request.url === null ){
+		return null;
 	}
-	var config = {};
-	for(var key in defaultConfig){
-		config[key] = key in options ? options[key] : defaultConfig[key];
-	}
-	return config;
-}
-
-function sendXHR(method, url, options){
-	options = getConfig(options);
-	var onComplete = createObservable();
-	var onError = createObservable();
-	var progress = createState({
-		total: 0,
-		loaded: 0,
-		lengthComputable: false
-	});
-	var uploadProgress = createState({
-		total: 0,
-		loaded: 0,
-		lengthComputable: false
-	});
-	var readyState = createState(0);
-	var abortHandler = options.onAbort;
-	var http = {
-		then: then,
-		abort: abort,
-		status: 0,
-		header: getHeader,
-		headers: getHeaders,
-		progress: progress,
-		uploadProgress: uploadProgress,
-		readyState: readyState
-	};
 	var xhr = new XMLHttpRequest();
-	xhr.onprogress = onProgress;
+	xhr.onprogress = function(e){
+		pendingResponse.progress.set(e);
+		render();
+	};
 	if( xhr.upload ){
-		xhr.upload.onprogress = onUploadProgress;
+		xhr.upload.onprogress = function(e){
+			pendingResponse.uploadProgress.set(e);
+			render();
+		};
 	}
-	if( abortHandler ){
-		xhr.onabort = onAbort;
-	}
-	xhr.onreadystatechange = onReadyStateChange;
-	xhr.open(method, url, options.async, options.user, options.password);
-	xhr.responseType = options.responseType;
-	var headers = options.headers;
-	if( headers ){
-		for(var name in headers){
-			xhr.setRequestHeader(name, headers[name]);
+	xhr.onreadystatechange = function(){
+		if( xhr.readyState === 4 || xhr.readyState === 0 ){
+			var response = createResponse(xhr);
+			responseState.set(response);
+			complete(response);
 		}
+		render();
+	};
+	xhr.open(request.method, request.url, request.async, request.user, request.password);
+	xhr.responseType = request.responseType;
+	var headers = request.headers;
+	for(var name in headers){
+		xhr.setRequestHeader(name, headers[name]);
 	}
-	xhr.send(options.body);
-	return http;
-	
-	function abort(){
-		xhr.abort();
-	}
-	
+	xhr.send(request.body);
+	return xhr;
+}
+
+function createProgressEvent(){
+	return {
+		lengthComputable: false,
+		loaded: 0,
+		total: 0
+	};
+}
+
+function createResponse(xhr){
 	function getHeader(name){
 		return xhr.getResponseHeader(name);
 	}
@@ -105,49 +80,86 @@ function sendXHR(method, url, options){
 		return xhr.getAllResponseHeaders();
 	}
 	
-	function then(resolve, reject){
-		if( resolve ){
-			onComplete.subscribe(resolve);
-		}
-		if( reject ){
-			onError.subscribe(reject);
-		}
-	}
-	
-	function onProgress(e){
-		progress.set(e);
-		render();
-	}
-	
-	function onUploadProgress(e){
-		uploadProgress.set(e);
-		render();
-	}
-	
-	function onAbort(){
-		abortHandler();
-		render();
-	}
-	
-	function onReadyStateChange(e){
-		http.status = xhr.status;
-		if( readyState ){
-			readyState.set(xhr.readyState);
-		}
-		if( xhr.readyState === 4 || xhr.readyState === 0 ){
-			var data = {
-				status: xhr.status,
-				header: getHeader,
-				headers: getHeaders,
-				body: typeof xhr.response !== "undefined" ? xhr.response : xhr.responseText
-			};
-			xhr.status >= 200 ? onComplete(data) : onError(data);
-		}
-		render();
-	}
+	var status = xhr.status;
+	return {
+		ok: status >= 200 && status <= 299,
+		status: status,
+		header: getHeader,
+		headers: getHeaders,
+		body: xhr.response !== undefined ? xhr.response : xhr.responseText
+	};
 }
 
-$.http = createRequest;
-$.http.config = defaultConfig;
+function createPendingResponse(abort){
+	return {
+		abort: abort,
+		progress: createState(createProgressEvent()),
+		uploadProgress: createState(createProgressEvent())
+	};
+}
+
+function createResponseState(requestState, options, onAbort){
+	function abort(){
+		if( xhr && isAbortable ){
+			xhr.abort();
+		}
+		xhr = null;
+		unsubscribe();
+		unsubscribe.clear();
+	}
+	
+	function setRequest(req){
+		abort();
+		var request = createRequest(req);
+		if( options && typeof options === "object" ){
+			for(var key in options){
+				if( key in request ){
+					request[key] = options[key];
+				}
+			}
+		}
+		var method = request.method.toUpperCase();
+		isAbortable = request.abortable;
+		var pendingResponse = createPendingResponse(abort);
+		xhr = sendRequest(request, pendingResponse, responseState, complete);
+		responseState.set(xhr ? pendingResponse : null);
+		if( xhr ){
+			unsubscribe.subscribe(onAbort.subscribe(abort));
+		}
+	}
+	
+	function complete(response){
+		onResponse(response);
+		onResponse.clear();
+		abort();
+	}
+	
+	var onResponse = createObservable();
+	var unsubscribe = createObservable();
+	var xhr = null;
+	var isAbortable = true;
+	var responseState = createState(null);
+	if( requestState && typeof requestState.effect === "function" ){
+		requestState.effect(setRequest);
+	}else{
+		setRequest(requestState);
+	}
+	
+	var result = responseState.map();
+	result.then = onResponse.subscribe;
+	return result;
+}
+
+function createHttpHandle(request, options){
+	var abort = createObservable();
+	unmount(abort);
+	var value = request === undefined
+		? function(request, options){ return createResponseState(request, options, abort); }
+		: createResponseState(request, options, abort);
+	value.abort = abort;
+	return value;
+}
+
+$.http = createHttpHandle;
 
 })($);
