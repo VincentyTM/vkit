@@ -94,18 +94,25 @@ function prop(key){
 }
 
 function effect(action){
-	var cleanup = createObservable();
-	unmount(cleanup);
-	var unsubscribe = subscribe(this, function(value){
-		cleanup();
-		cleanup.clear();
-		action(value, cleanup.subscribe);
-	});
-	var prev = getComponent();
-	setComponent(null);
-	action(this.get(), cleanup.subscribe);
-	setComponent(prev);
-	return unsubscribe;
+	var prev = getComponent(true);
+	if( prev ){
+		var cleanup = createObservable();
+		unmount(cleanup);
+		var unsubscribe = subscribe(this, function(value){
+			cleanup();
+			cleanup.clear();
+			action(value, cleanup.subscribe);
+		});
+		setComponent(null);
+		action(this.get(), cleanup.subscribe);
+		setComponent(prev);
+		return unsubscribe;
+	}else{
+		action(this.get());
+		return subscribe(this, function(value){
+			action(value);
+		});
+	}
 }
 
 function getStateView(getView, immutable){
