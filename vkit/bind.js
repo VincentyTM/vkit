@@ -48,6 +48,8 @@ function bind(el, props, persistent){
 					bindProp(prop, value)(el);
 				}
 				break;
+			case "undefined":
+				break;
 			default:
 				el[prop] = value;
 		}
