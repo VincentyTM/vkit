@@ -8,7 +8,7 @@ function createComputedState(getter, updater){
 	var prev = getComponent();
 	setComponent(null);
 	var state = createState(getter());
-	getComponent(prev);
+	setComponent(prev);
 	updater(function(){
 		state.set(getter());
 	});
