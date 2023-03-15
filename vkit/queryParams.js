@@ -103,7 +103,7 @@ function queryParams(search){
 		each: each,
 		clear: clear,
 		clone: clone,
-		text: toString,
+		render: toString,
 		toString: toString
 	};
 }
