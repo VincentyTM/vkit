@@ -122,7 +122,7 @@ function createResponseState(requestState, options, onAbort){
 		isAbortable = request.abortable;
 		var pendingResponse = createPendingResponse(abort);
 		xhr = sendRequest(request, pendingResponse, responseState, complete);
-		responseState.set(xhr ? pendingResponse : null);
+		responseState.set(xhr ? pendingResponse : {});
 		if( xhr ){
 			unsubscribe.subscribe(onAbort.subscribe(abort));
 		}
@@ -138,7 +138,7 @@ function createResponseState(requestState, options, onAbort){
 	var unsubscribe = createObservable();
 	var xhr = null;
 	var isAbortable = true;
-	var responseState = createState(null);
+	var responseState = createState();
 	if( requestState && typeof requestState.effect === "function" ){
 		requestState.effect(setRequest);
 	}else{
