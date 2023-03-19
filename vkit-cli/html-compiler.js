@@ -161,6 +161,16 @@ window.onerror = function(message, source, lineno, colno, error){
 	});
 	document.body.appendChild(container);
 };
+window.onunhandledrejection = function(e){
+	var error = e.reason;
+	window.onerror(
+		error.message,
+		error.fileName,
+		error.lineNumber,
+		error.columnNumber,
+		error
+	);
+};
 </script>`;
 
 const RELOAD_SCRIPT = `<script type="text/javascript" language="javascript">
