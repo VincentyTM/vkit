@@ -152,14 +152,31 @@ function createResponseState(requestState, options, onAbort){
 
 function createHttpHandle(request, options){
 	var abort = createObservable();
-	unmount(abort);
-	var value = request === undefined
-		? function(request, options){ return createResponseState(request, options, abort); }
-		: createResponseState(request, options, abort);
-	value.abort = abort;
-	return value;
+	var hasAborter = options && typeof options.aborter === "function";
+	if( hasAborter ){
+		options.aborter(abort);
+	}else{
+		unmount(abort);
+	}
+	return createResponseState(request, options, abort);
+}
+
+function createAborter(){
+	var cb = null;
+	unmount(function(){
+		if( typeof cb === "function" ){
+			cb();
+		}
+	});
+	return function(callback){
+		if( typeof cb === "function" ){
+			cb();
+		}
+		cb = callback;
+	};
 }
 
 $.http = createHttpHandle;
+$.aborter = createAborter;
 
 })($);
