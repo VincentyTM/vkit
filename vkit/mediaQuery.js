@@ -4,7 +4,7 @@ var unmount = $.unmount;
 var createState = $.state;
 var render = $.render;
 
-function createMediaState(mediaQuery, win){
+function createMediaQuery(mediaQuery, win){
 	if(!win) win = window;
 	if(!win.matchMedia){
 		return createState(false);
@@ -29,6 +29,6 @@ function createMediaState(mediaQuery, win){
 	return state;
 }
 
-$.mediaState = createMediaState;
+$.mediaQuery = createMediaQuery;
 
 })($, window);
