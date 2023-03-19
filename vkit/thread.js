@@ -1,65 +1,72 @@
-(function($){
+(function($, global){
 
-if(!(typeof Worker=="function" && typeof URL=="function" && typeof Blob=="function" && typeof Promise=="function" && Array.from)){
-	return;
-}
+var render = $.render;
+var URL = global.URL || global.webkitURL || global.mozURL;
+var isSupported = typeof Worker === "function" && typeof URL === "function" && typeof Blob === "function" && typeof Promise === "function";
+var slice = Array.prototype.slice;
+var workerSRC = isSupported ? URL.createObjectURL(new Blob(["'use strict';this.onmessage=function(e){this.postMessage(new Function(e.data[0].split(','),e.data[1]).apply(this,e.data[2]));};"])) : null;
 
-var workerSRC=URL.createObjectURL(new Blob(["'use strict';this.onmessage=function(e){this.postMessage(new Function(e.data[0].split(','),e.data[1]).apply(this,e.data[2]));};"]));
-
-function Thread(){
-	var thread=this;
-	this.curr=null;
-	this.queue=[];
-	this.worker=new Worker(workerSRC);
-	this.worker.onmessage=function(e){
-		thread.curr.complete(e.data);
-		if( thread.queue.length ){
-			thread.run(thread.queue.shift());
+function createThread(){
+	if(!isSupported){
+		throw new Error("Thread API is not supported");
+	}
+	var current = null;
+	var queue = [];
+	var worker = new Worker(workerSRC);
+	
+	worker.onmessage = function(e){
+		current.complete(e.data);
+		if( queue.length ){
+			run(queue.shift());
 		}else{
-			thread.curr=null;
+			current = null;
 		}
+		render();
+	};
+	
+	function run(task){
+		var f = task.func.toString(),
+		a = f.indexOf("(") + 1,
+		b = f.indexOf(")", a),
+		c = f.indexOf("{", b) + 1,
+		d = f.lastIndexOf("}");
+		current = task;
+		worker.postMessage([
+			f.substring(a, b),
+			f.substring(c, d),
+			task.args
+		]);
+	}
+	
+	function stop(){
+		if( worker ){
+			worker.terminate();
+			worker = null;
+			queue.splice(0, queue.length);
+		}
+	}
+	
+	function createTask(func){
+		return function(){
+			var args = slice.call(arguments);
+			return new Promise(function(resolve){
+				var task = {
+					func: func,
+					args: args,
+					complete: resolve
+				};
+				current ? queue.push(task) : run(task);
+			});
+		};
+	}
+	
+	return {
+		run: run,
+		stop: stop,
+		task: createTask
 	};
 }
 
-Thread.prototype.run=function(task){
-	var f=task.func.toString(),
-	a=f.indexOf("(")+1,
-	b=f.indexOf(")", a),
-	c=f.indexOf("{", b)+1,
-	d=f.lastIndexOf("}");
-	this.curr=task;
-	this.worker.postMessage([
-		f.substring(a, b),
-		f.substring(c, d),
-		task.args
-	]);
-};
+$.thread = createThread;
 
-Thread.prototype.stop=function(){
-	this.worker.terminate();
-	this.queue.splice(0, this.queue.length);
-	return this;
-};
-
-Thread.prototype.task=function(func){
-	var thread=this;
-	return function(){
-		var args=Array.from(arguments);
-		return new Promise(function(resolve){
-			new Task(func, args, resolve, thread);
-		});
-	};
-};
-
-function Task(func, args, complete, thread){
-	this.func=func;
-	this.args=args;
-	this.complete=complete;
-	thread.curr ? thread.queue.push(this) : thread.run(this);
-}
-
-$.thread=function(){
-	return new Thread();
-};
-
-})($);
+})($, this);
