@@ -1,6 +1,6 @@
 (function($, document, navigator, global){
 
-var URL = global.URL || global.webkitURL;
+var URL = global.URL || global.webkitURL || global.mozURL;
 
 function save(blob, name){
 	if( navigator.msSaveOrOpenBlob ){
