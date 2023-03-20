@@ -45,6 +45,6 @@ function createFullScreenState(doc){
 	return state;
 }
 
-$.fullScreenState = createFullScreenState;
+$.fullScreen = createFullScreenState;
 
 })($, document);
