@@ -11,7 +11,7 @@ function LexNode(type, word, pos, len){
 }
 
 LexNode.prototype.toString = function(){
-	return String(this.word || this.type || "null");
+	return String(this.word || this.type || "");
 };
 
 function Lexer(rules, text){
