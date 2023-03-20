@@ -30,8 +30,8 @@ function getUserMedia(constraints, onError, nav, displayMedia){
 					: nav.mediaDevices.getUserMedia(constraints)
 			).then(function(stream){
 				state.set(stream);
-				render(error);
-			}, function(){
+				render();
+			}, function(error){
 				if( typeof onError === "function" ){
 					onError(error);
 				}
