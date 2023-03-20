@@ -1,14 +1,15 @@
 (function($){
 
-var group = $.group;
 var append = $.append;
+var createNodeRange = $.nodeRange;
 var unmount = $.unmount;
 
 function createPortal(children, parent){
 	function remove(){
-		group(children).remove();
+		range.remove();
 	}
-	append(parent, children);
+	var range = createNodeRange();
+	append(parent, [range.start, children, range.end]);
 	unmount(remove);
 }
 
