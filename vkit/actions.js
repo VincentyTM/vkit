@@ -13,6 +13,9 @@ function createActions(state, reducers, actions){
 	if(!actions) actions = {};
 	if( reducers ){
 		for(var name in reducers){
+			if( name in actions ){
+				throw new Error("Cannot set key '" + name + "': it already exists");
+			}
 			actions[name] = patchMethod(state, reducers[name]);
 		}
 	}
