@@ -18,16 +18,16 @@ function parse(lexer, expecting, map, applyRule, skipToken){
 	while( expecting.length ){
 		var expect = expecting.pop();
 		var node = lexer.length === 0 || lexer.ended && lexer.ended() ? null : lexer.shift();
-		var lex = node ? node.type || node : null;
+		var type = node ? node.type || node : null;
 
 		if( skipToken && node && skipToken(node) ){
 			expecting.push(expect);
-		}else if( expect === lex ){
+		}else if( expect === type ){
 			if( applyRule ){
 				applyRule(expect, node, null);
 			}
 		}else if( expect in map ){
-			var array = lex ? map[expect][lex] : null;
+			var array = type ? map[expect][type] : null;
 			if( array ){
 				push.apply(expecting, array.slice().reverse());
 				if( applyRule ){
