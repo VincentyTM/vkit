@@ -123,6 +123,13 @@ function getStateViews(getView, immutable){
 	return toViews(this.get(), getView, immutable, getOnChange(this));
 }
 
+function createConstState(value){
+	function get(){
+		return value;
+	}
+	return {get: get};
+}
+
 function createState(value){
 	var oldValue = value;
 	var onChange = createObservable();
@@ -198,14 +205,14 @@ function createState(value){
 	};
 }
 
-function combineStates(func){
+function combineStates(combine){
 	function computeValue(){
 		var n = states.length;
 		var values = new Array(n);
 		for(var i=0; i<n; ++i){
 			values[i] = states[i].get();
 		}
-		return func.apply(null, values);
+		return combine.apply(null, values);
 	}
 	
 	function update(){
@@ -239,6 +246,7 @@ function combineStates(func){
 	var unsubscribes = [];
 	var component = getComponent(true);
 	var autoUnsubscribe = false;
+	var hasNonState = false;
 	
 	for(var i=0; i<n; ++i){
 		var state = states[i];
@@ -249,6 +257,9 @@ function combineStates(func){
 				autoUnsubscribe = true;
 			}
 		}
+		if(!(state && typeof state.get === "function")){
+			hasNonState = true;
+		}
 	}
 	
 	if( autoUnsubscribe ){
@@ -256,6 +267,14 @@ function combineStates(func){
 			throw new Error("Some source states are created in components, but not the destination state");
 		}
 		unmount(unsubscribe);
+	}
+	
+	if( hasNonState ){
+		states = new Array(n);
+		for(var i=0; i<n; ++i){
+			var state = this[i];
+			states[i] = state && typeof state.get === "function" ? state : createConstState(state);
+		}
 	}
 	
 	var prev = getComponent(true);
