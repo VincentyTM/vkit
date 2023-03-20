@@ -2,6 +2,10 @@
 
 var toString = Object.prototype.toString;
 
+function isArray(value){
+	return toString.call(value) === "[object Array]";
+}
+
 function validate(type, data){
 	switch( type ){
 		case String: return typeof data === "string";
@@ -15,7 +19,7 @@ function validate(type, data){
 	if( type instanceof RegExp ){
 		return type.test(data);
 	}
-	if( type instanceof Array ){
+	if( isArray(type) ){
 		var n = type.length;
 		for(var i=0; i<n; ++i){
 			if(!validate(type[i], data)){
@@ -86,7 +90,7 @@ $.validators = {
 	},
 	ArrayOf: function(T){
 		return function(x){
-			if( toString.call(x) !== "[object Array]" ){
+			if(!isArray(x)){
 				return false;
 			}
 			var n = x.length;
@@ -134,7 +138,7 @@ $.validators = {
 		};
 	},
 	Partial: function(T){
-		if(!T || typeof T !== "object" || T instanceof Array || T instanceof RegExp){
+		if(!T || typeof T !== "object" || isArray(T) || T instanceof RegExp){
 			throw new TypeError("Partial types can only be used with non-Array, non-RegExp objects.");
 		}
 		return function(x){
@@ -147,7 +151,7 @@ $.validators = {
 		};
 	},
 	Required: function(T){
-		if(!T || typeof T !== "object" || T instanceof Array || T instanceof RegExp){
+		if(!T || typeof T !== "object" || isArray(T) || T instanceof RegExp){
 			throw new TypeError("Required types can only be used with non-Array, non-RegExp objects.");
 		}
 		return function(x){
