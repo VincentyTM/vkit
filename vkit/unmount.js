@@ -7,7 +7,9 @@ function noop(){}
 
 function unmount(callback){
 	var currentComponent = getComponent();
-	return currentComponent !== rootComponent ? currentComponent.onDestroy.subscribe(callback) : noop;
+	return typeof callback === "function"
+		? (currentComponent !== rootComponent ? currentComponent.onDestroy.subscribe(callback) : noop)
+		: currentComponent.onDestroy.subscribe;
 }
 
 $.unmount = unmount;
