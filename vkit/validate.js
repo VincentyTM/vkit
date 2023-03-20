@@ -60,12 +60,12 @@ $.validators = {
 			return x.length <= a;
 		}
 	},
-	Min: function(a, b){
+	Min: function(a){
 		return function(x){
 			return x >= a;
 		}
 	},
-	Max: function(a, b){
+	Max: function(a){
 		return function(x){
 			return x <= a;
 		};
