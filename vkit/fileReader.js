@@ -4,7 +4,7 @@ var createState = $.state;
 var render = $.render;
 var unmount = $.unmount;
 
-function createFileReader(input){
+function createFileReader(input, options){
 	function abort(){
 		reader.abort();
 	}
@@ -39,6 +39,9 @@ function createFileReader(input){
 		output.set({
 			error: reader.error
 		});
+		if( typeof unsubscribe === "function" ){
+			unsubscribe();
+		}
 		render();
 	};
 	
@@ -46,6 +49,9 @@ function createFileReader(input){
 		output.set({
 			result: reader.result
 		});
+		if( typeof unsubscribe === "function" ){
+			unsubscribe();
+		}
 		render();
 	};
 	
@@ -60,7 +66,9 @@ function createFileReader(input){
 		update(input);
 	}
 	
-	unmount(abort);
+	var unsubscribe = options && typeof options.aborter === "function"
+		? options.aborter(abort)
+		: unmount(abort);
 	
 	return output.map();
 }
