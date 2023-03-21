@@ -8,6 +8,7 @@ function getUserMedia(constraints, onError, nav, displayMedia){
 		nav = navigator;
 	}
 	var state = createState(null);
+	var pending = createState(false);
 	
 	function setConstraints(constraints){
 		var stream = state.get();
@@ -28,14 +29,17 @@ function getUserMedia(constraints, onError, nav, displayMedia){
 				}
 				return;
 			}
+			pending.set(true);
 			(
 				displayMedia
 					? nav.mediaDevices.getDisplayMedia(constraints)
 					: nav.mediaDevices.getUserMedia(constraints)
 			).then(function(stream){
 				state.set(stream);
+				pending.set(false);
 				render();
 			}, function(error){
+				pending.set(false);
 				if( typeof onError === "function" ){
 					onError(error);
 				}
@@ -50,7 +54,9 @@ function getUserMedia(constraints, onError, nav, displayMedia){
 		setConstraints(constraints);
 	}
 	
-	return state.map();
+	var userMedia = state.map();
+	userMedia.pending = pending.map();
+	return userMedia;
 }
 
 function getDisplayMedia(options, onError, nav){
