@@ -18,7 +18,11 @@ function getUserMedia(constraints, onError, nav, displayMedia){
 			state.set(null);
 		}
 		if( constraints ){
-			if(!nav.mediaDevices){
+			if(
+				!nav.mediaDevices ||
+				(!displayMedia && typeof nav.mediaDevices.getUserMedia !== "function") ||
+				(displayMedia && typeof nav.mediaDevices.getDisplayMedia !== "function")
+			){
 				if( typeof onError === "function" ){
 					onError(new Error("MediaDevices API is not supported"));
 				}
