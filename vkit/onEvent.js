@@ -16,6 +16,9 @@ function onEvent(obj, type, fn){
 		if(!e.preventDefault) e.preventDefault = preventDefault;
 		if(!e.stopPropagation) e.stopPropagation = stopPropagation;
 		var ret = fn.call(obj, e);
+		if( ret && typeof ret.then === "function" ){
+			ret.then(render);
+		}
 		render();
 		return ret;
 	}
