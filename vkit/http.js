@@ -122,7 +122,7 @@ function createResponseState(requestState, options, onAbort){
 		isAbortable = request.abortable;
 		var pendingResponse = createPendingResponse(abort);
 		xhr = sendRequest(request, pendingResponse, responseState, complete);
-		responseState.set(xhr ? pendingResponse : {});
+		responseState.set(xhr ? pendingResponse : {unsent: true});
 		if( xhr ){
 			unsubscribe.subscribe(onAbort.subscribe(abort));
 		}
