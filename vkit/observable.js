@@ -11,7 +11,7 @@ function createObservable(){
 	
 	function subscribe(callback){
 		function unsubscribe(){
-			for(var i=Math.min(curr, n); i--;){
+			for(var i=Math.min(curr, n) - 1; i > 0; i -= 2){
 				if( callbacks[i] === unsubscribe ){
 					callbacks.splice(i - 1, 2);
 					n -= 2;
@@ -19,8 +19,9 @@ function createObservable(){
 				}
 			}
 		}
-		callbacks.push(callback, unsubscribe);
-		var curr = n += 2;
+		
+		var curr = n = callbacks.push(callback, unsubscribe);
+		
 		return unsubscribe;
 	}
 	
