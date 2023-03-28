@@ -25,6 +25,9 @@ function createThread(){
 	};
 	
 	function run(task){
+		if(!worker){
+			return;
+		}
 		var f = task.func.toString(),
 		a = f.indexOf("(") + 1,
 		b = f.indexOf(")", a),
