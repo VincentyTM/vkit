@@ -115,6 +115,19 @@ function effect(action){
 	}
 }
 
+function flatten(){
+	var output = createState();
+	this.effect(function(inner, cleanup){
+		output.set(inner.get());
+		cleanup(
+			inner.onChange.subscribe(function(value){
+				output.set(value);
+			})
+		);
+	});
+	return output.map();
+}
+
 function getStateView(getView, immutable){
 	return toView(this.get(), getView, immutable, getOnChange(this));
 }
@@ -190,6 +203,7 @@ function createState(value){
 		get: get,
 		map: map,
 		pipe: pipe,
+		flatten: flatten,
 		mutate: mutate,
 		onChange: onChange,
 		enqueue: enqueue,
@@ -286,6 +300,7 @@ function combineStates(combine){
 		get: getValue,
 		map: map,
 		pipe: pipe,
+		flatten: flatten,
 		mutate: mutate,
 		onChange: onChange,
 		render: text,
