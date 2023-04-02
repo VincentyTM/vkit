@@ -22,6 +22,7 @@ function createActions(state, reducers, actions){
 	return actions;
 }
 
+$.action = patchMethod;
 $.actions = createActions;
 
 })($);
