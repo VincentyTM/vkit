@@ -3,8 +3,11 @@
 var onEvent = $.onEvent;
 var unmount = $.unmount;
 
-function createEventPipe(type, state){
+function createEventPipe(type, state, transform){
 	function updateValue(value){
+		if( typeof transform === "function" ){
+			value = transform(value);
+		}
 		state.set(value);
 	}
 	
