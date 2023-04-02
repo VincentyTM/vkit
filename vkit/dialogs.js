@@ -9,13 +9,13 @@ function Dialogs(){
 	}
 	var openDialogs = createState([]);
 	
-	function opener(component){
+	function opener(component, only){
 		return function(){
-			return open(component, arguments);
+			return open(component, arguments, only);
 		};
 	}
 	
-	function open(component, args){
+	function open(component, args, only){
 		var dialog = {
 			render: function(){
 				return component.apply(dialog, args);
@@ -24,7 +24,7 @@ function Dialogs(){
 				close(dialog);
 			}
 		};
-		openDialogs.set(openDialogs.get().concat([dialog]));
+		openDialogs.set(only ? [dialog] : openDialogs.get().concat([dialog]));
 		return dialog;
 	}
 	
@@ -55,8 +55,8 @@ function Dialogs(){
 	this.render = render;
 }
 
-Dialogs.opener = function(component){
-	return inject(Dialogs).opener(component);
+Dialogs.opener = function(component, only){
+	return inject(Dialogs).opener(component, only);
 };
 
 $.dialogs = Dialogs;
