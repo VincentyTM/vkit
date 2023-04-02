@@ -54,6 +54,7 @@ function createNotificationManager(onError, win){
 	
 	if( nav.permissions ){
 		nav.permissions.query({name: "notifications"}).then(function(perm){
+			permission.set(perm.state || perm.status);
 			asyncUnmount(
 				onEvent(perm, "change", function(){
 					permission.set(perm.state || perm.status);
