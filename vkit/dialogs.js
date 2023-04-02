@@ -38,6 +38,10 @@ function Dialogs(){
 		}
 	}
 	
+	function closeAll(){
+		openDialogs.set([]);
+	}
+	
 	function render(){
 		return openDialogs.views(function(dialog){
 			return dialog;
@@ -47,6 +51,7 @@ function Dialogs(){
 	this.opener = opener;
 	this.open = open;
 	this.close = close;
+	this.closeAll = closeAll;
 	this.render = render;
 }
 
