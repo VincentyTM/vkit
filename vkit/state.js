@@ -118,12 +118,18 @@ function effect(action){
 function flatten(){
 	var output = createState();
 	this.effect(function(inner, cleanup){
-		output.set(inner.get());
-		cleanup(
-			inner.onChange.subscribe(function(value){
-				output.set(value);
-			})
-		);
+		if( inner && typeof inner.get === "function" ){
+			output.set(inner.get());
+			if( inner.onChange && typeof inner.onChange.subscribe === "function" ){
+				cleanup(
+					inner.onChange.subscribe(function(value){
+						output.set(value);
+					})
+				);
+			}
+		}else{
+			output.set(inner);
+		}
 	});
 	return output.map();
 }
