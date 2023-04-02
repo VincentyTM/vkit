@@ -2,6 +2,7 @@
 
 var createState = $.state;
 var render = $.render;
+var unmount = $.unmount;
 
 function getUserMedia(constraints, onError, nav, displayMedia){
 	if(!nav){
@@ -53,6 +54,10 @@ function getUserMedia(constraints, onError, nav, displayMedia){
 	}else{
 		setConstraints(constraints);
 	}
+	
+	unmount(function(){
+		setConstraints(null);
+	});
 	
 	var userMedia = state.map();
 	userMedia.pending = pending.map();
