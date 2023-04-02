@@ -9,6 +9,12 @@ function Dialogs(){
 	}
 	var openDialogs = createState([]);
 	
+	function opener(component){
+		return function(){
+			return open(component, arguments);
+		};
+	}
+	
 	function open(component, args){
 		var dialog = {
 			render: function(){
@@ -38,17 +44,14 @@ function Dialogs(){
 		});
 	}
 	
+	this.opener = opener;
 	this.open = open;
 	this.close = close;
 	this.render = render;
 }
 
 Dialogs.opener = function(component){
-	var dialogs = inject(Dialogs);
-	
-	return function(){
-		return dialogs.open(component, arguments);
-	};
+	return inject(Dialogs).opener(component);
 };
 
 $.dialogs = Dialogs;
