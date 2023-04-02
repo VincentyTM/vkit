@@ -20,6 +20,9 @@ function getIndexAt(array, time, n){
 }
 
 function getValueAt(array, time, mix){
+	if( typeof array === "function" ){
+		return array(time, mix);
+	}
 	if( toString.call(array) !== "[object Array]" ){
 		return array;
 	}
