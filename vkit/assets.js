@@ -21,6 +21,7 @@ function createAsset(name){
 	function removeRef(){
 		var doUnload = --refCount <= 0;
 		if( doUnload ){
+			reset();
 			unload();
 			unload.clear();
 		}
