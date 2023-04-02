@@ -18,6 +18,8 @@ function Lexer(rules, text){
 	var pos = 0;
 	var buffer = [];
 	
+	this.rules = rules;
+	
 	if( iterator ){
 		this[iterator] = function(){
 			return this;
@@ -40,6 +42,7 @@ function Lexer(rules, text){
 		if( buffer.length ){
 			return buffer.pop();
 		}
+		var rules = this.rules;
 		if( pos < text.length ){
 			var ctype, word, len = 0, sub = text.substring(pos);
 			for(var type in rules){
