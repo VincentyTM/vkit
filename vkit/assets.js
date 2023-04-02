@@ -130,7 +130,11 @@ function createAssetContainer(assetNeeded){
 		}else{
 			asset = assets[name] = createAsset(name);
 			if( typeof assetNeeded === "function" ){
-				assetNeeded(asset.publicInterface);
+				try{
+					assetNeeded(asset.publicInterface);
+				}catch(ex){
+					asset.error(ex);
+				}
 			}
 		}
 		return asset;
