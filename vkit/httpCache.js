@@ -36,7 +36,7 @@ function httpCache(params){
 	
 	if( httpState && typeof httpState.effect === "function" ){
 		httpState.effect(function(res){
-			if(!res || res.progress){
+			if( res.unsent || res.progress ){
 				return;
 			}
 			if( res.status === 200 ){
