@@ -99,7 +99,7 @@ async function requestListener(req, res){
 	if( path.startsWith(config.debugPath) ){
 		const cachedPath = decodeURIComponent(path.replace(config.debugPath, config.appDirectory + "/src/"));
 		const cached = cache.get(cachedPath);
-		if( cached ){
+		if( cached !== null ){
 			const lastModified = cache.getVersion(cachedPath);
 			const ifModifiedSince = req.headers["if-modified-since"];
 			if( ifModifiedSince && new Date(ifModifiedSince).getTime() >= lastModified ){
