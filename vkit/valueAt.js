@@ -32,7 +32,7 @@ function getValueAt(array, time, mix){
 	}
 	var end = array[n - 1].end;
 	if( end <= time ){
-		time %= end;
+		time = Math.round((time - end * Math.floor(time / end)) * 1e12) / 1e12;
 	}
 	if( n === 1 ){
 		return getValueAt(array[0].value, time - array[0].start, mix);
