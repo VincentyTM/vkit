@@ -26,6 +26,30 @@ function isPrefixOf(a, b){
 	return true;
 }
 
+function getNth(i){
+	return function(array){
+		return array[i];
+	};
+}
+
+function split(path){
+	return path.split("/");
+}
+
+function parsePath(route, pathState){
+	var splitPath = pathState.map(split);
+	var keys = {};
+	var parts = route.path.split("/");
+	var n = parts.length;
+	for(var i=0; i<n; ++i){
+		var part = parts[i];
+		if( part.charAt(0) === ":" ){
+			keys[part.substring(1)] = splitPath.map(getNth(i));
+		}
+	}
+	return keys;
+}
+
 function matches(routePath, currentPath, exact){
 	if( routePath === currentPath || routePath === undefined ){
 		return true;
@@ -41,11 +65,7 @@ function matches(routePath, currentPath, exact){
 	return exact !== false ? equals(a, b) : isPrefixOf(a, b);
 }
 
-function Router(pathState, routes){
-	if(!(this instanceof Router)){
-		return new Router(pathState, routes);
-	}
-	
+function createRouter(pathState, routes){
 	function getRoute(path){
 		var n = routes.length;
 		for(var i=0; i<n; ++i){
@@ -67,20 +87,22 @@ function Router(pathState, routes){
 	function render(){
 		return currentRoute.view(function(route){
 			var component = route.component;
-			var params = route.params;
-			return component ? (params ? component.apply(null, params) : component()) : null;
+			var params = typeof route.path === "string" && route.path.indexOf(":") !== -1 ? parsePath(route, pathState) : null;
+			return component ? component(params) : null;
 		});
 	}
 	
 	var currentRoute = pathState.map(getRoute);
 	
-	this.path = pathState;
-	this.isActive = isActive;
-	this.getRoute = getRoute;
-	this.currentRoute = currentRoute;
-	this.render = render;
+	return {
+		path: pathState,
+		isActive: isActive,
+		getRoute: getRoute,
+		currentRoute: currentRoute,
+		render: render
+	};
 }
 
-$.router = Router;
+$.router = createRouter;
 
 })($);
