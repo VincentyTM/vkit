@@ -47,6 +47,7 @@ $(document.body).render(CounterApp);
   * [References](#references)
   * [Serializing a Form](#serializing-a-form)
   * [Custom Elements](#custom-elements)
+  * [Windows and Components](#windows-and-components)
   * [Cookies](#cookies)
   * [Dragging Elements](#dragging-elements)
   * [Text Selection](#text-selection)
@@ -401,7 +402,7 @@ function Component(){
 }
 ```
 
-Note that no component knows when its view is appended to or removed from the DOM. However, we can enqueue a function to be called after the current render cycle using `$.tick`.
+Note that no component knows when its view is appended to or removed from the DOM. However, you can enqueue a function to be called after the current render cycle using `$.tick`.
 
 ```javascript
 function AutoFocusedInput(){
@@ -419,7 +420,7 @@ In many cases, you should not store your data inside the component, but pass it 
 
 ## Dependency Injection
 
-Using `$.inject`, you can avoid unnecessary levels of passing arguments down the component tree. By default, classes are lazily constructed by `$.inject` calls, and injected classes work like singletons.
+Using `$.inject`, you can avoid unnecessary levels of passing arguments down the component tree. By default, singleton instances are constructed lazily and injected by `$.inject`.
 
 ```javascript
 class MyService {
@@ -724,8 +725,8 @@ function FormComponent(){
 Custom elements can be registered with `$.customElement` to encapsulate some functionality. They have their own component tree and can be used by non-vKit applications.
 
 ```javascript
-$.customElement("hello-element", function(){
-    const {name} = $.stateOf(this.observedAttributes);
+$.customElement("hello-element", function({name}){
+    name = $.defaultValue(name, "world");
     
     console.log("The <hello-element> is connected!");
     
@@ -751,6 +752,39 @@ const App = () => Hello_Element(
     P("Some contents")
 );
 $(document.body).render(App);
+```
+
+## Windows and Components
+
+Creating a component in another window (e.g. a tab or an iframe) is difficult because it might get unloaded before your app does and the side effects remain. To avoid this, you should use `renderDetached`.
+
+```javascript
+const {Button, H1} = $.htmlTags;
+
+function NewWindowContent({close}){
+	return [
+		H1("This is a new window"),
+		Button("Close it", {
+			onclick: close
+		})
+	];
+}
+
+function NewWindowOpener(){
+	return Button("Open new window", {
+		onclick(){
+			const myWindow = window.open();
+			
+			$(myWindow.document.body).renderDetached(unmount => {
+				$(myWindow).bind({onunload: unmount});
+				
+				return NewWindowContent({
+					close: () => myWindow.close()
+				});
+			});
+		}
+	});
+}
 ```
 
 ## Cookies
