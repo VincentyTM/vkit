@@ -961,7 +961,7 @@ const operators = {
 
 ## Recording Audio
 
-Since the built-in `MediaRecorder` API has some problems, vKit provides an alternative for audio recording. `$.recorder` can be efficiently used with the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API). Its output is a WAV file.
+Since the built-in `MediaRecorder` API has some problems, vKit provides an alternative for audio recording. `$.audioRecorder` can be efficiently used with the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API). Its output is a WAV file.
 
 ```javascript
 const ctx = new AudioContext();
@@ -972,7 +972,7 @@ async function recordMicrophone(){
     });
     const source = ctx.createMediaStreamSource(stream);
 
-    const rec = $.recorder(source);
+    const rec = $.audioRecorder(source);
     rec.start();
 
     return async function(){

@@ -4,11 +4,13 @@ var createThread = $.thread;
 
 function recorderTask(sampleRate){
 	var recLength, recBuffersL, recBuffersR;
+	
 	this.record = function(inputBufferL, inputBufferR){
 		recBuffersL.push(inputBufferL);
 		recBuffersR.push(inputBufferR);
 		recLength += inputBufferL.length;
 	};
+	
 	this.exportWAV = function(){
 		var bufferL = mergeBuffers(recBuffersL, recLength);
 		var bufferR = mergeBuffers(recBuffersR, recLength);
@@ -17,17 +19,20 @@ function recorderTask(sampleRate){
 		var audioBlob = new Blob([dataview], {type: "audio/wav"});
 		return audioBlob;
 	};
+	
 	this.getBuffers = function(){
 		this.postMessage([
 			mergeBuffers(recBuffersL, recLength),
 			mergeBuffers(recBuffersR, recLength)
 		]);
 	};
+	
 	this.clear = function(){
 		recLength = 0;
 		recBuffersL = [];
 		recBuffersR = [];
 	};
+	
 	function mergeBuffers(recBuffers, recLength){
 		var result = new Float32Array(recLength);
 		var offset = 0;
@@ -38,6 +43,7 @@ function recorderTask(sampleRate){
 		}
 		return result;
 	}
+	
 	function interleave(inputL, inputR){
 		var length = inputL.length + inputR.length;
 		var result = new Float32Array(length);
@@ -50,6 +56,7 @@ function recorderTask(sampleRate){
 		}
 		return result;
 	}
+	
 	function floatTo16BitPCM(output, offset, input){
 		var n = input.length;
 		for(var i=0; i<n; ++i, offset+=2){
@@ -57,12 +64,14 @@ function recorderTask(sampleRate){
 			output.setInt16(offset, s < 0 ? s * 32768 : s * 32767, true);
 		}
 	}
+	
 	function writeString(view, offset, string){
 		var n = string.length;
 		for(var i=0; i<n; ++i){
 			view.setUint8(offset + i, string.charCodeAt(i));
 		}
 	}
+	
 	function encodeWAV(samples, mono){
 		var buffer = new ArrayBuffer(44 + samples.length * 2);
 		var view = new DataView(buffer);
@@ -82,25 +91,33 @@ function recorderTask(sampleRate){
 		floatTo16BitPCM(view, 44, samples);
 		return view;
 	}
+	
 	this.clear();
 }
 
-function createRecorder(source){
+function createAudioRecorder(source){
 	var context = source.context;
 	var recorder = createThread();
+	
 	recorder.task(recorderTask)(context.sampleRate);
+	
 	var record = recorder.task(function(L, R){
 		record(L, R);
 	});
-	var bufferLen = 4096;
+	
+	var bufferLength = 4096;
 	var recording = false;
-	var node = context.createScriptProcessor ? context.createScriptProcessor(bufferLen, 2, 2) : context.createJavaScriptNode(bufferLen, 2, 2);
+	var node = context.createScriptProcessor
+		? context.createScriptProcessor(bufferLength, 2, 2)
+		: context.createJavaScriptNode(bufferLength, 2, 2);
+	
 	node.onaudioprocess = function(e){
 		recording && record(
 			e.inputBuffer.getChannelData(0),
 			e.inputBuffer.getChannelData(1)
 		);
 	};
+	
 	source.connect(node);
 	node.connect(context.destination);
 	
@@ -128,6 +145,6 @@ function createRecorder(source){
 	};
 }
 
-$.recorder = createRecorder;
+$.audioRecorder = createAudioRecorder;
 
 })($);
