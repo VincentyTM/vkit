@@ -762,28 +762,28 @@ Creating a component in another window (e.g. a tab or an iframe) is difficult be
 const {Button, H1} = $.htmlTags;
 
 function NewWindowContent({close}){
-	return [
-		H1("This is a new window"),
-		Button("Close it", {
-			onclick: close
-		})
-	];
+    return [
+        H1("This is a new window"),
+        Button("Close it", {
+            onclick: close
+        })
+    ];
 }
 
 function NewWindowOpener(){
-	return Button("Open new window", {
-		onclick(){
-			const myWindow = window.open();
-			
-			$(myWindow.document.body).renderDetached(unmount => {
-				$(myWindow).bind({onunload: unmount});
-				
-				return NewWindowContent({
-					close: () => myWindow.close()
-				});
-			});
-		}
-	});
+    return Button("Open new window", {
+        onclick(){
+            const myWindow = window.open();
+            
+            $(myWindow.document.body).renderDetached(unmount => {
+                $(myWindow).bind({onunload: unmount});
+                
+                return NewWindowContent({
+                    close: () => myWindow.close()
+                });
+            });
+        }
+    });
 }
 ```
 
