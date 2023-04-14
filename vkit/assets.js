@@ -228,9 +228,15 @@ function createAssetContainer(assetNeeded){
 		}
 	}
 	
+	function select(name){
+		var asset = assets[name];
+		return asset ? asset.publicInterface : undefined;
+	}
+	
 	return {
 		bind: bind,
-		refs: createRefs
+		refs: createRefs,
+		select: select
 	};
 }
 
