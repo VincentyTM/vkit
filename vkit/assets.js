@@ -10,6 +10,7 @@ function createAsset(name){
 	var unload = createObservable();
 	var errorHandler = createObservable();
 	var loadHandler = createObservable();
+	var progressHandler = createObservable();
 	var resetHandler = createObservable();
 	var status = PENDING;
 	var data;
@@ -41,6 +42,12 @@ function createAsset(name){
 			status = REJECTED;
 			data = reason;
 			errorHandler(reason);
+		}
+	}
+	
+	function progress(state){
+		if( status === PENDING ){
+			progressHandler(state);
 		}
 	}
 	
@@ -110,8 +117,10 @@ function createAsset(name){
 			name: name,
 			onError: errorHandler.subscribe,
 			onLoad: loadHandler.subscribe,
+			onProgress: progressHandler.subscribe,
 			onReset: resetHandler.subscribe,
 			onUnload: unload.subscribe,
+			progress: progress,
 			reset: reset,
 			then: then
 		},
