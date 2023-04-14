@@ -168,6 +168,12 @@ function createAssetContainer(assetNeeded){
 			return asset.publicInterface;
 		}
 		
+		function forEach(callback){
+			for(var name in refs){
+				callback(name, refs[name].publicInterface);
+			}
+		}
+		
 		function get(name){
 			var asset = refs[name];
 			return asset ? asset.publicInterface.get() : undefined;
@@ -198,6 +204,7 @@ function createAssetContainer(assetNeeded){
 		
 		return {
 			add: add,
+			forEach: forEach,
 			get: get,
 			has: has,
 			remove: remove,
