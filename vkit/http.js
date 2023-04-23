@@ -161,22 +161,6 @@ function createHttpHandle(request, options){
 	return createResponseState(request, options, abort);
 }
 
-function createAborter(){
-	var cb = null;
-	unmount(function(){
-		if( typeof cb === "function" ){
-			cb();
-		}
-	});
-	return function(callback){
-		if( typeof cb === "function" ){
-			cb();
-		}
-		cb = callback;
-	};
-}
-
 $.http = createHttpHandle;
-$.aborter = createAborter;
 
 })($);
