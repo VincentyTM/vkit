@@ -152,30 +152,30 @@ function createConstState(value){
 function createState(value){
 	var oldValue = value;
 	var onChange = createObservable();
+	var queued = false;
 	
 	function update(){
+		queued = false;
 		if( value !== oldValue ){
 			onChange(oldValue = value);
 		}
 	}
-	
-	update.queued = false;
 	
 	function get(){
 		return value;
 	}
 	
 	function enqueue(){
-		if(!update.queued){
-			update.queued = true;
+		if(!queued){
+			queued = true;
 			stateUpdates.push(update);
 		}
 		return this;
 	}
 	
 	function dequeue(){
-		if( update.queued ){
-			update.queued = false;
+		if( queued ){
+			queued = false;
 			for(var i=stateUpdates.length; i--;){
 				if( stateUpdates[i] === update ){
 					stateUpdates.splice(i, 1);
@@ -326,9 +326,7 @@ function renderStates(){
 	while( n = stateUpdates.length ){
 		var updates = stateUpdates.splice(0, n);
 		for(var i=0; i<n; ++i){
-			var update = updates[i];
-			update.queued = false;
-			update();
+			updates[i]();
 		}
 	}
 }
