@@ -77,7 +77,7 @@ function interpolate(a, b, time, mix){
 	if( typeof mix === "function" ){
 		return mix(aValue, bValue, t);
 	}
-	return aValue * (1 - t) + bValue * t;
+	return Math.round((aValue * (1 - t) + bValue * t) * 1e12) / 1e12;
 }
 
 $.valueAt = getValueAt;
