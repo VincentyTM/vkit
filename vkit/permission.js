@@ -34,7 +34,12 @@ function createPermissionState(name, requestPermission, onError, nav){
 		}
 	}
 	
-	var asyncUnmount = unmount();
+	var isUnmounted = false;
+	var whenUnmount = unmount();
+	whenUnmount(function(){
+		isUnmounted = true;
+	});
+	
 	var permission = createState("default");
 	var prompt = permission.map(function(perm){
 		if( perm === "granted" ){
@@ -68,11 +73,13 @@ function createPermissionState(name, requestPermission, onError, nav){
 	if( nav.permissions ){
 		nav.permissions.query({name: name}).then(function(perm){
 			permission.set(perm.state || perm.status);
-			asyncUnmount(
-				onEvent(perm, "change", function(){
-					permission.set(perm.state || perm.status);
-				})
-			);
+			if(!isUnmounted){
+				whenUnmount(
+					onEvent(perm, "change", function(){
+						permission.set(perm.state || perm.status);
+					})
+				);
+			}
 			render();
 		}, function(error){
 			if( typeof onError === "function" ){
