@@ -1,11 +1,11 @@
-(function($){
+(function($, undefined){
 
-function defaultValue(state, value){
-	return state.map(function(v){
-		return v === null || v === undefined ? value : v;
-	});
+var map = $.map;
+
+function defaultValue(value, fallback){
+	return value === null || value === undefined ? fallback : value;
 }
 
-$.defaultValue = defaultValue;
+$.defaultValue = map(defaultValue);
 
 })($);
