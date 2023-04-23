@@ -313,6 +313,7 @@ function combineStates(combine){
 		text: text,
 		prop: prop,
 		effect: effect,
+		update: update,
 		view: getStateView,
 		views: getStateViews,
 		subscribe: subscribeToThis,
