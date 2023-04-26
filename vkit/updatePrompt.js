@@ -3,6 +3,7 @@
 var createState = $.state;
 var onEvent = $.onEvent;
 var render = $.render;
+var unmount = $.unmount;
 
 function createUpdatePrompt(serviceWorker, message, win){
 	if(!win){
@@ -10,6 +11,7 @@ function createUpdatePrompt(serviceWorker, message, win){
 	}
 	
 	var updatePrompt = createState(null);
+	var refreshing = false;
 	
 	function reset(){
 		updatePrompt.set(null);
@@ -17,12 +19,16 @@ function createUpdatePrompt(serviceWorker, message, win){
 	
 	function showPrompt(reg){
 		function update(){
-			if( updatePrompt.get() ){
-				updatePrompt.set(null);
-				
-				if( reg.waiting ){
-					reg.waiting.postMessage(typeof message === "function" ? message() : message === undefined ? "skipWaiting" : message);
-				}
+			updatePrompt.set(null);
+			
+			if( reg.waiting ){
+				reg.waiting.postMessage(
+					typeof message === "function"
+						? message()
+						: message === undefined
+							? "skipWaiting"
+							: message
+				);
 			}
 		}
 		
@@ -31,6 +37,17 @@ function createUpdatePrompt(serviceWorker, message, win){
 			deny: reset
 		});
 		render();
+	}
+	
+	if( win.navigator.serviceWorker ){
+		unmount(
+			onEvent(win.navigator.serviceWorker, "controllerchange", function(){
+				if(!refreshing){
+					refreshing = true;
+					win.location.reload();
+				}
+			})
+		);
 	}
 	
 	serviceWorker.effect(function(reg, cleanup){
@@ -50,23 +67,13 @@ function createUpdatePrompt(serviceWorker, message, win){
 			}
 		}
 		
-		var refreshing = false;
-		
-		cleanup(
-			onEvent(win.navigator.serviceWorker, "controllerchange", function(){
-				if(!refreshing){
-					refreshing = true;
-					win.location.reload();
-				}
-			})
-		);
-		
 		if( reg.waiting ){
 			showPrompt(reg);
 		}else{
 			if( reg.installing ){
 				awaitStateChange();
 			}
+			
 			cleanup(
 				onEvent(reg, "updatefound", awaitStateChange)
 			);
