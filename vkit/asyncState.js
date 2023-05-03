@@ -30,25 +30,25 @@ function createAsyncState(input, callAsync, onError, getInitialValue){
 			var returnValue = callAsync(inputValue);
 			if( returnValue && typeof returnValue.then === "function" ){
 				returnValue.then(function(outputValue){
-					stop();
 					result.set(outputValue);
+					stop();
 					render();
 				}, function(error){
-					stop();
 					if( typeof onError === "function" ){
 						onError(error);
 					}
+					stop();
 					render();
 				});
 			}else{
-				pending.set(false);
 				result.set(returnValue);
+				stop();
 			}
 		}catch(error){
-			pending.set(false);
 			if( typeof onError === "function" ){
 				onError(error);
 			}
+			stop();
 		}
 	}
 	
