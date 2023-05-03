@@ -56,7 +56,7 @@ function createNodeRange(){
 		if(!start.nextSibling){
 			throw new Error("Cannot get nodes of detached range");
 		}
-		var nodes = $();
+		var nodes = [];
 		var parent = start.parentNode;
 		if( parent ){
 			for(var el = start; el && el !== end; el = el.nextSibling){
