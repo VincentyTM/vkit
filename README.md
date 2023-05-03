@@ -162,11 +162,11 @@ const myForm = Form(
             type: "text",
             name: "title",
             value: "Example"
-        }),
-        Button("Submit!", {
-            type: "submit"
         })
-    )
+    ),
+    Button("Submit!", {
+        type: "submit"
+    })
 )
 ```
 
@@ -456,11 +456,12 @@ It may be desirable to subscribe to events. In vKit, the easiest tool for that i
 ```javascript
 class DownloadService {
     constructor(){
-        this.onDownload = $.observable();
+        this.emitDownload = $.observable();
+        this.onDownload = this.emitDownload.subscribe;
     }
     async download(url){
         const blob = await (await fetch(url)).blob();
-        this.onDownload(blob);
+        this.emitDownload(blob);
         $.render();
     }
 }
@@ -468,11 +469,13 @@ class DownloadService {
 function DownloadListComponent(){
     const downloadService = $.inject(DownloadService);
     const downloadedBlobs = [];
+    
     $.unmount(
-        downloadService.onDownload.subscribe(
+        downloadService.onDownload(
             blob => downloadedBlobs.push(blob)
         )
     );
+    
     return $.views(downloadedBlobs, FileComponent);
 }
 ```
@@ -673,7 +676,7 @@ function App(){
     return [
         Ul(
             Li(A("Page A", $.href("?page=a"))),
-            Li(A("Page A", $.href("?page=b")))
+            Li(A("Page B", $.href("?page=b")))
         ),
         router
     ]);
