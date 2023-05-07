@@ -43,9 +43,13 @@ function wakeLock(controller){
 		}
 	}
 	
-	controller.map(Boolean).effect(function(doLock){
-		doLock ? lock() : unlock();
-	});
+	if( controller && typeof controller.effect === "function" ){
+		controller.map(Boolean).effect(function(doLock){
+			doLock ? lock() : unlock();
+		});
+	}else{
+		lock();
+	}
 	
 	unmount(unlock);
 	
