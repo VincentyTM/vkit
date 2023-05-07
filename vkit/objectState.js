@@ -3,6 +3,7 @@
 var map = $.map;
 var unmount = $.unmount;
 var onChange = $.onChange;
+var createActions = $.actions;
 var createState = $.state;
 var createObservable = $.observable;
 
@@ -12,23 +13,12 @@ function createObjectState(parent, methods){
 	}else if(!parent || typeof parent.get !== "function"){
 		parent = createState(parent);
 	}
-	if(!methods){
-		methods = {};
+	
+	if( methods ){
+		createActions(parent, methods, parent);
 	}
+	
 	var set = parent.set;
-	
-	for(var k in methods){
-		parent[k] = patchMethod(methods[k]);
-	}
-	
-	function patchMethod(method){
-		return function(){
-			var result = method.apply(parent.get(), arguments);
-			if( result !== undefined ){
-				set.call(parent, result);
-			}
-		};
-	}
 	
 	function item(value, reducer){
 		var child = createObjectState(value, reducer);
