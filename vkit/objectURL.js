@@ -2,13 +2,12 @@
 
 var createState = $.state;
 var unmount = $.unmount;
-var URL = global.URL || global.webkitURL || global.mozURL;
+var URL = global.URL || global.webkitURL || global.mozURL || {
+	createObjectURL: function(){ return ""; },
+	revokeObjectURL: function(){}
+};
 
 function createObjectURL(file){
-	if(!URL){
-		throw new Error("File URL is not supported");
-	}
-	
 	if(!file && file !== ""){
 		return null;
 	}
