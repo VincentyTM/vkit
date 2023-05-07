@@ -170,7 +170,7 @@ function createAssetContainer(assetNeeded){
 		
 		function forEach(callback){
 			for(var name in refs){
-				callback(name, refs[name].publicInterface);
+				callback(refs[name].publicInterface);
 			}
 		}
 		
