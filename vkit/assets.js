@@ -244,6 +244,12 @@ function createAssetContainer(assetNeeded){
 		}
 	}
 	
+	function forEach(callback){
+		for(var name in assets){
+			callback(assets[name].publicInterface);
+		}
+	}
+	
 	function select(name){
 		var asset = assets[name];
 		return asset ? asset.publicInterface : undefined;
@@ -251,6 +257,7 @@ function createAssetContainer(assetNeeded){
 	
 	return {
 		bind: bind,
+		forEach: forEach,
 		refs: createRefs,
 		select: select
 	};
