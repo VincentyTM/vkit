@@ -20,12 +20,13 @@ function observe(obj, prop){
 		throw new ReferenceError("Property '" + prop + "' does not exist!");
 	}
 	var state = createState(obj[prop]);
-	state.subscribe(function(value){
+	var set = state.set;
+	state.set = function(value){
 		obj[prop] = value;
-	});
+	};
 	unmount(
 		observable.subscribe(function(value){
-			state.set(value);
+			set.call(state, value);
 		})
 	);
 	return state;
