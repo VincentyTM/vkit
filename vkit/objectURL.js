@@ -9,7 +9,7 @@ function createObjectURL(file){
 		throw new Error("File URL is not supported");
 	}
 	
-	if(!file){
+	if(!file && file !== ""){
 		return null;
 	}
 	
@@ -23,9 +23,9 @@ function createObjectURL(file){
 			}
 		}
 		
-		file.effect(function(file){
+		file.effect(function(value){
 			revoke();
-			urlState.set(file ? URL.createObjectURL(file) : "");
+			urlState.set(value ? (typeof value === "string" ? value : URL.createObjectURL(value)) : "");
 		});
 		
 		unmount(revoke);
@@ -33,7 +33,7 @@ function createObjectURL(file){
 		return urlState;
 	}
 	
-	var url = URL.createObjectURL(file);
+	var url = typeof file === "string" ? file : URL.createObjectURL(file);
 	
 	unmount(function(){
 		URL.revokeObjectURL(url);
