@@ -9,10 +9,19 @@ function createComputedState(getter, updater){
 	setComponent(null);
 	var state = createState(getter());
 	setComponent(prev);
-	updater(function(){
+	
+	var readOnly = state.map();
+	var u = readOnly.update;
+	
+	function update(){
 		state.set(getter());
-	});
-	return state.map();
+		u();
+	}
+	
+	updater(update);
+	readOnly.update = update;
+	
+	return readOnly;
 }
 
 $.computedState = createComputedState;
