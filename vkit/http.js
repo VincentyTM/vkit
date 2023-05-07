@@ -31,7 +31,7 @@ function createRequest(data){
 }
 
 function sendRequest(request, pendingResponse, responseState, complete){
-	if( request.url === null ){
+	if( request.url === null || request.url === undefined ){
 		return null;
 	}
 	var xhr = new XMLHttpRequest();
