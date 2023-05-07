@@ -1,8 +1,9 @@
 (function($, global){
 
+var createPromise = $.promise;
 var render = $.render;
 var URL = global.URL || global.webkitURL || global.mozURL;
-var isSupported = typeof Worker === "function" && typeof URL === "function" && typeof Blob === "function" && typeof Promise === "function";
+var isSupported = typeof Worker === "function" && typeof URL === "function" && typeof Blob === "function";
 var slice = Array.prototype.slice;
 var workerSRC = isSupported ? URL.createObjectURL(new Blob(["'use strict';this.onmessage=function(e){this.postMessage(new Function(e.data[0].split(','),e.data[1]).apply(this,e.data[2]));};"])) : null;
 
@@ -52,7 +53,7 @@ function createThread(){
 	function createTask(func){
 		return function(){
 			var args = slice.call(arguments);
-			return new Promise(function(resolve){
+			return createPromise(function(resolve){
 				var task = {
 					func: func,
 					args: args,
