@@ -1,7 +1,12 @@
 (function($, window){
 
 var unmount = $.unmount;
+var createObservable = $.observable;
+var createState = $.state;
 var onEvent = $.onEvent;
+
+var count = 0;
+var countChange = createObservable();
 
 function prevent(e){
 	if( e && e.preventDefault ){
@@ -17,7 +22,7 @@ function unsavedGuard(state, win){
 	function add(){
 		if(!unsubscribe){
 			unsubscribe = onEvent(win, "beforeunload", prevent);
-			++unsavedGuard.count;
+			countChange(++count);
 		}
 	}
 	
@@ -25,7 +30,7 @@ function unsavedGuard(state, win){
 		if( unsubscribe ){
 			unsubscribe();
 			unsubscribe = null;
-			--unsavedGuard.count;
+			countChange(--count);
 		}
 	}
 	
@@ -38,8 +43,23 @@ function unsavedGuard(state, win){
 	return state;
 }
 
-unsavedGuard.count = 0;
+function allSaved(){
+	var saved = createState(count === 0);
+	
+	unmount(
+		countChange.subscribe(function(c){
+			saved.set(c === 0);
+		})
+	);
+	
+	return saved.map();
+}
 
+allSaved.get = function(){
+	return count === 0;
+};
+
+$.allSaved = allSaved;
 $.unsavedGuard = unsavedGuard;
 
 })($, window);
