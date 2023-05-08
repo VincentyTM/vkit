@@ -20,7 +20,7 @@ function renderDetached(getView, parent){
 		}
 		var view = getView(function(){
 			component.unmount();
-		});
+		}, component);
 		if( parent ){
 			append(parent, view, parent, bind);
 		}
