@@ -20,6 +20,7 @@ function createCustomElement(name, getView, options){
 	function CustomElement(){
 		var el = Reflect.construct(win.HTMLElement, [], CustomElement);
 		var component = createComponent(null);
+		component.window = win;
 		el.component = component;
 		el.observedAttributes = {};
 		if( CustomElement.observedAttributes ){
