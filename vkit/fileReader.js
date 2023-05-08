@@ -20,12 +20,16 @@ function createFileReader(input, options){
 				}),
 				abort: abort
 			});
-			switch(value.as){
-				case "arrayBuffer": reader.readAsArrayBuffer(value.file); break;
-				case "binaryString": reader.readAsBinaryString(value.file); break;
-				case "dataURL": reader.readAsDataURL(value.file); break;
-				case "text": reader.readAsText(value.file); break;
-				default: reader.readAsText(value);
+			
+			var as = value.as || (options ? options.as : null) || "text";
+			var file = value.file || value;
+			
+			switch(as){
+				case "arrayBuffer": reader.readAsArrayBuffer(file); break;
+				case "binaryString": reader.readAsBinaryString(file); break;
+				case "dataURL": reader.readAsDataURL(file); break;
+				case "text": reader.readAsText(file); break;
+				default: reader.readAsText(file);
 			}
 		}else{
 			output.set({});
