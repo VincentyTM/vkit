@@ -1,9 +1,10 @@
-(function($, window){
+(function($){
 
-var unmount = $.unmount;
 var createObservable = $.observable;
 var createState = $.state;
+var getWindow = $.window;
 var onEvent = $.onEvent;
+var unmount = $.unmount;
 
 var count = 0;
 var countChange = createObservable();
@@ -16,7 +17,7 @@ function prevent(e){
 }
 
 function unsavedGuard(state, win){
-	if(!win) win = window;
+	if(!win) win = getWindow();
 	var unsubscribe = null;
 	
 	function add(){
@@ -62,4 +63,4 @@ allSaved.get = function(){
 $.allSaved = allSaved;
 $.unsavedGuard = unsavedGuard;
 
-})($, window);
+})($);
