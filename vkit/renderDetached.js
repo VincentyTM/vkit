@@ -12,6 +12,12 @@ function renderDetached(getView, parent){
 	try{
 		var component = createComponent(null);
 		setComponent(component);
+		if( parent ){
+			var doc = parent.ownerDocument;
+			if( doc ){
+				component.window = doc.defaultView || doc.parentWindow;
+			}
+		}
 		var view = getView(function(){
 			component.unmount();
 		});
