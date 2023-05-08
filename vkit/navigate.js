@@ -1,14 +1,8 @@
 (function($, window){
 
 var createHistoryHandler = $.history;
-var unsavedGuard = $.unsavedGuard;
-var navigationGuard = function(){ return false; };
-
-function canNavigate(guard){
-	if( typeof guard === "function" ){
-		navigationGuard = guard;
-	}
-}
+var createObservable = $.observable;
+var emitNavigate = createObservable();
 
 function createHref(url, win){
 	return {
@@ -22,15 +16,33 @@ function createHref(url, win){
 
 function navigate(url, win){
 	if(!win) win = window;
-	if( unsavedGuard.count > 0 && !navigationGuard(url, win) ){
-		return;
+	
+	if( typeof url.get === "function" ){
+		url = url.get();
 	}
-	createHistoryHandler(win).push(typeof url.get === "function" ? url.get() : url);
+	
+	if( emitNavigate.count() > 0 ){
+		var prevented = false;
+		
+		emitNavigate({
+			url: url,
+			window: win,
+			prevent: function(){
+				prevented = true;
+			}
+		});
+		
+		if( prevented ){
+			return;
+		}
+	}
+	
+	createHistoryHandler(win).push(url);
 	win.scrollTo(0, 0);
 }
 
 $.href = createHref;
 $.navigate = navigate;
-$.canNavigate = canNavigate;
+$.onNavigate = emitNavigate.subscribe;
 
 })($, window);
