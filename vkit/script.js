@@ -20,7 +20,7 @@ function createScript(url, options){
 	function reset(){
 		s.onload = s.onerror = s.onreadystatechange = null;
 		s.request = null;
-		var p = t.parentNode;
+		var p = s.parentNode;
 		if( p ){
 			p.removeChild(s);
 		}
