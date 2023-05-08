@@ -15,13 +15,15 @@ function createScript(url, options){
 	var onLoad = createObservable();
 	var onError = createObservable();
 	var t = d.getElementsByTagName("script")[0];
-	var p = t.parentNode;
 	var s = d.createElement("script");
 	
 	function reset(){
 		s.onload = s.onerror = s.onreadystatechange = null;
 		s.request = null;
-		p.removeChild(s);
+		var p = t.parentNode;
+		if( p ){
+			p.removeChild(s);
+		}
 	}
 	
 	function reject(error){
@@ -69,7 +71,11 @@ function createScript(url, options){
 	s.async = true;
 	s.src = url;
 	
-	p.insertBefore(s,t);
+	if( t ){
+		t.parentNode.insertBefore(s, t);
+	}else{
+		d.getElementsByTagName("head")[0].appendChild(s);
+	}
 	
 	return {
 		then: then
