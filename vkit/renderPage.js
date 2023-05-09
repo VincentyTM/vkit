@@ -10,7 +10,7 @@ var renderDetached = $.renderDetached;
 
 function renderPage(root, url, callback, tagName, win){
 	if(!win) win = window;
-	var history = createHistoryHandler(win.history);
+	var history = createHistoryHandler(win);
 	var prevURL = win.location.href;
 	var state = history.state;
 	
