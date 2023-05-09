@@ -101,6 +101,11 @@ function createPendingResponse(abort){
 function createResponseState(requestState, options, onAbort){
 	function abort(){
 		if( xhr && isAbortable ){
+			xhr.onreadystatechange = null;
+			xhr.onprogress = null;
+			if( xhr.upload ){
+				xhr.upload.onprogress = null;
+			}
 			xhr.abort();
 		}
 		xhr = null;
