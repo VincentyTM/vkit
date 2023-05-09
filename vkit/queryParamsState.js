@@ -10,38 +10,28 @@ function createQueryParamsState(win){
 	var location = win.location;
 	var historyHandler = createHistoryHandler(win);
 	var queryParamsState = url(historyHandler.url()).queryParams;
+	
 	return function(name, allowObject){
-		var mode = 0;
-		var state = createState();
-		var set = state.set;
-		queryParamsState.effect(allowObject ? function(queryParams){
-			mode = 0;
-			set.call(state, queryParams.get(name));
-		} : function(queryParams){
-			mode = 0;
-			set.call(state, queryParams.getAsString(name));
-		});
-		state.set = function(value){
-			mode = 1;
-			set.call(state, value);
+		var state = queryParamsState.map(allowObject
+			? function(queryParams){ return queryParams.get(name); }
+			: function(queryParams){ return queryParams.getAsString(name); }
+		);
+		
+		state.replace = function(value){
+			historyHandler.replace(getQuery(value) + location.hash);
 		};
+		
 		state.push = function(value){
-			mode = 2;
-			set.call(state, value);
+			historyHandler.push(getQuery(value) + location.hash);
 		};
-		state.onChange.subscribe(function(value){
-			if( mode === 1 ){
-				historyHandler.replace(getQuery(value) + location.hash);
-			}else if( mode === 2 ){
-				historyHandler.push(getQuery(value) + location.hash);
-			}
-		});
+		
 		function getQuery(value){
 			var queryParams = createQueryParams(location.search.substring(1));
 			queryParams.set(name, value);
 			var params = queryParams.toString();
 			return params ? "?" + params : location.pathname;
 		}
+		
 		return state;
 	};
 };
