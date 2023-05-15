@@ -1,6 +1,7 @@
 (function($){
 
 var createState = $.state;
+var map = $.fn.map;
 
 function useKey(arrayState, getKey){
 	var isFunction = typeof getKey === "function";
@@ -23,7 +24,7 @@ function useKey(arrayState, getKey){
 	});
 	
 	function select(key, reducers){
-		var state = key.map ? $(recordsState, key).map(function(records, key){
+		var state = key.map ? map.call([recordsState, key], function(records, key){
 			return records[key];
 		}) : recordsState.map(function(records){
 			return records[key];
