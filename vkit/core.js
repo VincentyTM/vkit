@@ -46,12 +46,6 @@ function push(){
 	}
 	return this;
 }
-
-function pop(){
-	var item = this[--this.length];
-	delete this[this.length];
-	return item;
-}
 $.fn = vKit.prototype;
 $.global = global;
 $.version = "1.0.7";
@@ -59,6 +53,5 @@ $.data = {};
 $.install = install;
 $.uninstall = uninstall;
 $.fn.push = push;
-$.fn.pop = pop;
 
 })(this);
