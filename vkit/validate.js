@@ -11,6 +11,7 @@ function validate(type, data){
 		case String: return typeof data === "string";
 		case Boolean: return typeof data === "boolean";
 		case Number: return typeof data === "number" && !isNaN(data) && isFinite(data);
+		case Date: return new Date(data).getTime() === data;
 		case null: return data === null;
 	}
 	if( typeof type === "function" ){
@@ -177,9 +178,6 @@ $.validators = {
 		return function(x){
 			return x === null || validate(T, x);
 		};
-	},
-	DateTime: function(x){
-		return new Date(x).getTime() === x;
 	},
 	Int: function(x){
 		return typeof x === "number" && isFinite(x) && Math.floor(x) === x;
