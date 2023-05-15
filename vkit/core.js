@@ -39,19 +39,11 @@ function uninstall(){
 	return $;
 }
 
-function push(){
-	var n = arguments.length;
-	for(var i=0; i<n; ++i){
-		this[this.length++] = arguments[i];
-	}
-	return this;
-}
 $.fn = vKit.prototype;
 $.global = global;
 $.version = "1.0.7";
 $.data = {};
 $.install = install;
 $.uninstall = uninstall;
-$.fn.push = push;
 
 })(this);
