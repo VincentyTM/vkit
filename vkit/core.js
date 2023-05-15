@@ -71,17 +71,6 @@ function each(fn){
 	}
 	return this;
 }
-
-function forEach(array, fn){
-	var n = this.length;
-	for(var i=0; i<n; ++i){
-		if( fn.call(this, array[i], i, array) === false ){
-			break;
-		}
-	}
-	return this;
-}
-
 $.fn = vKit.prototype;
 $.global = global;
 $.version = "1.0.7";
@@ -92,6 +81,5 @@ $.fn.push = push;
 $.fn.pop = pop;
 $.fn.toArray = toArray;
 $.fn.each = each;
-$.fn.forEach = forEach;
 
 })(this);
