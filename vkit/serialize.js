@@ -1,45 +1,49 @@
 (function($){
 
-function serialize(form, append){
+function serialize(form, callback){
 	var submitButton = form.ownerDocument.activeElement;
-	for(var i=0, l=form.elements.length; i<l; ++i){
-		var input=form.elements[i];
+	var n = form.elements.length;
+	for(var i=0; i<n; ++i){
+		var input = form.elements[i];
 		if(!input.name || input.disabled){
 			continue;
 		}
 		switch( input.type ){
-			case 'submit': case 'image':
-				if( input === submitButton )
-					append(input.name, input.value);
+			case "submit": case "image":
+				if( input === submitButton ){
+					callback(input.name, input.value);
+				}
 				break;
-			case 'button': case 'reset':
+			case "button": case "reset":
 				break;
-			case 'file':
+			case "file":
 				if( input.files ){
 					var n = input.files.length;
 					if( n === 0 ){
-						append(input.name, "");
+						callback(input.name, "");
 					}else{
 						for(var k=0; k<n; ++k){
-							append(input.name, input.files[k].name);
+							callback(input.name, input.files[k].name);
 						}
 					}
 				}else{
-					append(input.name, input.value);
+					callback(input.name, input.value);
 				}
 				break;
-			case 'checkbox': case 'radio':
-				if( input.checked )
-					append(input.name, input.value);
+			case "checkbox": case "radio":
+				if( input.checked ){
+					callback(input.name, input.value);
+				}
 				break;
-			case 'select-multiple':
-				for(var j=0, lj=input.options.length; j<lj; ++j){
+			case "select-multiple":
+				var m = input.options.length;
+				for(var j=0; j<m; ++j){
 					var option = input.options[j];
-					option.selected && append(input.name, option.value);
+					option.selected && callback(input.name, option.value);
 				}
 				break;
 			default:
-				append(input.name, input.value);
+				callback(input.name, input.value);
 		}
 	}
 }
