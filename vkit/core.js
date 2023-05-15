@@ -94,18 +94,6 @@ function on(key, callback){
 	}
 	return this;
 }
-
-function extend(data){
-	var n = this.length;
-	for(var i=0; i<n; ++i){
-		var item = this[i];
-		for(var key in data){
-			item[key] = data[key];
-		}
-	}
-	return this;
-}
-
 $.fn = vKit.prototype;
 $.global = global;
 $.version = "1.0.7";
@@ -118,6 +106,5 @@ $.fn.toArray = toArray;
 $.fn.each = each;
 $.fn.forEach = forEach;
 $.fn.on = on;
-$.fn.extend = extend;
 
 })(this);
