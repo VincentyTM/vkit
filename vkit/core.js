@@ -41,7 +41,6 @@ function uninstall(){
 
 $.fn = vKit.prototype;
 $.global = global;
-$.version = "1.0.7";
 $.data = {};
 $.install = install;
 $.uninstall = uninstall;
