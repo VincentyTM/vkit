@@ -52,15 +52,6 @@ function pop(){
 	delete this[this.length];
 	return item;
 }
-
-function toArray(){
-	var n = this.length;
-	var a = new Array(n);
-	for(var i=0; i<n; ++i){
-		a[i] = this[i];
-	}
-	return a;
-}
 $.fn = vKit.prototype;
 $.global = global;
 $.version = "1.0.7";
@@ -69,6 +60,5 @@ $.install = install;
 $.uninstall = uninstall;
 $.fn.push = push;
 $.fn.pop = pop;
-$.fn.toArray = toArray;
 
 })(this);
