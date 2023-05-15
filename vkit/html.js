@@ -1,8 +1,8 @@
 (function($, document, undefined){
 
-var group = $.group;
-var insert = $.insert;
 var bind = $.bind;
+var insert = $.insert;
+var toArray = $.toArray;
 
 function findNodes(result, container, type, value, count){
 	if( container.nodeType === type && container.nodeValue === value ){
@@ -88,7 +88,7 @@ function html(){
 		}
 	}
 	
-	return group(container.childNodes);
+	return toArray(container.childNodes);
 }
 
 $.html = html;
