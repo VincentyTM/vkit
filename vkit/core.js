@@ -82,18 +82,6 @@ function forEach(array, fn){
 	return this;
 }
 
-function on(key, callback){
-	key = "on" + key;
-	var n = this.length;
-	for(var i=0; i<n; ++i){
-		var item = this[i], before = item[key];
-		item[key] = typeof before === "function" ? function(){
-			before.apply(this, arguments);
-			return callback.apply(this, arguments);
-		} : callback;
-	}
-	return this;
-}
 $.fn = vKit.prototype;
 $.global = global;
 $.version = "1.0.7";
@@ -105,6 +93,5 @@ $.fn.pop = pop;
 $.fn.toArray = toArray;
 $.fn.each = each;
 $.fn.forEach = forEach;
-$.fn.on = on;
 
 })(this);
