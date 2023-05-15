@@ -1,6 +1,6 @@
 (function(global){
 
-"use strict"; var _$, UNSET={};
+var _$, UNSET = {};
 
 function vKit(args){
 	this.end = this;
