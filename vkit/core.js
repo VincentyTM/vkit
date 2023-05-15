@@ -61,16 +61,6 @@ function toArray(){
 	}
 	return a;
 }
-
-function each(fn){
-	var n = this.length;
-	for(var i=0; i<n; ++i){
-		if( fn.call(this, this[i], i) === false ){
-			break;
-		}
-	}
-	return this;
-}
 $.fn = vKit.prototype;
 $.global = global;
 $.version = "1.0.7";
@@ -80,6 +70,5 @@ $.uninstall = uninstall;
 $.fn.push = push;
 $.fn.pop = pop;
 $.fn.toArray = toArray;
-$.fn.each = each;
 
 })(this);
