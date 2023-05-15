@@ -1,11 +1,39 @@
 (function($){
 
-var cursorStartX, cursorStartY, elStartLeft, elStartTop, elNode=null, noop=function(){}, ondragstart=noop, ondragstop=noop, defaultDragGo=function(x,y){this.style.left=x+"px";this.style.top=y+"px";}, ondraggo=defaultDragGo;
+var cursorStartX;
+var cursorStartY;
+var elStartLeft;
+var elStartTop;
+var elNode = null;
 
-function getX(e){ return e.touches && e.touches[0] ? e.touches[0].pageX||0 : e.pageX||e.clientX+(window.scrollX||document.documentElement.scrollLeft + (document.body ? document.body.scrollLeft : 0)||0); }
-function getY(e){ return e.touches && e.touches[0] ? e.touches[0].pageY||0 : e.pageY||e.clientY+(window.scrollY||document.documentElement.scrollTop + (document.body ? document.body.scrollTop : 0)||0); }
+function noop(){}
+
+var ondragstart = noop;
+var ondragstop = noop;
+var defaultDragGo = function(x, y){
+	this.style.left = x + "px";
+	this.style.top = y + "px";
+};
+var ondraggo = defaultDragGo;
+
+function getX(e, el){
+	var doc = el.ownerDocument;
+	var win = doc.defaultView || doc.parentWindow;
+	return e.touches && e.touches[0] ? e.touches[0].pageX || 0 : e.pageX || e.clientX + (
+		win.scrollX || doc.documentElement.scrollLeft + (doc.body ? doc.body.scrollLeft : 0) || 0
+	);
+}
+
+function getY(e, el){
+	var doc = el.ownerDocument;
+	var win = doc.defaultView || doc.parentWindow;
+	return e.touches && e.touches[0] ? e.touches[0].pageY || 0 : e.pageY || e.clientY + (
+		win.scrollY || doc.documentElement.scrollTop + (doc.body ? doc.body.scrollTop : 0) || 0
+	);
+}
+
 function getStyle(el, prop){
-	if( typeof getComputedStyle=="function" ){
+	if( typeof getComputedStyle === "function" ){
 		return getComputedStyle(el, null).getPropertyValue(prop);
 	}else if( el.currentStyle ){
 		return el.currentStyle[prop];
@@ -16,27 +44,33 @@ function getStyle(el, prop){
 }
 
 function dragStart(e, target, cancel){
-	e=e||window.event;
-	cursorStartX=getX(e);
-	cursorStartY=getY(e);
-	elNode=target;
-	elStartLeft=parseInt(getStyle(elNode,"left"))||elNode.offsetLeft||0;
-	elStartTop=parseInt(getStyle(elNode,"top"))||elNode.offsetTop||0;
-	ondragstart.call(elNode, elStartLeft + getX(e) - cursorStartX, elStartTop + getY(e) - cursorStartY);
+	elNode = target;
+	cursorStartX = getX(e, elNode);
+	cursorStartY = getY(e, elNode);
+	elStartLeft = parseInt(getStyle(elNode, "left")) || elNode.offsetLeft || 0;
+	elStartTop = parseInt(getStyle(elNode, "top")) || elNode.offsetTop || 0;
+	ondragstart.call(
+		elNode,
+		elStartLeft + getX(e, elNode) - cursorStartX,
+		elStartTop + getY(e, elNode) - cursorStartY
+	);
 	if( cancel ){
-		e.cancelBubble=true; e.stopPropagation && e.stopPropagation();
-		e.returnValue=false; e.preventDefault && e.preventDefault();
+		e.cancelBubble = true; e.stopPropagation && e.stopPropagation();
+		e.returnValue = false; e.preventDefault && e.preventDefault();
 		return false;
 	}
 }
 
 function dragGo(e, cancel){
 	if( elNode ){
-		e=e||window.event;
-		ondraggo.call(elNode, elStartLeft + getX(e) - cursorStartX, elStartTop + getY(e) - cursorStartY);
+		ondraggo.call(
+			elNode,
+			elStartLeft + getX(e, elNode) - cursorStartX,
+			elStartTop + getY(e, elNode) - cursorStartY
+		);
 		if( cancel ){
-			e.cancelBubble=true; e.stopPropagation && e.stopPropagation();
-			e.returnValue=false; e.preventDefault && e.preventDefault();
+			e.cancelBubble = true; e.stopPropagation && e.stopPropagation();
+			e.returnValue = false; e.preventDefault && e.preventDefault();
 			return false;
 		}
 	}
@@ -45,36 +79,48 @@ function dragGo(e, cancel){
 function dragStop(e){
 	if( elNode ){
 		dragGo.call(this, e);
-		ondragstop.call(elNode, elStartLeft + getX(e) - cursorStartX, elStartTop + getY(e) - cursorStartY);
-		elNode=null;
+		ondragstop.call(
+			elNode,
+			elStartLeft + getX(e, this) - cursorStartX,
+			elStartTop + getY(e, this) - cursorStartY
+		);
+		elNode = null;
 	}
 }
 
-$.fn.dragZone=function(){
-	return this
-		.on("mouseleave", dragStop)
-		.on("mouseup", dragStop)
-		.on("mousemove", dragGo)
-		.on("touchmove", function(e){ return dragGo(e, true); })
-		.on("touchend", dragStop)
-		.on("touchcancel", dragStop)
-	;
-};
-
-$.fn.drag=function(target, after){
-	var handler=target && typeof target=="object" ? function(e){
+function drag(target, after){
+	var handler = target && typeof target === "object" ? function(e){
 		dragStart(e, target, cancel);
 	} : function(e, cancel){
 		dragStart(e, this, cancel);
-		ondraggo=target||defaultDragGo;
-		ondragstop=after||noop;
+		ondraggo = target || defaultDragGo;
+		ondragstop = after || noop;
 	};
-	for(var i=0, l=this.length; i<l; ++i){
-		this[i].style.touchAction="none";
-	}
-	return this.on("mousedown", handler).on("touchstart", function(e){
-		handler.call(this, e, true);
-	});
+	
+	return {
+		style: {
+			touchAction: "none"
+		},
+		onmousedown: handler,
+		ontouchstart: function(e){
+			handler.call(this, e, true);
+		}
+	};
+}
+
+function touchMove(e){
+	return dragGo.call(this, e, true);
+}
+
+$.dragZone = {
+	onmouseleave: dragStop,
+	onmouseup: dragStop,
+	onmousemove: dragGo,
+	ontouchmove: touchMove,
+	ontouchend: dragStop,
+	ontouchcancel: dragStop
 };
+
+$.drag = drag;
 
 })($);
