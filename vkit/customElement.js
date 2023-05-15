@@ -1,12 +1,15 @@
 (function($, window){
 
-var bind = $.bind;
 var append = $.append;
-var render = $.render;
+var bind = $.bind;
 var createComponent = $.component;
 var getComponent = $.getComponent;
+var inject = $.inject;
+var provide = $.provide;
+var render = $.render;
 var setComponent = $.setComponent;
 var stateOf = $.stateOf;
+var WindowService = $.windowService;
 
 function setPrototypeOf(obj, proto){
 	if( Object.setPrototypeOf ){
@@ -20,7 +23,6 @@ function createCustomElement(name, getView, options){
 	function CustomElement(){
 		var el = Reflect.construct(win.HTMLElement, [], CustomElement);
 		var component = createComponent(null);
-		component.window = win;
 		el.component = component;
 		el.observedAttributes = {};
 		if( CustomElement.observedAttributes ){
@@ -35,6 +37,7 @@ function createCustomElement(name, getView, options){
 	var win = window;
 	
 	proto.connectedCallback = function(){
+		var self = this;
 		var el = this;
 		while( el.parentNode !== null ){
 			el = el.parentNode;
@@ -46,8 +49,12 @@ function createCustomElement(name, getView, options){
 		var prev = getComponent(true);
 		setComponent(component);
 		try{
-			var view = getView.call(this, stateOf(this.observedAttributes), this);
-			append(this, [component.start, view, component.end], this, bind);
+			var doc = this.ownerDocument;
+			provide([WindowService], function(){
+				inject(WindowService).window = doc.defaultView || doc.parentWindow;
+				var view = getView.call(self, stateOf(self.observedAttributes), self);
+				append(self, [component.start, view, component.end], self, bind);
+			});
 		}finally{
 			setComponent(prev);
 		}

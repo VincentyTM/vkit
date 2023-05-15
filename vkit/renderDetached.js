@@ -2,28 +2,38 @@
 
 var append = $.append;
 var bind = $.bind;
-var render = $.render;
 var createComponent = $.component;
 var getComponent = $.getComponent;
+var inject = $.inject;
+var provide = $.provide;
+var render = $.render;
 var setComponent = $.setComponent;
+var WindowService = $.windowService;
 
 function renderDetached(getView, parent){
 	var prev = getComponent(true);
 	try{
 		var component = createComponent(null);
 		setComponent(component);
+		var win = null;
 		if( parent ){
 			var doc = parent.ownerDocument;
 			if( doc ){
-				component.window = doc.defaultView || doc.parentWindow;
+				win = doc.defaultView || doc.parentWindow;
 			}
 		}
-		var view = getView(function(){
-			component.unmount();
-		}, component);
-		if( parent ){
-			append(parent, view, parent, bind);
-		}
+		var view;
+		provide([WindowService], function(){
+			if( win ){
+				inject(WindowService).window = win;
+			}
+			view = getView(function(){
+				component.unmount();
+			}, component);
+			if( parent ){
+				append(parent, view, parent, bind);
+			}
+		});
 		render();
 		return view;
 	}finally{

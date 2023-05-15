@@ -1,16 +1,22 @@
 (function($, window){
 
-var getComponent = $.getComponent;
+var bind = $.bind;
+var inject = $.inject;
+
+function WindowService(){
+	this.window = window;
+}
 
 function getWindow(){
-	for(var component = getComponent(); component; component = component.parent){
-		if( component.window ){
-			return component.window;
-		}
+	var win = inject(WindowService).window;
+	var n = arguments.length;
+	for(var i=0; i<n; ++i){
+		bind(win, arguments[i]);
 	}
-	return window;
+	return win;
 }
 
 $.window = getWindow;
+$.windowService = WindowService;
 
 })($, window);
