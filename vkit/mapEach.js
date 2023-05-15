@@ -3,10 +3,10 @@
 function mapEach(){
 	var states = this;
 	var n = states.length;
-	var result = $();
+	var result = new Array(n);
 	for(var i=0; i<n; ++i){
 		var state = states[i];
-		result.push(state.map.apply(state, arguments));
+		result[i] = state.map.apply(state, arguments);
 	}
 	return result;
 }
