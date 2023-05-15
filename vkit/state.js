@@ -46,7 +46,7 @@ function map(){
 		}
 		return x;
 	}
-	return $(this).map(n === 1 ? args[0] : transform);
+	return combineStates.call([this], n === 1 ? args[0] : transform);
 }
 
 function pipe(state, transform){
