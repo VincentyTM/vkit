@@ -3,7 +3,7 @@
 var deepPush = $.deepPush;
 
 function group(){
-	return deepPush($(), arguments, null, null);
+	return deepPush([], arguments, null, null);
 }
 
 $.group = group;
