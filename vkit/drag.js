@@ -78,11 +78,11 @@ function dragGo(e, cancel){
 
 function dragStop(e){
 	if( elNode ){
-		dragGo.call(this, e);
+		dragGo.call(elNode, e);
 		ondragstop.call(
 			elNode,
-			elStartLeft + getX(e, this) - cursorStartX,
-			elStartTop + getY(e, this) - cursorStartY
+			elStartLeft + getX(e, elNode) - cursorStartX,
+			elStartTop + getY(e, elNode) - cursorStartY
 		);
 		elNode = null;
 	}
