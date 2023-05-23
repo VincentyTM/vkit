@@ -23,22 +23,22 @@ function useKey(arrayState, getKey){
 		return keys;
 	});
 	
-	function select(key, reducers){
+	function select(key, factory){
 		var state = key.map ? map.call([recordsState, key], function(records, key){
 			return records[key];
 		}) : recordsState.map(function(records){
 			return records[key];
 		});
 		if( typeof arrayState.item === "function" ){
-			arrayState.item(state, reducers);
+			arrayState.item(state, factory);
 		}
 		state.key = key;
 		return state;
 	}
 	
-	function getStateViews(getView, reducers){
+	function getStateViews(getView, factory){
 		return keysState.views(function(key){
-			return getView(select(key, reducers));
+			return getView(select(key, factory));
 		});
 	}
 	
