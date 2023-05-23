@@ -2,6 +2,7 @@
 
 var createState = $.state;
 var getComponent = $.getComponent;
+var getWindow = $.window;
 var render = $.render;
 var unmount = $.unmount;
 
@@ -15,7 +16,7 @@ function createFont(name, url, onError, doc){
 	}
 	
 	if(!doc){
-		doc = document;
+		doc = getWindow().document;
 	}
 	
 	var fontFaceState = createState(null);
