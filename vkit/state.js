@@ -198,13 +198,6 @@ function createState(value){
 		return this;
 	}
 	
-	function mutate(newValue){
-		oldValue = NaN;
-		value = newValue;
-		enqueue();
-		return this;
-	}
-	
 	return {
 		set: set,
 		apply: apply,
@@ -214,7 +207,6 @@ function createState(value){
 		map: map,
 		pipe: pipe,
 		flatten: flatten,
-		mutate: mutate,
 		onChange: onChange,
 		enqueue: enqueue,
 		dequeue: dequeue,
@@ -242,8 +234,7 @@ function combineStates(combine){
 	
 	function update(){
 		var newValue = computeValue();
-		if( value !== newValue || mutated ){
-			mutated = false;
+		if( value !== newValue ){
 			onChange(value = newValue);
 		}
 		return this;
@@ -257,16 +248,11 @@ function combineStates(combine){
 		return this;
 	}
 	
-	function mutate(){
-		mutated = true;
-	}
-	
 	function getValue(){
 		return value;
 	}
 	
 	var states = this, n = states.length;
-	var mutated = false;
 	var onChange = createObservable();
 	var unsubscribes = [];
 	var component = getComponent(true);
@@ -312,7 +298,6 @@ function combineStates(combine){
 		map: map,
 		pipe: pipe,
 		flatten: flatten,
-		mutate: mutate,
 		onChange: onChange,
 		render: text,
 		text: text,
