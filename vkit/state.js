@@ -8,6 +8,10 @@ var toViews = $.views;
 var unmount = $.unmount;
 var stateUpdates = [];
 
+function toString(){
+	return "[object State(" + this.get() + ")]";
+}
+
 function subscribe(state, callback){
 	var unsubscribe = state.onChange.subscribe(callback);
 	var component = getComponent(true);
@@ -221,7 +225,8 @@ function createState(value){
 		view: getStateView,
 		views: getStateViews,
 		subscribe: subscribeToThis,
-		component: getComponent(true)
+		component: getComponent(true),
+		toString: toString
 	};
 }
 
@@ -318,7 +323,8 @@ function combineStates(combine){
 		views: getStateViews,
 		subscribe: subscribeToThis,
 		unsubscribe: unsubscribe,
-		component: component
+		component: component,
+		toString: toString
 	};
 }
 
