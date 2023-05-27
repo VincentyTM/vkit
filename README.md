@@ -77,7 +77,9 @@ You can install the vKit module with this command:
 
 An example server app:
 ```javascript
+const http = require("http");
 const $ = require("vkit");
+
 const {A, Li, Main, Nav, Ul} = $.htmlTags;
 
 const RedH1 = $.styledHtmlTag("h1", `::this{color: red;}`);
@@ -116,9 +118,7 @@ const App = () => $.htmlString`<!DOCTYPE html>
     </body>
 </html>`;
 
-module.exports = (req, res) => {
-    $.render(App, req, res);
-};
+http.createServer((req, res) => $.render(App, req, res)).listen(1234);
 ```
 
 ## Components
