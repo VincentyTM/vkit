@@ -20,16 +20,20 @@ function hasOwnProperty(e, p){
 }
 
 function install(){
-	_$ = hasOwnProperty(global, "$") ? global.$ : UNSET;
-	global.$ = $;
+	if( global.$ !== $ ){
+		_$ = hasOwnProperty(global, "$") ? global.$ : UNSET;
+		global.$ = $;
+	}
 	return $;
 }
 
 function uninstall(){
-	if( _$ === UNSET ){
-		delete global.$;
-	}else{
-		global.$ = _$;
+	if( global.$ === $ ){
+		if( _$ === UNSET ){
+			delete global.$;
+		}else{
+			global.$ = _$;
+		}
 	}
 	return $;
 }
