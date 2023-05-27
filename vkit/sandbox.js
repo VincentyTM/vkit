@@ -12,7 +12,10 @@ function createSandbox(code, sandboxFlags){
 	var emitRun = createObservable();
 	
 	function run(newCode){
-		emitRun(code = newCode);
+		if( typeof newCode === "string" ){
+			code = newCode;
+		}
+		emitRun(code);
 	}
 	
 	function bind(iframe){
