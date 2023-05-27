@@ -1,9 +1,10 @@
-(function($, window){
+(function($){
 
-var unmount = $.unmount;
-var onEvent = $.onEvent;
-var createState = $.state;
 var createHistoryHandler = $.history;
+var createState = $.state;
+var getWindow = $.window;
+var onEvent = $.onEvent;
+var unmount = $.unmount;
 
 function getHash(url){
 	var pos = url.indexOf("#");
@@ -11,7 +12,7 @@ function getHash(url){
 }
 
 function createHashState(win){
-	if(!win) win = window;
+	if(!win) win = getWindow();
 	var location = win.location;
 	var state = createState(decodeURIComponent(location.hash.substring(1)));
 	createHistoryHandler().url().map(getHash).pipe(state);
@@ -31,4 +32,4 @@ function createHashState(win){
 
 $.hashState = createHashState;
 
-})($, window);
+})($);
