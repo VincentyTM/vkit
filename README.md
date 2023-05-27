@@ -57,23 +57,68 @@ $(document.body).render(CounterApp);
 
 ## Getting Started
 
+### For the client
+
 You can use the vKit CLI that automatically includes the libraries you need:
 1. Install [NodeJS](https://nodejs.org/) with npm
 2. Install [Git](https://git-scm.com/download/)
-3. Run `npm install -g VincentyTM/vkit`
-4. Create a project in a directory with `vkit .` or just `vkit`
+3. Run `npm i -g VincentyTM/vkit`
+4. Create a project in a directory with `vkit directoryName`, `vkit .` or just `vkit`
 5. Create/edit your `js` and `css` files inside the generated `src` directory
 6. You can immediately see the changes in your browser
 7. Use the `export` command to create a standalone `export.html` file
 
-In case you do not want to use the CLI, you can manually include the required files:
+### For the server
 
-```html
-<script src="vkit/core.js"></script>
-<script src="vkit/dom.js"></script>
-<script src="vkit/html.js"></script>
-<script src="vkit/component.js"></script>
-...
+There is also a limited version of vKit that can be run on a NodeJS server. It includes templating, styling and routing but no reactivity.
+
+You can install the vKit module with this command:
+`npm i VincentyTM/vkit`
+
+An example server app:
+```javascript
+const $ = require("vkit");
+const {A, Li, Main, Nav, Ul} = $.htmlTags;
+
+const RedH1 = $.styledHtmlTag("h1", `::this{color: red;}`);
+
+const Body = () => [
+    RedH1("Hello, you are on page ", $.path()),
+    Nav(
+        Ul(
+            Li(A("Home", $.href("?"))),
+            Li(A("About", $.href("?page=about")))
+        )
+    ),
+    Main(
+        $.router($.param("page"), [
+            {
+                path: "",
+                component: () => "Home"
+            },
+            {
+                path: "about",
+                component: () => "About"
+            }
+        ])
+    )
+];
+
+const App = () => $.htmlString`<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Example title</title>
+        <style>${ $.renderStyle() }</style>
+    </head>
+    <body>
+        ${ Body() }
+    </body>
+</html>`;
+
+module.exports = (req, res) => {
+    $.render(App, req, res);
+};
 ```
 
 ## Components
