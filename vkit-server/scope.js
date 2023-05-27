@@ -1,5 +1,9 @@
 var scope = null;
 
+function replaceStyleEnds(text){
+	return '<\\/' + text.substring(2);
+}
+
 function createScope(req, res){
 	var styles = [];
 	var styleCount = 0;
@@ -9,7 +13,7 @@ function createScope(req, res){
 	}
 	
 	function getStyles(){
-		return styles.join('\n');
+		return styles.join('\n').replace(/<\/style\b/ig, replaceStyleEnds);
 	}
 	
 	function nextStyleCount(){
