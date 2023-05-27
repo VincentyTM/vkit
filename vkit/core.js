@@ -13,10 +13,6 @@ function $(){
 	return new vKit(arguments);
 }
 
-if( typeof module === "object" ){
-	module.exports = $;
-}
-
 install();
 
 function hasOwnProperty(e, p){
