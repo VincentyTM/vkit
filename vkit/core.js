@@ -3,7 +3,6 @@
 var _$, UNSET = {};
 
 function vKit(args){
-	this.end = this;
 	var n = this.length = args.length;
 	for(var i=0; i<n; ++i){
 		this[i] = args[i];
