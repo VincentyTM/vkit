@@ -118,7 +118,7 @@ const App = () => $.htmlString`<!DOCTYPE html>
     </body>
 </html>`;
 
-http.createServer((req, res) => $.render(App, req, res)).listen(1234);
+http.createServer($.render(App)).listen(1234);
 ```
 
 ## Components
