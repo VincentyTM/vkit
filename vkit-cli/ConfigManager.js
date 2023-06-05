@@ -14,6 +14,7 @@ class ConfigManager {
 	
 	async load(){
 		this.setCurrentWorkingDirectory();
+		this.loadFromCommandLineArgs();
 		const needsRestart = await this.loadFromFile();
 		this.loadFromCommandLineArgs();
 		return needsRestart;
