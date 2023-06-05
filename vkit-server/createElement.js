@@ -24,8 +24,13 @@ function propToAttr(name){
 	return name.toLowerCase();
 }
 
+function replaceUpperCase(letter){
+	return "-" + letter.toLowerCase();
+}
+
 function createElement(tagName){
 	var attributes = {};
+	var styleProps = {};
 	var children = selfClosingTags[tagName] ? null : [];
 	
 	function appendChild(child){
@@ -66,7 +71,17 @@ function createElement(tagName){
 		}
 	}
 	
+	function setStyleProperty(name, value){
+		name = name.replace(/[A-Z]/g, replaceUpperCase);
+		styleProps[name] = typeof value === "function" ? value() : value;
+	}
+	
 	function toHTML(res){
+		var styleArray = [];
+		for(var name in styleProps){
+			styleArray.push(name, ':', styleProps[name], ';');
+		}
+		
 		res.write('<');
 		res.write(tagName);
 		for(var name in attributes){
@@ -77,6 +92,11 @@ function createElement(tagName){
 				res.write(escapeHTML(attributes[name]));
 				res.write('"');
 			}
+		}
+		if( styleArray.length > 0 ){
+			res.write(' style="');
+			res.write(escapeHTML(styleArray.join('')));
+			res.write('"');
 		}
 		res.write('>');
 		if( children ){
@@ -126,6 +146,7 @@ function createElement(tagName){
 		removeAttribute: removeAttribute,
 		setAttribute: setAttribute,
 		setProperty: setProperty,
+		setStyleProperty: setStyleProperty,
 		toHTML: toHTML
 	};
 }

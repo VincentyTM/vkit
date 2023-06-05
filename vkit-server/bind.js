@@ -12,7 +12,9 @@ function bind(el, props){
 					if( obj ){
 						throw new Error("Property '" + prop + "' already exists on element");
 					}else if( prop === "style" ){
-						throw new Error("Cannot set inline style on the server, use $.style instead");
+						for(var styleProp in value){
+							el.setStyleProperty(styleProp, value[styleProp]);
+						}
 					}else{
 						el.setProperty(prop, value);
 					}
