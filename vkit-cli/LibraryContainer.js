@@ -1,152 +1,170 @@
 const fs = require("fs");
-const Library = require("./library.js");
+const isJS = require("./isJS");
+const Library = require("./Library");
 
 class LibraryContainer {
-	constructor(path){
-		this.path = path;
+	constructor(output){
 		this.libraries = {};
 		this.definitions = {};
+		this.output = output;
 	}
-	async getLibraryNames(){
-		return (await new Promise((resolve, reject) =>
-			fs.readdir(this.path, (err, files) =>
-				err ? reject("Can't access directory '" + this.path + "': " + err) : resolve(files)
-			)
-		)).filter(file => file.endsWith(".js")).map(file => file.substring(0, file.length - 3));
-	}
-	async loadAll(){
-		const libraries = await this.getLibraryNames();
-		for(const name of libraries){
-			this.addLibrary(name);
-		}
-		try{
-			for(const name in this.libraries){
-				await this.libraries[name].load();
-			}
-			this.findParents();
-			this.generateDocs().catch(err => {});
-		}catch(ex){
-			this.unloadAll();
-			console.error("Failed to load a library:");
-			console.error(ex);
+	
+	async addDirectory(directory){
+		const libraries = (
+			await new Promise((resolve, reject) => fs.readdir(directory, (err, files) =>
+				err
+					? reject("Can't access directory '" + directory + "': " + err)
+					: resolve(files)
+			))
+		)
+			.filter(isJS)
+			.map(file => ({
+				name: file.substring(0, file.length - 3),
+				path: directory + "/" + file
+			}));
+		
+		for(const {name, path} of libraries){
+			this.addLibrary(name, path);
 		}
 	}
-	async generateDocs(){
-		const data = {
-			"lastUpdated": Date.now(),
-			"modules": Object.keys(this.libraries).map(name => {
-				const lib = this.libraries[name];
-				return {
-					"name": name,
-					"dependencies": Object.keys(lib.parents),
-					"declarations": Object.keys(lib.definitions)
-				};
+	
+	async load(){
+		await Promise.all(
+			Object.keys(this.libraries).map(async name => {
+				return await this.libraries[name].load();
 			})
-		};
-		await new Promise((resolve, reject) =>
-			fs.writeFile(
-				this.path + "/../docs.json",
-				JSON.stringify(data),
-				err => err ? reject(err) : resolve()
-			)
 		);
+		
+		this.findParents();
 	}
-	unloadAll(){
+	
+	clear(){
 		this.libraries = {};
 		this.definitions = {};
 	}
+	
 	findParents(){
 		const libraries = this.libraries;
+		
 		for(const name in libraries){
 			const lib = libraries[name];
 			const parents = {};
+			
 			if( name !== "core" ){
 				parents.core = libraries.core;
 			}
+			
 			for(const dep in lib.dependencies){
 				const parent = this.definitions[dep];
+				
 				if( parent ){
 					parents[parent.name] = parent;
 				}else if( dep.startsWith("$.fn.") ){
 					delete lib.dependencies[dep];
 				}else{
-					console.warn("Warning: In library '" + name + "' the '" + dep + "' dependency is not defined!");
+					this.output.dependencyNotFound(name, dep);
 				}
 			}
+			
 			lib.parents = parents;
 		}
 	}
-	addLibrary(name){
+	
+	addLibrary(name, path){
 		if(!/^[a-zA-Z][a-zA-Z0-9]*$/.test(name)){
-			throw "Library names must match ^[a-zA-Z][a-zA-Z0-9]*$!";
+			throw new Error("Library names must match ^[a-zA-Z][a-zA-Z0-9]*$");
 		}
+		
 		if( name in this.libraries ){
-			throw "Library '" + name + "' already exists!";
+			throw new Error("Library '" + name + "' already exists");
 		}
-		const library = new Library(this, name, this.path + "/" + name + ".js");
+		
+		const library = new Library(this, name, path);
 		this.libraries[name] = library;
 		return library;
 	}
+	
 	addDefinition(def, library){
 		if( def in this.definitions ){
-			throw "Redefinion of '" + def + "' in " + library.name + " already present in " + this.definitions[def].name + "!";
+			throw new Error("Redefinion of '" + def + "' in " + library.name + ": already defined in " + this.definitions[def].name);
 		}
+		
 		this.definitions[def] = library;
 	}
+	
 	getLibraries(input){
 		if(!this.libraries.core){
-			throw "The 'core' library is missing!";
+			throw new Error("The 'core' library is missing");
 		}
+		
 		const definitions = {};
 		const regexDef = /\$(\.fn)?\.[a-zA-Z_][a-zA-Z0-9_]*\b\s*=/g;
+		
 		for(let match; match = regexDef.exec(input);){
 			const def = match[0].replace(/\s*=/, "");
 			definitions[def] = true;
 		}
+		
 		const dependencies = {};
 		const regexDep = /\$?\.[a-zA-Z_][a-zA-Z0-9_]*\b/g;
+		
 		for(let match; match = regexDep.exec(input);){
 			let dep = match[0];
+			
 			if(/^\$\.(apply|call|bind)$/.test(dep)){
 				continue;
 			}
+			
 			if(!dep.startsWith("$.") ){
 				dep = "$.fn" + dep;
 			}
+			
 			if(!(dep in definitions)){
 				dependencies[dep] = true;
 			}
 		}
+		
 		const libraries = {};
+		
 		for(const dep in dependencies){
 			const lib = this.definitions[dep];
 			if( lib ){
 				libraries[lib.name] = lib;
 			}else if(!dep.startsWith("$.fn.")){
-				console.warn("Warning: " + dep + " is not defined in any library!");
+				this.output.dependencyNotDefined(dep);
 			}
 		}
+		
 		const resolved = new Set();
+		
 		for(const name in libraries){
 			this.resolveDependencies(libraries[name], resolved);
 		}
+		
 		const result = Array.from(resolved.values());
+		
 		if(!result.length && input.includes("$")){
 			result.push(this.libraries.core);
 		}
+		
 		return result;
 	}
+	
 	resolveDependencies(library, resolved = new Set(), unresolved = new Set()){
 		unresolved.add(library);
+		
 		for(const name in library.parents){
 			const parent = library.parents[name];
+			
 			if(!resolved.has(parent)){
 				if( unresolved.has(parent) ){
-					throw "Circular dependency: '" + library.name + "' -> '" + name + "'";
+					throw new Error("Circular dependency: '" + library.name + "' -> '" + name + "'");
 				}
+				
 				this.resolveDependencies(parent, resolved, unresolved);
 			}
 		}
+		
 		resolved.add(library);
 		unresolved.delete(library);
 	}

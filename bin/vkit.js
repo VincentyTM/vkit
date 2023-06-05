@@ -2,4 +2,4 @@
 
 "use strict";
 
-require("../vkit-cli/index.js");
+require("../vkit-cli/main.js");
