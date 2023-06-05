@@ -2,6 +2,7 @@ const addDirectoryToCache = require("./addDirectoryToCache");
 const createFileCache = require("./createFileCache");
 const initSrcDirectory = require("./initSrcDirectory");
 const initWwwDirectory = require("./initWwwDirectory");
+const readCommandLineArguments = require("./readCommandLineArguments");
 
 class FileCacheManager {
 	firstChangeReady = false;
@@ -28,6 +29,12 @@ class FileCacheManager {
 		});
 		
 		this.output = output;
+		
+		readCommandLineArguments((key, value) => {
+			if( key === "template" && /[a-zA-Z0-9_\-]+/.test(value) ){
+				this.templateName = value;
+			}
+		});
 	}
 	
 	async initDirectories(){
