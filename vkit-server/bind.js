@@ -1,7 +1,7 @@
 function bind(el, props){
 	for(var prop in props){
 		var value = props[prop];
-		switch( typeof value ){
+		switch(typeof value){
 			case "object":
 				if(!value){
 					el.setProperty(prop, value);
@@ -21,10 +21,8 @@ function bind(el, props){
 				}
 				break;
 			case "function":
-				if( prop.indexOf("on") === 0 ){
-					throw new Error("Cannot add event listener (" + prop + ") on the server");
-				}else{
-					throw new Error("Cannot bind dynamic property (" + prop + ") on the server");
+				if( prop.indexOf("on") !== 0 ){
+					el.setProperty(prop, value());
 				}
 				break;
 			case "undefined":
