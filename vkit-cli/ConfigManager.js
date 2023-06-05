@@ -1,3 +1,4 @@
+const {promises: fsp} = require("fs");
 const process = require("process");
 const createConfig = require("./createConfig");
 const readCommandLineArguments = require("./readCommandLineArguments");
@@ -46,9 +47,11 @@ class ConfigManager {
 		
 		this.cwdSet = true;
 		
-		readCommandLineArguments((key, value) => {
+		readCommandLineArguments(async (key, value) => {
 			if( key === null ){
-				process.chdir(value || ".");
+				if(!value) value = ".";
+				await fsp.mkdir(value, {recursive: true});
+				process.chdir(value);
 			}
 		});
 	}
