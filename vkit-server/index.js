@@ -22,5 +22,6 @@ module.exports = {
 	state: require("./state.js"),
 	style: require("./style.js"),
 	styledHtmlTag: require("./styledHtmlTag.js"),
+	theme: require("./theme.js"),
 	toArray: require("./toArray.js")
 };
