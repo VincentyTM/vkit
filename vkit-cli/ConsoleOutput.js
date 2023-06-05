@@ -59,11 +59,11 @@ class ConsoleOutput {
 		this.showMessage("error", "Could not load private key or certificate: " + error);
 	}
 	
-	srcDirError(ex){
+	srcDirError(error){
 		this.showMessage("error", "Could not initialize src directory: " + error);
 	}
 	
-	wwwDirError(ex){
+	wwwDirError(error){
 		this.showMessage("error", "Could not initialize www directory: " + error);
 	}
 	
