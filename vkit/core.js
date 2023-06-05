@@ -39,8 +39,8 @@ function uninstall(){
 }
 
 $.fn = vKit.prototype;
+$.data = null;
 $.global = global;
-$.data = {};
 $.install = install;
 $.uninstall = uninstall;
 
