@@ -8,6 +8,10 @@ function createTypedState(type, initialValue, transform){
 		throw new TypeError("Validation failed.");
 	}
 	
+	if( typeof transform === "function" ){
+		initialValue = transform(initialValue);
+	}
+	
 	function validateValue(value){
 		return validate(type, value);
 	}
@@ -16,9 +20,11 @@ function createTypedState(type, initialValue, transform){
 		if(!validate(type, value)){
 			throw new TypeError("Validation failed.");
 		}
-		if( transform ){
+		
+		if( typeof transform === "function" ){
 			value = transform(value);
 		}
+		
 		set.call(state, value);
 	}
 	
