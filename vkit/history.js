@@ -1,18 +1,20 @@
-(function($, window, undefined){
+(function($, undefined){
 
 var createObservable = $.observable;
 var createState = $.state;
-var emitUpdate = createObservable();
+var getWindow = $.window;
 var onEvent = $.onEvent;
 var render = $.render;
 var unmount = $.unmount;
+
+var emitUpdate = createObservable();
 
 function getURL(win){
 	return win.location.href.replace(win.location.origin, "");
 }
 
 function createHistoryHandler(win){
-	if(!win) win = window;
+	if(!win) win = getWindow();
 	var history = win.history;
 	
 	function push(url, state){
@@ -71,4 +73,4 @@ function createHistoryHandler(win){
 
 $.history = createHistoryHandler;
 
-})($, window);
+})($);
