@@ -14,10 +14,10 @@ class ConfigManager {
 	}
 	
 	async load(){
-		this.setCurrentWorkingDirectory();
-		this.loadFromCommandLineArgs();
+		await this.setCurrentWorkingDirectory();
+		await this.loadFromCommandLineArgs();
 		const needsRestart = await this.loadFromFile();
-		this.loadFromCommandLineArgs();
+		await this.loadFromCommandLineArgs();
 		return needsRestart;
 	}
 	
@@ -40,14 +40,14 @@ class ConfigManager {
 		}
 	}
 	
-	setCurrentWorkingDirectory(){
+	async setCurrentWorkingDirectory(){
 		if( this.cwdSet ){
 			return;
 		}
 		
 		this.cwdSet = true;
 		
-		readCommandLineArguments(async (key, value) => {
+		await readCommandLineArguments(async (key, value) => {
 			if( key === null ){
 				if(!value) value = ".";
 				await fsp.mkdir(value, {recursive: true});
@@ -56,10 +56,10 @@ class ConfigManager {
 		});
 	}
 	
-	loadFromCommandLineArgs(){
+	async loadFromCommandLineArgs(){
 		const {config} = this;
 		
-		readCommandLineArguments((key, value) => {
+		await readCommandLineArguments((key, value) => {
 			if( key !== null ){
 				config.set(key, value);
 			}

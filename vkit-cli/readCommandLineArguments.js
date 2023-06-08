@@ -1,6 +1,6 @@
 const process = require("process");
 
-module.exports = (processArgument) => {
+module.exports = async (processArgument) => {
 	const args = process.argv.slice(2);
 	let i = 0;
 	
@@ -11,12 +11,12 @@ module.exports = (processArgument) => {
 			const key = match[0].substring(2);
 			const i = regexp.lastIndex;
 			if( arg[i] === "=" ){
-				processArgument(key, decodeURIComponent(arg.substring(i + 1)));
+				await processArgument(key, decodeURIComponent(arg.substring(i + 1)));
 			}else{
-				processArgument(key, true);
+				await processArgument(key, true);
 			}
 		}else{
-			processArgument(null, args.slice(i).join(" "));
+			await processArgument(null, args.slice(i).join(" "));
 			break;
 		}
 		++i;
