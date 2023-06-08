@@ -66,7 +66,7 @@ You can use the vKit CLI that automatically includes the libraries you need:
 4. Create a project in a directory with `vkit directoryName`, `vkit .` or just `vkit`
 5. Create/edit your `js` and `css` files inside the generated `src` directory
 6. You can immediately see the changes in your browser
-7. Use the `export` command to create a standalone `export.html` file
+7. Use the `export` command to create a standalone `html` or `js` file
 
 ### For the server
 
