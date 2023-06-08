@@ -2,9 +2,10 @@
 
 var createObservable = $.observable;
 var createState = $.state;
+var emitUpdate = createObservable();
 var onEvent = $.onEvent;
+var render = $.render;
 var unmount = $.unmount;
-var onStateUpdate = createObservable();
 
 function getURL(win){
 	return win.location.href.replace(win.location.origin, "");
@@ -16,12 +17,12 @@ function createHistoryHandler(win){
 	
 	function push(url, state){
 		history.pushState(state === undefined ? null : state, "", typeof url === "string" ? url : getURL(win));
-		onStateUpdate(history);
+		emitUpdate(history);
 	}
 	
 	function replace(url, state){
 		history.replaceState(state === undefined ? null : state, "", typeof url === "string" ? url : getURL(win));
-		onStateUpdate(history);
+		emitUpdate(history);
 	}
 	
 	function selectState(){
@@ -32,9 +33,10 @@ function createHistoryHandler(win){
 			})
 		);
 		unmount(
-			onStateUpdate.subscribe(function(h){
+			emitUpdate.subscribe(function(h){
 				if( h === history ){
 					state.set(history.state);
+					render();
 				}
 			})
 		);
@@ -49,9 +51,10 @@ function createHistoryHandler(win){
 			})
 		);
 		unmount(
-			onStateUpdate.subscribe(function(h){
+			emitUpdate.subscribe(function(h){
 				if( h === history ){
 					state.set(getURL(win));
+					render();
 				}
 			})
 		);
