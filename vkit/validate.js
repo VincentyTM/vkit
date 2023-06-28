@@ -6,6 +6,10 @@ function isArray(value){
 	return toString.call(value) === "[object Array]";
 }
 
+function isRegExp(value){
+	return toString.call(value) === "[object RegExp]";
+}
+
 function validate(type, data){
 	switch( type ){
 		case String: return typeof data === "string";
@@ -17,7 +21,7 @@ function validate(type, data){
 	if( typeof type === "function" ){
 		return type(data);
 	}
-	if( type instanceof RegExp ){
+	if( isRegExp(type) ){
 		return type.test(data);
 	}
 	if( isArray(type) ){
