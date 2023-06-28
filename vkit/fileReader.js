@@ -6,9 +6,6 @@ var unmount = $.unmount;
 
 function createFileReader(input, options){
 	function abort(){
-		reader.onerror = null;
-		reader.onload = null;
-		reader.onprogress = null;
 		reader.abort();
 	}
 	
