@@ -1,14 +1,17 @@
 (function($, document){
 
 var createState = $.state;
+var getWindow = $.window;
 var onEvent = $.onEvent;
 var unmount = $.unmount;
 
 function createFullScreenState(doc){
 	if(!doc){
-		doc = document;
+		doc = getWindow().document;
 	}
+	
 	var state = createState();
+	
 	function updateState(){
 		state.set(
 			doc.fullscreenElement ||
@@ -18,7 +21,9 @@ function createFullScreenState(doc){
 			null
 		);
 	}
+	
 	updateState();
+	
 	state.subscribe(function(el){
 		if( el ){
 			el.requestFullscreen ? el.requestFullscreen() :
