@@ -45,8 +45,15 @@ function createFullScreenState(doc){
 			null;
 		}
 	});
-	unmount(onEvent(doc, "fullscreenchange", updateState));
-	unmount(onEvent(doc, "webkitfullscreenchange", updateState));
+	
+	unmount(
+		onEvent(
+			doc,
+			"onfullscreenchange" in doc ? "fullscreenchange" : "webkitfullscreenchange",
+			updateState
+		)
+	);
+	
 	return state;
 }
 
