@@ -1,13 +1,15 @@
-(function($, navigator){
+(function($){
 
 var createState = $.state;
+var getWindow = $.window;
 var render = $.render;
 var unmount = $.unmount;
 
 function getUserMedia(constraints, onError, nav, displayMedia){
 	if(!nav){
-		nav = navigator;
+		nav = getWindow().navigator;
 	}
+	
 	var state = createState(null);
 	var pending = createState(false);
 	
@@ -71,4 +73,4 @@ function getDisplayMedia(options, onError, nav){
 $.userMedia = getUserMedia;
 $.displayMedia = getDisplayMedia;
 
-})($, navigator);
+})($);
