@@ -6,7 +6,7 @@ var rootComponent = $.rootComponent;
 var setComponent = $.setComponent;
 var update = $.update;
 
-function renderTree(component){
+function render(component){
 	try{
 		setComponent(rootComponent);
 		var view = component();
@@ -21,6 +21,6 @@ function renderTree(component){
 	}
 }
 
-$.fn.render = renderTree;
+$.fn.render = render;
 
 })($);
