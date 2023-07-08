@@ -4,14 +4,14 @@ function createObservable(){
 	var callbacks = [], n = 0;
 	
 	function observable(){
-		for(var i=0; i<n; i+=2){
+		for(var i = 0; i < n; i += 2){
 			callbacks[i].apply(this, arguments);
 		}
 	}
 	
 	function subscribe(callback){
 		function unsubscribe(){
-			for(var i=Math.min(curr, n) - 1; i > 0; i -= 2){
+			for(var i = Math.min(curr, n) - 1; i > 0; i -= 2){
 				if( callbacks[i] === unsubscribe ){
 					callbacks.splice(i - 1, 2);
 					n -= 2;
@@ -36,9 +36,20 @@ function createObservable(){
 		}
 	}
 	
+	function has(callback){
+		for(var i = n - 2; i >= 0; i -= 2){
+			if( callbacks[i] === callback ){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	observable.subscribe = subscribe;
 	observable.count = getCount;
 	observable.clear = clear;
+	observable.has = has;
 	
 	return observable;
 }
