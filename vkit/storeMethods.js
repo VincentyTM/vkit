@@ -1,10 +1,26 @@
-(function($){
+(function($, undefined){
 
 var map = $.fn.map;
 var slice = Array.prototype.slice;
 var toString = Object.prototype.toString;
 
 function createMethod(store, name, type){
+	if( type === "action" ){
+		return function(){
+			var self = store.get();
+			
+			if( self === undefined ){
+				throw new Error("Undefined object");
+			}
+			
+			var method = self[name];
+			
+			if( typeof method === "function" ){
+				return method.apply(self, arguments);
+			}
+		};
+	}
+	
 	if( typeof type === "function" || !type ){
 		return function(){
 			return store.select(name, type);
