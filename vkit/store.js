@@ -20,6 +20,7 @@ function isArray(object){
 
 function select(key, factory){
 	var parent = this;
+	
 	if( key === undefined || key === null ){
 		if( typeof Proxy !== "function" ){
 			throw new ReferenceError("Proxy is not supported in your browser!");
@@ -32,6 +33,7 @@ function select(key, factory){
 	}
 	
 	var substore = parent.substores[key];
+	
 	if( substore ){
 		++substore.refCount;
 	}else{
@@ -41,13 +43,13 @@ function select(key, factory){
 		var child = createState();
 		var value = typeof factory === "function" ? factory(child) : undefined;
 		var object = parent.get();
-		if(!object){
-			
-		}else if(!isArray(object)){
+		
+		if( object && !isArray(object) ){
 			if( object[key] === undefined && value !== undefined ){
 				object[key] = value;
 			}
 		}
+		
 		var cleanup = createObservable();
 		
 		function addChangeHandler(object, i){
@@ -62,24 +64,29 @@ function select(key, factory){
 		function addChangeHandlers(array){
 			var n = array.length;
 			var value = new Array(n);
+			
 			for(var i=0; i<n; ++i){
 				var object = array[i];
 				value[i] = object[key];
 				addChangeHandler(object, i);
 			}
+			
 			return value;
 		}
 		
 		function updateObject(object){
 			cleanup();
 			cleanup.clear();
+			
 			if( isArray(object) ){
 				child.set(addChangeHandlers(object));
 			}else if( object ){
 				var observable = onChange(object, key);
+				
 				if(!observable){
 					throw new ReferenceError("Property '" + key + "' does not exist");
 				}
+				
 				child.set(object[key]);
 				cleanup.subscribe(
 					observable.subscribe(function(value){
@@ -93,6 +100,7 @@ function select(key, factory){
 		
 		function updateValue(value){
 			var object = parent.get();
+			
 			if( object ){
 				object[key] = value;
 			}
@@ -125,9 +133,11 @@ function select(key, factory){
 
 function item(value, factory){
 	var store = createStore(value);
+	
 	if( typeof factory === "function" ){
 		factory(store);
 	}
+	
 	return store;
 }
 
