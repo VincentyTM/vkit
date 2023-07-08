@@ -8,8 +8,8 @@ function noop(){}
 function unmount(callback){
 	var currentComponent = getComponent();
 	return typeof callback === "function"
-		? (currentComponent !== rootComponent ? currentComponent.onDestroy.subscribe(callback) : noop)
-		: currentComponent.onDestroy.subscribe;
+		? (currentComponent !== rootComponent ? currentComponent.onDestroy(callback) : noop)
+		: currentComponent.onDestroy;
 }
 
 $.unmount = unmount;

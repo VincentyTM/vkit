@@ -9,13 +9,16 @@ function createComponent(parent, stopUpdate){
 	
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
+	
+	var emitDestroy = createObservable();
+	
 	return {
 		index: 0,
 		parent: parent,
 		children: children,
 		onRender: createObservable(),
-		onDestroy: createObservable(),
 		emitError: null,
+		onDestroy: emitDestroy.subscribe,
 		shouldUpdate: false,
 		start: start,
 		end: end,
@@ -32,8 +35,9 @@ function createComponent(parent, stopUpdate){
 			for(var i=children.length; i--;){
 				children[i].unmount();
 			}
-			this.onDestroy();
-			this.onDestroy.clear();
+			
+			emitDestroy();
+			emitDestroy.clear();
 		},
 		render: function(){
 			if(!this.shouldUpdate){
