@@ -131,13 +131,19 @@ function item(value, factory){
 	return store;
 }
 
-function createStore(state){
+function createStore(state, factory){
 	if(!isState(state)){
 		state = createState(state);
 	}
+	
 	state.item = item;
 	state.select = select;
 	state.substores = {};
+	
+	if( typeof factory === "function" ){
+		factory(state);
+	}
+	
 	return state;
 }
 
@@ -145,6 +151,7 @@ function Store(){
 	if(!(this instanceof Store)){
 		return inject(Store).store;
 	}
+	
 	this.store = createStore({});
 }
 
