@@ -4,7 +4,7 @@ var insert = $.insert;
 var remove = $.remove;
 var createObservable = $.observable;
 
-function createComponent(parent, stopRender){
+function createComponent(parent, stopUpdate){
 	var children = [];
 	
 	var start = document.createTextNode("");
@@ -39,7 +39,7 @@ function createComponent(parent, stopRender){
 				return;
 			}
 			this.onRender();
-			if( stopRender ){
+			if( stopUpdate ){
 				return;
 			}
 			
