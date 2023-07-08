@@ -2,6 +2,7 @@
 
 var map = $.fn.map;
 var slice = Array.prototype.slice;
+var toString = Object.prototype.toString;
 
 function createMethod(store, name, type){
 	if( typeof type === "function" || !type ){
@@ -13,9 +14,24 @@ function createMethod(store, name, type){
 	return function(){
 		var m = type.length;
 		var deps = new Array(m);
+		
 		for(var i=0; i<m; ++i){
 			var dep = type[i];
-			deps[i] = typeof dep === "string" ? store.select(dep) : dep;
+			
+			if( typeof dep === "string" ){
+				dep = store.select(dep);
+			}else if( toString.call(dep) === "[object Array]" ){
+				var arr = dep;
+				var l = arr.length;
+				
+				dep = store;
+				
+				for(var j=0; j<l; ++j){
+					dep = dep.select(arr[j]);
+				}
+			}
+			
+			deps[i] = dep;
 		}
 		
 		var args = arguments;
