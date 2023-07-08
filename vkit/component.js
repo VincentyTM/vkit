@@ -11,7 +11,7 @@ function createComponent(parent, stopUpdate){
 	var end = document.createTextNode("");
 	
 	var emitDestroy = createObservable();
-	var emitRender = createObservable();
+	var emitUpdate = createObservable();
 	
 	return {
 		index: 0,
@@ -19,7 +19,7 @@ function createComponent(parent, stopUpdate){
 		children: children,
 		emitError: null,
 		onDestroy: emitDestroy.subscribe,
-		onRender: emitRender.subscribe,
+		onUpdate: emitUpdate.subscribe,
 		shouldUpdate: false,
 		start: start,
 		end: end,
@@ -32,7 +32,7 @@ function createComponent(parent, stopUpdate){
 				curr = curr.parent;
 			}
 			
-			return emitRender.subscribe(update);
+			return emitUpdate.subscribe(update);
 		},
 		
 		unmount: function(){
@@ -48,7 +48,7 @@ function createComponent(parent, stopUpdate){
 				return;
 			}
 			
-			emitRender();
+			emitUpdate();
 			
 			if( stopUpdate ){
 				return;
