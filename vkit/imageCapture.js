@@ -4,12 +4,12 @@ var createAsyncState = $.asyncState;
 var createObservable = $.observable;
 var createState = $.state;
 var map = $.fn.map;
-var render = $.render;
 
 var ImageCapture = global.ImageCapture || function(track){
 	var onPlay = createObservable();
 	var stream = new MediaStream([track]);
 	var canvas = document.createElement("canvas");
+	var ctx = canvas.getContext("2d");
 	var video = document.createElement("video");
 	video.muted = true;
 	video.srcObject = stream;
@@ -19,7 +19,6 @@ var ImageCapture = global.ImageCapture || function(track){
 		video.play();
 	};
 	video.onplay = onPlay;
-	var ctx = canvas.getContext("2d");
 	
 	function takePhoto(resolve){
 		ctx.drawImage(video, 0, 0);
@@ -65,10 +64,6 @@ function createImageCapture(stream, params, onError){
 		function(s){
 			if(!s){
 				return null;
-			}
-			
-			if( typeof ImageCapture !== "function" ){
-				throw new Error("ImageCapture API is not supported");
 			}
 			
 			var track = typeof s.getVideoTracks === "function" ? s.getVideoTracks()[0] : s;
