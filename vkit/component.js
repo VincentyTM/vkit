@@ -1,4 +1,4 @@
-(function($){
+(function($, document){
 
 var insert = $.insert;
 var remove = $.remove;
@@ -6,6 +6,7 @@ var createObservable = $.observable;
 
 function createComponent(parent, stopRender){
 	var children = [];
+	
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
 	return {
@@ -41,13 +42,17 @@ function createComponent(parent, stopRender){
 			if( stopRender ){
 				return;
 			}
+			
 			var n = children.length;
+			
 			for(var i=0; i<n; ++i){
 				children[i].render();
 			}
 		},
+		
 		throwError: function(error){
 			var component = this;
+			
 			while( component ){
 				if( component.onError ){
 					try{
@@ -57,39 +62,53 @@ function createComponent(parent, stopRender){
 						error = ex;
 					}
 				}
+				
 				component = component.parent;
 			}
+			
 			throw error;
 		},
+		
 		removeChild: function(index){
 			var removed = children.splice(index, 1)[0];
+			
 			if( removed ){
 				removed.removeView();
 				removed.unmount();
 			}
 		},
+		
 		removeView: function(){
 			this.clearView();
 			remove(start);
 			remove(end);
 		},
+		
 		clearView: function(){
 			var parent = start.parentNode;
-			if(!parent) return;
+			
+			if(!parent){
+				return;
+			}
+			
 			for(var el=end.previousSibling; el && el !== start; el = end.previousSibling){
 				parent.removeChild(el);
 			}
 		},
+		
 		insertView: function(view, anchor){
 			insert([start, view, end], anchor, anchor.parentNode);
 		},
+		
 		appendView: function(view){
 			insert(view, end, end.parentNode);
 		},
+		
 		replaceView: function(view){
 			this.clearView();
 			this.appendView(view);
 		},
+		
 		getChildStart: function(index){
 			var child = children[index];
 			return child ? child.start : end;
@@ -99,4 +118,4 @@ function createComponent(parent, stopRender){
 
 $.component = createComponent;
 
-})($);
+})($, document);
