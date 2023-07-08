@@ -13,18 +13,8 @@ function $(){
 	return new vKit(arguments);
 }
 
-install();
-
 function hasOwnProperty(e, p){
 	var o;p=String(p);return p in e&&(o=e.__proto__||e.constructor.prototype,!(p in o)||e[p]!==o[p]);
-}
-
-function install(){
-	if( global.$ !== $ ){
-		_$ = hasOwnProperty(global, "$") ? global.$ : UNSET;
-		global.$ = $;
-	}
-	return $;
 }
 
 function noConflict(){
@@ -38,10 +28,14 @@ function noConflict(){
 	return $;
 }
 
-$.fn = vKit.prototype;
+if( global.$ !== $ ){
+	_$ = hasOwnProperty(global, "$") ? global.$ : UNSET;
+	global.$ = $;
+}
+
 $.data = null;
+$.fn = vKit.prototype;
 $.global = global;
-$.install = install;
 $.noConflict = noConflict;
 
 })(this);
