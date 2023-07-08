@@ -37,7 +37,7 @@ function update(){
 			}
 		}
 		
-		rootComponent.render();
+		rootComponent.update();
 	}while(n);
 	
 	callTicks();

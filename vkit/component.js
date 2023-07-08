@@ -43,7 +43,8 @@ function createComponent(parent, stopUpdate){
 			emitDestroy();
 			emitDestroy.clear();
 		},
-		render: function(){
+		
+		update: function(){
 			if(!this.shouldUpdate){
 				return;
 			}
@@ -57,7 +58,7 @@ function createComponent(parent, stopUpdate){
 			var n = children.length;
 			
 			for(var i=0; i<n; ++i){
-				children[i].render();
+				children[i].update();
 			}
 		},
 		

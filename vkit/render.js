@@ -11,7 +11,7 @@ function render(){
 		if( n ){
 			renderStates();
 		}
-		rootComponent.render();
+		rootComponent.update();
 		n = stateUpdates.length;
 	}while(n);
 	callTicks();
