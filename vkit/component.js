@@ -16,13 +16,14 @@ function createComponent(parent, stopUpdate){
 		onRender: createObservable(),
 		onDestroy: createObservable(),
 		onError: null,
-		shouldRender: false,
+		shouldUpdate: false,
 		start: start,
 		end: end,
 		subscribe: function(update){
 			var curr = this;
-			while( curr && !curr.shouldRender ){
-				curr.shouldRender = true;
+			
+			while( curr && !curr.shouldUpdate ){
+				curr.shouldUpdate = true;
 				curr = curr.parent;
 			}
 			return this.onRender.subscribe(update);
@@ -35,7 +36,7 @@ function createComponent(parent, stopUpdate){
 			this.onDestroy.clear();
 		},
 		render: function(){
-			if(!this.shouldRender){
+			if(!this.shouldUpdate){
 				return;
 			}
 			this.onRender();
