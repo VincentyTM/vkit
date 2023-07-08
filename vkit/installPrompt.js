@@ -2,13 +2,14 @@
 
 var createState = $.state;
 var onEvent = $.onEvent;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 function createInstallPrompt(win){
 	if(!win){
 		win = window;
 	}
+	
 	var isAppInstalled = (
 		win.navigator.standalone ||
 		(win.matchMedia && win.matchMedia("(display-mode: standalone) or (display-mode: fullscreen) or (display-mode: minimal-ui)").matches) ||
@@ -26,18 +27,18 @@ function createInstallPrompt(win){
 			},
 			deny: deny
 		});
-		render();
+		update();
 	}
 	
 	function setChoice(choiceResult){
 		result.set(choiceResult.outcome);
 		installPrompt.set(null);
-		render();
+		update();
 	}
 	
 	function appInstalled(){
 		result.set("installed");
-		render();
+		update();
 	}
 	
 	function deny(){

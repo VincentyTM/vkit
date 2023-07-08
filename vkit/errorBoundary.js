@@ -2,20 +2,23 @@
 
 var createState = $.state;
 var onError = $.onError;
-var render = $.render;
+var update = $.update;
 
 function errorBoundary(component, fallback){
 	var failed = createState(false);
 	var error;
+	
 	return failed.view(function(hasFailed){
 		if( hasFailed ){
 			return fallback ? fallback(error) : null;
 		}
+		
 		onError(function(err){
 			error = err;
 			failed.set(true);
 			render();
 		});
+		
 		try{
 			return component();
 		}catch(ex){

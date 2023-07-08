@@ -2,8 +2,8 @@
 
 var createState = $.state;
 var getWindow = $.window;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 function createMediaQuery(mediaQuery, win){
 	if(!win){
@@ -19,7 +19,7 @@ function createMediaQuery(mediaQuery, win){
 	
 	function onChange(e){
 		state.set(e.matches);
-		render();
+		update();
 	}
 	
 	if( matcher.addEventListener ){

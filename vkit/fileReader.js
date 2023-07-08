@@ -1,8 +1,8 @@
 (function($){
 
 var createState = $.state;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 function createFileReader(input, options){
 	function abort(){
@@ -11,6 +11,7 @@ function createFileReader(input, options){
 	
 	function update(value){
 		abort();
+		
 		if( value ){
 			output.set({
 				progress: createState({
@@ -43,25 +44,29 @@ function createFileReader(input, options){
 		output.set({
 			error: reader.error
 		});
+		
 		if( typeof unsubscribe === "function" ){
 			unsubscribe();
 		}
-		render();
+		
+		update();
 	};
 	
 	reader.onload = function(){
 		output.set({
 			result: reader.result
 		});
+		
 		if( typeof unsubscribe === "function" ){
 			unsubscribe();
 		}
-		render();
+		
+		update();
 	};
 	
 	reader.onprogress = function(e){
 		output.get().progress.set(e);
-		render();
+		update();
 	};
 	
 	if( input && typeof input.effect === "function" ){

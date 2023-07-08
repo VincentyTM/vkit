@@ -2,8 +2,8 @@
 
 var createState = $.state;
 var onEvent = $.onEvent;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 function createPermissionState(name, requestPermission, onError, nav){
 	if(!nav){
@@ -80,12 +80,13 @@ function createPermissionState(name, requestPermission, onError, nav){
 					})
 				);
 			}
-			render();
+			update();
 		}, function(error){
 			if( typeof onError === "function" ){
 				onError(error);
 			}
-			render();
+			
+			update();
 		});
 	}
 	

@@ -4,7 +4,7 @@ var getComponent = $.getComponent;
 var createObservable = $.observable;
 var createState = $.state;
 var unmount = $.unmount;
-var render = $.render;
+var update = $.update;
 
 function createEmitter(base){
 	var component = getComponent(true);
@@ -128,9 +128,11 @@ function createEmitter(base){
 				data = transform(data);
 			}
 			state.set(data);
-			render();
+			update();
 		}
+		
 		state.unsubscribe = dataChannel.subscribe(onData);
+		
 		return e;
 	}
 

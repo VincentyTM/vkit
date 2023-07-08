@@ -1,8 +1,8 @@
 (function($, navigator){
 
-var render = $.render;
 var createState = $.state;
 var unmount = $.unmount;
+var update = $.update;
 
 function wakeLock(controller){
 	var currentSentinel = createState(null);
@@ -16,15 +16,15 @@ function wakeLock(controller){
 				if(!sentinel.released){
 					sentinel.onrelease = function(){
 						currentSentinel.set(null);
-						render();
+						update();
 					};
 					currentSentinel.set(sentinel);
-					render();
+					update();
 				}
 			}, function(err){
 				isPending = false;
 				currentSentinel.set(null);
-				render();
+				update();
 			});
 		}
 	}
@@ -36,7 +36,7 @@ function wakeLock(controller){
 			sentinel.release().then(function(){
 				isPending = false;
 				currentSentinel.set(null);
-				render();
+				update();
 			}, function(){
 				isPending = false;
 			});

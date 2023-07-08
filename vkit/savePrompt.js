@@ -6,8 +6,8 @@ var createState = $.state;
 var inject = $.inject;
 var navigate = $.navigate;
 var onNavigate = $.onNavigate;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 function getSavePrompt(options){
 	var service = inject(SavePromptService);
@@ -79,7 +79,7 @@ function SavePromptService(){
 					discard: function(){
 						prompt.set(null);
 						emitDiscard();
-						render();
+						update();
 						navigate(nav.url, nav.window);
 					},
 					save: function(){

@@ -2,8 +2,8 @@
 
 var createState = $.state;
 var onEvent = $.onEvent;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 function mediaDevices(onError, nav){
 	if(!nav){
@@ -15,12 +15,13 @@ function mediaDevices(onError, nav){
 	function fetchDevices(){
 		nav.mediaDevices.enumerateDevices().then(function(list){
 			devices.set(list);
-			render();
+			update();
 		}, function(error){
 			if( typeof onError === "function" ){
 				onError(error);
 			}
-			render();
+			
+			update();
 		});
 	}
 	
@@ -28,6 +29,7 @@ function mediaDevices(onError, nav){
 		unmount(
 			onEvent(nav.mediaDevices, "devicechange", fetchDevices)
 		);
+		
 		fetchDevices();
 	}else if( typeof onError === "function" ){
 		onError(new Error("MediaDevices API is not supported"));

@@ -1,7 +1,7 @@
 (function($){
 
 var createState = $.state;
-var render = $.render;
+var update = $.update;
 
 var delay = typeof Promise === "function" && typeof Promise.resolve === "function"
 	? function(callback){ Promise.resolve().then(callback); }
@@ -56,21 +56,24 @@ function getValue(result){
 function then(onResolve, onReject){
 	var newState = createState({pending: true});
 	
-	function update(result){
+	function updateState(result){
 		if( result.fulfilled ){
 			unsubscribe();
+			
 			if( typeof onResolve === "function" ){
 				var value = result.value;
+				
 				delay(function(){
 					try{
 						var ret = onResolve(value);
+						
 						if( ret && typeof ret.then === "function" ){
 							ret.then(function(val){
 								newState.set({fulfilled: true, value: val});
-								render();
+								update();
 							}, function(error){
 								newState.set({rejected: true, error: error});
-								render();
+								update();
 							});
 						}else{
 							newState.set({fulfilled: true, value: ret});
@@ -78,20 +81,22 @@ function then(onResolve, onReject){
 					}catch(error){
 						newState.set({rejected: true, error: error});
 					}finally{
-						render();
+						update();
 					}
 				});
 			}
 		}else if( result.rejected ){
 			unsubscribe();
+			
 			if( typeof onReject === "function" ){
 				var error = result.error;
+				
 				delay(function(){
 					try{
 						newState.set(result);
 						onReject(error);
 					}finally{
-						render();
+						update();
 					}
 				});
 			}
@@ -101,8 +106,10 @@ function then(onResolve, onReject){
 		}
 	}
 	
-	var unsubscribe = this.onChange.subscribe(update);
-	update(this.get());
+	var unsubscribe = this.onChange.subscribe(updateState);
+	
+	updateState(this.get());
+	
 	return makeThenable(newState.map());
 }
 

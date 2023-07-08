@@ -6,9 +6,9 @@ var createComponent = $.component;
 var getComponent = $.getComponent;
 var inject = $.inject;
 var provide = $.provide;
-var render = $.render;
 var setComponent = $.setComponent;
 var stateOf = $.stateOf;
+var update = $.update;
 var WindowService = $.windowService;
 
 function setPrototypeOf(obj, proto){
@@ -39,17 +39,22 @@ function createCustomElement(name, getView, options){
 	proto.connectedCallback = function(){
 		var self = this;
 		var el = this;
+		
 		while( el.parentNode !== null ){
 			el = el.parentNode;
 		}
+		
 		if( el.nodeType !== 9 && el.nodeType !== 11 ){
 			return;
 		}
+		
 		var component = this.component;
 		var prev = getComponent(true);
 		setComponent(component);
+		
 		try{
 			var doc = this.ownerDocument;
+			
 			provide([WindowService], function(){
 				inject(WindowService).window = doc.defaultView || doc.parentWindow;
 				var view = getView.call(self, stateOf(self.observedAttributes), self);
@@ -58,7 +63,8 @@ function createCustomElement(name, getView, options){
 		}finally{
 			setComponent(prev);
 		}
-		render();
+		
+		update();
 	};
 	
 	proto.disconnectedCallback = function(){
@@ -66,18 +72,25 @@ function createCustomElement(name, getView, options){
 		component.removeView();
 		component.unmount();
 		component.children.splice(0, component.children.length);
-		render();
+		update();
 	};
 	
 	if( options ){
-		if( options.window ) win = options.window;
-		if( options.adoptedCallback ) proto.adoptedCallback = options.adoptedCallback;
+		if( options.window ){
+			win = options.window;
+		}
+		
+		if( options.adoptedCallback ){
+			proto.adoptedCallback = options.adoptedCallback;
+		}
+		
 		if( options.observedAttributes ){
 			CustomElement.observedAttributes = options.observedAttributes;
+			
 			proto.attributeChangedCallback = function(name, oldValue, newValue){
 				if( this.observedAttributes[name] !== newValue ){
 					this.observedAttributes[name] = newValue;
-					render();
+					update();
 				}
 			};
 		}

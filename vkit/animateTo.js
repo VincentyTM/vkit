@@ -2,8 +2,8 @@
 
 var animate = $.animate;
 var createState = $.state;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 function animateTo(state, duration, options){
 	var latest = +state.get();
@@ -16,17 +16,20 @@ function animateTo(state, duration, options){
 	function animationLoop(t){
 		latest = start + (end - start) * (easing ? easing(t) : t);
 		currentState.set(latest);
+		
 		if( t >= 1 ){
 			currentAnimation = null;
 			start = end = +state.get();
 		}
-		render();
+		
+		update();
 	}
 	
 	state.subscribe(function(value){
 		if( currentAnimation ){
 			currentAnimation.stop();
 		}
+		
 		start = latest;
 		end = +value;
 		currentAnimation = animate(animationLoop, duration * Math.abs(end - start));

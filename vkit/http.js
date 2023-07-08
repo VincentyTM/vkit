@@ -2,8 +2,8 @@
 
 var createObservable = $.observable;
 var createState = $.state;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 function createRequest(data){
 	if(!data) data = {};
@@ -34,32 +34,42 @@ function sendRequest(request, pendingResponse, responseState, complete){
 	if( request.url === null || request.url === undefined ){
 		return null;
 	}
+	
 	var xhr = new XMLHttpRequest();
+	
 	xhr.onprogress = function(e){
 		pendingResponse.progress.set(e);
-		render();
+		update();
 	};
+	
 	if( xhr.upload ){
 		xhr.upload.onprogress = function(e){
 			pendingResponse.uploadProgress.set(e);
-			render();
+			update();
 		};
 	}
+	
 	xhr.onreadystatechange = function(){
 		if( xhr.readyState === 4 || xhr.readyState === 0 ){
 			var response = createResponse(xhr);
 			responseState.set(response);
 			complete(response);
 		}
-		render();
+		
+		update();
 	};
+	
 	xhr.open(request.method, request.url, request.async, request.user, request.password);
 	xhr.responseType = request.responseType;
+	
 	var headers = request.headers;
+	
 	for(var name in headers){
 		xhr.setRequestHeader(name, headers[name]);
 	}
+	
 	xhr.send(request.body);
+	
 	return xhr;
 }
 
@@ -81,6 +91,7 @@ function createResponse(xhr){
 	}
 	
 	var status = xhr.status;
+	
 	return {
 		ok: status >= 200 && status <= 299,
 		status: status,
@@ -103,11 +114,14 @@ function createResponseState(requestState, options, onAbort){
 		if( xhr && isAbortable ){
 			xhr.onreadystatechange = null;
 			xhr.onprogress = null;
+			
 			if( xhr.upload ){
 				xhr.upload.onprogress = null;
 			}
+			
 			xhr.abort();
 		}
+		
 		xhr = null;
 		unsubscribe();
 		unsubscribe.clear();
@@ -115,7 +129,9 @@ function createResponseState(requestState, options, onAbort){
 	
 	function setRequest(req){
 		abort();
+		
 		var request = createRequest(req);
+		
 		if( options && typeof options === "object" ){
 			for(var key in options){
 				if( key in request ){
@@ -123,11 +139,13 @@ function createResponseState(requestState, options, onAbort){
 				}
 			}
 		}
+		
 		var method = request.method.toUpperCase();
 		isAbortable = request.abortable;
 		var pendingResponse = createPendingResponse(abort);
 		xhr = sendRequest(request, pendingResponse, responseState, complete);
 		responseState.set(xhr ? pendingResponse : {unsent: true});
+		
 		if( xhr ){
 			unsubscribe.subscribe(onAbort.subscribe(abort));
 		}
@@ -144,6 +162,7 @@ function createResponseState(requestState, options, onAbort){
 	var xhr = null;
 	var isAbortable = true;
 	var responseState = createState();
+	
 	if( requestState && typeof requestState.effect === "function" ){
 		requestState.effect(setRequest);
 	}else{
@@ -158,11 +177,13 @@ function createResponseState(requestState, options, onAbort){
 function createHttpHandle(request, options){
 	var abort = createObservable();
 	var hasAborter = options && typeof options.aborter === "function";
+	
 	if( hasAborter ){
 		options.aborter(abort);
 	}else{
 		unmount(abort);
 	}
+	
 	return createResponseState(request, options, abort);
 }
 

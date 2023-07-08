@@ -4,8 +4,8 @@ var createObservable = $.observable;
 var createState = $.state;
 var getWindow = $.window;
 var onEvent = $.onEvent;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 var emitUpdate = createObservable();
 
@@ -38,7 +38,7 @@ function createHistoryHandler(win){
 			emitUpdate.subscribe(function(h){
 				if( h === history ){
 					state.set(history.state);
-					render();
+					update();
 				}
 			})
 		);
@@ -56,7 +56,7 @@ function createHistoryHandler(win){
 			emitUpdate.subscribe(function(h){
 				if( h === history ){
 					state.set(getURL(win));
-					render();
+					update();
 				}
 			})
 		);

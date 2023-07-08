@@ -1,7 +1,8 @@
 (function($, global){
 
 var createPromise = $.promise;
-var render = $.render;
+var update = $.update;
+
 var URL = global.URL || global.webkitURL || global.mozURL;
 var isSupported = typeof Worker === "function" && typeof URL === "function" && typeof Blob === "function";
 var slice = Array.prototype.slice;
@@ -11,24 +12,28 @@ function createThread(){
 	if(!isSupported){
 		throw new Error("Thread API is not supported");
 	}
+	
 	var current = null;
 	var queue = [];
 	var worker = new Worker(workerSRC);
 	
 	worker.onmessage = function(e){
 		current.complete(e.data);
+		
 		if( queue.length ){
 			run(queue.shift());
 		}else{
 			current = null;
 		}
-		render();
+		
+		update();
 	};
 	
 	function run(task){
 		if(!worker){
 			return;
 		}
+		
 		var f = task.func.toString(),
 		a = f.indexOf("(") + 1,
 		b = f.indexOf(")", a),

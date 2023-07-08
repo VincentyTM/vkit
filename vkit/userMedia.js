@@ -2,8 +2,8 @@
 
 var createState = $.state;
 var getWindow = $.window;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 function getUserMedia(constraints, onError, nav, displayMedia){
 	if(!nav){
@@ -15,12 +15,14 @@ function getUserMedia(constraints, onError, nav, displayMedia){
 	
 	function setConstraints(constraints){
 		var stream = state.get();
+		
 		if( stream ){
 			stream.getTracks().forEach(function(track){
 				track.stop();
 			});
 			state.set(null);
 		}
+		
 		if( constraints ){
 			if(
 				!nav.mediaDevices ||
@@ -30,8 +32,10 @@ function getUserMedia(constraints, onError, nav, displayMedia){
 				if( typeof onError === "function" ){
 					onError(new Error("MediaDevices API is not supported"));
 				}
+				
 				return;
 			}
+			
 			pending.set(true);
 			(
 				displayMedia
@@ -40,13 +44,15 @@ function getUserMedia(constraints, onError, nav, displayMedia){
 			).then(function(stream){
 				state.set(stream);
 				pending.set(false);
-				render();
+				update();
 			}, function(error){
 				pending.set(false);
+				
 				if( typeof onError === "function" ){
 					onError(error);
 				}
-				render();
+				
+				update();
 			});
 		}
 	}

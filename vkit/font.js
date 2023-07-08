@@ -3,8 +3,8 @@
 var createState = $.state;
 var getComponent = $.getComponent;
 var getWindow = $.window;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 function renderFont(){
 	return null;
@@ -48,12 +48,14 @@ function createFont(name, url, onError, doc){
 						break;
 					}
 				}
-				render();
+				
+				update();
 			}, function(error){
 				if( typeof onError === "function" ){
 					onError(error);
 				}
-				render();
+				
+				update();
 			});
 		}
 	}
@@ -75,6 +77,7 @@ function createFont(name, url, onError, doc){
 	var result = fontFaceState.map();
 	result.remove = remove;
 	result.render = renderFont;
+	
 	return result;
 }
 

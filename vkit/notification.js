@@ -3,8 +3,8 @@
 var createObservable = $.observable;
 var createState = $.state;
 var onEvent = $.onEvent;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 function createNotificationManager(onError, win){
 	if(!win){
@@ -64,7 +64,8 @@ function createNotificationManager(onError, win){
 			if( typeof onError === "function" ){
 				onError(error);
 			}
-			render();
+			
+			update();
 		});
 	}
 	
@@ -72,7 +73,7 @@ function createNotificationManager(onError, win){
 		if( isSupported && Notification.permission !== "granted" && permission.get() === "prompt" ){
 			Notification.requestPermission(function(perm){
 				permission.set(perm === "default" ? "prompt" : perm);
-				render();
+				update();
 			});
 		}
 	}
@@ -92,6 +93,7 @@ function createNotificationManager(onError, win){
 			if( typeof onError === "function" ){
 				onError(new Error("Notification API is not supported"));
 			}
+			
 			return;
 		}
 		
@@ -99,6 +101,7 @@ function createNotificationManager(onError, win){
 			if( typeof onError === "function" ){
 				onError(new Error("Notifications are not granted by the user"));
 			}
+			
 			return;
 		}
 		
@@ -113,7 +116,8 @@ function createNotificationManager(onError, win){
 						onError(error);
 					}
 				}
-				render();
+				
+				update();
 			});
 		}else{
 			new Notification(title, options);

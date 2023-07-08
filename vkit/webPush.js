@@ -3,8 +3,8 @@
 var createState = $.state;
 var map = $.map;
 var notification = $.notification;
-var render = $.render;
 var tick = $.tick;
+var update = $.update;
 
 function areEqual(a, b){
 	a = new Uint8Array(a);
@@ -28,14 +28,17 @@ function createWebPushManager(serviceWorker, serverKey, handleError, win){
 	
 	function onError(error){
 		locked = false;
+		
 		if( typeof handleError === "function" ){
 			handleError(error);
 		}
-		render();
+		
+		update();
 	}
 	
 	function finish(){
 		locked = false;
+		
 		if( queued ){
 			queued = false;
 			setSubscription(serviceWorker.get(), serverKey.get());
@@ -56,7 +59,7 @@ function createWebPushManager(serviceWorker, serverKey, handleError, win){
 			}).then(function(sub){
 				subscription.set(sub);
 				finish();
-				render();
+				update();
 			}, function(error){
 				subscription.set(null);
 				onError(error);
@@ -78,9 +81,11 @@ function createWebPushManager(serviceWorker, serverKey, handleError, win){
 				if( sub ){
 					if( areEqual(sub.options.applicationServerKey, serverKey) ){
 						var last = subscription.get();
+						
 						if(!last || !areEqual(last, sub)){
 							subscription.set(sub);
 						}
+						
 						finish();
 					}else{
 						sub.unsubscribe().then(subscribe, onError);
@@ -92,12 +97,13 @@ function createWebPushManager(serviceWorker, serverKey, handleError, win){
 				sub.unsubscribe().then(function(){
 					subscription.set(null);
 					finish();
-					render();
+					update();
 				}, onError);
 			}else{
 				finish();
 			}
-			render();
+			
+			update();
 		}, onError);
 	}
 	

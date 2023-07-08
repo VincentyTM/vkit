@@ -1,7 +1,7 @@
 (function($){
 
 var createState = $.state;
-var render = $.render;
+var update = $.update;
 
 function createAsyncState(input, callAsync, onError, getInitialValue){
 	var isFunction = typeof getInitialValue === "function";
@@ -32,13 +32,14 @@ function createAsyncState(input, callAsync, onError, getInitialValue){
 				returnValue.then(function(outputValue){
 					result.set(outputValue);
 					stop();
-					render();
+					update();
 				}, function(error){
 					if( typeof onError === "function" ){
 						onError(error);
 					}
+					
 					stop();
-					render();
+					update();
 				});
 			}else{
 				result.set(returnValue);
@@ -57,7 +58,7 @@ function createAsyncState(input, callAsync, onError, getInitialValue){
 	}else{
 		start(input);
 	}
-
+	
 	var output = result.map();
 	output.pending = pending.map();
 	return output;

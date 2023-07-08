@@ -6,8 +6,8 @@ var createComponent = $.component;
 var getComponent = $.getComponent;
 var inject = $.inject;
 var provide = $.provide;
-var render = $.render;
 var setComponent = $.setComponent;
+var update = $.update;
 var WindowService = $.windowService;
 
 function renderDetached(getView, parent){
@@ -34,7 +34,7 @@ function renderDetached(getView, parent){
 				append(parent, view, parent, bind);
 			}
 		});
-		render();
+		update();
 		return view;
 	}finally{
 		setComponent(prev);

@@ -2,7 +2,7 @@
 
 var createEmitter = $.emitter;
 var createState = $.state;
-var render = $.render;
+var update = $.update;
 
 function createWebSocket(url, options){
 	var ws = null;
@@ -26,14 +26,14 @@ function createWebSocket(url, options){
 	function onError(err){
 		close();
 		emitter.throwError(err);
-		render();
+		update();
 	}
 
 	function onClose(e){
 		close();
 		isOpen.set(false);
 		isOpen.event = e;
-		render();
+		update();
 	}
 
 	function onOpen(e){
@@ -46,7 +46,7 @@ function createWebSocket(url, options){
 				send(q[i]);
 			}
 		}
-		render();
+		update();
 	}
 
 	function open(){

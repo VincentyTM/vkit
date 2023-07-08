@@ -5,9 +5,9 @@ var bind = $.bind;
 var createHistoryHandler = $.history;
 var inject = $.inject;
 var provide = $.provide;
-var render = $.render;
 var renderDetached = $.renderDetached;
 var StyleService = $.styleService;
+var update = $.update;
 var WindowService = $.windowService;
 
 function renderPage(root, url, callback, tagName, win){
@@ -24,12 +24,12 @@ function renderPage(root, url, callback, tagName, win){
 				inject(WindowService).window = win;
 				append(container, [root(), StyleService().element], container, bind);
 			});
-			render();
+			update();
 			callback(container);
 			unmount();
 		}finally{
 			history.replace(prevURL);
-			render();
+			update();
 		}
 		return container;
 	});

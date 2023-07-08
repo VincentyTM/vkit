@@ -2,7 +2,7 @@
 
 var createState = $.state;
 var unmount = $.unmount;
-var render = $.render;
+var update = $.update;
 
 function createGeoLocationState(options, onError, geolocation){
 	if(!geolocation){
@@ -13,13 +13,13 @@ function createGeoLocationState(options, onError, geolocation){
 	
 	function update(position){
 		state.set(position);
-		render();
+		update();
 	}
 	
 	function handleError(error){
 		if( typeof onError === "function" ){
 			onError(error);
-			render();
+			update();
 		}
 	}
 	

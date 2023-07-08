@@ -1,8 +1,8 @@
 (function($, d){
 
-var render = $.render;
 var createObservable = $.observable;
 var getCurrentScript = $.currentScript;
+var update = $.update;
 
 function respond(response){
 	getCurrentScript().request.resolve(response);
@@ -29,13 +29,13 @@ function createScript(url, options){
 	function reject(error){
 		reset();
 		onError(error);
-		render();
+		update();
 	}
 	
 	function resolve(data){
 		reset();
 		onLoad(data);
-		render();
+		update();
 	}
 	
 	function onLoad(){
@@ -43,7 +43,7 @@ function createScript(url, options){
 		if(!r || r === "loaded" || r === "complete"){
 			reset();
 			onLoad();
-			render();
+			update();
 		}
 	}
 	

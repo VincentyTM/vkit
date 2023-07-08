@@ -2,8 +2,8 @@
 
 var createState = $.state;
 var onEvent = $.onEvent;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 function createUpdatePrompt(serviceWorker, message, win){
 	if(!win){
@@ -36,7 +36,7 @@ function createUpdatePrompt(serviceWorker, message, win){
 			accept: update,
 			deny: reset
 		});
-		render();
+		update();
 	}
 	
 	if( win.navigator.serviceWorker ){

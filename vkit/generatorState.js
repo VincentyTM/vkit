@@ -4,8 +4,8 @@ var createObservable = $.observable;
 var createState = $.state;
 var getComponent = $.getComponent;
 var setComponent = $.setComponent;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 function createGeneratorState(generator, updater){
 	function next(){
@@ -15,10 +15,12 @@ function createGeneratorState(generator, updater){
 				state.set(curr.value);
 				cleanup();
 				cleanup.clear();
+				
 				if(!curr.done && autoNext){
 					next();
 				}
-				render();
+				
+				update();
 			});
 		}else{
 			if(!current.done || current.value !== undefined){
@@ -32,7 +34,9 @@ function createGeneratorState(generator, updater){
 			function cleanup(callback){
 				state.unmount(callback);
 			}
+			
 			var state = createGeneratorState(generator.apply({unmount: cleanup}, arguments));
+			
 			return state;
 		};
 	}
@@ -44,6 +48,7 @@ function createGeneratorState(generator, updater){
 	var state = createState();
 	next();
 	setComponent(prev);
+	
 	if( autoNext ){
 		unmount(function(){
 			autoNext = false;
@@ -52,7 +57,9 @@ function createGeneratorState(generator, updater){
 	}else{
 		updater(next);
 	}
+	
 	state.unmount = cleanup.subscribe;
+	
 	return state;
 }
 

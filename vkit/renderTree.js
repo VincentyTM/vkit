@@ -1,10 +1,10 @@
 (function($){
 
-var bind = $.bind;
 var append = $.append;
-var render = $.render;
+var bind = $.bind;
 var rootComponent = $.rootComponent;
 var setComponent = $.setComponent;
+var update = $.update;
 
 function renderTree(component){
 	try{
@@ -14,7 +14,7 @@ function renderTree(component){
 		if( parent ){
 			append(parent, view, parent, bind);
 		}
-		render();
+		update();
 		return view;
 	}finally{
 		setComponent(null);

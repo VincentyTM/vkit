@@ -2,7 +2,7 @@
 
 var createPermissionState = $.permission;
 var createState = $.state;
-var render = $.render;
+var update = $.update;
 
 function noop(){}
 
@@ -14,16 +14,12 @@ function persistentStorage(nav){
 	function requestPermission(grant, deny){
 		if( isSupported ){
 			nav.storage.persist().then(function(value){
-				if( value ){
-					grant();
-				}else{
-					deny();
-				}
+				value ? grant() : deny();
 				persisted.set(value);
-				render();
+				update();
 			}, function(){
 				deny();
-				render();
+				update();
 			});
 		}
 	}
@@ -34,7 +30,7 @@ function persistentStorage(nav){
 	if( isSupported && typeof nav.storage.persisted === "function" ){
 		nav.storage.persisted().then(function(p){
 			persisted.set(p);
-			render();
+			update();
 		}, noop);
 	}
 	

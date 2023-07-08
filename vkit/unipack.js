@@ -3,8 +3,8 @@
 var createObservable = $.observable;
 var createState = $.state;
 var makeThenable = $.thenable;
-var render = $.render;
 var unmount = $.unmount;
+var update = $.update;
 
 function pack(files){
 	var r = /\n/g;
@@ -39,7 +39,7 @@ function unpack(currentFile, options){
 	
 	reader.onprogress = function(e){
 		handleProgress(e);
-		render();
+		update();
 	};
 	
 	reader.onload = function(){
@@ -49,7 +49,7 @@ function unpack(currentFile, options){
 			for(var i=0, l=res.length; i<l; i+=4){
 				if( isNaN(res[i+1]) || isNaN(res[i+3]) ){
 					reject(new Error("Invalid package: header cannot be parsed."));
-					render();
+					update();
 					return;
 				}
 				var blob = file.slice(s, s += +res[i+1], res[i+2]);
@@ -59,7 +59,7 @@ function unpack(currentFile, options){
 			}
 			if( s !== file.size ){
 				reject(new Error("Invalid package: sum of file sizes does not match package size."));
-				render();
+				update();
 				return;
 			}
 			result.set({fulfilled: true, value: data});
@@ -75,12 +75,12 @@ function unpack(currentFile, options){
 				reject(new Error("Invalid package: header size exceeds file size."));
 			}
 		}
-		render();
+		update();
 	};
 	
 	reader.onerror = function(){
 		reject(reader.error);
-		render();
+		update();
 	};
 	
 	function reject(error){

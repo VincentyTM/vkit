@@ -1,35 +1,40 @@
 (function($){
 
 var createState = $.state;
-var render = $.render;
+var update = $.update;
 
 function awaitState(promiseOrState){
 	var state = createState();
 	var lastPromise = null;
+	
 	function setPromise(promise){
 		state.set({pending: true});
+		
 		if( promise && typeof promise.then === "function" ){
 			lastPromise = promise;
+			
 			promise.then(function(value){
 				if( promise === lastPromise ){
 					state.set({fulfilled: true, value: value});
-					render();
+					update();
 				}
 			}, function(error){
 				if( promise === lastPromise ){
 					state.set({rejected: true, error: error});
-					render();
+					update();
 				}
 			});
 		}else{
 			lastPromise = null;
 		}
 	}
+	
 	if( promiseOrState.effect ){
 		promiseOrState.effect(setPromise);
 	}else{
 		setPromise(promiseOrState);
 	}
+	
 	return state;
 }
 
