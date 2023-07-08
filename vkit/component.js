@@ -15,7 +15,7 @@ function createComponent(parent, stopUpdate){
 		children: children,
 		onRender: createObservable(),
 		onDestroy: createObservable(),
-		onError: null,
+		emitError: null,
 		shouldUpdate: false,
 		start: start,
 		end: end,
@@ -55,9 +55,9 @@ function createComponent(parent, stopUpdate){
 			var component = this;
 			
 			while( component ){
-				if( component.onError ){
+				if( component.emitError ){
 					try{
-						component.onError(error);
+						component.emitError(error);
 						return;
 					}catch(ex){
 						error = ex;

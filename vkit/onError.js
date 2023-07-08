@@ -6,14 +6,18 @@ var getComponent = $.getComponent;
 
 function onError(errorHandler){
 	var component = getComponent();
-	if(!component.onError){
-		component.onError = createObservable();
+	
+	if(!component.emitError){
+		component.emitError = createObservable();
 	}
-	var unsubscribe = component.onError.subscribe(errorHandler);
+	
+	var unsubscribe = component.emitError.subscribe(errorHandler);
+	
 	unmount(function(){
 		unsubscribe();
-		if( component.onError.count() === 0 ){
-			component.onError = null;
+		
+		if( component.emitError.count() === 0 ){
+			component.emitError = null;
 		}
 	});
 }
