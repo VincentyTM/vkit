@@ -3,18 +3,18 @@
 var map = $.fn.map;
 var slice = Array.prototype.slice;
 
-function createMethod(store, name, dependencies){
-	if( typeof dependencies === "function" || !dependencies ){
+function createMethod(store, name, type){
+	if( typeof type === "function" || !type ){
 		return function(){
-			return store.select(name, dependencies);
+			return store.select(name, type);
 		};
 	}
 	
 	return function(){
-		var m = dependencies.length;
+		var m = type.length;
 		var deps = new Array(m);
 		for(var i=0; i<m; ++i){
-			var dep = dependencies[i];
+			var dep = type[i];
 			deps[i] = typeof dep === "string" ? store.select(dep) : dep;
 		}
 		
