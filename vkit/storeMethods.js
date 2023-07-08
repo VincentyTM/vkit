@@ -17,9 +17,11 @@ function createMethod(store, name, dependencies){
 			var dep = dependencies[i];
 			deps[i] = typeof dep === "string" ? store.select(dep) : dep;
 		}
+		
 		var args = arguments;
 		var n = args.length;
 		var inputs = [].concat(args, deps);
+		
 		return map.call(inputs, function(){
 			var value = store.get();
 			return value && value[name].apply(value, slice.call(arguments, 0, n));
@@ -28,14 +30,18 @@ function createMethod(store, name, dependencies){
 }
 
 function createMethods(store, methods, target){
-	if(!target) target = store;
+	if(!target){
+		target = store;
+	}
+	
 	for(var name in methods){
-		var method = methods[name];
 		if( name in target ){
 			throw new Error("Property '" + name + "' already exists");
 		}
-		target[name] = createMethod(store, name, method);
+		
+		target[name] = createMethod(store, name, methods[name]);
 	}
+	
 	return target;
 }
 
