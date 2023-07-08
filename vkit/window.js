@@ -2,9 +2,13 @@
 
 var bind = $.bind;
 var inject = $.inject;
+var withContext = $.withContext;
 
 function WindowService(){
 	this.window = window;
+	this.run = withContext(function(callback){
+		return callback();
+	});
 }
 
 function getWindow(){
