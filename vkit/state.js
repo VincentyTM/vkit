@@ -1,12 +1,13 @@
 (function($, document, undefined){
 
 var createObservable = $.observable;
+var dequeueUpdate = $.dequeueUpdate;
+var enqueueUpdate = $.enqueueUpdate;
 var getComponent = $.getComponent;
 var setComponent = $.setComponent;
 var toView = $.view;
 var toViews = $.views;
 var unmount = $.unmount;
-var stateUpdates = [];
 
 function toString(){
 	return "[object State(" + this.get() + ")]";
@@ -172,7 +173,7 @@ function createState(value){
 	function enqueue(){
 		if(!queued){
 			queued = true;
-			stateUpdates.push(update);
+			enqueueUpdate(update);
 		}
 		return this;
 	}
@@ -180,12 +181,7 @@ function createState(value){
 	function dequeue(){
 		if( queued ){
 			queued = false;
-			for(var i=stateUpdates.length; i--;){
-				if( stateUpdates[i] === update ){
-					stateUpdates.splice(i, 1);
-					break;
-				}
-			}
+			dequeueUpdate(update);
 		}
 		return this;
 	}
@@ -313,16 +309,6 @@ function combineStates(combine){
 	};
 }
 
-function renderStates(){
-	var n;
-	while( n = stateUpdates.length ){
-		var updates = stateUpdates.splice(0, n);
-		for(var i=0; i<n; ++i){
-			updates[i]();
-		}
-	}
-}
-
 function getArgs(){
 	return arguments;
 }
@@ -341,8 +327,6 @@ function combineEffect(action){
 }
 
 $.state = createState;
-$.renderStates = renderStates;
-$.stateUpdateQueue = stateUpdates;
 $.fn.map = combineStates;
 $.fn.view = combineView;
 $.fn.effect = combineEffect;
