@@ -27,7 +27,7 @@ function install(){
 	return $;
 }
 
-function uninstall(){
+function noConflict(){
 	if( global.$ === $ ){
 		if( _$ === UNSET ){
 			delete global.$;
@@ -42,6 +42,6 @@ $.fn = vKit.prototype;
 $.data = null;
 $.global = global;
 $.install = install;
-$.uninstall = uninstall;
+$.noConflict = noConflict;
 
 })(this);
