@@ -3,6 +3,7 @@ const {promises: fsp} = fs;
 
 class Config {
 	apiPath = "/api/";
+	autoExport = false;
 	bundles = [
 		{
 			includeLibraries: true,
@@ -11,7 +12,6 @@ class Config {
 			templateFile: "index.html"
 		}
 	];
-	autoExport = false;
 	certificateFile = "";
 	htmlDebugToken = "<!--DEBUG-->";
 	htmlHotReloadToken = "<!--HOT-RELOAD-->";
