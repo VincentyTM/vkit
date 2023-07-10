@@ -8,17 +8,17 @@ var queueMicrotask = g.queueMicrotask || (typeof Promise === "function" && typeo
 	? function(callback){ Promise.resolve().then(callback); }
 	: function(callback){ setTimeout(callback, 0); });
 
-function enqueueUpdate(update){
-	queue.push(update);
+function enqueueUpdate(callback){
+	queue.push(callback);
 	
 	if( queue.length === 1 ){
 		queueMicrotask(update);
 	}
 }
 
-function dequeueUpdate(update){
+function dequeueUpdate(callback){
 	for(var i=queue.length; i--;){
-		if( queue[i] === update ){
+		if( queue[i] === callback ){
 			queue.splice(i, 1);
 			break;
 		}
