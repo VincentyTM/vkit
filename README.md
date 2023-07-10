@@ -299,18 +299,18 @@ function ClickableButton(){
 }
 ```
 
-In asynchronous functions and callbacks (other than vKit-specific event handlers and methods) you must explicitly call `$.render`.
+In asynchronous functions and callbacks (other than vKit-specific event handlers and methods) you must explicitly call `$.update`.
 
 ```javascript
 async function load(){
     const response = await fetch("/api/data");
     dataToDisplay = await response.json();
-    $.render();
+    $.update();
 }
 
 setInterval(() => {
     ++count;
-    $.render();
+    $.update();
 }, 1000);
 ```
 
@@ -507,7 +507,7 @@ class DownloadService {
     async download(url){
         const blob = await (await fetch(url)).blob();
         this.emitDownload(blob);
-        $.render();
+        $.update();
     }
 }
 
@@ -557,7 +557,7 @@ const aPlusB = $(a, b).map((a, b) => a + b);
 // aPlusB.get() === 7
 a.set(5);
 // aPlusB.get() === 7
-$.render();
+$.update();
 // aPlusB.get() === 9
 ```
 
