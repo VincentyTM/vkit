@@ -3,20 +3,27 @@
 var getComponent = $.getComponent;
 var setComponent = $.setComponent;
 var onEvent = $.onEvent;
+var onUpdate = $.onUpdate;
 var unmount = $.unmount;
 
 function bindProp(prop, getter){
 	return function(element){
 		var component = getComponent();
 		setComponent(null);
+		
 		var oldValue = element[prop] = getter(element);
 		setComponent(component);
-		component.subscribe(function(){
-			var value = getter(element);
-			if( oldValue !== value ){
-				oldValue = element[prop] = value;
-			}
-		});
+		
+		onUpdate(
+			function(){
+				var value = getter(element);
+				if( oldValue !== value ){
+					oldValue = element[prop] = value;
+				}
+			},
+			
+			component
+		);
 	};
 }
 

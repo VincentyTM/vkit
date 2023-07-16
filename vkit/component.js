@@ -25,17 +25,6 @@ function createComponent(parent, stopUpdate){
 		start: start,
 		end: end,
 		
-		subscribe: function(update){
-			var curr = this;
-			
-			while( curr && !curr.shouldUpdate ){
-				curr.shouldUpdate = true;
-				curr = curr.parent;
-			}
-			
-			return emitUpdate.subscribe(update);
-		},
-		
 		removeChild: function(index){
 			var removed = children.splice(index, 1)[0];
 			
