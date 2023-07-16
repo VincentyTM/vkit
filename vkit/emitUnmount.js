@@ -1,15 +1,12 @@
 (function($){
 
 function emitUnmount(component){
-	var children = component.children;
-	var emitDestroy = component.emitDestroy;
+	var unmount = component.unmount;
 	
-	for(var i=children.length; i--;){
-		emitUnmount(children[i]);
+	if( unmount ){
+		unmount();
+		component.unmount = null;
 	}
-	
-	emitDestroy();
-	emitDestroy.clear();
 }
 
 $.emitUnmount = emitUnmount;

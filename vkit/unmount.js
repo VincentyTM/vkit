@@ -1,17 +1,42 @@
 (function($){
 
+var createObservable = $.observable;
 var getComponent = $.getComponent;
-var rootComponent = $.rootComponent;
+var noop = $.noop;
 
-function noop(){}
-
-function unmount(callback){
-	var currentComponent = getComponent();
-	return typeof callback === "function"
-		? (currentComponent !== rootComponent ? currentComponent.onDestroy(callback) : noop)
-		: currentComponent.onDestroy;
+function onUnmount(callback, component){
+	if(!callback){
+		component = getComponent();
+		
+		return function(callback){
+			return onUnmount(callback, component);
+		};
+	}
+	
+	if(!component){
+		component = getComponent();
+	}
+	
+	var c = component;
+	
+	while(!c.unmount && c.parent){
+		var unmount = c.unmount = createObservable();
+		c = c.parent;
+		
+		if( c.unmount ){
+			c.unmount.subscribe(unmount);
+		}
+	}
+	
+	var unmount = component.unmount;
+	
+	if(!unmount){
+		return noop;
+	}
+	
+	return unmount.subscribe(callback);
 }
 
-$.unmount = unmount;
+$.unmount = onUnmount;
 
 })($);

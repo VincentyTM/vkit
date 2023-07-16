@@ -11,18 +11,16 @@ function createComponent(parent, stopUpdate){
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
 	
-	var emitDestroy = createObservable();
 	var emitUpdate = createObservable();
 	
 	return {
 		index: 0,
 		parent: parent,
 		children: children,
-		emitDestroy: emitDestroy,
 		emitError: null,
-		onDestroy: emitDestroy.subscribe,
 		onUpdate: emitUpdate.subscribe,
 		shouldUpdate: false,
+		unmount: null,
 		start: start,
 		end: end,
 		
