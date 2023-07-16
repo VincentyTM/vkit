@@ -4,6 +4,7 @@ var getComponent = $.getComponent;
 var getProvider = $.getProvider;
 var setComponent = $.setComponent;
 var setProvider = $.setProvider;
+var throwError = $.throwError;
 
 function withContext(getView){
 	var component = getComponent();
@@ -18,8 +19,8 @@ function withContext(getView){
 			setProvider(provider);
 			
 			return getView.apply(this, arguments);
-		}catch(ex){
-			component.throwError(ex);
+		}catch(error){
+			throwError(error, component);
 		}finally{
 			setComponent(prevComponent);
 			setProvider(prevProvider);

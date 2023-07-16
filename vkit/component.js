@@ -62,25 +62,6 @@ function createComponent(parent, stopUpdate){
 			}
 		},
 		
-		throwError: function(error){
-			var component = this;
-			
-			while( component ){
-				if( component.emitError ){
-					try{
-						component.emitError(error);
-						return;
-					}catch(ex){
-						error = ex;
-					}
-				}
-				
-				component = component.parent;
-			}
-			
-			throw error;
-		},
-		
 		removeChild: function(index){
 			var removed = children.splice(index, 1)[0];
 			
