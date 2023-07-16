@@ -9,9 +9,7 @@ var queueMicrotask = g.queueMicrotask || (typeof Promise === "function" && typeo
 	: function(callback){ setTimeout(callback, 0); });
 
 function enqueueUpdate(callback){
-	queue.push(callback);
-	
-	if( queue.length === 1 ){
+	if( queue.push(callback) === 1 ){
 		queueMicrotask(update);
 	}
 }
