@@ -1,6 +1,7 @@
 (function($, g){
 
 var callTicks = $.callTicks;
+var emitUpdate = $.emitUpdate;
 var rootComponent = $.rootComponent;
 var queue = [];
 
@@ -35,7 +36,7 @@ function update(){
 			}
 		}
 		
-		rootComponent.update();
+		emitUpdate(rootComponent);
 	}while(n);
 	
 	callTicks();

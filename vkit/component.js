@@ -2,6 +2,7 @@
 
 var createObservable = $.observable;
 var emitUnmount = $.emitUnmount;
+var emitUpdate = $.emitUpdate;
 var insert = $.insert;
 var remove = $.remove;
 
@@ -18,8 +19,9 @@ function createComponent(parent, stopUpdate){
 		parent: parent,
 		children: children,
 		emitError: null,
-		onUpdate: emitUpdate.subscribe,
+		emitUpdate: emitUpdate,
 		shouldUpdate: false,
+		stopUpdate: stopUpdate,
 		unmount: null,
 		start: start,
 		end: end,
@@ -33,24 +35,6 @@ function createComponent(parent, stopUpdate){
 			}
 			
 			return emitUpdate.subscribe(update);
-		},
-		
-		update: function(){
-			if(!this.shouldUpdate){
-				return;
-			}
-			
-			emitUpdate();
-			
-			if( stopUpdate ){
-				return;
-			}
-			
-			var n = children.length;
-			
-			for(var i=0; i<n; ++i){
-				children[i].update();
-			}
 		},
 		
 		removeChild: function(index){
