@@ -44,7 +44,20 @@ function param(name, win){
 	return createQueryParamsState(win)(name);
 }
 
-$.queryParamsState = createQueryParamsState;
+function params(win){
+	var qps = createQueryParamsState(win);
+	
+	if( typeof Proxy === "function" ){
+		return new Proxy({}, {
+			get: function(target, name, receiver){
+				return qps(name);
+			}
+		});
+	}
+}
+
 $.param = param;
+$.params = params;
+$.queryParamsState = createQueryParamsState;
 
 })($);
