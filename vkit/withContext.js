@@ -1,58 +1,32 @@
-(function($, document){
+(function($){
 
-var createComponent = $.component;
-var rootComponent = createComponent(null);
-var currentComponent = null;
-var currentProvider = null;
+var getComponent = $.getComponent;
+var getProvider = $.getProvider;
+var setComponent = $.setComponent;
+var setProvider = $.setProvider;
 
 function withContext(getView){
 	var component = getComponent();
-	var provider = currentProvider;
+	var provider = getProvider();
+	
 	return function(){
-		var prevComponent = currentComponent;
-		var prevProvider = currentProvider;
+		var prevComponent = getComponent(true);
+		var prevProvider = getProvider(true);
+		
 		try{
-			currentComponent = component;
-			currentProvider = provider;
+			setComponent(component);
+			setProvider(provider);
+			
 			return getView.apply(this, arguments);
 		}catch(ex){
 			component.throwError(ex);
 		}finally{
-			currentComponent = prevComponent;
-			currentProvider = prevProvider;
+			setComponent(prevComponent);
+			setProvider(prevProvider);
 		}
 	};
 }
 
-function contextGuard(allowNull){
-	if(!allowNull && !currentComponent){
-		throw new Error("This function can only be called synchronously from a component");
-	}
-}
-
-function getComponent(allowNull){
-	contextGuard(allowNull);
-	return currentComponent;
-}
-
-function setComponent(component){
-	currentComponent = component;
-}
-
-function getProvider(allowNull){
-	contextGuard(allowNull);
-	return currentProvider;
-}
-
-function setProvider(provider){
-	currentProvider = provider;
-}
-
 $.withContext = withContext;
-$.rootComponent = rootComponent;
-$.getComponent = getComponent;
-$.setComponent = setComponent;
-$.getProvider = getProvider;
-$.setProvider = setProvider;
 
-})($, document);
+})($);
