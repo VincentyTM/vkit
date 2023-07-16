@@ -1,12 +1,16 @@
-(function($, window, undefined){
+(function($, undefined){
 
 var url = $.url;
-var createState = $.state;
-var createQueryParams = $.queryParams;
 var createHistoryHandler = $.history;
+var createQueryParams = $.queryParams;
+var createState = $.state;
+var getWindow = $.window;
 
 function createQueryParamsState(win){
-	if(!win) win = window;
+	if(!win){
+		win = getWindow();
+	}
+	
 	var location = win.location;
 	var historyHandler = createHistoryHandler(win);
 	var queryParamsState = url(historyHandler.url()).queryParams;
@@ -43,4 +47,4 @@ function param(name, win){
 $.queryParamsState = createQueryParamsState;
 $.param = param;
 
-})($, window);
+})($);
