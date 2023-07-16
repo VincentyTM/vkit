@@ -1,8 +1,9 @@
 (function($, document){
 
+var createObservable = $.observable;
+var emitUnmount = $.emitUnmount;
 var insert = $.insert;
 var remove = $.remove;
-var createObservable = $.observable;
 
 function createComponent(parent, stopUpdate){
 	var children = [];
@@ -17,6 +18,7 @@ function createComponent(parent, stopUpdate){
 		index: 0,
 		parent: parent,
 		children: children,
+		emitDestroy: emitDestroy,
 		emitError: null,
 		onDestroy: emitDestroy.subscribe,
 		onUpdate: emitUpdate.subscribe,
@@ -33,15 +35,6 @@ function createComponent(parent, stopUpdate){
 			}
 			
 			return emitUpdate.subscribe(update);
-		},
-		
-		unmount: function(){
-			for(var i=children.length; i--;){
-				children[i].unmount();
-			}
-			
-			emitDestroy();
-			emitDestroy.clear();
 		},
 		
 		update: function(){
@@ -67,7 +60,7 @@ function createComponent(parent, stopUpdate){
 			
 			if( removed ){
 				removed.removeView();
-				removed.unmount();
+				emitUnmount(removed);
 			}
 		},
 		

@@ -3,6 +3,7 @@
 var append = $.append;
 var bind = $.bind;
 var createComponent = $.component;
+var emitUnmount = $.emitUnmount;
 var getComponent = $.getComponent;
 var inject = $.inject;
 var provide = $.provide;
@@ -70,7 +71,7 @@ function createCustomElement(name, getView, options){
 	proto.disconnectedCallback = function(){
 		var component = this.component;
 		component.removeView();
-		component.unmount();
+		emitUnmount(component);
 		component.children.splice(0, component.children.length);
 		update();
 	};
