@@ -2,7 +2,6 @@
 
 var createObservable = $.observable;
 var emitUnmount = $.emitUnmount;
-var emitUpdate = $.emitUpdate;
 var insert = $.insert;
 var remove = $.remove;
 
