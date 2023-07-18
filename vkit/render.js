@@ -6,19 +6,21 @@ var rootComponent = $.rootComponent;
 var setComponent = $.setComponent;
 var update = $.update;
 
-function render(component){
+function render(getView, container){
+	if(!container){
+		container = this[0];
+	}
+	
 	try{
 		setComponent(rootComponent);
-		var view = component();
-		var parent = this[0];
-		if( parent ){
-			append(parent, view, parent, bind);
-		}
+		var view = getView();
+		append(container, view, container, bind);
 		update();
-		return view;
 	}finally{
 		setComponent(null);
 	}
+	
+	return rootComponent;
 }
 
 $.fn.render = render;
