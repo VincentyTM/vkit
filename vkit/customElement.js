@@ -4,6 +4,7 @@ var append = $.append;
 var bind = $.bind;
 var createComponent = $.component;
 var emitUnmount = $.emitUnmount;
+var empty = $.empty;
 var getComponent = $.getComponent;
 var inject = $.inject;
 var provide = $.provide;
@@ -59,7 +60,7 @@ function createCustomElement(name, getView, options){
 			provide([WindowService], function(){
 				inject(WindowService).window = doc.defaultView || doc.parentWindow;
 				var view = getView.call(self, stateOf(self.observedAttributes), self);
-				append(self, [component.start, view, component.end], self, bind);
+				append(self, view, self, bind);
 			});
 		}finally{
 			setComponent(prev);
@@ -69,9 +70,8 @@ function createCustomElement(name, getView, options){
 	};
 	
 	proto.disconnectedCallback = function(){
-		var component = this.component;
-		component.removeView();
-		emitUnmount(component);
+		empty(this);
+		emitUnmount(this.component);
 		update();
 	};
 	
