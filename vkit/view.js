@@ -1,6 +1,7 @@
 (function($){
 
 var createComponent = $.component;
+var createNodeRange = $.nodeRange;
 var emitUnmount = $.emitUnmount;
 var getComponent = $.getComponent;
 var insert = $.insert;
@@ -13,7 +14,7 @@ function createView(getValue, getView, immutable, update){
 	try{
 		var A = update ? getValue : getValue();
 		var component = createComponent(prev, immutable);
-		var range = component.range;
+		var range = createNodeRange();
 		
 		setComponent(component);
 		

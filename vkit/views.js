@@ -1,6 +1,7 @@
 (function($){
 
 var createComponent = $.component;
+var createNodeRange = $.nodeRange;
 var emitUnmount = $.emitUnmount;
 var getComponent = $.getComponent;
 var insert = $.insert;
@@ -14,17 +15,28 @@ function createViews(array, getView, immutable, update){
 	var items = toArray(oldArray);
 	var container = createComponent(prev, immutable);
 	var children = [];
-	var range = container.range;
+	var range = createNodeRange();
 	var n = items.length;
 	var views = new Array(n);
 	
 	for(var i=0; i<n; ++i){
 		try{
 			var component = createComponent(container);
+			var componentRange = createNodeRange();
+			
 			setComponent(component);
 			component.index = i;
-			views[i] = [component.start, getView(items[i]), component.end];
-			children.push(component);
+			
+			views[i] = [
+				componentRange.start,
+				getView(items[i]),
+				componentRange.end
+			];
+			
+			children.push({
+				component: component,
+				range: componentRange
+			});
 		}finally{
 			setComponent(prev);
 		}
@@ -37,19 +49,24 @@ function createViews(array, getView, immutable, update){
 		
 		try{
 			var component = createComponent(container);
+			
 			setComponent(component);
 			
+			var componentRange = createNodeRange();
 			var view = getView(value);
 			var child = children[index];
 			var anchor = child ? child.range.start : range.end;
 			
 			insert([
-				component.range.start,
+				componentRange.start,
 				view,
-				component.range.end
+				componentRange.end
 			], anchor, anchor.parentNode);
 			
-			children.splice(index, 0, component);
+			children.splice(index, 0, {
+				component: component,
+				range: componentRange
+			});
 		}finally{
 			setComponent(prev);
 		}
@@ -123,7 +140,7 @@ function createViews(array, getView, immutable, update){
 		}
 		
 		for(i=0; i<m; ++i){
-			children[i].index = i;
+			children[i].component.index = i;
 		}
 	});
 	
@@ -133,7 +150,11 @@ function createViews(array, getView, immutable, update){
 		throw new Error("Views method is not available");
 	}
 	
-	return [range.start, views, range.end];
+	return [
+		range.start,
+		views,
+		range.end
+	];
 }
 
 $.views = createViews;
