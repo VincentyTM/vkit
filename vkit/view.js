@@ -25,7 +25,10 @@ function createView(getValue, getView, immutable, update){
 				return;
 			}
 			
-			component.clearView();
+			if( range.start.nextSibling ){
+				range.clear();
+			}
+			
 			emitUnmount(component);
 			component.appendView(getView ? getView(B) : B);
 			A = B;

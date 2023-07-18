@@ -16,12 +16,6 @@ function createComponent(parent){
 		emitError: null,
 		unmount: null,
 		
-		clearView: function(){
-			if( range.start.nextSibling ){
-				range.clear();
-			}
-		},
-		
 		insertView: function(view, anchor){
 			insert([range.start, view, range.end], anchor, anchor.parentNode);
 		},
