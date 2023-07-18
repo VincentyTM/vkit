@@ -1,8 +1,6 @@
 (function($, g){
 
 var callTicks = $.callTicks;
-var emitUpdate = $.emitUpdate;
-var rootComponent = $.rootComponent;
 var queue = [];
 
 var queueMicrotask = g.queueMicrotask || (typeof Promise === "function" && typeof Promise.resolve === "function"
@@ -27,17 +25,13 @@ function dequeueUpdate(callback){
 function update(){
 	var n;
 	
-	do{
-		while( n = queue.length ){
-			var updates = queue.splice(0, n);
-			
-			for(var i=0; i<n; ++i){
-				updates[i]();
-			}
-		}
+	while( n = queue.length ){
+		var updates = queue.splice(0, n);
 		
-		emitUpdate(rootComponent);
-	}while(n);
+		for(var i=0; i<n; ++i){
+			updates[i]();
+		}
+	}
 	
 	callTicks();
 }

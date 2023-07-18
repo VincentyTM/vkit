@@ -5,22 +5,17 @@ var emitUnmount = $.emitUnmount;
 var insert = $.insert;
 var remove = $.remove;
 
-function createComponent(parent, stopUpdate){
+function createComponent(parent){
 	var children = [];
 	
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
-	
-	var emitUpdate = createObservable();
 	
 	return {
 		index: 0,
 		parent: parent,
 		children: children,
 		emitError: null,
-		emitUpdate: emitUpdate,
-		shouldUpdate: false,
-		stopUpdate: stopUpdate,
 		unmount: null,
 		start: start,
 		end: end,
