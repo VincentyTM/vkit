@@ -28,11 +28,6 @@ function createComponent(parent){
 		
 		appendView: function(view){
 			insert(view, range.end, range.end.parentNode);
-		},
-		
-		replaceView: function(view){
-			this.clearView();
-			this.appendView(view);
 		}
 	};
 }
