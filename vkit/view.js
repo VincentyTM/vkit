@@ -12,6 +12,7 @@ function createView(getValue, getView, immutable, update){
 	try{
 		var A = update ? getValue : getValue();
 		var component = createComponent(prev, immutable);
+		var range = component.range;
 		
 		setComponent(component);
 		
@@ -38,7 +39,7 @@ function createView(getValue, getView, immutable, update){
 			throw new Error("View method is not available");
 		}
 		
-		return [component.start, view, component.end];
+		return [range.start, view, range.end];
 	}finally{
 		setComponent(prev);
 	}

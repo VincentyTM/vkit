@@ -11,6 +11,7 @@ function createViews(array, getView, immutable, update){
 	var oldArray = typeof array === "function" ? array() : array;
 	var items = toArray(oldArray);
 	var container = createComponent(prev, immutable);
+	var range = container.range;
 	prev.children.push(container);
 	var n = items.length;
 	var views = new Array(n);
@@ -114,7 +115,7 @@ function createViews(array, getView, immutable, update){
 		throw new Error("Views method is not available");
 	}
 	
-	return [container.start, views, container.end];
+	return [range.start, views, range.end];
 }
 
 $.views = createViews;

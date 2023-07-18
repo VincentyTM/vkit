@@ -1,5 +1,6 @@
 (function($, document){
 
+var createNodeRange = $.nodeRange;
 var createObservable = $.observable;
 var emitUnmount = $.emitUnmount;
 var insert = $.insert;
@@ -7,18 +8,15 @@ var remove = $.remove;
 
 function createComponent(parent){
 	var children = [];
-	
-	var start = document.createTextNode("");
-	var end = document.createTextNode("");
+	var range = createNodeRange();
 	
 	return {
 		index: 0,
 		parent: parent,
 		children: children,
+		range: range,
 		emitError: null,
 		unmount: null,
-		start: start,
-		end: end,
 		
 		removeChild: function(index){
 			var removed = children.splice(index, 1)[0];
@@ -30,29 +28,23 @@ function createComponent(parent){
 		},
 		
 		removeView: function(){
-			this.clearView();
-			remove(start);
-			remove(end);
+			if( range.start.nextSibling ){
+				range.remove();
+			}
 		},
 		
 		clearView: function(){
-			var parent = start.parentNode;
-			
-			if(!parent){
-				return;
-			}
-			
-			for(var el=end.previousSibling; el && el !== start; el = end.previousSibling){
-				parent.removeChild(el);
+			if( range.start.nextSibling ){
+				range.clear();
 			}
 		},
 		
 		insertView: function(view, anchor){
-			insert([start, view, end], anchor, anchor.parentNode);
+			insert([range.start, view, range.end], anchor, anchor.parentNode);
 		},
 		
 		appendView: function(view){
-			insert(view, end, end.parentNode);
+			insert(view, range.end, range.end.parentNode);
 		},
 		
 		replaceView: function(view){
@@ -62,7 +54,7 @@ function createComponent(parent){
 		
 		getChildStart: function(index){
 			var child = children[index];
-			return child ? child.start : end;
+			return child ? child.range.start : range.end;
 		}
 	};
 }
