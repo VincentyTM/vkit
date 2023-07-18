@@ -17,7 +17,6 @@ function createView(getValue, getView, immutable, update){
 		setComponent(component);
 		
 		var view = getView ? getView(A) : A;
-		prev.children.push(component);
 		
 		var updateView = withContext(function(newValue){
 			var B = update ? newValue : getValue();
@@ -28,7 +27,6 @@ function createView(getValue, getView, immutable, update){
 			
 			component.clearView();
 			emitUnmount(component);
-			component.children.splice(0, component.children.length);
 			component.appendView(getView ? getView(B) : B);
 			A = B;
 		});

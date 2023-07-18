@@ -1,6 +1,7 @@
 (function($){
 
 var createComponent = $.component;
+var emitUnmount = $.emitUnmount;
 var getComponent = $.getComponent;
 var setComponent = $.setComponent;
 var withContext = $.withContext;
@@ -11,8 +12,8 @@ function createViews(array, getView, immutable, update){
 	var oldArray = typeof array === "function" ? array() : array;
 	var items = toArray(oldArray);
 	var container = createComponent(prev, immutable);
+	var children = [];
 	var range = container.range;
-	prev.children.push(container);
 	var n = items.length;
 	var views = new Array(n);
 	
@@ -22,7 +23,7 @@ function createViews(array, getView, immutable, update){
 			setComponent(component);
 			component.index = i;
 			views[i] = [component.start, getView(items[i]), component.end];
-			container.children.push(component);
+			children.push(component);
 		}finally{
 			setComponent(prev);
 		}
@@ -38,10 +39,11 @@ function createViews(array, getView, immutable, update){
 			setComponent(component);
 			
 			var view = getView(value);
-			var anchor = container.getChildStart(index);
+			var child = children[index];
+			var anchor = child ? child.range.start : range.end;
 			
 			component.insertView(view, anchor);
-			container.children.splice(index, 0, component);
+			children.splice(index, 0, component);
 		}finally{
 			setComponent(prev);
 		}
@@ -95,7 +97,14 @@ function createViews(array, getView, immutable, update){
 			}
 			
 			items.splice(i, 1);
-			container.removeChild(i);
+			
+			var removed = children.splice(i, 1)[0];
+			
+			if( removed ){
+				removed.removeView();
+				emitUnmount(removed);
+			}
+			
 			--n;
 			--i;
 		}
@@ -105,7 +114,7 @@ function createViews(array, getView, immutable, update){
 		}
 		
 		for(i=0; i<m; ++i){
-			container.children[i].index = i;
+			children[i].index = i;
 		}
 	});
 	

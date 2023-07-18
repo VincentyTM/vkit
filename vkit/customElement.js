@@ -72,7 +72,6 @@ function createCustomElement(name, getView, options){
 		var component = this.component;
 		component.removeView();
 		emitUnmount(component);
-		component.children.splice(0, component.children.length);
 		update();
 	};
 	

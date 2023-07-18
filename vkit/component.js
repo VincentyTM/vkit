@@ -7,25 +7,14 @@ var insert = $.insert;
 var remove = $.remove;
 
 function createComponent(parent){
-	var children = [];
 	var range = createNodeRange();
 	
 	return {
 		index: 0,
 		parent: parent,
-		children: children,
 		range: range,
 		emitError: null,
 		unmount: null,
-		
-		removeChild: function(index){
-			var removed = children.splice(index, 1)[0];
-			
-			if( removed ){
-				removed.removeView();
-				emitUnmount(removed);
-			}
-		},
 		
 		removeView: function(){
 			if( range.start.nextSibling ){
@@ -50,11 +39,6 @@ function createComponent(parent){
 		replaceView: function(view){
 			this.clearView();
 			this.appendView(view);
-		},
-		
-		getChildStart: function(index){
-			var child = children[index];
-			return child ? child.range.start : range.end;
 		}
 	};
 }
