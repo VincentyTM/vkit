@@ -1,7 +1,6 @@
 (function($){
 
 var getComponent = $.getComponent;
-var onUpdate = $.onUpdate;
 
 function setAttribute(el, name, value){
 	if( typeof value === "number" ){
@@ -25,20 +24,7 @@ function addAttribute(el, name, value){
 	if( typeof value === "string" ){
 		el.setAttribute(name, value);
 	}else if( typeof value === "function" ){
-		var oldValue = value();
-		setAttribute(el, name, oldValue);
-		
-		onUpdate(
-			function(){
-				var newValue = value();
-				if( oldValue !== newValue ){
-					oldValue = newValue;
-					setAttribute(el, name, newValue);
-				}
-			},
-			
-			getComponent()
-		);
+		throw new Error("Function attributes are not available");
 	}else if( value && typeof value.effect === "function" ){
 		value.effect(function(val){
 			setAttribute(el, name, val);

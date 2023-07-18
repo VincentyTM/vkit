@@ -3,29 +3,7 @@
 var getComponent = $.getComponent;
 var setComponent = $.setComponent;
 var onEvent = $.onEvent;
-var onUpdate = $.onUpdate;
 var unmount = $.unmount;
-
-function bindProp(prop, getter){
-	return function(element){
-		var component = getComponent();
-		setComponent(null);
-		
-		var oldValue = element[prop] = getter(element);
-		setComponent(component);
-		
-		onUpdate(
-			function(){
-				var value = getter(element);
-				if( oldValue !== value ){
-					oldValue = element[prop] = value;
-				}
-			},
-			
-			component
-		);
-	};
-}
 
 function bind(el, props, persistent){
 	for(var prop in props){
@@ -52,7 +30,7 @@ function bind(el, props, persistent){
 						unmount(unsub);
 					}
 				}else{
-					bindProp(prop, value)(el);
+					throw new Error("Function bindings are not available");
 				}
 				break;
 			case "undefined":
@@ -72,7 +50,6 @@ function bindAll(props){
 }
 
 $.bind = bind;
-$.bindProp = bindProp;
 $.fn.bind = bindAll;
 
 })($);

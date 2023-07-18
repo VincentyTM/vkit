@@ -2,7 +2,6 @@
 
 var createComponent = $.component;
 var getComponent = $.getComponent;
-var onUpdate = $.onUpdate;
 var setComponent = $.setComponent;
 var withContext = $.withContext;
 var toArray = $.toArray;
@@ -112,7 +111,7 @@ function createViews(array, getView, immutable, update){
 	if( update ){
 		update.subscribe(updateViews);
 	}else{
-		onUpdate(updateViews, container);
+		throw new Error("Views method is not available");
 	}
 	
 	return [container.start, views, container.end];
