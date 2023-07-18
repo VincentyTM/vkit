@@ -16,12 +16,6 @@ function createComponent(parent){
 		emitError: null,
 		unmount: null,
 		
-		removeView: function(){
-			if( range.start.nextSibling ){
-				range.remove();
-			}
-		},
-		
 		clearView: function(){
 			if( range.start.nextSibling ){
 				range.clear();

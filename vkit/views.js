@@ -101,7 +101,10 @@ function createViews(array, getView, immutable, update){
 			var removed = children.splice(i, 1)[0];
 			
 			if( removed ){
-				removed.removeView();
+				if( removed.range.start.nextSibling ){
+					removed.range.remove();
+				}
+				
 				emitUnmount(removed);
 			}
 			
