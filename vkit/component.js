@@ -16,10 +16,6 @@ function createComponent(parent){
 		emitError: null,
 		unmount: null,
 		
-		insertView: function(view, anchor){
-			insert([range.start, view, range.end], anchor, anchor.parentNode);
-		},
-		
 		appendView: function(view){
 			insert(view, range.end, range.end.parentNode);
 		}

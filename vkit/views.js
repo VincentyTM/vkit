@@ -3,6 +3,7 @@
 var createComponent = $.component;
 var emitUnmount = $.emitUnmount;
 var getComponent = $.getComponent;
+var insert = $.insert;
 var setComponent = $.setComponent;
 var withContext = $.withContext;
 var toArray = $.toArray;
@@ -42,7 +43,12 @@ function createViews(array, getView, immutable, update){
 			var child = children[index];
 			var anchor = child ? child.range.start : range.end;
 			
-			component.insertView(view, anchor);
+			insert([
+				component.range.start,
+				view,
+				component.range.end
+			], anchor, anchor.parentNode);
+			
 			children.splice(index, 0, component);
 		}finally{
 			setComponent(prev);
