@@ -23,20 +23,21 @@ function createViews(array, getView, immutable, update){
 		try{
 			var component = createComponent(container);
 			var componentRange = createNodeRange();
+			var ref = {
+				component: component,
+				index: i,
+				range: componentRange
+			};
 			
 			setComponent(component);
-			component.index = i;
 			
 			views[i] = [
 				componentRange.start,
-				getView(items[i]),
+				getView(items[i], ref),
 				componentRange.end
 			];
 			
-			children.push({
-				component: component,
-				range: componentRange
-			});
+			children.push(ref);
 		}finally{
 			setComponent(prev);
 		}
@@ -53,7 +54,12 @@ function createViews(array, getView, immutable, update){
 			setComponent(component);
 			
 			var componentRange = createNodeRange();
-			var view = getView(value);
+			var ref = {
+				component: component,
+				index: index,
+				range: componentRange
+			};
+			var view = getView(value, ref);
 			var child = children[index];
 			var anchor = child ? child.range.start : range.end;
 			
@@ -63,10 +69,7 @@ function createViews(array, getView, immutable, update){
 				componentRange.end
 			], anchor, anchor.parentNode);
 			
-			children.splice(index, 0, {
-				component: component,
-				range: componentRange
-			});
+			children.splice(index, 0, ref);
 		}finally{
 			setComponent(prev);
 		}
@@ -140,7 +143,7 @@ function createViews(array, getView, immutable, update){
 		}
 		
 		for(i=0; i<m; ++i){
-			children[i].component.index = i;
+			children[i].index = i;
 		}
 	});
 	
