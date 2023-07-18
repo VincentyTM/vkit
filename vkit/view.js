@@ -3,6 +3,7 @@
 var createComponent = $.component;
 var emitUnmount = $.emitUnmount;
 var getComponent = $.getComponent;
+var insert = $.insert;
 var setComponent = $.setComponent;
 var withContext = $.withContext;
 
@@ -30,7 +31,13 @@ function createView(getValue, getView, immutable, update){
 			}
 			
 			emitUnmount(component);
-			component.appendView(getView ? getView(B) : B);
+			
+			insert(
+				getView ? getView(B) : B,
+				range.end,
+				range.end.parentNode
+			);
+			
 			A = B;
 		});
 		
