@@ -2,6 +2,7 @@
 
 var append = $.append;
 var bind = $.bind;
+var provide = $.provide;
 var rootComponent = $.rootComponent;
 var setComponent = $.setComponent;
 var update = $.update;
@@ -13,12 +14,16 @@ function render(getView, container){
 	
 	try{
 		setComponent(rootComponent);
-		var view = getView();
-		append(container, view, container, bind);
-		update();
+		
+		provide(null, function(){
+			var view = getView();
+			append(container, view, container, bind);
+		});
 	}finally{
 		setComponent(null);
 	}
+	
+	update();
 	
 	return rootComponent;
 }
