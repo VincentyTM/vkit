@@ -1,5 +1,6 @@
 (function($){
 
+var createComponent = $.component;
 var getComponent = $.getComponent;
 
 function setAttribute(el, name, value){
@@ -24,7 +25,11 @@ function addAttribute(el, name, value){
 	if( typeof value === "string" ){
 		el.setAttribute(name, value);
 	}else if( typeof value === "function" ){
-		throw new Error("Function attributes are not available");
+		function setValue(){
+			el.setAttribute(name, value());
+		}
+		
+		createComponent(setValue).render();
 	}else if( value && typeof value.effect === "function" ){
 		value.effect(function(val){
 			setAttribute(el, name, val);
