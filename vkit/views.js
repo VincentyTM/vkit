@@ -38,13 +38,11 @@ function createBlock(model, getView, container, provider){
 	
 	function insertBefore(end){
 		if( range.start.nextSibling ){
-			console.log("Moved");
 			range.insertBefore(end);
 		}else{
 			try{
 				setComponent(component);
 				setProvider(provider);
-				console.log("Inserted");
 				insert(render(), end);
 			}catch(error){
 				throwError(error, component);
@@ -72,8 +70,6 @@ function views(getView){
 	var array;
 	
 	function render(models){
-		console.log("Rendering", models);
-		
 		if(!isArray(models)){
 			models = toArray(models);
 		}
@@ -90,7 +86,6 @@ function views(getView){
 				key = "_" + key;
 			}
 			
-			console.log("Adding to newBlocks", model);
 			newArray[i] = newBlocks[key] = oldBlocks[key] || createBlock(
 				model,
 				getView,
@@ -103,8 +98,6 @@ function views(getView){
 			if(!(key in newBlocks)){
 				var block = oldBlocks[key];
 				block.range.remove();
-				
-				console.log("Deleted", block.component);
 				emitUnmount(block.component);
 			}
 		}
