@@ -1,9 +1,18 @@
 (function($){
 
 var createComponent = $.component;
+var createProvider = $.createProvider;
+var rootComponent = $.rootComponent;
 
-$.rootComponent = createComponent(function(){
+var rootProvider = createProvider(null, null);
+
+var rootComponent = createComponent(function(){
 	throw new Error("The root component cannot be rerendered");
-}, null, null);
+}, null, rootProvider);
+
+rootProvider.component = rootComponent;
+
+$.rootComponent = rootComponent;
+$.rootProvider = rootProvider;
 
 })($);
