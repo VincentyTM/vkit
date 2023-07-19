@@ -2,6 +2,8 @@
 
 var createComponent = $.component;
 
-$.rootComponent = createComponent(null);
+$.rootComponent = createComponent(function(){
+	throw new Error("The root component cannot be rerendered");
+}, null, null);
 
 })($);

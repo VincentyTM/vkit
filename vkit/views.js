@@ -4,162 +4,160 @@ var createComponent = $.component;
 var createNodeRange = $.nodeRange;
 var emitUnmount = $.emitUnmount;
 var getComponent = $.getComponent;
+var getProvider = $.getProvider;
+var hashCode = $.hashCode;
 var insert = $.insert;
+var isArray = $.isArray;
 var setComponent = $.setComponent;
-var withContext = $.withContext;
+var setProvider = $.setProvider;
+var throwError = $.throwError;
 var toArray = $.toArray;
 
-function createViews(array, getView, immutable, update){
-	var prev = getComponent();
-	var oldArray = typeof array === "function" ? array() : array;
-	var items = toArray(oldArray);
-	var container = createComponent(prev, immutable);
-	var children = [];
+function createBlock(model, getView, container, provider){
 	var range = createNodeRange();
-	var n = items.length;
-	var views = new Array(n);
+	var view;
 	
-	for(var i=0; i<n; ++i){
-		try{
-			var component = createComponent(container);
-			var componentRange = createNodeRange();
-			var ref = {
-				component: component,
-				index: i,
-				range: componentRange
-			};
-			
-			setComponent(component);
-			
-			views[i] = [
-				componentRange.start,
-				getView(items[i], ref),
-				componentRange.end
-			];
-			
-			children.push(ref);
-		}finally{
-			setComponent(prev);
+	var component = createComponent(function(){
+		view = getView(model);
+		
+		if( range.start.nextSibling ){
+			range.clear();
+			range.append(view);
 		}
+	}, container, provider);
+	
+	component.render();
+	
+	function render(){
+		return [
+			range.start,
+			view,
+			range.end
+		];
 	}
 	
-	function insertItem(index, value){
-		items.splice(index, 0, value);
-		
-		var prev = getComponent();
-		
-		try{
-			var component = createComponent(container);
-			
-			setComponent(component);
-			
-			var componentRange = createNodeRange();
-			var ref = {
-				component: component,
-				index: index,
-				range: componentRange
-			};
-			var view = getView(value, ref);
-			var child = children[index];
-			var anchor = child ? child.range.start : range.end;
-			
-			insert([
-				componentRange.start,
-				view,
-				componentRange.end
-			], anchor, anchor.parentNode);
-			
-			children.splice(index, 0, ref);
-		}finally{
-			setComponent(prev);
-		}
-	}
-	
-	var updateViews = withContext(function(newArray){
-		if(!newArray){
-			newArray = typeof array === "function" ? array() : array;
-		}
-		
-		if( immutable && newArray === oldArray ){
-			return;
-		}
-		
-		var i, n=items.length, m=newArray.length;
-		
-		for(i=0; i<n; ++i){
-			if( i < m ){
-				var value = items[i];
-				
-				if( value === newArray[i] ){
-					continue;
-				}
-				
-				if( i + 1 < m ){
-					if( value === newArray[i + 1] ){
-						insertItem(i, newArray[i]);
-						++n; ++i;
-						continue;
-					}
-					
-					if( i + 2 < m ){
-						if( value === newArray[i + 2] ){
-							insertItem(i, newArray[i + 1]);
-							insertItem(i, newArray[i]);
-							n += 2;
-							i += 2;
-							continue;
-						}
-						
-						if( i + 3 < m && value === newArray[i + 3] ){
-							insertItem(i, newArray[i + 2]);
-							insertItem(i, newArray[i + 1]);
-							insertItem(i, newArray[i]);
-							n += 3;
-							i += 3;
-							continue;
-						}
-					}
-				}
+	function insertBefore(end){
+		if( range.start.nextSibling ){
+			console.log("Moved");
+			range.insertBefore(end);
+		}else{
+			try{
+				setComponent(component);
+				setProvider(provider);
+				console.log("Inserted");
+				insert(render(), end);
+			}catch(error){
+				throwError(error, component);
+			}finally{
+				setComponent(null);
+				setProvider(null);
 			}
-			
-			items.splice(i, 1);
-			
-			var removed = children.splice(i, 1)[0];
-			
-			if( removed ){
-				if( removed.range.start.nextSibling ){
-					removed.range.remove();
-				}
-				
-				emitUnmount(removed);
-			}
-			
-			--n;
-			--i;
 		}
-		
-		for(; i<m; ++i){
-			insertItem(i, newArray[i]);
-		}
-		
-		for(i=0; i<m; ++i){
-			children[i].index = i;
-		}
-	});
-	
-	if( update ){
-		update.subscribe(updateViews);
-	}else{
-		throw new Error("Views method is not available");
 	}
 	
-	return [
-		range.start,
-		views,
-		range.end
-	];
+	return {
+		component: component,
+		insertBefore: insertBefore,
+		range: range,
+		render: render
+	};
 }
 
-$.views = createViews;
+function views(getView){
+	var signal = this;
+	var container = getComponent();
+	var provider = getProvider();
+	var range = createNodeRange();
+	var oldBlocks = {};
+	var array;
+	
+	function render(models){
+		console.log("Rendering", models);
+		
+		if(!isArray(models)){
+			models = toArray(models);
+		}
+		
+		var newBlocks = {};
+		var n = models.length;
+		var newArray = new Array(n);
+		
+		for(var i=0; i<n; ++i){
+			var model = models[i];
+			var key = hashCode(model);
+			
+			while( key in newBlocks ){
+				key = "_" + key;
+			}
+			
+			console.log("Adding to newBlocks", model);
+			newArray[i] = newBlocks[key] = oldBlocks[key] || createBlock(
+				model,
+				getView,
+				container,
+				provider
+			);
+		}
+		
+		for(var key in oldBlocks){
+			if(!(key in newBlocks)){
+				var block = oldBlocks[key];
+				block.range.remove();
+				
+				console.log("Deleted", block.component);
+				emitUnmount(block.component);
+			}
+		}
+		
+		oldBlocks = newBlocks;
+		
+		if( range.start.nextSibling ){
+			var m = array.length;
+			var l = m;
+			
+			while( m > 0 && n > 0 && array[m - 1] === newArray[n - 1] ){
+				--m;
+				--n;
+			}
+			
+			if( n === 0 && m === 0 ){
+				array = newArray;
+				return;
+			}
+			
+			var i = 0;
+			var k = Math.min(m, n);
+			var end = m < l ? array[m].range.start : range.end;
+			
+			while( i < k && array[i] === newArray[i] ){
+				++i;
+			}
+			
+			while( i < n ){
+				newArray[i].insertBefore(end);
+				++i;
+			}
+		}
+		
+		array = newArray;
+	}
+	
+	render(signal.get());
+	signal.subscribe(render);
+	
+	var n = array.length;
+	var output = new Array(n + 2);
+	
+	for(var i=0; i<n; ++i){
+		output[i + 1] = array[i].render();
+	}
+	
+	output[0] = range.start;
+	output[n + 1] = range.end;
+	
+	return output;
+}
+
+$.views = views;
 
 })($);

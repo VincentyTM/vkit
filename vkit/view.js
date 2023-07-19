@@ -2,58 +2,40 @@
 
 var createComponent = $.component;
 var createNodeRange = $.nodeRange;
-var emitUnmount = $.emitUnmount;
-var getComponent = $.getComponent;
-var insert = $.insert;
-var setComponent = $.setComponent;
-var withContext = $.withContext;
 
-function createView(getValue, getView, immutable, update){
-	var prev = getComponent();
+function view(getView){
+	var component = createComponent(mount);
+	var currentView;
+	var range = createNodeRange();
+	var render = component.render;
+	var signal = this;
 	
-	try{
-		var A = update ? getValue : getValue();
-		var component = createComponent(prev, immutable);
-		var range = createNodeRange();
-		
-		setComponent(component);
-		
-		var view = getView ? getView(A) : A;
-		
-		var updateView = withContext(function(newValue){
-			var B = update ? newValue : getValue();
-			
-			if( A === B ){
-				return;
-			}
-			
-			if( range.start.nextSibling ){
-				range.clear();
-			}
-			
-			emitUnmount(component);
-			
-			insert(
-				getView ? getView(B) : B,
-				range.end,
-				range.end.parentNode
-			);
-			
-			A = B;
-		});
-		
-		if( update ){
-			update.subscribe(updateView);
-		}else{
-			throw new Error("View method is not available");
-		}
-		
-		return [range.start, view, range.end];
-	}finally{
-		setComponent(prev);
+	if(!(signal && typeof signal.get === "function" && typeof signal.subscribe === "function")){
+		signal = null;
 	}
+	
+	function mount(){
+		currentView = getView(signal ? signal.get() : null);
+		
+		if( range.start.nextSibling ){
+			range.clear();
+			range.append(currentView);
+		}
+	}
+	
+	render();
+	
+	if( signal ){
+		signal.subscribe(render);
+	}
+	
+	return [
+		range.start,
+		currentView,
+		range.end
+	];
 }
 
-$.view = createView;
+$.view = view;
 
 })($);

@@ -23,15 +23,42 @@ function setPrototypeOf(obj, proto){
 
 function createCustomElement(name, getView, options){
 	function CustomElement(){
-		var el = Reflect.construct(win.HTMLElement, [], CustomElement);
-		var component = createComponent(null);
+		var el = Reflect.construct(
+			win.HTMLElement,
+			[],
+			CustomElement
+		);
+		
+		var component = createComponent(function(){
+			var doc = el.ownerDocument;
+			
+			provide(null, function(){
+				inject(WindowService).window = doc.defaultView || doc.parentWindow;
+				
+				var view = getView.call(
+					el,
+					stateOf(el.observedAttributes),
+					el
+				);
+				
+				append(
+					el,
+					view,
+					el,
+					bind
+				);
+			});
+		}, null, null);
+		
 		el.component = component;
 		el.observedAttributes = {};
+		
 		if( CustomElement.observedAttributes ){
 			CustomElement.observedAttributes.forEach(function(attrName){
 				el.observedAttributes[attrName] = el.getAttribute(attrName);
 			});
 		}
+		
 		return el;
 	}
 	
@@ -39,7 +66,6 @@ function createCustomElement(name, getView, options){
 	var win = window;
 	
 	proto.connectedCallback = function(){
-		var self = this;
 		var el = this;
 		
 		while( el.parentNode !== null ){
@@ -51,21 +77,7 @@ function createCustomElement(name, getView, options){
 		}
 		
 		var component = this.component;
-		var prev = getComponent(true);
-		setComponent(component);
-		
-		try{
-			var doc = this.ownerDocument;
-			
-			provide([WindowService], function(){
-				inject(WindowService).window = doc.defaultView || doc.parentWindow;
-				var view = getView.call(self, stateOf(self.observedAttributes), self);
-				append(self, view, self, bind);
-			});
-		}finally{
-			setComponent(prev);
-		}
-		
+		component.render();
 		update();
 	};
 	

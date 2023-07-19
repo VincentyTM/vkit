@@ -5,9 +5,9 @@ var dequeueUpdate = $.dequeueUpdate;
 var enqueueUpdate = $.enqueueUpdate;
 var getComponent = $.getComponent;
 var setComponent = $.setComponent;
-var toView = $.view;
-var toViews = $.views;
 var unmount = $.unmount;
+var view = $.view;
+var views = $.views;
 
 function toString(){
 	return "[object State(" + this.get() + ")]";
@@ -27,20 +27,6 @@ function subscribe(state, callback){
 
 function subscribeToThis(callback){
 	return subscribe(this, callback);
-}
-
-function getOnChange(state){
-	var component = getComponent(true);
-	if( state.component === component ){
-		return state.onChange;
-	}else{
-		if(!component){
-			throw new Error("Some source states are created in components, but not the destination view");
-		}
-		var onChange = createObservable();
-		unmount(state.onChange.subscribe(onChange));
-		return onChange;
-	}
 }
 
 function map(){
@@ -139,14 +125,6 @@ function flatten(){
 	return output.map();
 }
 
-function getStateView(getView, immutable){
-	return toView(this.get(), getView, immutable, getOnChange(this));
-}
-
-function getStateViews(getView, immutable){
-	return toViews(this.get(), getView, immutable, getOnChange(this));
-}
-
 function createConstState(value){
 	function get(){
 		return value;
@@ -210,8 +188,8 @@ function createState(value){
 		text: text,
 		prop: prop,
 		effect: effect,
-		view: getStateView,
-		views: getStateViews,
+		view: view,
+		views: views,
 		subscribe: subscribeToThis,
 		component: getComponent(true),
 		toString: toString
@@ -300,8 +278,8 @@ function combineStates(combine){
 		prop: prop,
 		effect: effect,
 		update: update,
-		view: getStateView,
-		views: getStateViews,
+		view: view,
+		views: views,
 		subscribe: subscribeToThis,
 		unsubscribe: unsubscribe,
 		component: component,

@@ -4,61 +4,44 @@ var append = $.append;
 var bind = $.bind;
 var createComponent = $.component;
 var emitUnmount = $.emitUnmount;
-var getComponent = $.getComponent;
 var inject = $.inject;
 var provide = $.provide;
-var setComponent = $.setComponent;
 var update = $.update;
 var WindowService = $.windowService;
 
 function renderDetached(getView, parent){
-	var prev = getComponent(true);
+	if(!parent){
+		parent = this[0];
+	}
 	
-	try{
-		var component = createComponent(null);
-		setComponent(component);
-		
+	var component = createComponent(function(){
 		var win = null;
+		var doc = parent.ownerDocument;
 		
-		if( parent ){
-			var doc = parent.ownerDocument;
-			
-			if( doc ){
-				win = doc.defaultView || doc.parentWindow;
-			}
+		if( doc ){
+			win = doc.defaultView || doc.parentWindow;
 		}
 		
-		var view;
-		
-		provide([WindowService], function(){
+		provide(null, function(){
 			if( win ){
 				inject(WindowService).window = win;
 			}
 			
-			view = getView(function(){
+			var view = getView(function(){
 				emitUnmount(component);
 			}, component);
 			
-			if( parent ){
-				append(parent, view, parent, bind);
-			}
+			append(parent, view, parent, bind);
 		});
-		
-		update();
-		
-		return view;
-	}finally{
-		setComponent(prev);
-	}
-}
-
-function renderDetachedToThis(getView){
-	renderDetached(getView, this[0]);
+	}, null, null);
 	
-	return this;
+	component.render();
+	update();
+	
+	return component;
 }
 
 $.renderDetached = renderDetached;
-$.fn.renderDetached = renderDetachedToThis;
+$.fn.renderDetached = renderDetached;
 
 })($);
