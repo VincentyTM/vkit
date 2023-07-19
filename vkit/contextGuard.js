@@ -2,15 +2,13 @@
 
 var currentComponent = null;
 var currentProvider = null;
-
-function contextGuard(allowNull){
-	if(!allowNull && !currentComponent){
-		throw new Error("This function can only be called synchronously from a component");
-	}
-}
+var errorMessage = "This function can only be called synchronously from a component";
 
 function getComponent(allowNull){
-	contextGuard(allowNull);
+	if(!allowNull && !currentComponent){
+		throw new Error(errorMessage);
+	}
+	
 	return currentComponent;
 }
 
@@ -19,7 +17,10 @@ function setComponent(component){
 }
 
 function getProvider(allowNull){
-	contextGuard(allowNull);
+	if(!allowNull && (!currentComponent || !currentProvider)){
+		throw new Error(errorMessage);
+	}
+	
 	return currentProvider;
 }
 
