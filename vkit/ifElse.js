@@ -1,18 +1,11 @@
 (function($){
 
-var toView = $.view;
-
-function getConditionalView(condition, getView){
-	return typeof condition.map === "function"
-		? condition.map(Boolean).view(getView)
-		: toView(function(){ return !!condition() }, getView);
-}
-
 function ifElseSlice(args, offset, argsCount){
 	if( argsCount < 2 ){
 		return argsCount === 1 ? args[offset]() : null;
 	}
-	return getConditionalView(args[offset], function(value){
+	
+	return args[offset].map(Boolean).view(function(value){
 		return value ? args[offset + 1]() : ifElseSlice(args, offset + 2, argsCount - 2);
 	});
 }
