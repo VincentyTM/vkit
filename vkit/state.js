@@ -4,6 +4,7 @@ var createObservable = $.observable;
 var dequeueUpdate = $.dequeueUpdate;
 var enqueueUpdate = $.enqueueUpdate;
 var getComponent = $.getComponent;
+var prop = $.signalProp;
 var setComponent = $.setComponent;
 var text = $.signalText;
 var unmount = $.unmount;
@@ -64,17 +65,6 @@ function apply(){
 		value = arguments[i].call(this, value);
 	}
 	return this.set(value);
-}
-
-function prop(key){
-	var value = this.get();
-	var state = this;
-	return function(node){
-		node[key] = value;
-		subscribe(state, function(value){
-			node[key] = value;
-		});
-	};
 }
 
 function effect(action){
