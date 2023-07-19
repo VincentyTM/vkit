@@ -1,8 +1,10 @@
 (function($){
 
 var createObservable = $.observable;
+var emitUnmount = $.emitUnmount;
 var getComponent = $.getComponent;
 var noop = $.noop;
+var rootComponent = $.rootComponent;
 
 function onUnmount(callback, component){
 	if(!callback){
@@ -17,24 +19,27 @@ function onUnmount(callback, component){
 		component = getComponent();
 	}
 	
-	var c = component;
-	
-	while(!c.unmount && c.parent){
-		var unmount = c.unmount = createObservable();
-		c = c.parent;
-		
-		if( c.unmount ){
-			c.unmount.subscribe(unmount);
-		}
-	}
-	
-	var unmount = component.unmount;
-	
-	if(!unmount){
+	if( component === rootComponent ){
 		return noop;
 	}
 	
-	return unmount.subscribe(callback);
+	var c = component;
+	
+	while( c && !c.unmount ){
+		c.unmount = createObservable();
+		
+		if( c.parent ){
+			if( c.parent.children ){
+				c.parent.children.push(c);
+			}else{
+				c.parent.children = [c];
+			}
+		}
+		
+		c = c.parent;
+	}
+	
+	return component.unmount.subscribe(callback);
 }
 
 $.unmount = onUnmount;
