@@ -10,19 +10,18 @@ var update = $.update;
 var WindowService = $.windowService;
 
 function renderDetached(getView, parent){
-	if(!parent){
-		parent = this[0];
-	}
-	
 	var component = createComponent(function(){
-		var win = null;
-		var doc = parent.ownerDocument;
-		
-		if( doc ){
-			win = doc.defaultView || doc.parentWindow;
-		}
-		
 		provide(null, function(){
+			var win = null;
+			
+			if( parent ){
+				var doc = parent.ownerDocument;
+				
+				if( doc ){
+					win = doc.defaultView || doc.parentWindow;
+				}
+			}
+			
 			if( win ){
 				inject(WindowService).window = win;
 			}
@@ -31,7 +30,9 @@ function renderDetached(getView, parent){
 				emitUnmount(component);
 			}, component);
 			
-			append(parent, view, parent, bind);
+			if( parent ){
+				append(parent, view, parent, bind);
+			}
 		});
 	}, null, null);
 	
@@ -41,7 +42,11 @@ function renderDetached(getView, parent){
 	return component;
 }
 
+function renderDetachedToThis(getView){
+	return renderDetached(getView, this[0]);
+}
+
 $.renderDetached = renderDetached;
-$.fn.renderDetached = renderDetached;
+$.fn.renderDetached = renderDetachedToThis;
 
 })($);
