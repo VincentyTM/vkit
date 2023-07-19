@@ -26,7 +26,7 @@ function addAttribute(el, name, value){
 		el.setAttribute(name, value);
 	}else if( typeof value === "function" ){
 		function setValue(){
-			el.setAttribute(name, value());
+			setAttribute(el, name, value());
 		}
 		
 		createComponent(setValue).render();
