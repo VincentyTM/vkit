@@ -1,6 +1,6 @@
 (function($){
 
-var createComponent = $.createComponent;
+var createComponent = $.component;
 var getComponent = $.getComponent;
 var onUnmount = $.unmount;
 var signalProp = $.signalProp;
