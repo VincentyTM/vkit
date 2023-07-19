@@ -1,10 +1,11 @@
-(function($, document, undefined){
+(function($, undefined){
 
 var createObservable = $.observable;
 var dequeueUpdate = $.dequeueUpdate;
 var enqueueUpdate = $.enqueueUpdate;
 var getComponent = $.getComponent;
 var setComponent = $.setComponent;
+var text = $.signalText;
 var unmount = $.unmount;
 var view = $.view;
 var views = $.views;
@@ -63,14 +64,6 @@ function apply(){
 		value = arguments[i].call(this, value);
 	}
 	return this.set(value);
-}
-
-function text(){
-	var node = document.createTextNode(this.get());
-	subscribe(this, function(value){
-		node.nodeValue = String(value);
-	});
-	return node;
 }
 
 function prop(key){
@@ -185,7 +178,6 @@ function createState(value){
 		enqueue: enqueue,
 		dequeue: dequeue,
 		render: text,
-		text: text,
 		prop: prop,
 		effect: effect,
 		view: view,
@@ -274,7 +266,6 @@ function combineStates(combine){
 		flatten: flatten,
 		onChange: onChange,
 		render: text,
-		text: text,
 		prop: prop,
 		effect: effect,
 		update: update,
@@ -309,4 +300,4 @@ $.fn.map = combineStates;
 $.fn.view = combineView;
 $.fn.effect = combineEffect;
 
-})($, document);
+})($);
