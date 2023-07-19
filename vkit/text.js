@@ -1,9 +1,25 @@
-(function($){
+(function($, document){
 
-function createText(){
-	throw new Error("Text is not available");
+var createComponent = $.component;
+
+function createDynamicText(getText){
+	var oldText = "";
+	var node = document.createTextNode(oldText);
+	var component = createComponent(setText);
+	
+	function setText(){
+		var newText = getText();
+		
+		if( oldText !== newText ){
+			node.nodeValue = oldText = newText;
+		}
+	}
+	
+	component.render();
+	
+	return node;
 }
 
-$.text = createText;
+$.text = createDynamicText;
 
-})($);
+})($, document);
