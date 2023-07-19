@@ -17,7 +17,7 @@ function createComponent(mount, parent, provider){
 	};
 	
 	if( provider === undefined ){
-		provider = getProvider(true);
+		provider = getProvider();
 	}
 	
 	function renderComponent(){
