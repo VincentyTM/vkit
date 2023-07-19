@@ -14,19 +14,21 @@ Example app:
 const {Br, Button} = $.htmlTags;
 
 function CounterApp(){
-    let count = 0;
+    const count = $.signal(0);
     
     return [
         Button("Increment", {
-            onclick: () => ++count
+            onclick(){
+                count.set(count.get() + 1);
+            }
         }),
         Button("Reset counter", {
-            disabled: () => count === 0,
-            onclick: () => count = 0
+            disabled: () => count() === 0,
+            onclick: () => count.set(0)
         }),
         Br(),
-        "Click count: ", $.text(() => count)
-    );
+        "Click count: ", count
+    ];
 }
 
 $(document.body).render(CounterApp);
