@@ -40,6 +40,9 @@ function createBlock(model, getView, container, provider){
 		if( range.start.nextSibling ){
 			range.insertBefore(end);
 		}else{
+			var prevComponent = getComponent(true);
+			var prevProvider = getProvider(true);
+			
 			try{
 				setComponent(component);
 				setProvider(provider);
@@ -47,8 +50,8 @@ function createBlock(model, getView, container, provider){
 			}catch(error){
 				throwError(error, component);
 			}finally{
-				setComponent(null);
-				setProvider(null);
+				setComponent(prevComponent);
+				setProvider(prevProvider);
 			}
 		}
 	}
