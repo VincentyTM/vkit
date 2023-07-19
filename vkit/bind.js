@@ -1,5 +1,6 @@
 (function($){
 
+var createDynamicProp = $.prop;
 var getComponent = $.getComponent;
 var setComponent = $.setComponent;
 var onEvent = $.onEvent;
@@ -30,7 +31,7 @@ function bind(el, props, persistent){
 						unmount(unsub);
 					}
 				}else{
-					throw new Error("Function bindings are not available");
+					createDynamicProp(prop, value)(el);
 				}
 				break;
 			case "undefined":
