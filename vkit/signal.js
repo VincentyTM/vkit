@@ -1,281 +1,89 @@
-(function($, g){
+(function($){
 
-var createObservable = $.observable;
-var unmount = $.unmount;
-var toView = $.view;
-var toViews = $.views;
+var enqueueUpdate = $.enqueueUpdate;
+var getComponent = $.getComponent;
+var onUnmount = $.unmount;
+var signalProp = $.signalProp;
+var signalText = $.signalText;
+var view = $.view;
+var views = $.views;
 
-var queueMicrotask = g.queueMicrotask || (typeof Promise === "function" && typeof Promise.resolve === "function"
-	? function(callback){ Promise.resolve().then(callback); }
-	: function(callback){ setTimeout(callback, 0); });
-
-var currentDestination = null;
-var updateQueue = [];
-
-function callAllOnce(array){
-	var n = array.length;
-	if( n > 0 ){
-		var items = array.splice(0, n);
-		for(var i=0; i<n; ++i){
-			items[i]();
-		}
-	}
-}
-
-function addItem(array, item){
-	for(var i=array.length; i--;){
-		if( array[i] === item ){
-			return;
-		}
-	}
-	array.push(item);
-}
-
-function renderSignals(){
-	callAllOnce(updateQueue);
-}
-
-function enqueueUpdate(callback){
-	updateQueue.push(callback);
-	
-	if( updateQueue.length === 1 ){
-		queueMicrotask(renderSignals);
-	}
-}
-
-function view(getView, immutable){
-	var signal = this;
-	var valueChanged = createObservable();
-	
-	createSignalEffect(function(){
-		valueChanged(signal());
-	});
-	
-	return toView(this.get(), getView, immutable, valueChanged);
-}
-
-function views(getView, immutable){
-	var signal = this;
-	var valueChanged = createObservable();
-	
-	createSignalEffect(function(){
-		valueChanged(signal());
-	});
-	
-	return toViews(this.get(), getView, immutable, valueChanged);
-}
-
-function render(){
-	var signal = this;
-	var text = document.createTextNode(this.get());
-	
-	createSignalEffect(function(){
-		text.nodeValue = signal();
-	});
-	
-	return text;
-}
-
-function prop(propName){
-	var signal = this;
-	
-	return function(el){
-		createSignalEffect(function(){
-			el[propName] = signal();
-		});
-	};
-}
-
-function style(cssPropName){
-	var signal = this;
-	
-	return function(el){
-		createSignalEffect(function(){
-			el.style[cssPropName] = signal();
-		});
-	};
-}
-
-function update(transform){
-	this.set(transform(this.get()));
-}
-
-function equal(a, b){
-	return a === b;
-}
-
-function createWritableSignal(value, options){
-	var renderedValue = value;
-	var dependents = [];
-	var unmounted = false;
+function createWritableSignal(value){
+	var parent = getComponent(true);
+	var subscriptions = [];
 	var enqueued = false;
-	var mutated = false;
-	var eq = options && typeof options.equal === "function" ? options.equal : equal;
 	
-	function signal(){
-		if( unmounted ){
-			throw new Error("Cannot use unmounted signal");
-		}
-		
-		var d = currentDestination;
-		if( d ){
-			addItem(dependents, d);
-		}
+	function use(){
+		subscribe(getComponent().render);
 		
 		return value;
 	}
 	
-	function updateDependents(){
-		enqueued = false;
+	function get(){
+		return value;
+	}
+	
+	function subscribe(callback){
+		var component = getComponent();
+		var unmounted = false;
 		
-		if( unmounted ){
-			return;
+		subscriptions.push(function(value){
+			if(!unmounted){
+				callback(value);
+			}
+		});
+		
+		function unsubscribe(){
+			unmounted = true;
+			
+			for(var i=subscriptions.length; i--;){
+				if( subscriptions[i] === callback ){
+					subscriptions.splice(i, 1);
+					break;
+				}
+			}
 		}
 		
-		if( mutated || !eq(value, renderedValue) ){
-			mutated = false;
-			renderedValue = value;
-			callAllOnce(dependents);
+		if( component !== parent ){
+			onUnmount(unsubscribe);
 		}
+		
+		return unsubscribe;
 	}
 	
 	function set(newValue){
-		if( mutated || !eq(value, newValue) ){
+		if( value !== newValue ){
 			value = newValue;
 			
 			if(!enqueued){
 				enqueued = true;
-				enqueueUpdate(updateDependents);
+				enqueueUpdate(updateSignal);
 			}
 		}
 	}
 	
-	function mutate(callback){
-		mutated = true;
-		callback(value);
+	function updateSignal(){
+		enqueued = false;
 		
-		if(!enqueued){
-			enqueued = true;
-			enqueueUpdate(updateDependents);
-		}
-	}
-	
-	function get(){
-		return value;
-	}
-	
-	(options && options.cleanup ? options.cleanup : unmount)(function(){
-		unmounted = true;
-		dependents.splice(0, dependents.length);
-	});
-	
-	signal.get = get;
-	signal.mutate = mutate;
-	signal.prop = prop;
-	signal.render = render;
-	signal.set = set;
-	signal.style = style;
-	signal.update = update;
-	signal.valueOf = signal;
-	signal.view = view;
-	signal.views = views;
-	
-	return signal;
-}
-
-function createSignalEffect(callback, options){
-	var cleanup = createObservable();
-	
-	createComputedSignal(function(){
-		cleanup();
-		cleanup.clear();
-		return callback(cleanup.subscribe);
-	}, options)();
-	
-	if( options && options.cleanup ){
-		options.cleanup(cleanup);
-	}else{
-		unmount(cleanup);
-	}
-}
-
-function createComputedSignal(getter, options){
-	var value;
-	var dependents = [];
-	var unmounted = false;
-	var eq = options && typeof options.equal === "function" ? options.equal : equal;
-
-	function signal(){
-		if( unmounted ){
-			throw new Error("Cannot use unmounted signal");
-		}
-		
-		var d = currentDestination;
-		if( d ){
-			addItem(dependents, d);
-		}
-		
-		updateDependents();
-		
-		return value;
-	}
-	
-	function updateDependents(){
-		if( unmounted ){
-			return;
-		}
-		
-		var prev = currentDestination;
-		
-		try{
-			currentDestination = updateDependents;
-			var newValue = getter();
+		var n = subscriptions.length;
 			
-			if(!eq(value, newValue)){
-				value = newValue;
-				callAllOnce(dependents);
-			}
-		}finally{
-			currentDestination = prev;
+		for(var i=0; i<n; ++i){
+			subscriptions[i](value);
 		}
 	}
 	
-	function get(){
-		return value;
-	}
+	use.component = parent;
+	use.get = get;
+	use.prop = signalProp;
+	use.render = signalText;
+	use.set = set;
+	use.subscribe = subscribe;
+	use.view = view;
+	use.views = views;
 	
-	(options && options.cleanup ? options.cleanup : unmount)(function(){
-		unmounted = true;
-		dependents.splice(0, dependents.length);
-	});
-	
-	signal.get = get;
-	signal.prop = prop;
-	signal.render = render;
-	signal.style = style;
-	signal.valueOf = signal;
-	signal.view = view;
-	signal.views = views;
-	
-	return signal;
+	return use;
 }
 
-function untracked(callback){
-	var prev = currentDestination;
-	
-	try{
-		currentDestination = null;
-		return callback();
-	}finally{
-		currentDestination = prev;
-	}
-}
+$.signal = createWritableSignal;
 
-$.signal = {
-	computed: createComputedSignal,
-	effect: createSignalEffect,
-	signal: createWritableSignal,
-	untracked: untracked
-};
-
-})($, this);
+})($);
