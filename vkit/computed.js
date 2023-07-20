@@ -8,13 +8,40 @@ var signalText = $.signalText;
 var view = $.view;
 var views = $.views;
 
-function createComputedSignal(getValue){
+function createComputedSignal(getValue, inputs){
 	var parent = getComponent(true);
 	var subscriptions = [];
 	var value;
+	var signalComponent = createComponent(computeValue);
 	
-	var signalComponent = createComponent(function(){
-		var newValue = getValue();
+	if( inputs ){
+		var n = inputs.length;
+		
+		for(var i=0; i<n; ++i){
+			var input = inputs[i];
+			
+			if( input && typeof input.subscribe === "function" ){
+				input.subscribe(signalComponent.render);
+			}
+		}
+	}
+	
+	function computeValue(){
+		var newValue;
+		
+		if( inputs ){
+			var n = inputs.length;
+			var args = new Array(n);
+			var input = inputs[i];
+			
+			for(var i=0; i<n; ++i){
+				args[i] = input && typeof input.get === "function" ? input.get() : input;
+			}
+			
+			newValue = getValue.apply(null, args);
+		}else{
+			newValue = getValue();
+		}
 		
 		if( value !== newValue ){
 			value = newValue;
@@ -25,7 +52,7 @@ function createComputedSignal(getValue){
 				subscriptions[i](value);
 			}
 		}
-	});
+	}
 	
 	function use(){
 		subscribe(getComponent().render);
