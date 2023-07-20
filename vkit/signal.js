@@ -24,7 +24,7 @@ function createWritableSignal(value){
 	}
 	
 	function subscribe(callback){
-		var component = getComponent();
+		var component = getComponent(true);
 		var unmounted = false;
 		
 		subscriptions.push(function(value){
