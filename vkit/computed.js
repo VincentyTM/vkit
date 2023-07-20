@@ -101,10 +101,15 @@ function createComputedSignal(getValue, inputs){
 	use.prop = signalProp;
 	use.render = signalText;
 	use.subscribe = subscribe;
+	use.toString = toString;
 	use.view = view;
 	use.views = views;
 	
 	return use;
+}
+
+function toString(){
+	return "[object ComputedSignal(" + this.get() + ")]";
 }
 
 $.computed = createComputedSignal;
