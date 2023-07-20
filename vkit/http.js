@@ -6,7 +6,10 @@ var unmount = $.unmount;
 var update = $.update;
 
 function createRequest(data){
-	if(!data) data = {};
+	if(!data){
+		data = {};
+	}
+	
 	var request = {
 		url: null,
 		method: "GET",
@@ -18,6 +21,7 @@ function createRequest(data){
 		body: null,
 		abortable: true
 	};
+	
 	if( typeof data === "string" ){
 		request.url = data;
 	}else if( data && typeof data === "object" ){
@@ -27,6 +31,7 @@ function createRequest(data){
 			}
 		}
 	}
+	
 	return request;
 }
 
@@ -142,6 +147,7 @@ function createResponseState(requestState, options, onAbort){
 		
 		var method = request.method.toUpperCase();
 		isAbortable = request.abortable;
+		
 		var pendingResponse = createPendingResponse(abort);
 		xhr = sendRequest(request, pendingResponse, responseState, complete);
 		responseState.set(xhr ? pendingResponse : {unsent: true});
@@ -171,6 +177,7 @@ function createResponseState(requestState, options, onAbort){
 	
 	var result = responseState.map();
 	result.then = onResponse.subscribe;
+	
 	return result;
 }
 
