@@ -1,6 +1,7 @@
-(function($, window){
+(function($){
 
 var createState = $.state;
+var getWindow = $.window;
 var onEvent = $.onEvent;
 var unmount = $.unmount;
 
@@ -14,7 +15,10 @@ function getPreferredLanguages(nav){
 }
 
 function preferredLanguages(win){
-	if(!win) win = window;
+	if(!win){
+		win = getWindow();
+	}
+	
 	var nav = win.navigator;
 	var langs = createState(getPreferredLanguages(nav));
 	
@@ -29,4 +33,4 @@ function preferredLanguages(win){
 
 $.preferredLanguages = preferredLanguages;
 
-})($, window);
+})($);
