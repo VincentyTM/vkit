@@ -1,7 +1,8 @@
-(function($){
+(function($, undefined){
 
 var createComponent = $.component;
 var getComponent = $.getComponent;
+var getProvider = $.getProvider;
 var onUnmount = $.unmount;
 var signalEffect = $.signalEffect;
 var signalPipe = $.signalPipe;
@@ -14,7 +15,7 @@ function createComputedSignal(getValue, inputs){
 	var parent = getComponent(true);
 	var subscriptions = [];
 	var value;
-	var signalComponent = createComponent(computeValue);
+	var signalComponent = createComponent(computeValue, parent, getProvider(true));
 	
 	if( inputs ){
 		var n = inputs.length;
