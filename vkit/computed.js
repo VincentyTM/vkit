@@ -34,9 +34,9 @@ function createComputedSignal(getValue, inputs){
 		if( inputs ){
 			var n = inputs.length;
 			var args = new Array(n);
-			var input = inputs[i];
 			
 			for(var i=0; i<n; ++i){
+				var input = inputs[i];
 				args[i] = input && typeof input.get === "function" ? input.get() : input;
 			}
 			
