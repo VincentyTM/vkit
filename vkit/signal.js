@@ -26,7 +26,7 @@ function createWritableSignal(value){
 		return value;
 	}
 	
-	function subscribe(callback){
+	function subscribe(callback, persistent){
 		var component = getComponent(true);
 		var unmounted = false;
 		
@@ -47,7 +47,7 @@ function createWritableSignal(value){
 			}
 		}
 		
-		if( component !== parent ){
+		if( component !== parent && !persistent ){
 			onUnmount(unsubscribe);
 		}
 		

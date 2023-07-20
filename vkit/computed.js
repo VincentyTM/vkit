@@ -71,7 +71,7 @@ function createComputedSignal(getValue, inputs){
 		return value;
 	}
 	
-	function subscribe(callback){
+	function subscribe(callback, persistent){
 		var component = getComponent(true);
 		var unmounted = false;
 		
@@ -92,7 +92,7 @@ function createComputedSignal(getValue, inputs){
 			}
 		}
 		
-		if( component !== parent ){
+		if( component !== parent && !persistent ){
 			onUnmount(unsubscribe);
 		}
 		
