@@ -21,13 +21,13 @@ function valuesOf(stateOfStates){
 		output.set(computeValues(stateOfStates.get()));
 	}
 	
-	stateOfStates.effect(function(states, cleanup){
+	stateOfStates.effect(function(states){
 		var n = states.length;
 		
 		for(var i=0; i<n; ++i){
 			var state = states[i];
-			if( state && state.onChange && typeof state.onChange.subscribe === "function" ){
-				cleanup(state.onChange.subscribe(update));
+			if( state && typeof state.subscribe === "function" ){
+				state.subscribe(update);
 			}
 		}
 		

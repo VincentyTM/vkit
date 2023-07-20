@@ -112,8 +112,8 @@ function select(key, factory){
 			refCount: 1,
 			store: createStore(child),
 			unsubscribe: compose(
-				parent.onChange.subscribe(updateObject),
-				child.onChange.subscribe(updateValue),
+				parent.subscribe(updateObject),
+				child.subscribe(updateValue),
 				cleanup
 			)
 		};

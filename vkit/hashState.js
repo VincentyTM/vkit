@@ -12,14 +12,17 @@ function getHash(url){
 }
 
 function createHashState(win){
-	if(!win) win = getWindow();
+	if(!win){
+		win = getWindow();
+	}
+	
 	var location = win.location;
 	var state = createState(decodeURIComponent(location.hash.substring(1)));
 	var history = createHistoryHandler(win);
 	
 	history.url().map(getHash).pipe(state);
 	
-	state.onChange.subscribe(function(value){
+	state.subscribe(function(value){
 		location.replace("#" + encodeURIComponent(value));
 	});
 	
