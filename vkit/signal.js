@@ -3,6 +3,7 @@
 var enqueueUpdate = $.enqueueUpdate;
 var getComponent = $.getComponent;
 var onUnmount = $.unmount;
+var signalEffect = $.signalEffect;
 var signalProp = $.signalProp;
 var signalText = $.signalText;
 var view = $.view;
@@ -74,6 +75,7 @@ function createWritableSignal(value){
 	
 	use.add = add;
 	use.component = parent;
+	use.effect = signalEffect;
 	use.get = get;
 	use.prop = signalProp;
 	use.render = signalText;

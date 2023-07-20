@@ -3,6 +3,7 @@
 var createComponent = $.component;
 var getComponent = $.getComponent;
 var onUnmount = $.unmount;
+var signalEffect = $.signalEffect;
 var signalProp = $.signalProp;
 var signalText = $.signalText;
 var view = $.view;
@@ -97,6 +98,7 @@ function createComputedSignal(getValue, inputs){
 	}
 	
 	use.component = parent;
+	use.effect = signalEffect;
 	use.get = get;
 	use.prop = signalProp;
 	use.render = signalText;
