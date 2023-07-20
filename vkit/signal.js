@@ -80,6 +80,7 @@ function createWritableSignal(value){
 	use.set = set;
 	use.subscribe = subscribe;
 	use.toggle = toggle;
+	use.toString = toString;
 	use.view = view;
 	use.views = views;
 	
@@ -92,6 +93,10 @@ function add(value){
 
 function toggle(){
 	this.set(!this.get());
+}
+
+function toString(){
+	return "[object WritableSignal(" + this.get() + ")]";
 }
 
 $.signal = createWritableSignal;
