@@ -72,6 +72,7 @@ function createWritableSignal(value){
 		}
 	}
 	
+	use.add = add;
 	use.component = parent;
 	use.get = get;
 	use.prop = signalProp;
@@ -82,6 +83,10 @@ function createWritableSignal(value){
 	use.views = views;
 	
 	return use;
+}
+
+function add(value){
+	this.set(this.get() + value);
 }
 
 $.signal = createWritableSignal;
