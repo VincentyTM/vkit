@@ -42,6 +42,7 @@ function onUnmount(callback, component){
 	return component.unmount.subscribe(callback);
 }
 
+$.onUnmount = onUnmount;
 $.unmount = onUnmount;
 
 })($);
