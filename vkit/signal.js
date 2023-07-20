@@ -106,5 +106,6 @@ function toString(){
 }
 
 $.signal = createWritableSignal;
+$.state = createWritableSignal;
 
 })($);

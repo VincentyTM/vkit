@@ -1,17 +1,22 @@
 (function($){
 
-var combineStates = $.fn.map;
+var createComputedSignal = $.computed;
 
-function mapStates(transform){
-	function map(){
-		return combineStates.call(arguments, transform);
+function map(transform){
+	function getComputed(){
+		return createComputedSignal(transform, arguments);
 	}
 	
-	map.get = transform;
+	getComputed.get = transform;
 	
-	return map;
+	return getComputed;
 }
 
-$.map = mapStates;
+function mapThis(transform){
+	return createComputedSignal(transform, this);
+}
+
+$.map = map;
+$.fn.map = mapThis;
 
 })($);
