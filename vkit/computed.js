@@ -107,6 +107,7 @@ function createComputedSignal(getValue, inputs){
 	use.render = signalText;
 	use.subscribe = subscribe;
 	use.toString = toString;
+	use.update = signalComponent.render;
 	use.view = view;
 	use.views = views;
 	
