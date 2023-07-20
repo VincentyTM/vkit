@@ -18,9 +18,7 @@ function CounterApp(){
     
     return [
         Button("Increment", {
-            onclick(){
-                count.set(count.get() + 1);
-            }
+            onclick: () => count.add(1)
         }),
         Button("Reset counter", {
             disabled: () => count() === 0,
@@ -36,15 +34,14 @@ $(document.body).render(CounterApp);
 
 ## Table of Contents
   * [Getting Started](#getting-started)
-  * [Components](#components)
+  * [Components and Views](#components-and-views)
   * [Styles](#styles)
-  * [Dynamic UI](#dynamic-ui)
-  * [Conditional Rendering](#conditional-rendering)
-  * [Mapping an Array](#mapping-an-array)
+  * [Signals](#signals)
+  * [View Blocks](#view-blocks)
+  * [View List Blocks](#view-list-blocks)
   * [Component Lifecycle](#component-lifecycle)
   * [Dependency Injection](#dependency-injection)
   * [Observables and Subscription](#observables-and-subscription)
-  * [States](#states)
   * [Routing](#routing)
   * [References](#references)
   * [Serializing a Form](#serializing-a-form)
@@ -123,7 +120,7 @@ const App = () => $.htmlString`<!DOCTYPE html>
 http.createServer($.render(App)).listen(1234);
 ```
 
-## Components
+## Components and Views
 
 The fundamental building block of a vKit application is a view. It is most commonly a DOM node, a text or an array but many other types are also allowed. You can create a DOM node list with the `$.html` function:
 
@@ -168,9 +165,9 @@ $(document.body).render(App);
 As you have more components, you can build a tree of them:
 
 ```javascript
-function App(){
-    const {Footer, Header, Main} = $.htmlTags;
+const {Footer, Header, Main} = $.htmlTags;
 
+function App(){
     return [
         Header(
             HelloComponent("A"),
@@ -187,34 +184,43 @@ function App(){
 $(document.body).render(App);
 ```
 
-The arguments of element factory functions (the functions returned by the `$.htmlTags` proxy, e.g. `Form`) can be views, objects or functions that can modify the current DOM element.
-
+The arguments of element factory functions can be a mix of child nodes to be appended, function directives and property binding objects.
 ```javascript
-const {Button, Form, Input, Label} = $.htmlTags;
-
-const myForm = Form(
+Div(
     {
-        onsubmit(e){
-            e.preventDefault();
-            console.log("Form was submitted!");
-            console.log("Title:", this.elements.title.value);
+        className: "box",
+        style: {
+            color: "red"
         }
     },
-    form => {
-        console.log("This element is:", form);
-    },
-    Label(
-        "Title: ",
-        Input({
-            type: "text",
-            name: "title",
-            value: "Example"
-        })
-    ),
-    Button("Submit!", {
-        type: "submit"
-    })
+    H1("Element node"),
+    "Text node",
+    [
+        "Arrays can also be used for grouping",
+        {
+            style: {
+                color: "blue"
+            }
+        }
+    ],
+    (div) => console.log("Color:", div.style.color)
 )
+```
+
+## Event Listeners
+
+You can bind a property named `on*` to attach an event listener to a DOM element.
+
+```javascript
+const {Button} = $.htmlTags;
+
+function ClickableButton(){
+    return Button("Click me", {
+        onclick(event){
+            console.log("Clicked.", event);
+        }
+    });
+}
 ```
 
 ## Styles
@@ -251,235 +257,321 @@ const SpecialButton = $.styledHtmlTag("button", `
 const myButton = SpecialButton("Some label");
 ```
 
-## Dynamic UI
+## Signals
 
-Using plain objects and `$.text`, you can update DOM nodes dynamically.
+A signal is a container object whose value may change over time. There are two types of signals: writable and computed (read-only).
+
+### Writable Signals
+
+A writable signal can be created with `$.signal`.
 
 ```javascript
-let color = "red";
-let text = "Hello world";
-let highlight = false;
-
-const {P} = $.htmlTags;
-
-P(
-    {
-        className: () => highlight ? "highlighted" : "",
-        style: {
-            color: () => color
-        }
-    },
-    $.text(() => text)
-)
+const count = $.signal(42);
 ```
 
-Also, there is `$.effect`, which is called everytime a rerender happens and is not specific to a DOM element.
+Its value can be written with `set` and read with `get`.
 
 ```javascript
-function HelloWorldComponent(){
-    let title = "Hello world";
-    
-    $.effect(() => {
-        document.title = title;
-    });
-    
-    return "Hello world";
-}
+count.set(50);
+console.log(count.get()); // 50
 ```
 
-You can add `on*` properties to attach event listeners to a DOM element. After the callback fires, an automatic rerender is triggered.
+It is also possible to `add` a value, similarly to the `+=` operator.
 
 ```javascript
-function ClickableButton(){
-    const {Button} = $.htmlTags;
-    
-    return Button("Click me", {
-        onclick(){
-            console.log("Clicked.");
-        }
-    });
-}
+count.add(12); // equivalent to count.set(count.get() + 12);
 ```
 
-In asynchronous functions and callbacks (other than vKit-specific event handlers and methods) you must explicitly call `$.update`.
+The `toggle` method is useful if the signal contains a boolean value. It transforms `true` into `false` and vice versa.
 
 ```javascript
-async function load(){
-    const response = await fetch("/api/data");
-    dataToDisplay = await response.json();
-    $.update();
-}
-
-setInterval(() => {
-    ++count;
-    $.update();
-}, 1000);
+const show = $.signal(false);
+show.toggle(); // equivalent to count.set(!count.get());
 ```
 
-## Conditional Rendering
+### Computed Signals
 
-Sometimes, modifying DOM nodes is not enough; you may need to replace a whole subtree based on a value. This is exactly what `$.view` is for.
+A computed (or read-only) signal can be created with `$.computed`. Read-only signals do not have `add`, `set` and `toggle` methods.
 
 ```javascript
-const {Button, P} = $.htmlTags;
-
-function ToggleComponent(){
-    let shown = false;
-    
-    return $.html(
-        Button(
-            $.text(() => shown ? "Hide" : "Show"),
-            {
-                onclick: () => shown = !shown,
-            }
-        ),
-        $.view(() => shown, isShown => {
-            return isShown && P("This text is currently shown.");
-        })
-    );
-}
+const myText = $.computed(() => "Hello world");
 ```
 
-The function in the first argument can return any value, not just `true` or `false`. This is useful for creating tabs easily.
+You can use the `()` operator on any signal inside the callback function of `$.computed`. It automatically updates the computed signal when an input signal changes.
 
 ```javascript
-const {Button, Hr} = $.htmlTags;
+const name = $.signal("world");
+const myText = $.computed(() => "Hello " + name());
+```
 
-function TabsComponent(){
-    let currentComponent = HomeComponent;
-    
-    function Tab(title, component){
-        return Button(title, {
-            disabled: () => currentComponent === component,
-            onclick: () => currentComponent = component
-        });
+A computed signal is lazy, which means that its value is not calculated until it is needed somewhere (in the DOM or in a side effect).
+
+```javascript
+const notUsedAnywhere = $.computed(() => (
+    "This will never be calculated"
+));
+```
+
+A computed signal caches its value, so unless at least one of its inputs change, the value is not recalculated.
+
+```javascript
+const array = $.signal([]);
+const query = $.signal("");
+const filtered = $.computed(() => (
+    array().filter((item) => (
+        item.name.contains(query())
+    ))
+));
+```
+
+Computed signals are not immediately updated. The updates are added to a queue instead. To make sure all computed signals are up to date, you can call `$.update`.
+
+```javascript
+const a = $.signal(3);
+const b = $.signal(5);
+
+const aPlusB = $.computed(() => a() + b());
+console.log(aPlusB.get()); // 8
+
+a.set(13);
+console.log(aPlusB.get()); // 8
+
+$.update();
+console.log(aPlusB.get()); // 18
+```
+
+### Using a Signal
+
+A signal can be simply used as a dynamic text in the DOM.
+
+```javascript
+const name = $.signal("world");
+
+return P("Hello ", name);
+```
+
+It can also be used as a dynamic property of a DOM element.
+
+```javascript
+const name = $.signal("world");
+const color = $.signal("#ff0000");
+
+return Input({
+    value: name,
+    style: {
+        color
     }
-    
-    return [
-        Tab("Home", HomeComponent),
-        Tab("About", AboutComponent),
-        Hr(),
-        $.view(() => currentComponent, component => component())
-    ];
-}
+});
 ```
 
-In some cases, it can be more convenient to write a classic `$.ifElse` statement.
+Attributes can be dynamic too, not just properties.
 
 ```javascript
-$.ifElse(
-    () => isFirstConditionTrue(), () => {
-        return "The first condition is true.";
-    },
+return Div(
+    $.attributes({
+        "my-attribute": () => name() + "!"
+    })
+);
+```
+
+Side effects can also be created that run when the value of an input signal changes.
+
+```javascript
+$.effect(() => {
+    console.log(`Hello ${name()}`);
     
-    () => isSecondConditionTrue(), () => {
-        return "The first condition is false, but the second condition is true.";
-    },
-    
-    () => {
-        return "Both conditions are false.";
+    $.onUnmount(() => {
+        console.log("Optional cleanup function");
+    });
+});
+```
+
+A dynamic text node can also be created without a computed signal.
+
+```javascript
+$.text(() => `Hello ${name()}`)
+```
+
+### Mapping Signals
+
+The `$.map` method can be used to create a reusable function that maps input signals to an output signal. Its only parameter is a pure function that returns the output signal's current value.
+
+```javascript
+const sum = $.map((x, y) => x + y);
+```
+
+It can be used to combine multiple signals into a new (computed) one.
+
+```javascript
+const a = $.signal(3);
+const b = $.signal(5);
+const aPlusB = sum(a, b);
+```
+
+You can use the following inline syntax as well.
+
+```javascript
+const aPlusB = $(a, b).map((x, y) => x + y);
+```
+
+If you need to transform a single signal, you can just simply call `map` on it.
+
+```javascript
+const doubleCount = count.map(x => x * 2);
+```
+
+This means the same as:
+
+```javascript
+const doubleCount = $.computed(() => count() * 2);
+```
+
+## View Blocks
+
+Sometimes, modifying existing DOM nodes is not enough. You may want to insert new nodes and remove old ones. A view block is a part of the DOM tree which is destroyed and re-created every time a value changes.
+
+```javascript
+$.view(() => show() && "This text is shown now!");
+```
+
+Note that there might be unwanted DOM updates which you should avoid.
+
+```javascript
+$.view(() => count() > 3 && "This text is shown now!");
+```
+
+If you create a boolean computed signal for every condition in `if` statements, unwanted DOM updates will probably not happen.
+
+```javascript
+$.view(() => {
+    if ($.computed(() => count() > 3)()) {
+        return "This text is shown now!";
     }
-)
+});
 ```
 
-## Mapping an Array
-
-Items of an array that can dynamically change can be mapped to views with the `$.views` function.
+You can also use the alternative syntax if the view is generated from a single signal.
 
 ```javascript
-function BooksTable(books){
-    return $.htmlString`
-        <table>
-            <thead><tr>
+signal.view(() => {
+    if ($.computed(() => count() > 3)()) {
+        return "This text is shown now!";
+    }
+});
+```
+
+## View List Blocks
+
+A view list block can be used to render a dynamic list of views (most commonly list items or table rows) efficiently. First, you need a signal that contains an array.
+
+```javascript
+const items = $.signal([]);
+```
+
+Then you can use its `views` method to create the list items.
+
+```javascript
+return Ul(
+    items.views((item) => (
+        Li(item.value)
+    ))
+);
+```
+
+In some cases you might need to identify array items by a key (a string or a number) instead of their value. You can do this with the `$.useKey` method.
+
+```javascript
+const BooksTable = (books) => $.htmlString`
+    <table>
+        <thead>
+            <tr>
                 <th scope="col">Title</th>
                 <th scope="col">Author</th>
                 <th scope="col">Year</th>
-            </tr></thead>
-            <tbody>${
-                $.views(books, book => $.htmlString`
-                    <tr>
-                        <td>${ $.text(() => book.title) }</td>
-                        <td>${ $.text(() => book.author) }</td>
-                        <td>${ $.text(() => book.year) }</td>
-                    </tr>
-                `)
-            }</tbody>
-        </table>'
-    `;
-}
-```
+            </tr>
+        </thead>
+        <tbody>${
+            $.useKey(books, "id").views(BookRow)
+        }</tbody>
+    </table>'
+`;
 
-Instead of an array (or array-like object), you can pass a function to `$.views` as the first argument that returns an array.
+const BookRow = (bookSignal) => $.htmlString`
+    <tr>
+       <td>${
+         $.text(() => bookSignal().title)
+       }</td>
+        <td>${
+         $.text(() => bookSignal().author)
+       }</td>
+        <td>${
+         $.text(() => bookSignal().year)
+       }</td>
+    </tr>
+`;
+```
 
 ## Component Lifecycle
 
 Components can disappear from the tree when the value of `$.view` changes or the corresponding item is no longer in the array used in `$.views`. When this happens, all side effects caused by creating the component must be reverted. This includes all timeouts, AJAX requests, external state changes initiated by the component.
 
-Fortunately, the `$.unmount` function can be used here.
+Fortunately, the `$.onUnmount` function can be used here.
 
 ```javascript
-function LocalTimer(){
-    const timer = setTimeout(() => {
-        alert("Timeout is over");
+function Clock(){
+    const date = $.signal(new Date());
+    
+    const interval = setInterval(() => {
+        date.set(new Date());
     }, 1000);
     
-    $.unmount(() => {
-        clearTimeout(timeout);
+    $.onUnmount(() => {
+        clearInterval(interval);
     });
     
-    return $.htmlTags.P("A timeout has started...");
+    return $.computed(() => date().toLocaleString());
 }
 ```
 
-This is what the component lifecycle looks like:
+You can enqueue a function to be called after the current render cycle using `$.tick`. This is useful for interacting with the DOM after it has been rendered (e.g. when playing videos, scrolling, measuring CSS properties of elements, auto-focusing).
 
 ```javascript
-function Component(){
-    console.log("Component was created.");
-    
-    $.effect(() => {
-        console.log("Component was updated.");
-    });
-    
-    $.unmount(() => {
-        console.log("Component was destroyed.");
-    });
-    
-    return $.htmlTags.P("Component");
-}
-```
+const AutoFocus = (element) => {
+    $.tick(() => element.focus());
+};
 
-Note that no component knows when its view is appended to or removed from the DOM. However, you can enqueue a function to be called after the current render cycle using `$.tick`.
+const {Input} = $.htmlTags;
 
-```javascript
 function AutoFocusedInput(){
-    const {Input} = $.htmlTags;
-    
-    return Input(
-        input => {
-            $.tick(() => input.focus());
-        }
-    );
+    return Input(AutoFocus);
 }
 ```
-
-In many cases, you should not store your data inside the component, but pass it as an argument or inject it as a service.
 
 ## Dependency Injection
 
-Using `$.inject`, you can avoid unnecessary levels of passing arguments down the component tree. By default, singleton instances are constructed lazily and injected by `$.inject`.
+There are two ways a component can get data: from function parameters and from injected services. The difference is that in the latter case, intermediary components do not need to handle data that does not belong to them. By default, service instances are singletons lazily constructed and injected with `$.inject`.
 
 ```javascript
-class MyService {
-    constructor(){ // No arguments
-        this.anotherService = $.inject(AnotherService);
-        this.text = "Hello world";
-    }
-}
+const {P} = $.htmlTags;
 
 function MyComponent(){
     const myService = $.inject(MyService);
-    return $.htmlTags.P( $.text(() => myService.text) );
+    
+    return P(myService.getText());
+}
+
+class MyService {
+    constructor(){ // No arguments
+        this.anotherService = $.inject(AnotherService);
+    }
+    
+    getText(){
+        return this.anotherService.text;
+    }
+}
+
+class AnotherService {
+    text = "Hello world";
 }
 ```
 
@@ -498,148 +590,38 @@ This means that in the scope of `$.provide` you can access the same instance of 
 
 ## Observables and Subscription
 
-It may be desirable to subscribe to events. In vKit, the easiest tool for that is `$.observable`, similar to a promise or an event emitter. First, you need to `subscribe` to it. Remember to `unsubscribe` when the surrounding component is destroyed (`$.unmount`).
+An observable in vKit is a simple function whose behavior is not yet defined during creation.
 
 ```javascript
-class DownloadService {
-    constructor(){
-        this.emitDownload = $.observable();
-        this.onDownload = this.emitDownload.subscribe;
-    }
-    async download(url){
-        const blob = await (await fetch(url)).blob();
-        this.emitDownload(blob);
-        $.update();
-    }
-}
-
-function DownloadListComponent(){
-    const downloadService = $.inject(DownloadService);
-    const downloadedBlobs = [];
-    
-    $.unmount(
-        downloadService.onDownload(
-            blob => downloadedBlobs.push(blob)
-        )
-    );
-    
-    return $.views(downloadedBlobs, FileComponent);
-}
+const saveFile = $.observable();
 ```
 
-## States
-
-The default change detection mechanism in vKit is relatively slow, as all components need to be traversed to find any changes. It can be optimized with immutable objects, but that is still not optimal. However, there is a solution: `$.state`.
+You can later subscribe to an observable with `subscribe`.
 
 ```javascript
-function Counter(){
-    const count = $.state(0);
-    const {Button, Br} = $.htmlTags;
-    
-    return [
-        Button("Reset counter", {
-            disabled: count.map(count => count === 0),
-            onclick: () => count.set(0)
-        }),
-        Button("Increment count!", {
-            onclick: () => count.add(1)
-        }),
-        Br(),
-        "Click count: ", count
-    ];
-}
+const unsubscribe = saveFile.subscribe((file) => {
+    // Save the file somehow
+});
 ```
 
-States are container objects. Upon rendering, their descendants ― the so-called computed states ― will be updated up to view level. Note that computed states cannot be set. Multiple states can be combined with pure functions:
+And when you no longer need to be subscribed, be sure to unsubscribe. Not doing so may lead to memory leaks.
 
 ```javascript
-const a = $.state(3);
-const b = $.state(4);
-const aPlusB = $(a, b).map((a, b) => a + b);
-// aPlusB.get() === 7
-a.set(5);
-// aPlusB.get() === 7
-$.update();
-// aPlusB.get() === 9
+$.onUnmount(unsubscribe);
 ```
 
-You can wrap a pure function in `$.map` and apply it later to states.
+You can also unsubscribe all subscribers with the `clear` method.
 
 ```javascript
-const sum = $.map((x, y) => x + y);
-
-const a = $.state(3);
-const b = $.state(4);
-const aPlusB = sum(a, b);
-```
-
-You can also transform a single state's value into something else with the `map` method:
-
-```javascript
-const x = $.state(5);
-const xPlus1 = x.map(x => x + 1);
-```
-
-### States inside components
-
-Everything you can do with simple vKit components you can do with states. In order to avoid memory leaks, vKit automatically unsubscribes from parent states when necessary.
-
-```javascript
-function MyComponent(someState){
-    someState.effect(value => console.log("Value has changed to:", value));
-    return ["State value as text: ", someState];
-}
-```
-
-Conditional rendering and array mapping can even be more readable than without states.
-
-```javascript
-const isNotEmpty = $.map(array => array.length > 0);
-
-const {Li, Ul} = $.htmlTags;
-
-function DynamicList(arrayState = $.state([])){
-    return $.ifElse(
-        isNotEmpty(arrayState),
-        () => {
-            return Ul(arrayState.views(Li));
-        },
-        () => {
-            return "There are no items in your array.";
-        }
-    );
-}
-```
-
-If you have a model object, you can intercept its property changes with `stateOf` without ever explicitly creating or setting a state.
-
-```javascript
-class Counter {
-    constructor(){
-        this.count = 0;
-    }
-    render(){
-        const {count} = $.stateOf(this);
-        const {Br, Button} = $.htmlTags;
-        return [
-            "Count: ", count,
-            Br(),
-            Button("Increment", {
-                onclick: () => ++this.count
-            })
-        );
-    }
-}
-
-$(document.body).render(() => new Counter());
+saveFile.clear();
 ```
 
 ## Routing
 
-Any state can be used to provide the current path of the application. For instance, vKit has a `hashState` factory function which can be used for hash based routing. Since `hashState` is a state, you can create a view from it.
+Any signal can be used to provide the current path of the application. For instance, vKit has a `hashState` factory function which can be used for hash based routing. Since `hashState` is a signal, you can create a view from it.
 
 ```javascript
-$.hashState().view(path => {
+$.hashState().view((path) => {
     switch( path ){
         case "": return HomeComponent();
         case "about": return AboutComponent();
@@ -780,7 +762,7 @@ $.customElement("hello-element", function({name}){
     
     console.log("The <hello-element> is connected!");
     
-    $.unmount(() => {
+    $.onUnmount(() => {
         console.log("The <hello-element> is disconnected!");
     });
     
@@ -864,7 +846,7 @@ $(myElement).drag();
 $(myElement).drag(anotherElement);
 $(myElement).drag(anotherElement, onDragStop);
 $(myElement).drag((x, y) => {
-    if(!isNaN(y)){
+    if (!isNaN(y)) {
         resizeChatbox( Math.max(0, y - chatbox.offsetTop) );
     }
 });
@@ -926,9 +908,10 @@ You can use it to scan your text input and generate tokens.
 
 ```javascript
 for(const token of lexer.scan("Hello world")){
-    if( token.type === "whitespace" ){
+    if (token.type === "whitespace") {
         continue;
     }
+	
     console.log(token);
 }
 ```
@@ -952,8 +935,8 @@ const outputMessage = $.parse(
     
     // How to apply a rule (optional)
     function(expect, node, replacement){
-        if( expect === "EXPR" ){
-            if( node.type === "-" ){
+        if (expect === "EXPR") {
+            if (node.type === "-") {
                 node.type = "negation";
             }
         }
