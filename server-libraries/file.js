@@ -1,5 +1,6 @@
 const fs = require("fs");
 const cache = require("./cache.js");
+const createHttpError = require("./createHttpError.js");
 const getMimeType = require("./getMimeType.js");
 
 module.exports = async (
@@ -11,9 +12,7 @@ module.exports = async (
 ) => await new Promise((resolve, reject) => {
 	fs.lstat(path, (err, stats) => {
 		if( err || !stats || !stats.isFile() ){
-			reject({
-				status: 404
-			});
+			reject(createHttpError(404, "File not found"));
 			return;
 		}
 		
@@ -38,9 +37,7 @@ module.exports = async (
 			end = parts[1] ? parseInt(parts[1]) : size - 1;
 			
 			if( start >= size || start > end || start < 0 || isNaN(start) || end > size ){
-				reject({
-					status: 416
-				});
+				reject(createHttpError(416, "Range not satisfiable"));
 				return;
 			}
 			
@@ -78,4 +75,3 @@ module.exports = async (
 		});
 	});
 });
-
