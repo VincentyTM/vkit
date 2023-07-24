@@ -1,4 +1,4 @@
-const {readDirectory} = require("./server-libraries");
+const {readDirectory} = require("../server-libraries");
 const isTextFile = require("./isTextFile");
 
 module.exports = async (srcDir, fileCache) => {

@@ -1,5 +1,5 @@
 const {promises: fsp} = require("fs");
-const {copyDirectory} = require("./server-libraries");
+const {copyDirectory} = require("../server-libraries");
 
 module.exports = async (srcDir, templateSrcDir = null) => {
 	if( templateSrcDir ){

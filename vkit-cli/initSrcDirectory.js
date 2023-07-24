@@ -1,4 +1,4 @@
-const {watchDirectory} = require("./server-libraries");
+const {watchDirectory} = require("../server-libraries");
 const addDirectoryToCache = require("./addDirectoryToCache");
 const createDirectory = require("./createDirectory");
 const isTextFile = require("./isTextFile");

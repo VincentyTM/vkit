@@ -1,5 +1,5 @@
 const {promises: fsp} = require("fs");
-const {startBrowser} = require("./server-libraries");
+const {startBrowser} = require("../server-libraries");
 const buildDevIndexHTML = require("./buildDevIndexHTML");
 const createDevServer = require("./createDevServer");
 
