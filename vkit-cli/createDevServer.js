@@ -1,5 +1,4 @@
-const {cache, createServer, file, getMimeType, noCache} = require("../server-libraries");
-const sanitizePath = require("./sanitizePath");
+const {cache, createServer, file, getMimeType, noCache, sanitizePath} = require("../server-libraries");
 
 const text = (res, status, text) => {
 	res.writeHead(status, {

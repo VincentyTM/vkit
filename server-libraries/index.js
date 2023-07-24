@@ -8,4 +8,5 @@ module.exports = {
 	readDirectory: require("./readDirectory.js"),
 	startBrowser: require("./startBrowser.js"),
 	watchDirectory: require("./watchDirectory.js")
+	sanitizePath: require("./sanitizePath"),
 };

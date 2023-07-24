@@ -42,6 +42,5 @@ module.exports = {
 	minifyCSS: require("./minifyCSS"),
 	minifyLibrary: require("./minifyLibrary"),
 	readCommandLineArguments: require("./readCommandLineArguments"),
-	sanitizePath: require("./sanitizePath"),
 	startCLI: require("./startCLI")
 };
