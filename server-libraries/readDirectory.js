@@ -9,7 +9,7 @@ async function readDirectory(dir, handleItem, {signal} = {}){
 			}
 			
 			if( signal && signal.aborted ){
-				reject(signal.reason)
+				reject(signal.reason);
 				return;
 			}
 			
