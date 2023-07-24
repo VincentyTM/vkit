@@ -91,6 +91,7 @@ window.onerror = function(message, source, lineno, colno, error){
 		return msg;
 	}
 	function StackLine(line, lineColor, blockColor){
+		line = line.replace("new ", "");
 		var regexp = /^(\\s*at\\s+)?([^\\s@]*)\\s*@?\\s*\\(?\\s*([^)]+)\\)?$/g;
 		var match = regexp.exec(line);
 		if(!match){
