@@ -20,13 +20,25 @@ function createScope(req, res){
 		return ++styleCount;
 	}
 	
+	function renderStyle(res){
+		res.write(getStyles());
+	}
+	
+	function style(){
+		return {
+			toHTML: renderStyle,
+			toStyleContent: renderStyle
+		};
+	}
+	
 	return {
 		addStyle: addStyle,
 		getStyles: getStyles,
 		nextStyleCount: nextStyleCount,
 		render: null,
 		req: req,
-		res: res
+		res: res,
+		style: style
 	};
 }
 
