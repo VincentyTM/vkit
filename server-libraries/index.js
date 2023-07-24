@@ -1,13 +1,13 @@
 module.exports = {
-	cache: require("./cache.js"),
-	copyDirectory: require("./copyDirectory.js"),
-	createServer: require("./createServer.js"),
-	file: require("./file.js"),
-	getMimeType: require("./getMimeType.js"),
-	noCache: require("./noCache.js"),
-	readDirectory: require("./readDirectory.js"),
-	startBrowser: require("./startBrowser.js"),
-	watchDirectory: require("./watchDirectory.js")
+	cache: require("./cache"),
+	copyDirectory: require("./copyDirectory"),
+	createServer: require("./createServer"),
+	file: require("./file"),
+	getMimeType: require("./getMimeType"),
+	noCache: require("./noCache"),
+	readDirectory: require("./readDirectory"),
 	sanitizePath: require("./sanitizePath"),
 	selectRoute: require("./selectRoute"),
+	startBrowser: require("./startBrowser"),
+	watchDirectory: require("./watchDirectory")
 };
