@@ -13,7 +13,7 @@ Example app:
 ```javascript
 const {Br, Button} = $.htmlTags;
 
-function CounterApp(){
+function CounterApp() {
     const count = $.signal(0);
     
     return [
@@ -83,7 +83,7 @@ const {A, Li, Main, Nav, Ul} = $.htmlTags;
 
 const RedH1 = $.styledHtmlTag("h1", `::this{color: red;}`);
 
-const Body = () => [
+const App = () => [
     RedH1("Hello, you are on page ", $.path()),
     Nav(
         Ul(
@@ -105,19 +105,19 @@ const Body = () => [
     )
 ];
 
-const App = () => $.htmlString`<!DOCTYPE html>
+const requestListener = $.server.view((server) => $.htmlString`<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
         <title>Example title</title>
-        <style>${ $.renderStyle() }</style>
+        <style>${server.style()}</style>
     </head>
     <body>
-        ${ Body() }
+        ${App()}
     </body>
-</html>`;
+</html>`);
 
-http.createServer($.render(App)).listen(1234);
+http.createServer(requestListener).listen(1234);
 ```
 
 ## Components and Views
@@ -167,7 +167,7 @@ As you have more components, you can build a tree of them:
 ```javascript
 const {Footer, Header, Main} = $.htmlTags;
 
-function App(){
+function App() {
     return [
         Header(
             HelloComponent("A"),
@@ -214,13 +214,23 @@ You can bind a property named `on*` to attach an event listener to a DOM element
 ```javascript
 const {Button} = $.htmlTags;
 
-function ClickableButton(){
+function ClickableButton() {
     return Button("Click me", {
-        onclick(event){
+        onclick(event) {
             console.log("Clicked.", event);
         }
     });
 }
+```
+
+A global event listener can be attached with `bind`. It will be detached when the current component is destroyed.
+
+```javascript
+$(document).bind({
+    onclick(event) {
+        console.log("Clicked.", event);
+    }
+});
 ```
 
 ## Styles
@@ -237,7 +247,7 @@ const SpecialButtonStyle = $.style(`
     }
 `);
 
-function SpecialButton(...args){
+function SpecialButton(...args) {
     return $.htmlTags.Button(SpecialButtonStyle, args);
 }
 ```
@@ -431,13 +441,13 @@ const doubleCount = $.computed(() => count() * 2);
 Sometimes, modifying existing DOM nodes is not enough. You may want to insert new nodes and remove old ones. A view block is a part of the DOM tree which is destroyed and re-created every time a value changes.
 
 ```javascript
-$.view(() => show() && "This text is shown now!");
+$.view(() => show() && Div("This text is shown now!"));
 ```
 
 Note that there might be unwanted DOM updates which you should avoid.
 
 ```javascript
-$.view(() => count() > 3 && "This text is shown now!");
+$.view(() => count() > 3 && Div("This text is shown now!"));
 ```
 
 If you create a boolean computed signal for every condition in `if` statements, unwanted DOM updates will probably not happen.
@@ -445,7 +455,7 @@ If you create a boolean computed signal for every condition in `if` statements, 
 ```javascript
 $.view(() => {
     if ($.computed(() => count() > 3)()) {
-        return "This text is shown now!";
+        return Div("This text is shown now!");
     }
 });
 ```
@@ -453,9 +463,9 @@ $.view(() => {
 You can also use the alternative syntax if the view is generated from a single signal.
 
 ```javascript
-signal.view(() => {
-    if ($.computed(() => count() > 3)()) {
-        return "This text is shown now!";
+show.view((doShow) => {
+    if (doShow) {
+        return Div("This text is shown now!");
     }
 });
 ```
@@ -465,7 +475,11 @@ signal.view(() => {
 A view list block can be used to render a dynamic list of views (most commonly list items or table rows) efficiently. First, you need a signal that contains an array.
 
 ```javascript
-const items = $.signal([]);
+const items = $.signal([
+    {
+        value: "Hello world"
+    }
+]);
 ```
 
 Then you can use its `views` method to create the list items.
@@ -518,7 +532,7 @@ Components can disappear from the tree when the value of `$.view` changes or the
 Fortunately, the `$.onUnmount` function can be used here.
 
 ```javascript
-function Clock(){
+function Clock() {
     const date = $.signal(new Date());
     
     const interval = setInterval(() => {
@@ -542,7 +556,7 @@ const AutoFocus = (element) => {
 
 const {Input} = $.htmlTags;
 
-function AutoFocusedInput(){
+function AutoFocusedInput() {
     return Input(AutoFocus);
 }
 ```
@@ -554,18 +568,18 @@ There are two ways a component can get data: from function parameters and from i
 ```javascript
 const {P} = $.htmlTags;
 
-function MyComponent(){
+function MyComponent() {
     const myService = $.inject(MyService);
     
     return P(myService.getText());
 }
 
 class MyService {
-    constructor(){ // No arguments
+    constructor() { // No arguments
         this.anotherService = $.inject(AnotherService);
     }
     
-    getText(){
+    getText() {
         return this.anotherService.text;
     }
 }
@@ -578,7 +592,7 @@ class AnotherService {
 As your application grows, you might need to limit the scope of these services. You can do this easily with `$.provide`.
 
 ```javascript
-function ProviderComponent(){
+function ProviderComponent() {
     return $.provide([
         MyService,
         AnotherService
@@ -622,7 +636,7 @@ Any signal can be used to provide the current path of the application. For insta
 
 ```javascript
 $.hashState().view((path) => {
-    switch( path ){
+    switch(path) {
         case "": return HomeComponent();
         case "about": return AboutComponent();
         default: return NotFoundComponent();
@@ -633,7 +647,7 @@ $.hashState().view((path) => {
 vKit provides a `router` function to implement more sophisticated routing.
 
 ```javascript
-function App(){
+function App() {
     const router = $.router($.hashState(), [
         {
             path: "",
@@ -655,7 +669,9 @@ function App(){
     ]);
 }
 
-function MenuComponent(router){
+const {A, Li, Ul} = $.htmlTags;
+
+function MenuComponent(router) {
     const menuItems = [
         {
             title: "Home",
@@ -666,7 +682,6 @@ function MenuComponent(router){
             path: "about"
         }
     ];
-    const {A, Li, Ul} = $.htmlTags;
     
     return Ul(
         menuItems.map(({title, path}) => Li(
@@ -688,7 +703,9 @@ function MenuComponent(router){
 A dynamic query parameter can be accessed with `$.param`. It can be useful for routing.
 
 ```javascript
-function App(){
+const {A, Li, Ul} = $.htmlTags;
+
+function App() {
     const router = $.router($.param("page"), [
         {
             path: "a",
@@ -699,8 +716,6 @@ function App(){
             component: () => "Page B"
         }
     ]);
-    
-    const {A, Li, Ul} = $.htmlTags;
     
     return [
         Ul(
@@ -717,7 +732,7 @@ function App(){
 Although element (or other) references can be set with simple functions, there is a built-in `ref` function to create references.
 
 ```javascript
-function InputFocusComponent(){
+function InputFocusComponent() {
     const inputRef = $.ref();
     
     return $.html(
@@ -736,8 +751,8 @@ In order to serialize a form the way you want, you can use `$.serialize`. It ite
 ```javascript
 const {Button, Form, Input, Label} = $.htmlTags;
 
-function FormComponent(){
-    function onsubmit(e){
+function FormComponent() {
+    function onsubmit(e) {
         e.preventDefault();
         const data = {};
         $.serialize(this, (name, value) => data[name] = value);
@@ -757,7 +772,9 @@ function FormComponent(){
 Custom elements can be registered with `$.customElement` to encapsulate some functionality. They have their own component tree and can be used by non-vKit applications.
 
 ```javascript
-$.customElement("hello-element", function({name}){
+const {Div, H1} = $.htmlTags;
+
+$.customElement("hello-element", function({name}) {
     name = $.defaultValue(name, "world");
     
     console.log("The <hello-element> is connected!");
@@ -765,8 +782,6 @@ $.customElement("hello-element", function({name}){
     $.onUnmount(() => {
         console.log("The <hello-element> is disconnected!");
     });
-    
-    const {Div, H1} = $.htmlTags;
     
     return $.shadow(
         H1("Hello ", name),
@@ -777,12 +792,14 @@ $.customElement("hello-element", function({name}){
 });
 
 const {Hello_Element, P} = $.htmlTags;
+
 const App = () => Hello_Element(
     $.attributes({
         name: "world"
     }),
     P("Some contents")
 );
+
 $(document.body).render(App);
 ```
 
@@ -793,7 +810,7 @@ Creating a component in another window (e.g. a tab or an iframe) is difficult be
 ```javascript
 const {Button, H1} = $.htmlTags;
 
-function NewWindowContent({close}){
+function NewWindowContent({close}) {
     return [
         H1("This is a new window"),
         Button("Close it", {
@@ -802,9 +819,9 @@ function NewWindowContent({close}){
     ];
 }
 
-function NewWindowOpener(){
+function NewWindowOpener() {
     return Button("Open new window", {
-        onclick(){
+        onclick() {
             const myWindow = window.open();
             
             $(myWindow.document.body).renderDetached(unmount => {
@@ -860,22 +877,22 @@ A cross-browser implementation of selection in input fields and textareas. It ca
 ```javascript
 const {Br, Button, Textarea} = $.htmlTags;
 
-function EditorComponent(){
+function EditorComponent() {
     let textarea;
     
     return $.html(
         Button("Insert tab", {
-            onclick(){
+            onclick() {
                 $(textarea).insertText("\t");
             }
         }),
         Button("Select first character", {
-            onclick(){
+            onclick() {
                 $(textarea).select(0, 1);
             }
         }),
         Button("Show selected text", {
-            onclick(){
+            onclick() {
                 const selection = $(textarea).selection();
                 console.log(
                     textarea.value.substring(
@@ -907,11 +924,11 @@ const lexer = $.lexer(rules);
 You can use it to scan your text input and generate tokens.
 
 ```javascript
-for(const token of lexer.scan("Hello world")){
+for (const token of lexer.scan("Hello world")) {
     if (token.type === "whitespace") {
         continue;
     }
-	
+    
     console.log(token);
 }
 ```
@@ -934,7 +951,7 @@ const outputMessage = $.parse(
     syntax,
     
     // How to apply a rule (optional)
-    function(expect, node, replacement){
+    function(expect, node, replacement) {
         if (expect === "EXPR") {
             if (node.type === "-") {
                 node.type = "negation";
@@ -1033,7 +1050,7 @@ Since the built-in `MediaRecorder` API has some problems, vKit provides an alter
 ```javascript
 const ctx = new AudioContext();
 
-async function recordMicrophone(){
+async function recordMicrophone() {
     const stream = await navigator.mediaDevices.getUserMedia({
         audio: true
     });
@@ -1042,8 +1059,8 @@ async function recordMicrophone(){
     const rec = $.audioRecorder(source);
     rec.start();
 
-    return async function(){
-        for(const track of stream.getTracks()){
+    return async function() {
+        for (const track of stream.getTracks()) {
             track.stop();
         }
         rec.stop();
