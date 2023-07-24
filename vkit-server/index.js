@@ -16,7 +16,6 @@ module.exports = {
 	queryParams: require("./queryParams.js"),
 	queryParamsState: require("./queryParamsState.js"),
 	render: require("./render.js"),
-	renderStyle: require("./renderStyle.js"),
 	router: require("./router.js"),
 	scope: require("./scope.js"),
 	state: require("./state.js"),
