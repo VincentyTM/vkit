@@ -9,4 +9,5 @@ module.exports = {
 	startBrowser: require("./startBrowser.js"),
 	watchDirectory: require("./watchDirectory.js")
 	sanitizePath: require("./sanitizePath"),
+	selectRoute: require("./selectRoute"),
 };
