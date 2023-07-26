@@ -12,27 +12,29 @@ var WindowService = $.windowService;
 
 function renderDetached(getView, parent){
 	var component = createComponent(function(){
-		var win = null;
-		
-		if( parent ){
-			var doc = parent.ownerDocument;
+		provide([WindowService], function(){
+			var win = null;
 			
-			if( doc ){
-				win = doc.defaultView || doc.parentWindow;
+			if( parent ){
+				var doc = parent.ownerDocument;
+				
+				if( doc ){
+					win = doc.defaultView || doc.parentWindow;
+				}
 			}
-		}
-		
-		if( win ){
-			inject(WindowService).window = win;
-		}
-		
-		var view = getView(function(){
-			emitUnmount(component);
-		}, component);
-		
-		if( parent ){
-			append(parent, view, parent, bind);
-		}
+			
+			if( win ){
+				inject(WindowService).window = win;
+			}
+			
+			var view = getView(function(){
+				emitUnmount(component);
+			}, component);
+			
+			if( parent ){
+				append(parent, view, parent, bind);
+			}
+		});
 	}, null, rootProvider);
 	
 	component.render();
