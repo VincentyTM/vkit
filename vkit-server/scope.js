@@ -50,6 +50,14 @@ function createScope(req, res){
 		return value;
 	}
 	
+	function meta(name, content){
+		return {
+			toHTML: function(res){
+				renderWindowData(res, "meta:" + content, content);
+			}
+		};
+	}
+	
 	function nextStyleCount(){
 		return ++styleCount;
 	}
@@ -82,6 +90,7 @@ function createScope(req, res){
 		addWindowData: addWindowData,
 		getStyles: getStyles,
 		getWindowData: getWindowData,
+		meta: meta,
 		nextStyleCount: nextStyleCount,
 		render: null,
 		req: req,
