@@ -1,3 +1,4 @@
+var escapeHTML = require("./escapeHTML");
 var scope = null;
 
 function replaceStyleEnds(text){
@@ -55,6 +56,10 @@ function createScope(req, res){
 	
 	function renderStyle(res){
 		res.write(getStyles());
+	}
+	
+	function renderWindowData(res, name, value){
+		res.write(escapeHTML(getWindowData(name, value)));
 	}
 	
 	function style(){
