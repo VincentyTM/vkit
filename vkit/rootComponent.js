@@ -1,7 +1,7 @@
 (function($){
 
 var createComponent = $.component;
-var createProvider = $.createProvider;
+var createProvider = $.provider;
 var rootComponent = $.rootComponent;
 
 var rootProvider = createProvider(null, null);

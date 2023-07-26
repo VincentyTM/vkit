@@ -130,8 +130,8 @@ function createProvider(parent, component){
 	return new Provider(parent, component);
 }
 
-$.createProvider = createProvider;
 $.inject = inject;
 $.provide = provide;
+$.provider = createProvider;
 
 })($);
