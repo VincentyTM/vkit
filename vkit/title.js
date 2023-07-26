@@ -54,7 +54,7 @@ function initTitleParts(windowService){
 	});
 }
 
-function addTitle(titlePart, dependencies){
+function addTitle(titlePart){
 	var windowService = inject(WindowService);
 	
 	if( titlePart === undefined ){
@@ -63,12 +63,8 @@ function addTitle(titlePart, dependencies){
 	
 	var titleParts = initTitleParts(windowService);
 	
-	if( dependencies ){
-		var n = dependencies.length;
-		
-		for(var i=0; i<n; ++i){
-			dependencies[i].subscribe(windowService.updateTitle);
-		}
+	if( titlePart && typeof titlePart.subscribe === "function" ){
+		titlePart.subscribe(titleService.updateTitle);
 	}
 	
 	titleParts.set(
