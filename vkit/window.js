@@ -3,11 +3,14 @@
 var bind = $.bind;
 var getComponent = $.getComponent;
 var getProvider = $.getProvider;
+var getContext = $.context;
 var inject = $.inject;
 
 function WindowService(){
 	this.component = getComponent();
 	this.provider = getProvider();
+	this.context = getContext();
+	this.data = null;
 	this.window = window;
 }
 
