@@ -88,8 +88,11 @@ Provider.prototype.registerService = function(service){
 	}
 };
 
-function inject(service){
-	var provider = getProvider();
+function inject(service, provider){
+	if(!provider){
+		provider = getProvider();
+	}
+	
 	var container = null;
 	
 	while(!(container = provider.getContainer(service)) && provider.parent){
