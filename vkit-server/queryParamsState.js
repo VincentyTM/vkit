@@ -1,6 +1,5 @@
 var createHistoryHandler = require("./history.js");
 var createQueryParams = require("./queryParams.js");
-var createState = require("./state.js");
 var url = require("./url.js");
 var scope = require("./scope.js");
 

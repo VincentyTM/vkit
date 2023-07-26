@@ -1,5 +1,6 @@
 module.exports = {
 	attributes: require("./attributes"),
+	computed: require("./signal").computed,
 	escapeHTML: require("./escapeHTML"),
 	history: require("./history"),
 	href: require("./href"),
@@ -17,7 +18,8 @@ module.exports = {
 	queryParamsState: require("./queryParamsState"),
 	router: require("./router"),
 	server: require("./server"),
-	state: require("./state"),
+	signal: require("./signal").writable,
+	state: require("./signal").writable,
 	style: require("./style"),
 	styledHtmlTag: require("./styledHtmlTag"),
 	theme: require("./theme"),
