@@ -23,7 +23,7 @@ module.exports = {
 	style: require("./style"),
 	styledHtmlTag: require("./styledHtmlTag"),
 	theme: require("./theme"),
-	toArray: require("./toArray")
+	title: require("./title"),
 	toArray: require("./toArray"),
 	window: require("./window")
 };
