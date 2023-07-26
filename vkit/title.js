@@ -28,40 +28,40 @@ function getTitle(parts, title){
 	return title;
 }
 
-function initTitleParts(windowService){
-	if( windowService.titleParts ){
-		return windowService.titleParts;
+function TitleService(){
+	var windowService = inject(WindowService);
+	var document = windowService.window.document;
+	var titleParts = createState([]);
+	var originalTitle = document.title;
+	
+	function updateTitle(){
+		document.title = getTitle(titleParts.get(), originalTitle);
 	}
 	
-	return windowService.run(function(){
-		var document = windowService.window.document;
-		var titleParts = createState([]);
-		var originalTitle = document.title;
-		
-		function updateTitle(){
-			document.title = getTitle(titleParts.get(), originalTitle);
-		}
-		
-		windowService.title = titleParts.map(function(parts){
-			return getTitle(parts, originalTitle);
-		});
-		windowService.titleParts = titleParts;
-		windowService.updateTitle = updateTitle;
-		
-		titleParts.effect(updateTitle);
-		
-		return titleParts;
+	this.title = titleParts.map(function(parts){
+		return getTitle(parts, originalTitle);
 	});
+	this.titleParts = titleParts;
+	this.updateTitle = updateTitle;
+	
+	titleParts.effect(updateTitle);
 }
 
 function addTitle(titlePart){
 	var windowService = inject(WindowService);
+	var titleService = windowService.titleService;
 	
-	if( titlePart === undefined ){
-		return windowService.title;
+	if(!titleService){
+		var provider = windowService.provider;
+		provider.registerService(TitleService);
+		titleService = inject(TitleService, provider);
 	}
 	
-	var titleParts = initTitleParts(windowService);
+	if( titlePart === undefined ){
+		return titleService.title;
+	}
+	
+	var titleParts = titleService.titleParts;
 	
 	if( titlePart && typeof titlePart.subscribe === "function" ){
 		titlePart.subscribe(titleService.updateTitle);
