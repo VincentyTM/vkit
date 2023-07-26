@@ -7,6 +7,7 @@ function replaceStyleEnds(text){
 function createScope(req, res){
 	var styles = [];
 	var styleCount = 0;
+	var windowData = {};
 	
 	function addStyle(css){
 		styles.push(css);
@@ -14,6 +15,30 @@ function createScope(req, res){
 	
 	function getStyles(){
 		return styles.join('\n').replace(/<\/style\b/ig, replaceStyleEnds);
+	}
+	
+	function getWindowData(name, value){
+		var parts = windowData[name];
+		
+		if( parts ){
+			var n = parts.length;
+			
+			for(var i=0; i<n; ++i){
+				var part = parts[i];
+				
+				if( part && typeof part.get === "function" ){
+					part = part.get();
+				}
+				
+				if( typeof part === "function" ){
+					value = part(value);
+				}else{
+					value = part;
+				}
+			}
+		}
+		
+		return value;
 	}
 	
 	function nextStyleCount(){
@@ -34,6 +59,7 @@ function createScope(req, res){
 	return {
 		addStyle: addStyle,
 		getStyles: getStyles,
+		getWindowData: getWindowData,
 		nextStyleCount: nextStyleCount,
 		render: null,
 		req: req,
