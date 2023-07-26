@@ -13,6 +13,14 @@ function createScope(req, res){
 		styles.push(css);
 	}
 	
+	function addWindowData(name, value){
+		if( windowData[name] ){
+			windowData[name].push(value);
+		}else{
+			windowData[name] = [value];
+		}
+	}
+	
 	function getStyles(){
 		return styles.join('\n').replace(/<\/style\b/ig, replaceStyleEnds);
 	}
@@ -58,6 +66,7 @@ function createScope(req, res){
 	
 	return {
 		addStyle: addStyle,
+		addWindowData: addWindowData,
 		getStyles: getStyles,
 		getWindowData: getWindowData,
 		nextStyleCount: nextStyleCount,
