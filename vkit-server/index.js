@@ -10,6 +10,7 @@ module.exports = {
 	htmlTags: require("./htmlTags"),
 	inject: require("./inject").inject,
 	navigate: require("./navigate"),
+	noop: require("./noop"),
 	observable: require("./observable"),
 	param: require("./param"),
 	path: require("./path"),
