@@ -22,4 +22,6 @@ module.exports = {
 	styledHtmlTag: require("./styledHtmlTag"),
 	theme: require("./theme"),
 	toArray: require("./toArray")
+	toArray: require("./toArray"),
+	window: require("./window")
 };
