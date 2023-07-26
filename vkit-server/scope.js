@@ -69,6 +69,14 @@ function createScope(req, res){
 		};
 	}
 	
+	function title(value){
+		return {
+			toHTML: function(res){
+				renderWindowData(res, "title", value);
+			}
+		};
+	}
+	
 	return {
 		addStyle: addStyle,
 		addWindowData: addWindowData,
@@ -78,7 +86,8 @@ function createScope(req, res){
 		render: null,
 		req: req,
 		res: res,
-		style: style
+		style: style,
+		title: title
 	};
 }
 
