@@ -1,7 +1,10 @@
+var noop = require("./noop");
+
 module.exports = {
 	attributes: require("./attributes"),
 	await: require("./await"),
 	computed: require("./signal").computed,
+	effect: noop,
 	escapeHTML: require("./escapeHTML"),
 	history: require("./history"),
 	href: require("./href"),
@@ -11,7 +14,7 @@ module.exports = {
 	htmlTags: require("./htmlTags"),
 	inject: require("./inject").inject,
 	navigate: require("./navigate"),
-	noop: require("./noop"),
+	noop,
 	observable: require("./observable"),
 	param: require("./param"),
 	path: require("./path"),
