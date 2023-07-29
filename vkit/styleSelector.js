@@ -4,7 +4,7 @@ var createEffect = $.effect;
 var unmount = $.unmount;
 var count = 0;
 
-function createSelector(attr, attrValue){
+function createStyleSelector(attr, attrValue){
 	if(!attr){
 		attr = "vkit-selector" + (++count);
 	}
@@ -40,6 +40,6 @@ function createSelector(attr, attrValue){
 	return directive;
 }
 
-$.selector = createSelector;
+$.styleSelector = createStyleSelector;
 
 })($);
