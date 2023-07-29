@@ -26,7 +26,8 @@ function update(){
 	var n;
 	
 	while( n = queue.length ){
-		var updates = queue.splice(0, n);
+		var updates = queue;
+		queue = [];
 		
 		for(var i=0; i<n; ++i){
 			updates[i]();
