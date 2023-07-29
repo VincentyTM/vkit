@@ -1,17 +1,22 @@
 (function($){
 
+var createNodeRange = $.nodeRange;
 var view = $.view;
 var htmlTag = $.htmlTag;
 
 function wrap(getWrapper, contents){
+	var range = createNodeRange();
+	
 	function getView(wrapper){
 		if( typeof wrapper === "function" ){
-			return wrapper.apply(null, contents);
+			return wrapper(range);
 		}
+		
 		if( typeof wrapper === "string" ){
-			return htmlTag(wrapper)(contents);
+			return htmlTag(wrapper)(range);
 		}
-		return contents;
+		
+		return [range.start, contents, range.end];
 	}
 	
 	return getWrapper.view ? getWrapper.view(getView) : view(getWrapper, getView);
