@@ -45,6 +45,22 @@ function awaitPromise(promiseOrSignal){
 	
 	var output = result.map();
 	
+	output.then = function(fulfilled, rejected, pending){
+		return output.view(function(data){
+			if( data.fulfilled && typeof fulfilled === "function" ){
+				return fulfilled(data.value);
+			}
+			
+			if( data.rejected && typeof rejected === "function" ){
+				return rejected(data.error);
+			}
+			
+			if( data.pending && typeof pending === "function" ){
+				return pending();
+			}
+		});
+	};
+	
 	return output;
 }
 
