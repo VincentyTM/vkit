@@ -1,5 +1,6 @@
 module.exports = {
 	attributes: require("./attributes"),
+	await: require("./await"),
 	computed: require("./signal").computed,
 	escapeHTML: require("./escapeHTML"),
 	history: require("./history"),
