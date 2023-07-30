@@ -1,56 +1,79 @@
 (function($){
 
-var createState = $.state;
-var map = $.fn.map;
+var createComputedSignal = $.computed;
+var createSignal = $.signal;
 
-function useKey(arrayState, getKey){
+function getKeys(result){
+	return result.keys;
+}
+
+function getRecords(result){
+	return result.records;
+}
+
+function useKey(arraySignal, getKey, transformValue){
 	var isFunction = typeof getKey === "function";
-	var recordsState = createState({});
-	var keysState = arrayState.map(function(array){
+	
+	var signal = arraySignal.map(function(array){
 		var records = {};
 		var n = array ? array.length : 0;
 		var keys = new Array(n);
+		
 		for(var i=0; i<n; ++i){
 			var value = array[i];
 			var key = isFunction ? getKey(value) : value[getKey];
+			
 			if( key in records ){
 				throw new TypeError("Key '" + key + "' is not unique");
 			}
+			
 			records[key] = value;
 			keys[i] = key;
 		}
-		recordsState.set(records);
-		return keys;
+		
+		return {
+			keys: keys,
+			records: records
+		};
 	});
 	
-	function select(key, factory){
-		var state = key.map ? map.call([recordsState, key], function(records, key){
-			return records[key];
-		}) : recordsState.map(function(records){
-			return records[key];
+	var keysSignal = signal.map(getKeys);
+	
+	function select(key){
+		var selected = createComputedSignal(function(){
+			var k = key && typeof key.get === "function" ? key.get() : key;
+			return signal.get().records[k];
 		});
-		if( typeof arrayState.item === "function" ){
-			arrayState.item(state, factory);
+		
+		if( key && typeof key.subscribe === "function" ){
+			key.subscribe(selected.update);
 		}
-		state.key = key;
-		return state;
+		
+		signal.subscribe(selected.update);
+		selected.key = key;
+		
+		if( typeof transformValue === "function" ){
+			selected = transformValue(selected);
+		}
+		
+		return selected;
 	}
 	
-	function getStateViews(getView, factory){
-		return keysState.views(function(key){
-			return getView(select(key, factory));
+	function views(getView){
+		return keysSignal.views(function(key){
+			return getView(select(key));
 		});
 	}
 	
 	function getItem(key){
-		return recordsState.get()[key];
+		return signal.get().records[key];
 	}
 	
 	return {
+		getItem: getItem,
+		records: signal.map(getRecords),
 		select: select,
-		views: getStateViews,
-		records: recordsState,
-		getItem: getItem
+		views: views
 	};
 }
 
