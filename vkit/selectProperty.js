@@ -9,11 +9,16 @@ var onChange = $.onChange;
 var setComponent = $.setComponent;
 var unmount = $.unmount;
 
+function select(key, factory){
+	return selectProperty(this, key, factory);
+}
+
 function selectProperty(parent, key, factory){
 	if( key === undefined || key === null ){
 		if( typeof Proxy !== "function" ){
 			throw new ReferenceError("Proxy is not supported in your browser!");
 		}
+		
 		return new Proxy({}, {
 			get: function(target, key, receiver){
 				return selectProperty(parent, key);
@@ -23,6 +28,7 @@ function selectProperty(parent, key, factory){
 	
 	if(!parent.substores){
 		parent.substores = {};
+		parent.select = select;
 	}
 	
 	var substore = parent.substores[key];
