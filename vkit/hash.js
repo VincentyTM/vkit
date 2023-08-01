@@ -1,7 +1,7 @@
 (function($){
 
 var createHistoryHandler = $.history;
-var createState = $.state;
+var createSignal = $.signal;
 var getWindow = $.window;
 var onEvent = $.onEvent;
 var unmount = $.unmount;
@@ -11,38 +11,38 @@ function getHash(url){
 	return pos === -1 ? "" : url.substring(pos + 1);
 }
 
-function createHashState(win){
+function createHashSignal(win){
 	if(!win){
 		win = getWindow();
 	}
 	
 	var location = win.location;
-	var state = createState(decodeURIComponent(location.hash.substring(1)));
+	var signal = createSignal(decodeURIComponent(location.hash.substring(1)));
 	var history = createHistoryHandler(win);
 	
-	history.url().map(getHash).pipe(state);
+	history.url().map(getHash).pipe(signal);
 	
-	state.subscribe(function(value){
+	signal.subscribe(function(value){
 		location.replace("#" + encodeURIComponent(value));
 	});
 	
 	unmount(
 		onEvent(win, "hashchange", function(){
-			state.set(decodeURIComponent(location.hash.substring(1)));
+			signal.set(decodeURIComponent(location.hash.substring(1)));
 		})
 	);
 	
-	state.push = function(value){
+	signal.push = function(value){
 		location.assign("#" + encodeURIComponent(value));
 	};
 	
-	state.replace = function(value){
+	signal.replace = function(value){
 		history.replace("#" + value);
 	};
 	
-	return state;
+	return signal;
 }
 
-$.hashState = createHashState;
+$.hash = createHashSignal;
 
 })($);
