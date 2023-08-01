@@ -70,6 +70,7 @@ function useKey(arraySignal, getKey, transformValue){
 	}
 	
 	return {
+		array: arraySignal,
 		getItem: getItem,
 		records: signal.map(getRecords),
 		select: select,
