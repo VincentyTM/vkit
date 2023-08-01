@@ -9,7 +9,7 @@ function createFileReader(input, options){
 		reader.abort();
 	}
 	
-	function update(value){
+	function updateOutput(value){
 		abort();
 		
 		if( value ){
@@ -70,9 +70,9 @@ function createFileReader(input, options){
 	};
 	
 	if( input && typeof input.effect === "function" ){
-		input.effect(update);
+		input.effect(updateOutput);
 	}else{
-		update(input);
+		updateOutput(input);
 	}
 	
 	var unsubscribe = options && typeof options.aborter === "function"
