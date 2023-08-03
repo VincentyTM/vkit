@@ -3,7 +3,7 @@
 var animate = $.animate;
 var update = $.update;
 
-function animateState(state, duration, options){
+function animateValue(signal, duration, options){
 	var easing = options ? options.easing : null;
 	var blocking = options ? options.blocking : false;
 	var animation = null;
@@ -19,7 +19,7 @@ function animateState(state, duration, options){
 			animation = null;
 		}
 		
-		var oldValue = state.get();
+		var oldValue = signal.get();
 		var currT = lastT;
 		
 		animation = animate(function(t){
@@ -30,10 +30,10 @@ function animateState(state, duration, options){
 					t = easing(t);
 				}
 				
-				state.set(oldValue * (1 - t) + value * t);
+				signal.set(oldValue * (1 - t) + value * t);
 			}else{
 				lastT = 0;
-				state.set(value);
+				signal.set(value);
 				animation = null;
 			}
 			
@@ -42,21 +42,21 @@ function animateState(state, duration, options){
 	}
 	
 	function add(value){
-		set(state.get() + value);
+		set(signal.get() + value);
 	}
 	
 	function apply(func){
-		set(func(state.get()));
+		set(func(signal.get()));
 	}
 	
 	return {
 		set: set,
 		add: add,
 		apply: apply,
-		state: state
+		value: signal
 	};
 }
 
-$.animateState = animateState;
+$.animateValue = animateValue;
 
 })($);
