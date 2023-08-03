@@ -1,6 +1,6 @@
 (function($, undefined){
 
-var createStorageState = $.storageState;
+var useStorage = $.storage;
 
 function createStorageSelector(storage, path){
 	function get(){
@@ -34,7 +34,7 @@ function createStorageSelector(storage, path){
 	}
 	
 	function createState(win){
-		return createStorageState(storage, path, win);
+		return useStorage(storage, path, win);
 	}
 	
 	return {
