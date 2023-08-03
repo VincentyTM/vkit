@@ -1,9 +1,9 @@
 (function($){
 
 var validate = $.validate;
-var createState = $.state;
+var createSignal = $.signal;
 
-function createTypedState(type, initialValue, transform){
+function createTypedSignal(type, initialValue, transform){
 	if(!validate(type, initialValue)){
 		throw new TypeError("Validation failed.");
 	}
@@ -25,16 +25,18 @@ function createTypedState(type, initialValue, transform){
 			value = transform(value);
 		}
 		
-		set.call(state, value);
+		set.call(signal, value);
 	}
 	
-	var state = createState(initialValue);
-	var set = state.set;
-	state.set = setValue;
-	state.validate = validateValue;
-	return state;
+	var signal = createSignal(initialValue);
+	var set = signal.set;
+	
+	signal.set = setValue;
+	signal.validate = validateValue;
+	
+	return signal;
 }
 
-$.typedState = createTypedState;
+$.typed = createTypedSignal;
 
 })($);
