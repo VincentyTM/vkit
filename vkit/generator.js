@@ -1,18 +1,18 @@
 (function($, undefined){
 
 var createObservable = $.observable;
-var createState = $.state;
+var createSignal = $.signal;
 var getComponent = $.getComponent;
+var onUnmount = $.unmount;
 var setComponent = $.setComponent;
-var unmount = $.unmount;
 var update = $.update;
 
-function createGeneratorState(generator, updater){
+function createGeneratorSignal(generator, updater){
 	function next(){
 		var current = generator.next();
 		if( current && typeof current.then === "function" ){
 			current.then(function(curr){
-				state.set(curr.value);
+				signal.set(curr.value);
 				cleanup();
 				cleanup.clear();
 				
@@ -24,7 +24,7 @@ function createGeneratorState(generator, updater){
 			});
 		}else{
 			if(!current.done || current.value !== undefined){
-				state.set(current.value);
+				signal.set(current.value);
 			}
 		}
 	}
@@ -32,25 +32,29 @@ function createGeneratorState(generator, updater){
 	if( typeof generator === "function" ){
 		return function(){
 			function cleanup(callback){
-				state.unmount(callback);
+				signal.unmount(callback);
 			}
 			
-			var state = createGeneratorState(generator.apply({unmount: cleanup}, arguments));
+			var signal = createGeneratorSignal(generator.apply(
+				{unmount: cleanup},
+				arguments
+			));
 			
-			return state;
+			return signal;
 		};
 	}
 	
 	var cleanup = createObservable();
 	var autoNext = typeof updater !== "function";
 	var prev = getComponent();
+	var signal = createSignal();
+	
 	setComponent(null);
-	var state = createState();
 	next();
 	setComponent(prev);
 	
 	if( autoNext ){
-		unmount(function(){
+		onUnmount(function(){
 			autoNext = false;
 			cleanup();
 		});
@@ -63,6 +67,6 @@ function createGeneratorState(generator, updater){
 	return state;
 }
 
-$.generatorState = createGeneratorState;
+$.generator = createGeneratorSignal;
 
 })($);
