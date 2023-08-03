@@ -110,8 +110,13 @@ function inject(service, provider){
 
 function provide(services, getView){
 	var component = getComponent();
-	var prevProvider = getProvider();
-	var provider = new Provider(services ? prevProvider : null, component);
+	var prevProvider = null;
+	
+	if( services ){
+		prevProvider = getProvider();
+	}
+	
+	var provider = new Provider(prevProvider, component);
 	
 	if( services ){
 		var n = services.length;
