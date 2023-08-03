@@ -82,6 +82,10 @@ function createCustomElement(name, getView, options){
 	};
 	
 	proto.disconnectedCallback = function(){
+		if( this.shadowRoot ){
+			empty(this.shadowRoot);
+		}
+		
 		empty(this);
 		emitUnmount(this.component);
 		update();
