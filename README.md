@@ -624,6 +624,11 @@ And when you no longer need to be subscribed, be sure to unsubscribe. Not doing 
 $.onUnmount(unsubscribe);
 ```
 
+An observable can be called like any function. When this happens, all of its subscribers are called with the same arguments. The observable has no return value.
+```javascript
+saveFile(file);
+```
+
 You can also unsubscribe all subscribers with the `clear` method.
 
 ```javascript
@@ -632,10 +637,10 @@ saveFile.clear();
 
 ## Routing
 
-Any signal can be used to provide the current path of the application. For instance, vKit has a `hashState` factory function which can be used for hash based routing. Since `hashState` is a signal, you can create a view from it.
+Any signal can be used to provide the current path of the application. For instance, vKit has a `$.hash` factory function which can be used for hash based routing. Since its return value is a signal, you can create a view from it.
 
 ```javascript
-$.hashState().view((path) => {
+$.hash().view((path) => {
     switch(path) {
         case "": return HomeComponent();
         case "about": return AboutComponent();
@@ -648,7 +653,7 @@ vKit provides a `router` function to implement more sophisticated routing.
 
 ```javascript
 function App() {
-    const router = $.router($.hashState(), [
+    const router = $.router($.hash(), [
         {
             path: "",
             component: HomeComponent
