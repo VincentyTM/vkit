@@ -7,7 +7,16 @@ var selectProperty = $.selectProperty;
 function selectMethod(parent, name, args, dependencies){
 	var signal = computed(function(){
 		var value = parent.get();
-		return value && value[name].apply(value, arguments);
+		
+		if(!value){
+			return;
+		}
+		
+		if( typeof value[name] !== "function" ){
+			throw new TypeError(name + " is not a function");
+		}
+		
+		return value[name].apply(value, arguments);
 	}, args);
 	
 	var m = dependencies.length;
