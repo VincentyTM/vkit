@@ -1,12 +1,11 @@
 (function($, document){
 
-function createStyleSheet(doc){
-	if(!doc) doc = document;
-	var style = doc.createElement("style");
+function createStyleSheet(){
+	var style = document.createElement("style");
 	var textNode = null;
 	
 	try{
-		textNode = doc.createTextNode("");
+		textNode = document.createTextNode("");
 		style.appendChild(textNode);
 	}catch(ex){}
 	
@@ -56,8 +55,8 @@ function createStyleController(name, updateStyle){
 	};
 }
 
-function createStyleContainer(doc){
-	var style = createStyleSheet(doc);
+function createStyleContainer(){
+	var style = createStyleSheet();
 	var controllers = {};
 	var controllersArray = [];
 	
@@ -67,19 +66,25 @@ function createStyleContainer(doc){
 	
 	function add(name){
 		var controller = controllers[name];
+		
 		if( controller ){
 			controller.addRef();
 			return controller;
 		}
+		
 		var controller = controllers[name] = createStyleController(name, updateStyle);
+		
 		controllersArray.push(controller);
+		
 		return controller;
 	}
 	
 	function remove(name){
 		var controller = controllers[name];
+		
 		if( controller && controller.removeRef() ){
 			delete controllers[name];
+			
 			for(var i=controllersArray.length; i--;){
 				if( controllersArray[i].name === name ){
 					controllersArray.splice(i, 1);
@@ -88,9 +93,11 @@ function createStyleContainer(doc){
 				}
 			}
 		}
+		
 		for(var k in controllers){
 			return false;
 		}
+		
 		return true;
 	}
 	
