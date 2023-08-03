@@ -28,7 +28,6 @@ function selectProperty(parent, key, factory){
 	
 	if(!parent.substores){
 		parent.substores = {};
-		parent.select = select;
 	}
 	
 	var substore = parent.substores[key];
@@ -48,6 +47,8 @@ function selectProperty(parent, key, factory){
 				object[key] = value;
 			}
 		}
+		
+		child.select = select;
 		
 		var cleanup = createObservable();
 		
