@@ -1,7 +1,7 @@
 (function($){
 
 var createSignal = $.signal;
-var getWindow = $.getWindow;
+var getWindow = $.window;
 var onUnmount = $.unmount;
 var update = $.update;
 
