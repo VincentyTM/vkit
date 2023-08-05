@@ -1,16 +1,16 @@
-(function($, window, undefined){
+(function($, undefined){
 
-var createState = $.state;
+var createSignal = $.signal;
+var getWindow = $.window;
 var onEvent = $.onEvent;
-var unmount = $.unmount;
-var update = $.update;
+var onUnmount = $.unmount;
 
 function createUpdatePrompt(serviceWorker, message, win){
 	if(!win){
-		win = window;
+		win = getWindow();
 	}
 	
-	var updatePrompt = createState(null);
+	var updatePrompt = createSignal(null);
 	var refreshing = false;
 	
 	function reset(){
@@ -18,7 +18,7 @@ function createUpdatePrompt(serviceWorker, message, win){
 	}
 	
 	function showPrompt(reg){
-		function update(){
+		function accept(){
 			updatePrompt.set(null);
 			
 			if( reg.waiting ){
@@ -33,14 +33,13 @@ function createUpdatePrompt(serviceWorker, message, win){
 		}
 		
 		updatePrompt.set({
-			accept: update,
+			accept: accept,
 			deny: reset
 		});
-		update();
 	}
 	
 	if( win.navigator.serviceWorker ){
-		unmount(
+		onUnmount(
 			onEvent(win.navigator.serviceWorker, "controllerchange", function(){
 				if(!refreshing){
 					refreshing = true;
@@ -50,14 +49,14 @@ function createUpdatePrompt(serviceWorker, message, win){
 		);
 	}
 	
-	serviceWorker.effect(function(reg, cleanup){
+	serviceWorker.effect(function(reg, onCleanup){
 		if(!reg){
 			return;
 		}
 		
 		function awaitStateChange(){
 			if( reg.installing ){
-				cleanup(
+				onCleanup(
 					onEvent(reg.installing, "statechange", function(){
 						if( this.state === "installed" ){
 							showPrompt(reg);
@@ -74,7 +73,7 @@ function createUpdatePrompt(serviceWorker, message, win){
 				awaitStateChange();
 			}
 			
-			cleanup(
+			onCleanup(
 				onEvent(reg, "updatefound", awaitStateChange)
 			);
 		}
@@ -85,4 +84,4 @@ function createUpdatePrompt(serviceWorker, message, win){
 
 $.updatePrompt = createUpdatePrompt;
 
-})($, window);
+})($);
