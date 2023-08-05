@@ -58,9 +58,11 @@ function createComputedSignal(getValue, inputs){
 	}
 	
 	function use(){
+		var value = get();
+		
 		subscribe(getComponent().render);
 		
-		return get();
+		return value;
 	}
 	
 	function get(){
