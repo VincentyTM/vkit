@@ -1,13 +1,14 @@
-(function($, window){
+(function($){
 
-var createState = $.state;
+var createSignal = $.signal;
+var getWindow = $.window;
 var onEvent = $.onEvent;
-var unmount = $.unmount;
+var onUnmount = $.unmount;
 var update = $.update;
 
 function createInstallPrompt(win){
 	if(!win){
-		win = window;
+		win = getWindow();
 	}
 	
 	var isAppInstalled = (
@@ -15,8 +16,9 @@ function createInstallPrompt(win){
 		(win.matchMedia && win.matchMedia("(display-mode: standalone) or (display-mode: fullscreen) or (display-mode: minimal-ui)").matches) ||
 		win.document.referrer.indexOf("android-app://") > -1
 	);
-	var installPrompt = createState(null);
-	var result = createState(isAppInstalled ? "installed" : "default");
+	
+	var installPrompt = createSignal(null);
+	var result = createSignal(isAppInstalled ? "installed" : "default");
 	
 	function beforeInstall(e){
 		e.preventDefault();
@@ -27,7 +29,6 @@ function createInstallPrompt(win){
 			},
 			deny: deny
 		});
-		update();
 	}
 	
 	function setChoice(choiceResult){
@@ -38,7 +39,6 @@ function createInstallPrompt(win){
 	
 	function appInstalled(){
 		result.set("installed");
-		update();
 	}
 	
 	function deny(){
@@ -46,14 +46,16 @@ function createInstallPrompt(win){
 		result.set("dismissed");
 	}
 	
-	unmount(onEvent(win, "beforeinstallprompt", beforeInstall));
-	unmount(onEvent(win, "appinstalled", appInstalled));
+	onUnmount(onEvent(win, "beforeinstallprompt", beforeInstall));
+	onUnmount(onEvent(win, "appinstalled", appInstalled));
 	
 	var installPromptState = installPrompt.map();
+	
 	installPromptState.result = result.map();
+	
 	return installPromptState;
 }
 
 $.installPrompt = createInstallPrompt;
 
-})($, window);
+})($);
