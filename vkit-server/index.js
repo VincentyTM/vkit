@@ -26,6 +26,7 @@ module.exports = {
 	noop,
 	observable: require("./observable"),
 	param: require("./param"),
+	params: require("./params"),
 	path: require("./path"),
 	provide: require("./inject").provide,
 	queryParams: require("./queryParams"),
