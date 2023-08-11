@@ -1,35 +1,37 @@
-(function($, undefined){
+(function($){
 
-var unmount = $.unmount;
-var createState = $.state;
-var onChange = $.onChange;
+var createObservable = $.observable;
 
 function observe(obj, prop){
-	if( prop === undefined ){
-		if( typeof Proxy !== "function" ){
-			throw new ReferenceError("Proxy is not supported in your browser!");
-		}
-		return new Proxy({}, {
-			get: function(target, prop, receiver){
-				return observe(obj, prop);
+	var desc = Object.getOwnPropertyDescriptor(obj, prop);
+	
+	if(!desc){
+		return null;
+	}
+	
+	if( desc.get && desc.get.emitChange ){
+		return desc.get.emitChange;
+	}
+	
+	var value = obj[prop];
+	
+	function get(){
+		return value;
+	}
+	
+	get.emitChange = createObservable();
+	
+	Object.defineProperty(obj, prop, {
+		get: get,
+		set: function(v){
+			if( value !== v ){
+				value = v;
+				get.emitChange(v);
 			}
-		});
-	}
-	var observable = onChange(obj, prop);
-	if(!observable){
-		throw new ReferenceError("Property '" + prop + "' does not exist!");
-	}
-	var state = createState(obj[prop]);
-	var set = state.set;
-	state.set = function(value){
-		obj[prop] = value;
-	};
-	unmount(
-		observable.subscribe(function(value){
-			set.call(state, value);
-		})
-	);
-	return state;
+		}
+	});
+	
+	return get.emitChange;
 }
 
 $.observe = observe;

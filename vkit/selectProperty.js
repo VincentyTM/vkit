@@ -5,7 +5,7 @@ var createObservable = $.observable;
 var createSignal = $.signal;
 var getComponent = $.getComponent;
 var isArray = $.isArray;
-var onChange = $.onChange;
+var observe = $.observe;
 var setComponent = $.setComponent;
 var unmount = $.unmount;
 
@@ -54,7 +54,7 @@ function selectProperty(parent, key, factory){
 		
 		function addChangeHandler(object, i){
 			cleanup.subscribe(
-				onChange(object, key).subscribe(function(value){
+				observe(object, key).subscribe(function(value){
 					var values = child.get();
 					child.set(values.slice(0, i).concat([value]).concat(values.slice(i + 1)));
 				})
@@ -81,7 +81,7 @@ function selectProperty(parent, key, factory){
 			if( isArray(object) ){
 				child.set(addChangeHandlers(object));
 			}else if( object ){
-				var observable = onChange(object, key);
+				var observable = observe(object, key);
 				
 				if(!observable){
 					throw new ReferenceError("Property '" + key + "' does not exist");
