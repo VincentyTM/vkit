@@ -1,3 +1,4 @@
+var languageService = require("./languageService");
 var noop = require("./noop");
 
 module.exports = {
@@ -6,6 +7,7 @@ module.exports = {
 	computed: require("./signal").computed,
 	classes: require("./classes"),
 	classNames: require("./classNames"),
+	define: languageService.define,
 	effect: noop,
 	escapeHTML: require("./escapeHTML"),
 	history: require("./history"),
@@ -17,6 +19,8 @@ module.exports = {
 	inject: require("./inject").inject,
 	http: require("./http"),
 	ifElse: require("./ifElse"),
+	lang: languageService.lang,
+	languageService: languageService.languageService,
 	navigate: require("./navigate"),
 	noop,
 	observable: require("./observable"),
@@ -34,5 +38,6 @@ module.exports = {
 	theme: require("./theme"),
 	title: require("./title"),
 	toArray: require("./toArray"),
-	window: require("./window")
+	window: require("./window"),
+	word: languageService.word
 };
