@@ -38,6 +38,7 @@ module.exports = {
 	signal: require("./signal").writable,
 	state: require("./signal").writable,
 	shuffle: require("./shuffle"),
+	string: require("./string"),
 	style: require("./style"),
 	styledHtmlTag: require("./styledHtmlTag"),
 	theme: require("./theme"),
