@@ -30,6 +30,7 @@ module.exports = {
 	path: require("./path"),
 	provide: require("./inject").provide,
 	preferredLanguages: require("./preferredLanguages"),
+	preload: require("./preload"),
 	queryParams: require("./queryParams"),
 	queryParamsState: require("./queryParamsState"),
 	router: require("./router"),
