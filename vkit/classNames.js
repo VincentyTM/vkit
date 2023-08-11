@@ -1,61 +1,41 @@
 (function($){
 
-var createObservable = $.observable;
-var createState = $.state;
-var effect = $.effect;
+var computed = $.computed;
 
-function classNames(map){
-	function getValue(){
+function classNames(classes){
+	var signal = computed(function(){
 		var array = [];
 		
-		for(var cname in map){
-			if( get(map[cname]) ){
+		for(var cname in classes){
+			var val = classes[cname];
+			
+			if( val && typeof val.get === "function" ){
+				if( val.get() ){
+					array.push(cname);
+				}
+			}else if( typeof val === "function" ){
+				if( val() ){
+					array.push(cname);
+				}
+			}else if( val ){
 				array.push(cname);
 			}
 		}
 		
 		return array.join(" ");
-	}
+	});
 	
-	function get(value){
-		if( value && typeof value.get === "function" ){
-			return value.get();
-		}
+	var update = signal.update;
+	
+	for(var cname in classes){
+		var val = classes[cname];
 		
-		if( typeof value === "function" ){
-			return value();
-		}
-		
-		return value;
-	}
-	
-	var state = createState(getValue());
-	
-	function updateValue(){
-		state.set(getValue());
-	}
-	
-	var unsubscribe = createObservable();
-	var hasEffect = false;
-	var autoUnsubscribe = false;
-	
-	state.unsubscribe = unsubscribe;
-	
-	for(var cname in map){
-		var value = map[cname];
-		
-		if( value && typeof value.subscribe === "function" ){
-			value.subscribe(updateValue);
-		}else if( typeof value === "function" ){
-			hasEffect = true;
+		if( val && typeof val.subscribe === "function" ){
+			val.subscribe(update);
 		}
 	}
 	
-	if( hasEffect ){
-		effect(updateValue);
-	}
-	
-	return state;
+	return signal;
 }
 
 $.classNames = classNames;
