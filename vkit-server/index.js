@@ -41,6 +41,7 @@ module.exports = {
 	string: require("./string"),
 	style: require("./style"),
 	styledHtmlTag: require("./styledHtmlTag"),
+	text: require("./text"),
 	theme: require("./theme"),
 	title: require("./title"),
 	toArray: require("./toArray"),
