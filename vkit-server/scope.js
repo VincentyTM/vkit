@@ -8,10 +8,14 @@ function replaceStyleEnds(text){
 function createScope(req, res){
 	var styles = [];
 	var styleCount = 0;
+	var styleKeys = {};
 	var windowData = {};
 	
-	function addStyle(css){
-		styles.push(css);
+	function addStyle(key, css){
+		if(!(key in styleKeys)){
+			styleKeys[key] = true;
+			styles.push(css);
+		}
 	}
 	
 	function addWindowData(name, value){

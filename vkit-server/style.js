@@ -14,6 +14,7 @@ function style(css, attr){
 	
 	function bind(el){
 		scope.get().addStyle(
+			attr,
 			prepareCSS(
 				css && typeof css.get === "function" ? css.get() : css,
 				selector
