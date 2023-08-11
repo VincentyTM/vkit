@@ -29,6 +29,7 @@ module.exports = {
 	params: require("./params"),
 	path: require("./path"),
 	provide: require("./inject").provide,
+	preferredLanguages: require("./preferredLanguages"),
 	queryParams: require("./queryParams"),
 	queryParamsState: require("./queryParamsState"),
 	router: require("./router"),
