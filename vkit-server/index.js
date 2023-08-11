@@ -4,6 +4,7 @@ module.exports = {
 	attributes: require("./attributes"),
 	await: require("./await"),
 	computed: require("./signal").computed,
+	classes: require("./classes"),
 	classNames: require("./classNames"),
 	effect: noop,
 	escapeHTML: require("./escapeHTML"),
