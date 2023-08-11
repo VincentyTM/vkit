@@ -24,16 +24,16 @@ function addAttribute(el, name, value){
 	
 	if( typeof value === "string" ){
 		el.setAttribute(name, value);
+	}else if( value && typeof value.effect === "function" ){
+		value.effect(function(val){
+			setAttribute(el, name, val);
+		});
 	}else if( typeof value === "function" ){
 		function setValue(){
 			setAttribute(el, name, value());
 		}
 		
 		createComponent(setValue).render();
-	}else if( value && typeof value.effect === "function" ){
-		value.effect(function(val){
-			setAttribute(el, name, val);
-		});
 	}else if( value ){
 		el.setAttribute(name, "");
 	}else{

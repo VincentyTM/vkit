@@ -2,6 +2,7 @@ function setAttribute(el, name, value){
 	if( typeof value === "number" ){
 		value = value.toString();
 	}
+	
 	if( typeof value === "string" ){
 		el.setAttribute(name, value);
 	}else if( value ){
@@ -15,16 +16,13 @@ function bindAttribute(el, name, value){
 	if( typeof value === "number" ){
 		value = value.toString();
 	}
+	
 	if( typeof value === "string" ){
 		el.setAttribute(name, value);
+	}else if( value && typeof value.get === "function" ){
+		setAttribute(el, name, value.get());
 	}else if( typeof value === "function" ){
-		throw new Error("Cannot set dynamic attribute (" + name + ") on the server");
-	}else if( value && typeof value.effect === "function" ){
-		if( typeof value.get === "function" ){
-			setAttribute(el, name, value.get());
-		}else{
-			throw new Error("Cannot call effect without get method");
-		}
+		setAttribute(el, name, value());
 	}else if( value ){
 		el.setAttribute(name, "");
 	}else{
