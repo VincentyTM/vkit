@@ -37,6 +37,7 @@ module.exports = {
 	server: require("./server"),
 	signal: require("./signal").writable,
 	state: require("./signal").writable,
+	shuffle: require("./shuffle"),
 	style: require("./style"),
 	styledHtmlTag: require("./styledHtmlTag"),
 	theme: require("./theme"),
