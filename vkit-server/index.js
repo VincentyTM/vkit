@@ -21,6 +21,7 @@ module.exports = {
 	ifElse: require("./ifElse"),
 	lang: languageService.lang,
 	languageService: languageService.languageService,
+	lazy: require("./lazy"),
 	navigate: require("./navigate"),
 	noop,
 	observable: require("./observable"),
