@@ -68,6 +68,10 @@ function createStyle(css, attr){
 		var container = null;
 		var controller = null;
 		
+		if(!el || !el.nodeType){
+			throw new Error("Style can only be added to a DOM node");
+		}
+		
 		tick(function(){
 			container = getStyleContainer(el);
 			controller = container.add(selector);
