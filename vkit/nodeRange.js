@@ -1,5 +1,6 @@
 (function($, document){
 
+var bind = $.bind;
 var insert = $.insert;
 var removeNode = $.remove;
 
@@ -32,7 +33,7 @@ function createNodeRange(){
 			throw new Error("Cannot append to detached range");
 		}
 		
-		insert(arguments, end);
+		insert(arguments, end, start.parentNode, bind);
 	}
 	
 	function insertBefore(anchor){
