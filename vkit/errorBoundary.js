@@ -16,7 +16,6 @@ function errorBoundary(component, fallback){
 		onError(function(err){
 			error = err;
 			failed.set(true);
-			render();
 		});
 		
 		try{
@@ -24,7 +23,6 @@ function errorBoundary(component, fallback){
 		}catch(ex){
 			error = ex;
 			failed.set(true);
-			setTimeout(render, 0);
 		}
 	});
 }
