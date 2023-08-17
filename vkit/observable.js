@@ -10,6 +10,10 @@ function createObservable(){
 	}
 	
 	function subscribe(callback){
+		if( typeof callback !== "function" ){
+			throw new Error("Callback is not a function");
+		}
+		
 		function unsubscribe(){
 			for(var i = Math.min(curr, n) - 1; i > 0; i -= 2){
 				if( callbacks[i] === unsubscribe ){
