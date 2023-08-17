@@ -27,6 +27,7 @@ module.exports = {
 	lang: languageService.lang,
 	languageService: languageService.languageService,
 	lazy: require("./lazy"),
+	meta: require("./meta"),
 	navigate: require("./navigate"),
 	noop: noop,
 	observable: require("./observable"),

@@ -54,10 +54,21 @@ function createScope(req, res){
 		return value;
 	}
 	
-	function meta(name, content){
+	function meta(){
 		return {
 			toHTML: function(res){
-				renderWindowData(res, "meta:" + content, content);
+				for(var key in windowData){
+					if( key.indexOf("meta:") === 0 ){
+						var name = key.substring(5);
+						var content = getWindowData(key);
+						
+						res.write('<meta name="');
+						res.write(escapeHTML(name));
+						res.write('" content="');
+						res.write(escapeHTML(content));
+						res.write('">');
+					}
+				}
 			}
 		};
 	}

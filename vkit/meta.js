@@ -2,7 +2,7 @@
 
 var createWindowData = $.windowData;
 
-function getMetaElement(head, name){
+function getMetaElement(head, name, document){
 	var metas = head.getElementsByTagName("meta");
 	
 	for(var i=metas.length; i--;){
@@ -21,8 +21,8 @@ function getMetaElement(head, name){
 function setMeta(name, content){
 	function init(win, callback){
 		var document = win.document;
-		var head = document.getElementsByTagName("head")[0];
-		var meta = getMetaElement(head, name);
+		var head = document.head || document.getElementsByTagName("head")[0];
+		var meta = getMetaElement(head, name, document);
 		
 		callback(meta.content, function(content){
 			meta.content = content;
