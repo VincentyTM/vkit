@@ -84,6 +84,8 @@ const {A, Li, Main, Nav, Ul} = $.htmlTags;
 const RedH1 = $.styledHtmlTag("h1", `::this{color: red;}`);
 
 const App = () => [
+    $.title("Example App"),
+    $.meta("description", "This is an example application."),
     RedH1("Hello, you are on page ", $.path()),
     Nav(
         Ul(
@@ -95,11 +97,17 @@ const App = () => [
         $.router($.param("page"), [
             {
                 path: "",
-                component: () => "Home"
+                component: () => [
+                    $.title((t) => `Home | ${t}`),
+                    "Home"
+                ]
             },
             {
                 path: "about",
-                component: () => "About"
+                component: () => [
+                    $.title((t) => `About | ${t}`),
+                    "About"
+                ]
             }
         ])
     )
@@ -109,7 +117,8 @@ const requestListener = $.server.view((server) => $.htmlString`<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Example title</title>
+        ${server.meta()}
+        <title>${server.title()}</title>
         <style>${server.style()}</style>
     </head>
     <body>
