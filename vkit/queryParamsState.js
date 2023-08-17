@@ -1,4 +1,4 @@
-(function($, undefined){
+(function($){
 
 var url = $.url;
 var createHistoryHandler = $.history;
