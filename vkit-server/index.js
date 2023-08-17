@@ -24,6 +24,7 @@ module.exports = {
 	http: require("./http"),
 	ifElse: require("./ifElse"),
 	inject: inject.inject,
+	interval: noop,
 	lang: languageService.lang,
 	languageService: languageService.languageService,
 	lazy: require("./lazy"),
