@@ -1,6 +1,7 @@
 (function($){
 
-var unmount = $.unmount;
+var getWindow = $.window;
+var onUnmount = $.unmount;
 var update = $.update;
 
 var slice = Array.prototype.slice;
@@ -17,8 +18,9 @@ function createInterval(func, delay){
 		clearInterval(interval);
 	}
 	
-	var interval = setInterval(tick, delay);
-	unmount(clear);
+	var interval = getWindow().setInterval(tick, delay);
+	
+	onUnmount(clear);
 	
 	return {
 		clear: clear
