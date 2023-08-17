@@ -12,7 +12,7 @@ function stopPropagation(){
 }
 
 function onEvent(obj, type, fn){
-	function eventHandler(e){
+	function eventListener(e){
 		if(!e.preventDefault){
 			e.preventDefault = preventDefault;
 		}
@@ -28,21 +28,22 @@ function onEvent(obj, type, fn){
 		}
 		
 		update();
+		
 		return ret;
 	}
 	
 	if( obj.addEventListener ){
-		obj.addEventListener(type, eventHandler, false);
+		obj.addEventListener(type, eventListener, false);
 		
 		return function(){
-			obj.removeEventListener(type, eventHandler, false);
+			obj.removeEventListener(type, eventListener, false);
 		};
 	}else if( obj.attachEvent ){
 		type = "on" + type;
-		obj.attachEvent(type, eventHandler);
+		obj.attachEvent(type, eventListener);
 		
 		return function(){
-			obj.detachEvent(type, eventHandler);
+			obj.detachEvent(type, eventListener);
 		};
 	}
 	
