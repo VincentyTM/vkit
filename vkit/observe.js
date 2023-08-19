@@ -19,19 +19,19 @@ function observe(obj, prop){
 		return value;
 	}
 	
-	get.emitChange = createObservable();
+	var emitChange = get.emitChange = createObservable();
 	
 	Object.defineProperty(obj, prop, {
 		get: get,
 		set: function(v){
 			if( value !== v ){
 				value = v;
-				get.emitChange(v);
+				emitChange(v);
 			}
 		}
 	});
 	
-	return get.emitChange;
+	return emitChange;
 }
 
 $.observe = observe;
