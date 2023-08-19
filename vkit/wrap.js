@@ -1,8 +1,8 @@
 (function($){
 
 var createNodeRange = $.nodeRange;
-var view = $.view;
 var htmlTag = $.htmlTag;
+var view = $.view;
 
 function wrap(getWrapper, contents){
 	var range = createNodeRange();
@@ -28,12 +28,7 @@ function createWrapper(getWrapper){
 	};
 }
 
-function wrapThis(getWrapper){
-	return wrap(getWrapper, this);
-}
-
-$.wrapper = createWrapper;
 $.wrap = wrap;
-$.fn.wrap = wrapThis;
+$.wrapper = createWrapper;
 
 })($);
