@@ -1,7 +1,8 @@
-(function($, d){
+(function($){
 
-var createObservable = $.observable;
+var createPromise = $.promise;
 var getCurrentScript = $.currentScript;
+var getWindow = $.window;
 var update = $.update;
 
 function respond(response){
@@ -9,80 +10,84 @@ function respond(response){
 }
 
 function createScript(url, options){
-	if(!url) return getCurrentScript().request;
-	if(!options) options = {};
+	if(!url){
+		return getCurrentScript().request;
+	}
 	
-	var onLoad = createObservable();
-	var onError = createObservable();
-	var t = d.getElementsByTagName("script")[0];
-	var s = d.createElement("script");
+	if(!options){
+		options = {};
+	}
 	
-	function reset(){
-		s.onload = s.onerror = s.onreadystatechange = null;
-		s.request = null;
-		var p = s.parentNode;
-		if( p ){
-			p.removeChild(s);
+	var d = options.document || getWindow().document;
+	
+	return createPromise(function(resolve, reject){
+		var t = d.getElementsByTagName("script")[0];
+		var s = d.createElement("script");
+		
+		function reset(){
+			s.onload = s.onerror = s.onreadystatechange = null;
+			s.request = null;
+			
+			var p = s.parentNode;
+			
+			if( p ){
+				p.removeChild(s);
+			}
 		}
-	}
-	
-	function reject(error){
-		reset();
-		onError(error);
-		update();
-	}
-	
-	function resolve(data){
-		reset();
-		onLoad(data);
-		update();
-	}
-	
-	function onLoad(){
-		var r = s.readyState;
-		if(!r || r === "loaded" || r === "complete"){
+		
+		function fail(error){
 			reset();
-			onLoad();
+			reject(error);
 			update();
 		}
-	}
-	
-	function then(loadHandler, errorHandler){
-		if( typeof loadHandler === "function" ) onLoad.subscribe(loadHandler);
-		if( typeof errorHandler === "function" ) onError.subscribe(errorHandler);
-	}
-	
-	s.request = {
-		"url": url,
-		"data": options.data,
-		"reject": reject,
-		"resolve": resolve
-	};
-	
-	if( options.referrerPolicy) s.referrerPolicy = options.referrerPolicy;
-	if( options.crossOrigin ) s.crossOrigin = options.crossOrigin;
-	if( options.integrity ) s.integrity = options.integrity;
-	if( options.nonce ) s.nonce = options.nonce;
-	
-	s.onerror = reject;
-	"onload" in s ? (s.onload = onLoad) : (s.onreadystatechange = onLoad);
-	
-	s.type = "text/javascript";
-	s.async = true;
-	s.src = url;
-	
-	if( t ){
-		t.parentNode.insertBefore(s, t);
-	}else{
-		d.getElementsByTagName("head")[0].appendChild(s);
-	}
-	
-	return {
-		then: then
-	};
+		
+		function done(data){
+			reset();
+			resolve(data);
+			update();
+		}
+		
+		function loadHandler(){
+			var r = s.readyState;
+			
+			if(!r || r === "loaded" || r === "complete"){
+				done();
+			}
+		}
+		
+		s.request = {
+			"url": url,
+			"data": options.data,
+			"reject": fail,
+			"resolve": done
+		};
+		
+		if( options.referrerPolicy) s.referrerPolicy = options.referrerPolicy;
+		if( options.crossOrigin ) s.crossOrigin = options.crossOrigin;
+		if( options.integrity ) s.integrity = options.integrity;
+		if( options.nonce ) s.nonce = options.nonce;
+		
+		s.onerror = reject;
+		
+		if( "onload" in s ){
+			s.onload = loadHandler;
+		}else{
+			s.onreadystatechange = loadHandler;
+		}
+		
+		s.type = "text/javascript";
+		s.async = true;
+		s.src = url;
+		
+		if( t ){
+			t.parentNode.insertBefore(s, t);
+		}else{
+			(d.head || d.getElementsByTagName("head")[0]).appendChild(s);
+		}
+	});
 }
 
 $.respond = respond;
 $.script = createScript;
 
-})($, document);
+})($);
