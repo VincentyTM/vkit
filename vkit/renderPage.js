@@ -4,9 +4,7 @@ var append = $.append;
 var bind = $.bind;
 var createHistoryHandler = $.history;
 var inject = $.inject;
-var provide = $.provide;
 var renderDetached = $.renderDetached;
-var StyleService = $.styleService;
 var update = $.update;
 var WindowService = $.windowService;
 
@@ -25,19 +23,17 @@ function renderPage(root, url, callback, tagName, win){
 			
 			var container = win.document.createElement(tagName || "body");
 			
-			provide([StyleService, WindowService], function(){
-				inject(WindowService).window = win;
-				
-				append(
-					container,
-					[
-						root(),
-						StyleService().element
-					],
-					container,
-					bind
-				);
-			});
+			inject(WindowService).window = win;
+			
+			append(
+				container,
+				[
+					root(),
+					StyleService().element
+				],
+				container,
+				bind
+			);
 			
 			update();
 			callback(container);
