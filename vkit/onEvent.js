@@ -50,21 +50,6 @@ function onEvent(obj, type, fn){
 	throw new Error("Event listener could not be attached.");
 }
 
-function onEventAll(type, fn){
-	var n = this.length;
-	var a = new Array(n);
-	
-	for(var i=0; i<n; ++i){
-		a[i] = onEvent(this[i], type, fn);
-	}
-	
-	return a.length === 1 ? a[0] : function(){
-		for(var i=0; i<n; ++i){
-			a[i]();
-		}
-	};
-}
-
 function on(type, action){
 	return function(el){
 		unmount(onEvent(el, type, action));
@@ -73,6 +58,5 @@ function on(type, action){
 
 $.on = on;
 $.onEvent = onEvent;
-$.fn.onEvent = onEventAll;
 
 })($);
