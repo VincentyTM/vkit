@@ -16,12 +16,6 @@ function append(parent, children, context, bind){
 	}
 }
 
-function appendToThis(){
-	append(this[0], arguments, this[0]);
-	return this;
-}
-
 $.append = append;
-$.fn.append = appendToThis;
 
 })($);
