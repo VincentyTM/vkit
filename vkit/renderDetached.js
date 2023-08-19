@@ -43,11 +43,6 @@ function renderDetached(getView, parent){
 	return component;
 }
 
-function renderDetachedToThis(getView){
-	return renderDetached(getView, this[0]);
-}
-
 $.renderDetached = renderDetached;
-$.fn.renderDetached = renderDetachedToThis;
 
 })($);
