@@ -107,7 +107,7 @@ function then(onResolve, onReject){
 		}
 	}
 	
-	var unsubscribe = this.subscribe(updateValue);
+	var unsubscribe = this.subscribe(updateValue, true);
 	
 	updateValue(this.get());
 	
