@@ -1,8 +1,8 @@
 (function($, undefined){
 
+var computed = $.computed;
 var createState = $.state;
 var inject = $.inject;
-var map = $.fn.map;
 var slice = Array.prototype.slice;
 
 var assign = Object.assign || function(a, b){
@@ -22,7 +22,7 @@ function LanguageService(){
 	
 	var langCode = createState(null);
 	var dictionary = createState({});
-	var wordsOfLang = map.call([dictionary, langCode], selectWordsOfLang);
+	var wordsOfLang = computed(selectWordsOfLang, [dictionary, langCode]);
 	
 	function define(update){
 		var newDict = {};
@@ -57,7 +57,7 @@ function LanguageService(){
 			}
 		}
 		
-		return map.call(states, function(lang, key){
+		return computed(function(lang, key){
 			if(!lang){
 				var code = langCode.get();
 				throw new Error(code ? "Language '" + code + "' does not exist" : "No language has been set");
@@ -86,7 +86,7 @@ function LanguageService(){
 				default:
 					throw new Error("Undefined word " + key);
 			}
-		});
+		}, states);
 	}
 	
 	this.define = define;

@@ -1,9 +1,8 @@
 (function($, document, global){
 
+var computed = $.computed;
 var createAsyncState = $.asyncState;
 var createObservable = $.observable;
-var createState = $.state;
-var map = $.fn.map;
 
 var ImageCapture = global.ImageCapture || function(track){
 	var onPlay = createObservable();
@@ -78,7 +77,7 @@ function createImageCapture(stream, params, onError){
 	);
 	
 	return createAsyncState(
-		map.call([imageCapture, params], getArgs),
+		computed(getArgs, [imageCapture, params]),
 		function(args){
 			var ic = args[0];
 			var ps = args[1];
