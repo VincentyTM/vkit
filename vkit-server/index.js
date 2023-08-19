@@ -12,6 +12,7 @@ module.exports = {
 	classes: require("./classes"),
 	classNames: require("./classNames"),
 	computed: signal.computed,
+	customElement: require("./customElement"),
 	define: languageService.define,
 	effect: noop,
 	escapeHTML: require("./escapeHTML"),
