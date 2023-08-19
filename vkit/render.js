@@ -9,15 +9,12 @@ var setProvider = $.setProvider;
 var update = $.update;
 
 function render(getView, container){
-	if(!container){
-		container = this[0];
-	}
-	
 	try{
 		setComponent(rootComponent);
 		setProvider(rootProvider);
 		
 		var view = getView();
+		
 		append(container, view, container, bind);
 	}finally{
 		setComponent(null);
@@ -29,6 +26,6 @@ function render(getView, container){
 	return rootComponent;
 }
 
-$.fn.render = render;
+$.render = render;
 
 })($);

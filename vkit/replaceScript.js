@@ -1,15 +1,17 @@
 (function($){
 
+var currentScript = $.currentScript;
 var insert = $.insert;
 var remove = $.remove;
-var renderTree = $.fn.render;
-var getCurrentScript = $.currentScript;
+var render = $.render;
 
 function replaceScript(getView){
-	var script = getCurrentScript();
-	var view = typeof getView === "function" ? renderTree.call([], getView) : getView;
+	var script = currentScript();
+	var view = typeof getView === "function" ? render(getView) : getView;
+	
 	insert(view, script);
 	remove(script);
+	
 	return view;
 }
 
