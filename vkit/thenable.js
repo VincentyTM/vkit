@@ -1,19 +1,20 @@
 (function($){
 
-var createState = $.state;
+var createSignal = $.signal;
 var update = $.update;
 
 var delay = typeof Promise === "function" && typeof Promise.resolve === "function"
 	? function(callback){ Promise.resolve().then(callback); }
 	: function(callback){ setTimeout(callback, 0); };
 
-function makeThenable(state){
-	state.error = mapError;
-	state.pending = mapPending;
-	state.status = mapStatus;
-	state.then = then;
-	state.value = mapValue;
-	return state;
+function makeThenable(signal){
+	signal.error = mapError;
+	signal.pending = mapPending;
+	signal.status = mapStatus;
+	signal.then = then;
+	signal.value = mapValue;
+	
+	return signal;
 }
 
 function mapStatus(){
@@ -54,9 +55,9 @@ function getValue(result){
 }
 
 function then(onResolve, onReject){
-	var newState = createState({pending: true});
+	var newSignal = createSignal({pending: true});
 	
-	function updateState(result){
+	function updateValue(result){
 		if( result.fulfilled ){
 			unsubscribe();
 			
@@ -69,17 +70,17 @@ function then(onResolve, onReject){
 						
 						if( ret && typeof ret.then === "function" ){
 							ret.then(function(val){
-								newState.set({fulfilled: true, value: val});
+								newSignal.set({fulfilled: true, value: val});
 								update();
 							}, function(error){
-								newState.set({rejected: true, error: error});
+								newSignal.set({rejected: true, error: error});
 								update();
 							});
 						}else{
-							newState.set({fulfilled: true, value: ret});
+							newSignal.set({fulfilled: true, value: ret});
 						}
 					}catch(error){
-						newState.set({rejected: true, error: error});
+						newSignal.set({rejected: true, error: error});
 					}finally{
 						update();
 					}
@@ -93,7 +94,7 @@ function then(onResolve, onReject){
 				
 				delay(function(){
 					try{
-						newState.set(result);
+						newSignal.set(result);
 						onReject(error);
 					}finally{
 						update();
@@ -102,15 +103,15 @@ function then(onResolve, onReject){
 			}
 		}else if(!result.pending){
 			unsubscribe();
-			newState.set({});
+			newSignal.set({});
 		}
 	}
 	
-	var unsubscribe = this.subscribe(updateState);
+	var unsubscribe = this.subscribe(updateValue);
 	
-	updateState(this.get());
+	updateValue(this.get());
 	
-	return makeThenable(newState.map());
+	return makeThenable(newSignal.map());
 }
 
 $.thenable = makeThenable;
