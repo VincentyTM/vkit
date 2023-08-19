@@ -26,6 +26,7 @@ module.exports = {
 	ifElse: require("./ifElse"),
 	inject: inject.inject,
 	interval: noop,
+	isArray: require("./isArray"),
 	lang: languageService.lang,
 	languageService: languageService.languageService,
 	lazy: require("./lazy"),
