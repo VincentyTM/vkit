@@ -29,7 +29,7 @@ function CounterApp() {
     ];
 }
 
-$(document.body).render(CounterApp);
+$.render(CounterApp, document.body);
 ```
 
 ## Table of Contents
@@ -168,7 +168,7 @@ To render a component in `document.body`, just call `render` on it. This is what
 ```javascript
 const App = () => HelloComponent("world");
 
-$(document.body).render(App);
+$.render(App, document.body);
 ```
 
 As you have more components, you can build a tree of them:
@@ -190,7 +190,7 @@ function App() {
     ]
 }
 
-$(document.body).render(App);
+$.render(App, document.body);
 ```
 
 The arguments of element factory functions can be a mix of child nodes to be appended, function directives and property binding objects.
@@ -235,7 +235,7 @@ function ClickableButton() {
 A global event listener can be attached with `bind`. It will be detached when the current component is destroyed.
 
 ```javascript
-$(document).bind({
+$.bind(document, {
     onclick(event) {
         console.log("Clicked.", event);
     }
@@ -425,12 +425,6 @@ It can be used to combine multiple signals into a new (computed) one.
 const a = $.signal(3);
 const b = $.signal(5);
 const aPlusB = sum(a, b);
-```
-
-You can use the following inline syntax as well.
-
-```javascript
-const aPlusB = $(a, b).map((x, y) => x + y);
 ```
 
 If you need to transform a single signal, you can just simply call `map` on it.
@@ -814,39 +808,35 @@ const App = () => Hello_Element(
     P("Some contents")
 );
 
-$(document.body).render(App);
+$.render(App, document.body);
 ```
 
 ## Windows and Components
 
-Creating a component in another window (e.g. a tab or an iframe) is difficult because it might get unloaded before your app does and the side effects remain. To avoid this, you should use `renderDetached`.
+Creating a component in another window (e.g. a tab or an iframe) is difficult because it might get unloaded before your app does and the side effects remain. To avoid this, you should use `windowContent` or `frameContent`.
 
 ```javascript
-const {Button, H1} = $.htmlTags;
+const {Br, Button, H1, Iframe} = $.htmlTags;
 
-function NewWindowContent({close}) {
+const NewWindowContent = $.windowContent((window) => {
     return [
-        H1("This is a new window"),
+        H1("This is a new window!"),
         Button("Close it", {
-            onclick: close
+            onclick: () => window.close()
         })
     ];
-}
+});
 
 function NewWindowOpener() {
-    return Button("Open new window", {
-        onclick() {
-            const myWindow = window.open();
-            
-            $(myWindow.document.body).renderDetached(unmount => {
-                $(myWindow).bind({onunload: unmount});
-                
-                return NewWindowContent({
-                    close: () => myWindow.close()
-                });
-            });
-        }
-    });
+    return [
+        Button("Open new window", {
+            onclick: () => NewWindowContent(window.open())
+        }),
+        Br(),
+        Iframe($.frameContent(() => [
+            H1("This is the content of an iframe!")
+        ]))
+    ];
 }
 ```
 
@@ -873,15 +863,18 @@ $.cookie.each(cookie => {
 You can turn elements to be draggable with both touch and mouse events, move other elements or even perform a custom action.
 
 ```javascript
-$(myElement).drag();
-$(myElement).drag(anotherElement);
-$(myElement).drag(anotherElement, onDragStop);
-$(myElement).drag((x, y) => {
-    if (!isNaN(y)) {
-        resizeChatbox( Math.max(0, y - chatbox.offsetTop) );
-    }
-});
-$(myElement).dragZone();
+const {Div} = $.htmlTags;
+
+function DragTest(){
+    $.document($.dragZone);
+    
+    Div("Movable", $.drag(), {
+        style: {
+            position: "absolute",
+            cursor: "move"
+        }
+    });
+}
 ```
 
 ## Text Selection
@@ -897,27 +890,25 @@ function EditorComponent() {
     return $.html(
         Button("Insert tab", {
             onclick() {
-                $(textarea).insertText("\t");
+                $.insertText(textarea, "\t");
             }
         }),
         Button("Select first character", {
             onclick() {
-                $(textarea).select(0, 1);
+                $.selectText(textarea, 0, 1);
             }
         }),
         Button("Show selected text", {
             onclick() {
-                const selection = $(textarea).selection();
+                const {start, end} = $.textSelection(textarea);
+                
                 console.log(
-                    textarea.value.substring(
-                        selection.start,
-                        selection.end
-                    )
+                    textarea.value.substring(start, end)
                 );
             }
         }),
         Br(),
-        textarea = Textarea()
+        Textarea((el) => textarea = el)
     );
 }
 ```
