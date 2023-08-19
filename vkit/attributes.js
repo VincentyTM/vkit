@@ -1,7 +1,6 @@
 (function($){
 
-var createComponent = $.component;
-var getComponent = $.getComponent;
+var effect = $.effect;
 
 function setAttribute(el, name, value){
 	if( typeof value === "number" ){
@@ -29,11 +28,9 @@ function addAttribute(el, name, value){
 			setAttribute(el, name, val);
 		});
 	}else if( typeof value === "function" ){
-		function setValue(){
+		effect(function(){
 			setAttribute(el, name, value());
-		}
-		
-		createComponent(setValue).render();
+		});
 	}else if( value ){
 		el.setAttribute(name, "");
 	}else{
