@@ -37,10 +37,15 @@ function awaitPromise(promiseOrSignal){
 		}
 	}
 	
-	if( promiseOrSignal.effect ){
+	if( promiseOrSignal && typeof promiseOrSignal.then === "function" ){
+		setPromise(promiseOrSignal);
+	}else if( typeof promiseOrSignal.effect === "function" ){
 		promiseOrSignal.effect(setPromise);
 	}else{
-		setPromise(promiseOrSignal);
+		result.set({
+			fulfilled: true,
+			value: promiseOrSignal
+		});
 	}
 	
 	var output = result.map();
