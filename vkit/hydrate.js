@@ -110,20 +110,18 @@ function hydrateElement(parent, children){
 		index: 0,
 		lastText: null
 	};
+	
 	hydrate(parent, children, state);
+	
 	var index = state.index;
 	var childNodes = parent.childNodes;
 	var child;
+	
 	while( child = childNodes[index] ){
 		parent.removeChild(child);
 	}
 }
 
-function hydrateThis(children){
-	hydrateElement(this[0], children);
-}
-
 $.hydrate = hydrateElement;
-$.fn.hydrate = hydrateThis;
 
 })($, document);
