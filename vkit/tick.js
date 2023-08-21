@@ -2,14 +2,17 @@
 
 var ticks = [];
 
-function addTick(callback){
+function tick(callback){
 	ticks.push(callback);
 }
 
 function callTicks(){
 	var n = ticks.length;
+	
 	if( n ){
-		var callbacks = ticks.splice(0, n);
+		var callbacks = ticks;
+		ticks = [];
+		
 		for(var i=0; i<n; ++i){
 			callbacks[i]();
 		}
@@ -17,6 +20,6 @@ function callTicks(){
 }
 
 $.callTicks = callTicks;
-$.tick = addTick;
+$.tick = tick;
 
 })($);
