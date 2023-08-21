@@ -1,11 +1,11 @@
 (function($){
 
-var createComponent = $.component;
+var component = $.component;
 
-function createEffect(callback){
-	createComponent(callback).render();
+function effect(callback){
+	component(callback).render();
 }
 
-$.effect = createEffect;
+$.effect = effect;
 
 })($);
