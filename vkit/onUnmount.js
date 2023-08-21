@@ -1,9 +1,8 @@
 (function($){
 
-var createObservable = $.observable;
-var emitUnmount = $.emitUnmount;
 var getComponent = $.getComponent;
 var noop = $.noop;
+var observable = $.observable;
 var rootComponent = $.rootComponent;
 
 function onUnmount(callback, component){
@@ -26,7 +25,7 @@ function onUnmount(callback, component){
 	var c = component;
 	
 	while( c && !c.unmount ){
-		c.unmount = createObservable();
+		c.unmount = observable();
 		
 		if( c.parent ){
 			if( c.parent.children ){
