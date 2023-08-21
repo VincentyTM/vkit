@@ -49,7 +49,7 @@ function bindAttributes(el, attributes){
 	}
 }
 
-function createSVGTag(tagName){
+function svgTag(tagName){
 	return function(){
 		var el = document.createElementNS(xmlns, tagName);
 		append(el, arguments, el, bindAttributes);
@@ -57,14 +57,6 @@ function createSVGTag(tagName){
 	};
 }
 
-$.svgTag = createSVGTag;
-
-if( typeof Proxy === "function" ){
-	$.svgTags = new Proxy({}, {
-		get: function(target, prop, receiver){
-			return createSVGTag(prop.toLowerCase().replace(/_/g, "-"));
-		}
-	});
-}
+$.svgTag = svgTag;
 
 })($, document);
