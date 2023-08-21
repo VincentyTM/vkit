@@ -16,7 +16,7 @@ function configFactory(config){
 	}
 	
 	if( "useFactory" in config ){
-		return config.useFactory.apply(null, config.params || []);
+		return config.useFactory();
 	}
 	
 	if( "useClass" in config ){
