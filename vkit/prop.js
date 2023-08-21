@@ -1,17 +1,15 @@
 (function($){
 
-var createComponent = $.component;
+var effect = $.effect;
 
-function createDynamicProp(key, getValue){
-	return function(node){
-		createComponent(setValue).render();
-		
-		function setValue(){
-			node[key] = getValue();
-		}
+function prop(name, getValue){
+	return function(element){
+		effect(function(){
+			element[name] = getValue();
+		});
 	};
 }
 
-$.prop = createDynamicProp;
+$.prop = prop;
 
 })($);
