@@ -1,4 +1,4 @@
-(function($, document){
+(function($){
 
 var currentComponent = null;
 var currentProvider = null;
@@ -33,4 +33,4 @@ $.getProvider = getProvider;
 $.setComponent = setComponent;
 $.setProvider = setProvider;
 
-})($, document);
+})($);
