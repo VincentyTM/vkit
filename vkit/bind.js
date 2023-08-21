@@ -1,43 +1,46 @@
 (function($){
 
-var createDynamicProp = $.prop;
-var getComponent = $.getComponent;
-var setComponent = $.setComponent;
 var onEvent = $.onEvent;
-var onUnmount = $.unmount;
+var onUnmount = $.onUnmount;
+var prop = $.prop;
 
 function bind(el, props, persistent){
-	for(var prop in props){
-		var value = props[prop];
+	for(var name in props){
+		var value = props[name];
+		
 		switch( typeof value ){
 			case "object":
 				if(!value){
-					el[prop] = value;
+					el[name] = value;
 				}else if( value.prop ){
-					value.prop(prop)(el);
+					value.prop(name)(el);
 				}else{
-					var obj = el[prop];
+					var obj = el[name];
+					
 					if( obj ){
 						bind(obj, value, persistent);
 					}else{
-						el[prop] = value;
+						el[name] = value;
 					}
 				}
+				
 				break;
 			case "function":
-				if( prop.indexOf("on") === 0 ){
-					var unsub = onEvent(el, prop.substring(2), value);
+				if( name.indexOf("on") === 0 ){
+					var unsub = onEvent(el, name.substring(2), value);
+					
 					if(!persistent){
 						onUnmount(unsub);
 					}
 				}else{
-					createDynamicProp(prop, value)(el);
+					prop(name, value)(el);
 				}
+				
 				break;
 			case "undefined":
 				break;
 			default:
-				el[prop] = value;
+				el[name] = value;
 		}
 	}
 }
