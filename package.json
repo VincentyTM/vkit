@@ -1,23 +1,30 @@
 {
-  "name": "vkit",
+  "author": "Vincenty",
   "bin": {
     "vkit": "./bin/vkit.js"
   },
-  "version": "0.0.1",
   "description": "vKit is a web application framework with a command line interface.",
-  "main": "vkit-server/index.js",
-  "scripts": {
-    "start": "node ./vkit-cli/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "exports": {
+    ".": {
+      "import": "./vkit-typescript",
+      "require": "./vkit-server"
+    },
+    "./server": "./vkit-server"
   },
   "keywords": [
     "vkit",
     "vkit-cli"
   ],
+  "license": "MIT",
+  "main": "vkit-typescript",
+  "name": "vkit",
   "repository": {
     "type": "git",
     "url": "https://github.com/VincentyTM/vkit.git"
   },
-  "author": "Vincenty",
-  "license": "MIT"
+  "scripts": {
+    "start": "node ./vkit-cli/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.0.1"
 }

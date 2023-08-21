@@ -1,0 +1,46 @@
+var map = typeof WeakMap === "function" ? new WeakMap<any, any>() : {
+	get: function(object: any){
+		return object.__hashCode;
+	},
+	
+	set: function(object: any, value: any){
+		object.__hashCode = value;
+	}
+};
+
+var objectCount = 0;
+
+function next<ValueType>(value: ValueType){
+	var key = map.get(value);
+	
+	if( key ){
+		return key;
+	}
+	
+	key = ++objectCount;
+	map.set(value, key);
+	
+	return key;
+}
+
+function hashCode<ValueType>(value: ValueType): string{
+	switch(typeof value){
+		case "object":
+			return value === null ? String(value) : "o" + next<ValueType>(value);
+		case "string":
+			return "s" + value;
+		case "number":
+		case "boolean":
+		case "undefined":
+		case "symbol":
+			return String(value);
+		case "function":
+			return "f" + next<ValueType>(value);
+		case "bigint":
+			return value + "n";
+		default:
+			return "";
+	}
+}
+
+export default hashCode;
