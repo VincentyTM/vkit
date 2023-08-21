@@ -56,18 +56,33 @@ $.render(CounterApp, document.body);
 
 ## Getting Started
 
-### For the client
-
-You can use the vKit CLI that automatically includes the libraries you need:
+Before using vKit, you need to have NodeJS, npm and Git installed:
 1. Install [NodeJS](https://nodejs.org/) with npm
 2. Install [Git](https://git-scm.com/download/)
-3. Run `npm i -g VincentyTM/vkit`
-4. Create a project in a directory with `vkit directoryName`, `vkit .` or just `vkit`
-5. Create/edit your `js` and `css` files inside the generated `src` directory
-6. You can immediately see the changes in your browser
-7. Use the `export` command to create a standalone `html` or `js` file
 
-### For the server
+### Install as a TypeScript module
+
+You can add vKit to your existing TypeScript web project:
+1. Install vKit with `npm i VincentyTM/vkit`
+2. Import the required dependencies
+
+You can import the dependencies by name:
+`import {htmlTags, render, signal} from "vkit";`
+
+Or as a single object:
+`import * as $ from "vkit";`
+
+### Use the CLI
+
+You can also use the vKit CLI if you do not want to use any other build tools and you prefer simple JavaScript:
+1. Run `npm i -g VincentyTM/vkit` to install vKit globally
+2. Run `vkit` to create/open a project in the current directory
+
+If you edit your `js` and `css` files inside the generated `src` directory, you can immediately see the changes in your browser.
+
+Use the `export` command to create a standalone `html` or `js` file.
+
+### Use on the server
 
 There is also a limited version of vKit that can be run on a NodeJS server. It includes templating, styling and routing but no reactivity.
 
@@ -128,6 +143,8 @@ const requestListener = $.server.view((server) => $.htmlString`<!DOCTYPE html>
 
 http.createServer(requestListener).listen(1234);
 ```
+
+You can configure the CLI to produce different `js` files for the client and the server in order to enable server side rendering.
 
 ## Components and Views
 
