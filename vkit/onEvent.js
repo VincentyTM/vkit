@@ -1,6 +1,5 @@
 (function($){
 
-var unmount = $.unmount;
 var update = $.update;
 
 function preventDefault(){
@@ -11,7 +10,7 @@ function stopPropagation(){
 	this.cancelBubble = true;
 }
 
-function onEvent(obj, type, fn){
+function onEvent(target, type, listener){
 	function eventListener(e){
 		if(!e.preventDefault){
 			e.preventDefault = preventDefault;
@@ -21,7 +20,7 @@ function onEvent(obj, type, fn){
 			e.stopPropagation = stopPropagation;
 		}
 		
-		var ret = fn.call(obj, e);
+		var ret = listener.call(target, e);
 		
 		if( ret && typeof ret.then === "function" ){
 			ret.then(update);
@@ -32,31 +31,24 @@ function onEvent(obj, type, fn){
 		return ret;
 	}
 	
-	if( obj.addEventListener ){
-		obj.addEventListener(type, eventListener, false);
+	if( target.addEventListener ){
+		target.addEventListener(type, eventListener, false);
 		
 		return function(){
-			obj.removeEventListener(type, eventListener, false);
+			target.removeEventListener(type, eventListener, false);
 		};
-	}else if( obj.attachEvent ){
+	}else if( target.attachEvent ){
 		type = "on" + type;
-		obj.attachEvent(type, eventListener);
+		target.attachEvent(type, eventListener);
 		
 		return function(){
-			obj.detachEvent(type, eventListener);
+			target.detachEvent(type, eventListener);
 		};
 	}
 	
 	throw new Error("Event listener could not be attached.");
 }
 
-function on(type, action){
-	return function(el){
-		unmount(onEvent(el, type, action));
-	};
-}
-
-$.on = on;
 $.onEvent = onEvent;
 
 })($);
