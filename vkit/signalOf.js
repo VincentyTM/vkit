@@ -11,8 +11,8 @@ function signalOf(obj, prop){
 			throw new ReferenceError("Proxy is not supported in your browser!");
 		}
 		
-		return new Proxy({}, {
-			get: function(target, prop, receiver){
+		return new Proxy(obj, {
+			get: function(obj, prop, receiver){
 				return signalOf(obj, prop);
 			}
 		});
