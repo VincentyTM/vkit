@@ -60,5 +60,6 @@ module.exports = {
 	virtualHtmlTags: htmlTags,
 	virtualStyledHtmlTag: styledHtmlTag,
 	window: require("./window"),
+	windowContent: require("./windowContent"),
 	word: languageService.word
 };
