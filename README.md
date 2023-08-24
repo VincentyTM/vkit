@@ -883,9 +883,9 @@ You can turn elements to be draggable with both touch and mouse events, move oth
 const {Div} = $.htmlTags;
 
 function DragTest(){
-    $.document($.dragZone);
+    const dragZone = $.dragZone($.document());
     
-    Div("Movable", $.drag(), {
+    Div("Movable", dragZone.draggable(), {
         style: {
             position: "absolute",
             cursor: "move"
