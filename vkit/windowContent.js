@@ -3,15 +3,15 @@
 var onEvent = $.onEvent;
 var renderDetached = $.renderDetached;
 
-function createWindowContent(component){
-	return function(win){
+function windowContent(component){
+	return function(win, props){
 		renderDetached(function(unmount){
 			onEvent(win, "unload", unmount);
-			return component(win);
+			return component(win, props);
 		}, win.document.body);
 	};
 }
 
-$.windowContent = createWindowContent;
+$.windowContent = windowContent;
 
 })($);
