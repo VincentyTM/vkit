@@ -40,6 +40,7 @@ function repeat(count, getView){
 	return array;
 }
 
+$.range = createRangeArray;
 $.repeat = repeat;
 
 })($);
