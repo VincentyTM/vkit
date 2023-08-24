@@ -14,6 +14,7 @@ module.exports = {
 	computed: signal.computed,
 	customElement: require("./customElement"),
 	define: languageService.define,
+	dragZone: require("./dragZone"),
 	effect: noop,
 	escapeHTML: require("./escapeHTML"),
 	history: require("./history"),
