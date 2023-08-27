@@ -9,13 +9,13 @@ function dragZone(zoneTarget){
 	var elStartLeft;
 	var elStartTop;
 	var elNode = null;
-	var ondragstart = noop;
-	var ondragstop = noop;
-	var defaultDragGo = function(x, y){
-		this.style.left = x + "px";
-		this.style.top = y + "px";
+	var dragStartHandler = noop;
+	var dragStopHandler = noop;
+	var defaultDragGo = function(el, x, y){
+		el.style.left = x + "px";
+		el.style.top = y + "px";
 	};
-	var ondraggo = defaultDragGo;
+	var dragGoHandler = defaultDragGo;
 	
 	if( zoneTarget ){
 		bindTo(zoneTarget);
@@ -62,31 +62,32 @@ function dragZone(zoneTarget){
 		return "";
 	}
 
-	function draggable(target, after){
-		if(!after){
-			after = noop;
-		}
+	function draggable(target, options){
+		var go = typeof target === "function" && !("current" in target) ? target : defaultDragGo;
+		var start = options && options.start || noop;
+		var end = options && options.end || noop;
 		
 		var handler = target && target.nodeType ? function(e){
+			dragGoHandler = go;
+			dragStartHandler = start;
+			dragStopHandler = end;
 			dragStart(e, target);
 		}
 		
 		: target && "current" in target ? function(e){
 			if( target.current ){
+				dragGoHandler = go;
+				dragStartHandler = start;
+				dragStopHandler = end;
 				dragStart(e, target.current);
 			}
 		}
 		
-		: typeof target === "function" ? function(e){
-			dragStart(e, this);
-			ondraggo = target;
-			ondragstop = after;
-		}
-		
 		: function(e){
+			dragGoHandler = go;
+			dragStartHandler = start;
+			dragStopHandler = end;
 			dragStart(e, this);
-			ondraggo = defaultDragGo;
-			ondragstop = after;
 		};
 		
 		return {
@@ -100,7 +101,7 @@ function dragZone(zoneTarget){
 
 	function dragGo(e, cancel){
 		if( elNode ){
-			ondraggo.call(
+			dragGoHandler(
 				elNode,
 				elStartLeft + getX(e, elNode) - cursorStartX,
 				elStartTop + getY(e, elNode) - cursorStartY
@@ -118,10 +119,19 @@ function dragZone(zoneTarget){
 		elNode = target;
 		cursorStartX = getX(e, elNode);
 		cursorStartY = getY(e, elNode);
-		elStartLeft = parseInt(getStyle(elNode, "left")) || elNode.offsetLeft || 0;
-		elStartTop = parseInt(getStyle(elNode, "top")) || elNode.offsetTop || 0;
 		
-		ondragstart.call(
+		var el = elNode;
+		
+		while( el && el.offsetLeft >= 0 && el.offsetTop >= 0 ){
+			cursorStartX -= el.offsetLeft;
+			cursorStartY -= el.offsetTop;
+			el = el.offsetParent;
+		}
+		
+		elStartLeft = parseInt(getStyle(elNode, "left")) || 0;
+		elStartTop = parseInt(getStyle(elNode, "top")) || 0;
+		
+		dragStartHandler(
 			elNode,
 			elStartLeft + getX(e, elNode) - cursorStartX,
 			elStartTop + getY(e, elNode) - cursorStartY
@@ -135,7 +145,7 @@ function dragZone(zoneTarget){
 	function dragStop(e){
 		if( elNode ){
 			dragGo.call(elNode, e, false);
-			ondragstop.call(
+			dragStopHandler(
 				elNode,
 				elStartLeft + getX(e, elNode) - cursorStartX,
 				elStartTop + getY(e, elNode) - cursorStartY
