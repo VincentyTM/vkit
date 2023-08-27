@@ -1,4 +1,4 @@
-var noop = $.noop;
+var noop = require("./noop");
 
 function dragZone(zoneTarget){
 	function draggable(target, after){
