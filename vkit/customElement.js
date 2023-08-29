@@ -3,13 +3,13 @@
 var append = $.append;
 var bind = $.bind;
 var createComponent = $.component;
+var createSignal = $.signal;
 var emitUnmount = $.emitUnmount;
 var empty = $.empty;
 var getComponent = $.getComponent;
 var inject = $.inject;
 var provide = $.provide;
 var setComponent = $.setComponent;
-var stateOf = $.stateOf;
 var update = $.update;
 var WindowService = $.windowService;
 
@@ -19,6 +19,14 @@ function setPrototypeOf(obj, proto){
 	}else{
 		obj.__proto__ = proto;
 	}
+}
+
+function replaceHyphens(value){
+	return value.charAt(1).toUpperCase();
+}
+
+function attrToPropName(attrName){
+	return attrName.toLowerCase().replace(/\-[a-z]/g, replaceHyphens);
 }
 
 function createCustomElement(name, getView, options){
@@ -37,7 +45,7 @@ function createCustomElement(name, getView, options){
 				
 				var view = getView.call(
 					el,
-					stateOf(el.observedAttributes),
+					el.observedAttributes,
 					el
 				);
 				
@@ -55,7 +63,7 @@ function createCustomElement(name, getView, options){
 		
 		if( CustomElement.observedAttributes ){
 			CustomElement.observedAttributes.forEach(function(attrName){
-				el.observedAttributes[attrName] = el.getAttribute(attrName);
+				el.observedAttributes[attrToPropName(attrName)] = createSignal(el.getAttribute(attrName));
 			});
 		}
 		
@@ -103,11 +111,9 @@ function createCustomElement(name, getView, options){
 		if( options.observedAttributes ){
 			CustomElement.observedAttributes = options.observedAttributes;
 			
-			proto.attributeChangedCallback = function(name, oldValue, newValue){
-				if( this.observedAttributes[name] !== newValue ){
-					this.observedAttributes[name] = newValue;
-					update();
-				}
+			proto.attributeChangedCallback = function(attrName, oldValue, newValue){
+				this.observedAttributes[attrToPropName(attrName)].set(newValue);
+				update();
 			};
 		}
 	}
