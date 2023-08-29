@@ -2,6 +2,7 @@
 
 var bind = $.bind;
 var insert = $.insert;
+var isArray = $.isArray;
 var toArray = $.toArray;
 
 function findNodes(result, container, type, value, count){
@@ -17,7 +18,24 @@ function findNodes(result, container, type, value, count){
 	return count;
 }
 
-function html(){
+function html(strings){
+	if( isArray(strings) && isArray(strings.raw) ){
+		var n = strings.length;
+		var a = new Array(2*n - 1);
+		
+		if( n > 0 ){
+			a[0] = strings[0];
+		}
+		
+		for(var i = 1, j = 1; i < n; ++i){
+			var arg = arguments[i];
+			a[j++] = typeof arg === "string" ? [arg] : arg;
+			a[j++] = strings[i];
+		}
+		
+		return html.apply(null, a);
+	}
+	
 	var result = [], operators = [];
 	var placeholder = "<!---->";
 	for(var i=0, l=arguments.length; i<l; ++i){
