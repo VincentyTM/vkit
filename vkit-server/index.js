@@ -20,7 +20,6 @@ module.exports = {
 	history: require("./history"),
 	href: require("./href"),
 	html: require("./html"),
-	htmlString: require("./htmlString"),
 	htmlTag: htmlTag,
 	htmlTags: htmlTags,
 	http: require("./http"),
