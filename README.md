@@ -128,7 +128,7 @@ const App = () => [
     )
 ];
 
-const requestListener = $.server.view((server) => $.htmlString`<!DOCTYPE html>
+const requestListener = $.server.view((server) => $.html`<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
@@ -174,10 +174,10 @@ In vKit, a component is a function that returns a view:
 const HelloComponent = name => $.html('<h1>Hello ', [name], '</h1>');
 ```
 
-As you can see, you can wrap any text in an array to safely insert it in HTML. Alternatively, you can use tagged templates with `$.htmlString`.
+As you can see, you can wrap any text in an array to safely insert it in HTML. Alternatively, you can use tagged template literals.
 
 ```javascript
-const HelloComponent = name => $.htmlString`<h1>Hello ${name}</h1>`;
+const HelloComponent = name => $.html`<h1>Hello ${name}</h1>`;
 ```
 
 To render a component in `document.body`, just call `render` on it. This is what a typical application root looks like.
@@ -515,7 +515,7 @@ return Ul(
 In some cases you might need to identify array items by a key (a string or a number) instead of their value. You can do this with the `$.useKey` method.
 
 ```javascript
-const BooksTable = (books) => $.htmlString`
+const BooksTable = (books) => $.html`
     <table>
         <thead>
             <tr>
@@ -530,7 +530,7 @@ const BooksTable = (books) => $.htmlString`
     </table>'
 `;
 
-const BookRow = (bookSignal) => $.htmlString`
+const BookRow = (bookSignal) => $.html`
     <tr>
        <td>${
          $.text(() => bookSignal().title)
