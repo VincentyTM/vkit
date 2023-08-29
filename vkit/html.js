@@ -79,7 +79,22 @@ function html(){
 				throw new Error("Some object or function could not be inserted");
 			}
 			
-			var context = comment.previousSibling || comment.parentNode;
+			var context = comment.previousElementSibling;
+			
+			if( context === undefined ){
+				context = comment;
+				
+				while( context = context.previousSibling ){
+					if( context.nodeType === 1 ){
+						break;
+					}
+				}
+			}
+			
+			if(!context){
+				context = comment.parentNode;
+			}
+			
 			if( context === container ){
 				context = null;
 			}
