@@ -8,6 +8,7 @@ import isSignal from "./isSignal";
 import noop from "./noop";
 import observable from "./observable";
 import observe from "./observe";
+import of from "./of";
 import onEvent from "./onEvent";
 import onUnmount from "./onEvent";
 import render from "./render";
@@ -28,6 +29,7 @@ export {
     noop,
     observable,
     observe,
+	of,
     onEvent,
     onUnmount,
     provide,
