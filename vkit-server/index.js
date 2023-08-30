@@ -27,6 +27,7 @@ module.exports = {
 	inject: inject.inject,
 	interval: noop,
 	isArray: require("./isArray"),
+	isSignal: require("./isSignal"),
 	lang: languageService.lang,
 	languageService: languageService.languageService,
 	lazy: require("./lazy"),
