@@ -1,5 +1,5 @@
 type Observable<ValueType> = {
-	(): void,
+	(value: ValueType): void,
 	clear(): void,
 	count(): number,
 	has(callback: (value: ValueType) => void): boolean,

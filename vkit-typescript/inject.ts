@@ -162,7 +162,7 @@ function provide(
 	getView: () => View
 ){
 	var component = getComponent() as Component;
-	var prevProvider = null;
+	var prevProvider: Provider | null = null;
 	
 	if( services ){
 		prevProvider = getProvider();

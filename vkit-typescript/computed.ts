@@ -32,7 +32,7 @@ function createComputedSignal<ValueType>(
 	}
 	
 	function computeValue(){
-		var newValue;
+		var newValue: ValueType;
 		
 		if( inputs ){
 			var n = inputs.length;

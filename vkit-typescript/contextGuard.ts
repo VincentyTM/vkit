@@ -5,7 +5,7 @@ var currentComponent: Component | null = null;
 var currentProvider: Provider | null = null;
 var errorMessage = "This function can only be called synchronously from a component";
 
-function getComponent(allowNull = false){
+function getComponent(allowNull?: boolean){
 	if(!allowNull && !currentComponent){
 		throw new Error(errorMessage);
 	}
@@ -17,7 +17,7 @@ function setComponent(component: Component | null){
 	currentComponent = component;
 }
 
-function getProvider(allowNull = false){
+function getProvider(allowNull?: boolean){
 	if(!allowNull && (!currentComponent || !currentProvider)){
 		throw new Error(errorMessage);
 	}

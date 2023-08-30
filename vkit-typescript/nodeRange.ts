@@ -71,7 +71,7 @@ function createNodeRange() : NodeRange {
 			throw new Error("Cannot render detached range");
 		}
 		
-		var nodes = [];
+		var nodes: ChildNode[] = [];
 		var parent = start.parentNode;
 		
 		if( parent ){
