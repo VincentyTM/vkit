@@ -7,6 +7,7 @@ import {inject, provide} from "./inject";
 import isSignal from "./isSignal";
 import noop from "./noop";
 import observable from "./observable";
+import observe from "./observe";
 import onEvent from "./onEvent";
 import onUnmount from "./onEvent";
 import render from "./render";
@@ -26,6 +27,7 @@ export {
 	isSignal,
     noop,
     observable,
+    observe,
     onEvent,
     onUnmount,
     provide,
