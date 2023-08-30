@@ -22,7 +22,7 @@ function dequeueUpdate(callback: () => void){
 }
 
 function update(){
-	var n;
+	var n: number;
 	
 	while( n = queue.length ){
 		var updates = queue;
