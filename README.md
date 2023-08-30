@@ -410,6 +410,16 @@ return Div(
 );
 ```
 
+Or classes.
+
+```javascript
+return Div(
+    $.classes({
+        "my-class": () => isMyClassTrue()
+    })
+);
+```
+
 Side effects can also be created that run when the value of an input signal changes.
 
 ```javascript
@@ -426,6 +436,30 @@ A dynamic text node can also be created without a computed signal.
 
 ```javascript
 $.text(() => `Hello ${name()}`)
+```
+
+### Reactivity of Nested Objects
+
+If you have a nested object, it could be difficult to detect deep changes.
+
+```javascript
+const object = {
+    count: 0
+};
+
+++object.count;
+```
+
+Unfortunately, computed signals are not updated.
+
+```javascript
+const count = $.computed(() => object.count);
+```
+
+To fix this, you can use `$.of`. It is recommended to always put it in a `$.computed` block.
+
+```javascript
+const count = $.computed(() => $.of(object).count);
 ```
 
 ### Mapping Signals
