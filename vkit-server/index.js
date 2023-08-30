@@ -35,6 +35,7 @@ module.exports = {
 	navigate: require("./navigate"),
 	noop: noop,
 	observable: require("./observable"),
+	of: require("./of"),
 	param: require("./param"),
 	params: require("./params"),
 	path: require("./path"),
