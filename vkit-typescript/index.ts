@@ -4,6 +4,7 @@ import effect from "./effect";
 import htmlTag from "./htmlTag";
 import htmlTags from "./htmlTags";
 import {inject, provide} from "./inject";
+import isSignal from "./isSignal";
 import noop from "./noop";
 import observable from "./observable";
 import onEvent from "./onEvent";
@@ -22,6 +23,7 @@ export {
     htmlTag,
     htmlTags,
     inject,
+	isSignal,
     noop,
     observable,
     onEvent,
