@@ -2,6 +2,7 @@ import bind from "./bind";
 import computed from "./computed";
 import customElement from "./customElement";
 import effect from "./effect";
+import html from "./html";
 import htmlTag from "./htmlTag";
 import htmlTags from "./htmlTags";
 import inject from "./inject";
@@ -26,6 +27,7 @@ export {
     computed,
     customElement,
     effect,
+	html,
     htmlTag,
     htmlTags,
     inject,
