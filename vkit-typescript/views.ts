@@ -1,19 +1,17 @@
 import bind from "./bind";
-import createComponent from "./component";
+import createComponent, {Component} from "./component";
 import createNodeRange from "./nodeRange";
 import emitUnmount from "./emitUnmount";
 import {getComponent, getInjector, setComponent, setInjector} from "./contextGuard";
 import hashCode from "./hashCode";
+import {Injector} from "./injector";
 import insert from "./insert";
 import isArray from "./isArray";
+import {NodeRange} from "./nodeRange";
+import {Signal} from "./signal";
 import throwError from "./throwError";
 import toArray from "./toArray";
-
-import type {Component} from "./component";
-import type {Injector} from "./injector";
-import type {NodeRange} from "./nodeRange";
-import type {Signal} from "./signal";
-import type {View} from "./view";
+import {View} from "./view";
 
 type Block = {
 	component: Component;
@@ -31,10 +29,10 @@ function createBlock<ValueType>(
 	var range = createNodeRange();
 	var view: View;
 	
-	var component = createComponent(function(){
+	var component = createComponent(function() {
 		view = getView(model);
 		
-		if( range.start.nextSibling ){
+		if (range.start.nextSibling) {
 			range.clear();
 			range.append(view);
 		}
@@ -42,7 +40,7 @@ function createBlock<ValueType>(
 	
 	component.render();
 	
-	function render(){
+	function render() {
 		return [
 			range.start,
 			view,
@@ -50,20 +48,20 @@ function createBlock<ValueType>(
 		];
 	}
 	
-	function insertBefore(end: Node){
-		if( range.start.nextSibling ){
+	function insertBefore(end: Node) {
+		if (range.start.nextSibling) {
 			range.insertBefore(end);
-		}else{
+		} else {
 			var prevComponent = getComponent(true);
 			var prevInjector = getInjector(true);
 			
-			try{
+			try {
 				setComponent(component);
 				setInjector(injector);
 				insert(render(), end, end.parentNode as Node, bind);
-			}catch(error){
+			} catch (error) {
 				throwError(error, component);
-			}finally{
+			} finally {
 				setComponent(prevComponent);
 				setInjector(prevInjector);
 			}
@@ -81,7 +79,7 @@ function createBlock<ValueType>(
 function views<ValueType>(
 	this: Signal<ArrayLike<ValueType>>,
 	getView: (value: ValueType) => View
-){
+) {
 	var signal = this;
 	var container = getComponent();
 	var injector = getInjector();
@@ -89,8 +87,8 @@ function views<ValueType>(
 	var oldBlocks: {[key: string]: Block} = {};
 	var array: Block[];
 	
-	function render(models: ArrayLike<ValueType>){
-		if(!isArray(models)){
+	function render(models: ArrayLike<ValueType>) {
+		if (!isArray(models)) {
 			models = toArray(models);
 		}
 		
@@ -98,11 +96,11 @@ function views<ValueType>(
 		var n = models.length;
 		var newArray = new Array(n);
 		
-		for(var i=0; i<n; ++i){
+		for (var i = 0; i < n; ++i) {
 			var model = models[i];
 			var key = hashCode(model);
 			
-			while( key in newBlocks ){
+			while (key in newBlocks) {
 				key = "_" + key;
 			}
 			
@@ -114,8 +112,8 @@ function views<ValueType>(
 			);
 		}
 		
-		for(var key in oldBlocks){
-			if(!(key in newBlocks)){
+		for (var key in oldBlocks) {
+			if (!(key in newBlocks)) {
 				var block = oldBlocks[key];
 				block.range.remove();
 				emitUnmount(block.component);
@@ -124,16 +122,16 @@ function views<ValueType>(
 		
 		oldBlocks = newBlocks;
 		
-		if( range.start.nextSibling ){
+		if (range.start.nextSibling) {
 			var m = array.length;
 			var l = m;
 			
-			while( m > 0 && n > 0 && array[m - 1] === newArray[n - 1] ){
+			while (m > 0 && n > 0 && array[m - 1] === newArray[n - 1]) {
 				--m;
 				--n;
 			}
 			
-			if( n === 0 && m === 0 ){
+			if (n === 0 && m === 0) {
 				array = newArray;
 				return;
 			}
@@ -142,11 +140,11 @@ function views<ValueType>(
 			var k = Math.min(m, n);
 			var end = m < l ? array[m].range.start : range.end;
 			
-			while( i < k && array[i] === newArray[i] ){
+			while (i < k && array[i] === newArray[i]){
 				++i;
 			}
 			
-			while( i < n ){
+			while (i < n) {
 				newArray[i].insertBefore(end);
 				++i;
 			}
@@ -161,7 +159,7 @@ function views<ValueType>(
 	var n = array!.length;
 	var output = new Array(n + 2);
 	
-	for(var i=0; i<n; ++i){
+	for (var i = 0; i < n; ++i) {
 		output[i + 1] = array![i].render();
 	}
 	
