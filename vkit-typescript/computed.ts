@@ -1,5 +1,5 @@
 import createComponent from "./component";
-import {getComponent, getProvider} from "./contextGuard";
+import {getComponent, getInjector} from "./contextGuard";
 import onUnmount from "./onUnmount";
 import signalEffect from "./signalEffect";
 import signalPipe from "./signalPipe";
@@ -17,7 +17,7 @@ function createComputedSignal<ValueType>(
 	var parent = getComponent(true);
 	var subscriptions: ((value: ValueType) => void)[] = [];
 	var value: ValueType;
-	var signalComponent = createComponent(computeValue, parent, getProvider(true));
+	var signalComponent = createComponent(computeValue, parent, getInjector(true));
 	
 	if( inputs ){
 		var n = inputs.length;

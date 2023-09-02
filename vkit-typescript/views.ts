@@ -2,7 +2,7 @@ import bind from "./bind";
 import createComponent from "./component";
 import createNodeRange from "./nodeRange";
 import emitUnmount from "./emitUnmount";
-import {getComponent, getProvider, setComponent, setProvider} from "./contextGuard";
+import {getComponent, getInjector, setComponent, setInjector} from "./contextGuard";
 import hashCode from "./hashCode";
 import insert from "./insert";
 import isArray from "./isArray";
@@ -10,8 +10,8 @@ import throwError from "./throwError";
 import toArray from "./toArray";
 
 import type {Component} from "./component";
+import type {Injector} from "./injector";
 import type {NodeRange} from "./nodeRange";
-import type {Provider} from "./inject";
 import type {Signal} from "./signal";
 import type {View} from "./view";
 
@@ -26,7 +26,7 @@ function createBlock<ValueType>(
 	model: ValueType,
 	getView: (value: ValueType) => View,
 	container: Component | null,
-	provider: Provider | null
+	injector: Injector | null
 ): Block {
 	var range = createNodeRange();
 	var view: View;
@@ -38,7 +38,7 @@ function createBlock<ValueType>(
 			range.clear();
 			range.append(view);
 		}
-	}, container, provider);
+	}, container, injector);
 	
 	component.render();
 	
@@ -55,17 +55,17 @@ function createBlock<ValueType>(
 			range.insertBefore(end);
 		}else{
 			var prevComponent = getComponent(true);
-			var prevProvider = getProvider(true);
+			var prevInjector = getInjector(true);
 			
 			try{
 				setComponent(component);
-				setProvider(provider);
+				setInjector(injector);
 				insert(render(), end, end.parentNode as Node, bind);
 			}catch(error){
 				throwError(error, component);
 			}finally{
 				setComponent(prevComponent);
-				setProvider(prevProvider);
+				setInjector(prevInjector);
 			}
 		}
 	}
@@ -84,7 +84,7 @@ function views<ValueType>(
 ){
 	var signal = this;
 	var container = getComponent();
-	var provider = getProvider();
+	var injector = getInjector();
 	var range = createNodeRange();
 	var oldBlocks: {[key: string]: Block} = {};
 	var array: Block[];
@@ -110,7 +110,7 @@ function views<ValueType>(
 				model,
 				getView,
 				container,
-				provider
+				injector
 			);
 		}
 		

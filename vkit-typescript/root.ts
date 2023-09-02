@@ -1,13 +1,22 @@
 import component from "./component";
-import {provider} from "./inject";
+import {Config, ConfigClass} from "./provide";
+import createInjector from "./injector";
+import createProvider from "./provider";
 
 function mount(){
 	throw new Error("The root component cannot be rerendered");
 }
 
-var rootProvider = provider(null, null);
-var rootComponent = component(mount, null, rootProvider);
+function getValueFromClass(config: Config) {
+    return new (config as ConfigClass)();
+}
 
-rootProvider.component = rootComponent;
+var rootInjector = createInjector(null, function(token) {
+	var provider = createProvider(getValueFromClass, token, rootComponent);
+	rootInjector.set(token, provider);
+	return provider.getInstance();
+});
 
-export {rootComponent, rootProvider};
+var rootComponent = component(mount, null, rootInjector);
+
+export {rootComponent, rootInjector};

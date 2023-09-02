@@ -1,9 +1,9 @@
 import emitUnmount from "./emitUnmount";
-import {getComponent, getProvider, setComponent, setProvider} from "./contextGuard";
+import {getComponent, getInjector, setComponent, setInjector} from "./contextGuard";
 import throwError from "./throwError";
 
 import type {Observable} from "./observable";
-import type {Provider} from "./inject";
+import type {Injector} from "./injector";
 
 type Component = {
 	children: Component[] | null,
@@ -16,7 +16,7 @@ type Component = {
 function createComponent(
 	mount: () => void,
 	parent?: Component | null,
-	provider?: Provider | null
+	injector?: Injector | null
 ) : Component {
 	var component = {
 		children: null,
@@ -26,25 +26,25 @@ function createComponent(
 		unmount: null
 	};
 	
-	if( provider === undefined ){
-		provider = getProvider();
+	if( injector === undefined ){
+		injector = getInjector();
 	}
 	
 	function renderComponent(){
 		var prevComponent = getComponent(true);
-		var prevProvider = getProvider(true);
+		var prevInjector = getInjector(true);
 		
 		try{
 			setComponent(null);
 			emitUnmount(component);
 			setComponent(component);
-			setProvider(provider || null);
+			setInjector(injector || null);
 			mount();
 		}catch(error){
 			throwError(error, component);
 		}finally{
 			setComponent(prevComponent);
-			setProvider(prevProvider);
+			setInjector(prevInjector);
 		}
 	}
 	
