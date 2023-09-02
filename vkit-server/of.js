@@ -1,8 +1,5 @@
-var isSignal = require("./isSignal");
-
 function getValue(object, property){
-	var value = object[property];
-	return isSignal(value) ? value() : value;
+	return object[property];
 }
 
 var handler = {

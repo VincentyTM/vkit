@@ -1,5 +1,5 @@
 import createSignal from "./signal";
-import isSignal from "./isSignal";
+import {getComponent} from "./contextGuard";
 import observe from "./observe";
 import onUnmount from "./onUnmount";
 
@@ -10,8 +10,8 @@ function getValue<ObjectType>(
 ){
 	var value = object[property];
 	
-	if( isSignal(value) ){
-		return (value as any)();
+	if(!getComponent(true)){
+		return value;
 	}
 	
 	var observable = observe(object, property);

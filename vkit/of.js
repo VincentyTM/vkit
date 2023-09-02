@@ -1,15 +1,15 @@
 (function($){
 
 var createSignal = $.signal;
-var isSignal = $.isSignal;
+var getComponent = $.getComponent;
 var observe = $.observe;
 var onUnmount = $.onUnmount;
 
 function getValue(object, property){
 	var value = object[property];
 	
-	if( isSignal(value) ){
-		return value();
+	if(!getComponent(true)){
+		return value;
 	}
 	
 	var observable = observe(object, property);
