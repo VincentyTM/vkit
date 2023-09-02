@@ -20,6 +20,7 @@ import signal from "./signal";
 import text from "./text";
 import tick from "./tick";
 import update from "./update";
+import useKey from "./useKey";
 import view from "./view";
 import window from "./window";
 
@@ -47,6 +48,7 @@ export {
     tick,
     update,
 	view
+	useKey,
 	view,
     window
 };
