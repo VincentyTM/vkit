@@ -47,7 +47,6 @@ export {
     text,
     tick,
     update,
-	view
 	useKey,
 	view,
     window
