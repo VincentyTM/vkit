@@ -12,6 +12,8 @@ import views from "./views";
 import type {Component} from "./component";
 import type {View} from "./view";
 
+export type ItemType<ValueType> = ValueType extends (infer ItemType)[] ? ItemType : never;
+
 type Signal<ValueType> = {
 	(): ValueType;
 	component: Component | null;
@@ -30,7 +32,7 @@ type Signal<ValueType> = {
 	): () => void;
 	toString(): string;
 	view(getView: (value: ValueType | null) => View): View;
-	views(getView: (value: ValueType) => View): View;
+	views(getView: (value: ItemType<ValueType>) => View): View;
 };
 
 type WritableSignal<ValueType> = Signal<ValueType> & {
@@ -39,7 +41,7 @@ type WritableSignal<ValueType> = Signal<ValueType> & {
 	toggle(): void;
 };
 
-function createWritableSignal<ValueType>(value: ValueType): WritableSignal<ValueType>{
+function createWritableSignal<ValueType>(value: ValueType): WritableSignal<ValueType> {
 	var parent = getComponent(true);
 	var subscriptions: ((value: ValueType) => void)[] = [];
 	var enqueued = false;
@@ -110,8 +112,8 @@ function createWritableSignal<ValueType>(value: ValueType): WritableSignal<Value
 	use.component = parent;
 	use.effect = signalEffect<ValueType>;
 	use.get = get;
-	use.map = signalMap<unknown>;
-	use.pipe = signalPipe<ValueType, unknown>;
+	use.map = signalMap;
+	use.pipe = signalPipe<ValueType, any>;
 	use.prop = signalProp<ValueType>;
 	use.render = signalText<ValueType>;
 	use.set = set;
@@ -119,7 +121,7 @@ function createWritableSignal<ValueType>(value: ValueType): WritableSignal<Value
 	use.toggle = toggle;
 	use.toString = toString;
 	use.view = view<ValueType>;
-	use.views = views<ValueType>;
+	use.views = views<ItemType<ValueType>>;
 	
 	return use;
 }
