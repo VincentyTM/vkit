@@ -1,5 +1,6 @@
 import bind from "./bind";
 import computed from "./computed";
+import customElement from "./customElement";
 import effect from "./effect";
 import htmlTag from "./htmlTag";
 import htmlTags from "./htmlTags";
@@ -23,6 +24,7 @@ import window from "./window";
 export {
     bind,
     computed,
+    customElement,
     effect,
     htmlTag,
     htmlTags,
