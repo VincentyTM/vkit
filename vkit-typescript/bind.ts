@@ -10,38 +10,36 @@ export type Bindings = {
 	[key: string]: any
 };
 
-function bind(el: Target, props: Bindings, persistent = false){
-	for(var name in props){
+function bind(el: Target, props: Bindings, persistent?: boolean) {
+	for (var name in props) {
 		var value = props[name];
 		
-		switch( typeof value ){
+		switch (typeof value) {
 			case "object":
-				if(!value){
+				if (!value) {
 					el[name] = value;
-				}else if( value.prop ){
+				} else if (value.prop) {
 					value.prop(name)(el);
-				}else{
+				} else {
 					var obj = el[name];
 					
-					if( obj ){
+					if (obj) {
 						bind(obj, value, persistent);
-					}else{
+					} else {
 						el[name] = value;
 					}
 				}
-				
 				break;
 			case "function":
-				if( name.indexOf("on") === 0 ){
+				if (name.indexOf("on") === 0) {
 					var unsub = onEvent(el, name.substring(2), value);
 					
-					if(!persistent){
+					if (!persistent) {
 						onUnmount(unsub);
 					}
-				}else{
+				} else {
 					prop(name, value)(el);
 				}
-				
 				break;
 			case "undefined":
 				break;
