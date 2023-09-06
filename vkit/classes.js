@@ -1,6 +1,5 @@
 (function($){
 
-var createComponent = $.component;
 var effect = $.effect;
 var isArray = $.isArray;
 var onUnmount = $.unmount;

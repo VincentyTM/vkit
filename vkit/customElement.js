@@ -6,10 +6,8 @@ var createComponent = $.component;
 var createSignal = $.signal;
 var emitUnmount = $.emitUnmount;
 var empty = $.empty;
-var getComponent = $.getComponent;
 var inject = $.inject;
 var provide = $.provide;
-var setComponent = $.setComponent;
 var update = $.update;
 var WindowService = $.windowService;
 

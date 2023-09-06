@@ -1,7 +1,6 @@
 (function($){
 
-var createComputedSignal = $.computed;
-var createSignal = $.signal;
+var computed = $.computed;
 
 function getKeys(result){
 	return result.keys;
@@ -40,7 +39,7 @@ function useKey(arraySignal, getKey, transformValue){
 	var keysSignal = signal.map(getKeys);
 	
 	function select(key){
-		var selected = createComputedSignal(function(){
+		var selected = computed(function(){
 			var k = key && typeof key.get === "function" ? key.get() : key;
 			return signal.get().records[k];
 		});
