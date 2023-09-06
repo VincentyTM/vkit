@@ -1,9 +1,9 @@
-(function($){
+(function ($) {
 
 var bind = $.bind;
 var noop = $.noop;
 
-function dragZone(zoneTarget){
+function dragZone(zoneTarget) {
 	var cursorStartX;
 	var cursorStartY;
 	var elStartLeft;
@@ -11,17 +11,17 @@ function dragZone(zoneTarget){
 	var elNode = null;
 	var dragStartHandler = noop;
 	var dragStopHandler = noop;
-	var defaultDragGo = function(el, x, y){
+	var defaultDragGo = function (el, x, y) {
 		el.style.left = x + "px";
 		el.style.top = y + "px";
 	};
 	var dragGoHandler = defaultDragGo;
 	
-	if( zoneTarget ){
+	if (zoneTarget) {
 		bindTo(zoneTarget);
 	}
 	
-	function bindTo(zoneTarget){
+	function bindTo(zoneTarget) {
 		bind(zoneTarget, {
 			onmouseleave: dragStop,
 			onmouseup: dragStop,
@@ -32,7 +32,7 @@ function dragZone(zoneTarget){
 		});
 	}
 
-	function getX(e, el){
+	function getX(e, el) {
 		var doc = el.ownerDocument;
 		var win = doc.defaultView || doc.parentWindow;
 		
@@ -41,7 +41,7 @@ function dragZone(zoneTarget){
 		);
 	}
 
-	function getY(e, el){
+	function getY(e, el) {
 		var doc = el.ownerDocument;
 		var win = doc.defaultView || doc.parentWindow;
 		
@@ -50,12 +50,16 @@ function dragZone(zoneTarget){
 		);
 	}
 
-	function getStyle(el, prop){
-		if( typeof getComputedStyle === "function" ){
+	function getStyle(el, prop) {
+		if (typeof getComputedStyle === "function") {
 			return getComputedStyle(el, null).getPropertyValue(prop);
-		}else if( el.currentStyle ){
+		}
+		
+		if (el.currentStyle) {
 			return el.currentStyle[prop];
-		}else if( el.style ){
+		}
+		
+		if (el.style) {
 			return el.style[prop];
 		}
 		
@@ -68,15 +72,15 @@ function dragZone(zoneTarget){
 		var start = options && options.start || noop;
 		var end = options && options.end || noop;
 		
-		var handler = target && target.nodeType ? function(e){
+		var handler = target && target.nodeType ? function (e) {
 			dragGoHandler = go;
 			dragStartHandler = start;
 			dragStopHandler = end;
 			dragStart(e, target);
 		}
 		
-		: target && "current" in target ? function(e){
-			if( target.current ){
+		: target && "current" in target ? function (e) {
+			if (target.current) {
 				dragGoHandler = go;
 				dragStartHandler = start;
 				dragStopHandler = end;
@@ -84,7 +88,7 @@ function dragZone(zoneTarget){
 			}
 		}
 		
-		: function(e){
+		: function (e) {
 			dragGoHandler = go;
 			dragStartHandler = start;
 			dragStopHandler = end;
@@ -100,15 +104,15 @@ function dragZone(zoneTarget){
 		};
 	}
 
-	function dragGo(e, cancel){
-		if( elNode ){
+	function dragGo(e, cancel) {
+		if (elNode) {
 			dragGoHandler(
 				elNode,
 				elStartLeft + getX(e, elNode) - cursorStartX,
 				elStartTop + getY(e, elNode) - cursorStartY
 			);
 			
-			if( cancel ){
+			if (cancel) {
 				e.cancelBubble = true; e.stopPropagation && e.stopPropagation();
 				e.returnValue = false; e.preventDefault && e.preventDefault();
 				return false;
@@ -116,7 +120,7 @@ function dragZone(zoneTarget){
 		}
 	}
 
-	function dragStart(e, target){
+	function dragStart(e, target) {
 		elNode = target;
 		cursorStartX = getX(e, elNode);
 		cursorStartY = getY(e, elNode);
@@ -134,8 +138,8 @@ function dragZone(zoneTarget){
 		return false;
 	}
 
-	function dragStop(e){
-		if( elNode ){
+	function dragStop(e) {
+		if (elNode) {
 			dragGo.call(elNode, e, false);
 			dragStopHandler(
 				elNode,
@@ -146,7 +150,7 @@ function dragZone(zoneTarget){
 		}
 	}
 
-	function touchMove(e){
+	function touchMove(e) {
 		return dragGo.call(this, e, true);
 	}
 	
