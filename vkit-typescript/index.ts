@@ -3,6 +3,7 @@ import bind from "./bind";
 import classes from "./classes";
 import computed from "./computed";
 import customElement from "./customElement";
+import document from "./document";
 import effect from "./effect";
 import html from "./html";
 import htmlTag from "./htmlTag";
@@ -32,6 +33,7 @@ export {
     classes,
     computed,
     customElement,
+    document,
     effect,
 	html,
     htmlTag,

@@ -6,7 +6,7 @@ type Target = {
 	[key: string]: any
 };
 
-type Bindings = {
+export type Bindings = {
 	[key: string]: any
 };
 
