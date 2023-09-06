@@ -1,5 +1,6 @@
 import attributes from "./attributes";
 import bind from "./bind";
+import classes from "./classes";
 import computed from "./computed";
 import customElement from "./customElement";
 import effect from "./effect";
@@ -28,6 +29,7 @@ import window from "./window";
 export {
     attributes,
     bind,
+    classes,
     computed,
     customElement,
     effect,
