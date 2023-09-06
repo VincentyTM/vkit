@@ -17,6 +17,7 @@ import of from "./of";
 import onEvent from "./onEvent";
 import onUnmount from "./onEvent";
 import provide from "./provide";
+import ref from "./ref";
 import render from "./render";
 import shadow from "./shadow";
 import signal from "./signal";
@@ -47,6 +48,7 @@ export {
     onEvent,
     onUnmount,
     provide,
+    ref,
 	render,
 	shadow,
 	signal,
