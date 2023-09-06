@@ -62,7 +62,8 @@ function dragZone(zoneTarget){
 		return "";
 	}
 
-	function draggable(target, options){
+	function draggable(options) {
+		var target = options && options.move || null;
 		var go = typeof target === "function" && !("current" in target) ? target : defaultDragGo;
 		var start = options && options.start || noop;
 		var end = options && options.end || noop;
