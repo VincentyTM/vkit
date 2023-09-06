@@ -39,28 +39,15 @@ function sortable(dragZone, items, options){
 	function bind(value){
 		var lastValue = null;
 		var lastDown = null;
+		var offsetLeft = 0;
+		var offsetTop = 0;
 		
 		return [
-			dragZone.draggable(function(el, x, y){
-				el.style.left = x + "px";
-				el.style.top = y + "px";
-				
-				for(var i=list.length; i--;){
-					if( list[i].element !== el ){
-						var item = list[i];
-						
-						if( intersectsWithTop(el, item.element) ){
-							moveValueTo(value, lastValue = item.value, lastDown = false);
-						}
-						
-						if( intersectsWithBottom(el, item.element) ){
-							moveValueTo(value, lastValue = item.value, lastDown = true);
-						}
-					}
-				}
-			}, {
-				start: function(el){
+			dragZone.draggable({
+				start: function (el) {
 					el.style.position = "absolute";
+					offsetLeft = el.offsetLeft;
+					offsetTop = el.offsetTop;
 				},
 				end: function(el){
 					el.style.position = "";
@@ -69,6 +56,26 @@ function sortable(dragZone, items, options){
 					move(value, lastValue, lastDown);
 					lastValue = null;
 					lastDown = null;
+				},
+				move: function (el, x, y) {
+					x += offsetLeft;
+					y += offsetTop;
+					el.style.left = x + "px";
+					el.style.top = y + "px";
+					
+					for (var i = list.length; i--;) {
+						if (list[i].element !== el) {
+							var item = list[i];
+							
+							if (intersectsWithTop(el, item.element)) {
+								moveValueTo(value, lastValue = item.value, lastDown = false);
+							}
+							
+							if (intersectsWithBottom(el, item.element)) {
+								moveValueTo(value, lastValue = item.value, lastDown = true);
+							}
+						}
+					}
 				}
 			}),
 			function(el){

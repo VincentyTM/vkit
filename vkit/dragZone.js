@@ -119,15 +119,6 @@ function dragZone(zoneTarget){
 		elNode = target;
 		cursorStartX = getX(e, elNode);
 		cursorStartY = getY(e, elNode);
-		
-		var el = elNode;
-		
-		while( el && el.offsetLeft >= 0 && el.offsetTop >= 0 ){
-			cursorStartX -= el.offsetLeft;
-			cursorStartY -= el.offsetTop;
-			el = el.offsetParent;
-		}
-		
 		elStartLeft = parseInt(getStyle(elNode, "left")) || 0;
 		elStartTop = parseInt(getStyle(elNode, "top")) || 0;
 		
