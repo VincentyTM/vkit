@@ -1,3 +1,4 @@
+import attributes from "./attributes";
 import bind from "./bind";
 import computed from "./computed";
 import customElement from "./customElement";
@@ -25,6 +26,7 @@ import view from "./view";
 import window from "./window";
 
 export {
+    attributes,
     bind,
     computed,
     customElement,
