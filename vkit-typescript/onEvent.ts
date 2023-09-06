@@ -4,7 +4,7 @@ type EventListenerType = {
     call: (target: EventTargetType, event: EventType) => any;
 };
 
-type EventTargetType = {
+export type EventTargetType = {
     addEventListener?: (eventType: string, eventListener: EventListenerType, capturing: boolean) => void;
     removeEventListener?: (eventType: string, eventListener: EventListenerType, capturing: boolean) => void;
     attachEvent?: (eventType: string, eventListener: EventListenerType) => void;
