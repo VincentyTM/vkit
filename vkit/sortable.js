@@ -1,9 +1,9 @@
-(function($){
+(function ($) {
 
 var noop = $.noop;
 var onUnmount = $.onUnmount;
 
-function intersectsWithBottom(a, b){
+function intersectsWithBottom(a, b) {
 	var aRect = a.getBoundingClientRect();
 	var bRect = b.getBoundingClientRect();
 	
@@ -15,7 +15,7 @@ function intersectsWithBottom(a, b){
 	);
 }
 
-function intersectsWithTop(a, b){
+function intersectsWithTop(a, b) {
 	var aRect = a.getBoundingClientRect();
 	var bRect = b.getBoundingClientRect();
 	
@@ -27,16 +27,16 @@ function intersectsWithTop(a, b){
 	);
 }
 
-function defaultEqual(a, b){
+function defaultEqual(a, b) {
 	return a === b;
 }
 
-function sortable(dragZone, items, options){
+function sortable(dragZone, items, options) {
 	var equal = options && options.equal || defaultEqual;
 	var move = options && options.move || noop;
 	var list = [];
 	
-	function bind(value){
+	function bind(value) {
 		var lastValue = null;
 		var lastDown = null;
 		var offsetLeft = 0;
@@ -49,7 +49,7 @@ function sortable(dragZone, items, options){
 					offsetLeft = el.offsetLeft;
 					offsetTop = el.offsetTop;
 				},
-				end: function(el){
+				end: function (el) {
 					el.style.position = "";
 					el.style.left = "";
 					el.style.top = "";
@@ -78,15 +78,15 @@ function sortable(dragZone, items, options){
 					}
 				}
 			}),
-			function(el){
+			function (el) {
 				list.push({
 					element: el,
 					value: value
 				});
 				
-				onUnmount(function(){
-					for(var i=list.length; i--;){
-						if( list[i].element === el ){
+				onUnmount(function () {
+					for (var i = list.length; i--;) {
+						if (list[i].element === el) {
 							list.splice(i, 1);
 							break;
 						}
@@ -96,18 +96,18 @@ function sortable(dragZone, items, options){
 		];
 	}
 	
-	function moveValueTo(a, b, down){
-		if( a === b ){
+	function moveValueTo(a, b, down) {
+		if (a === b) {
 			return;
 		}
 		
 		var array = items.get();
 		
-		for(var i=array.length; i--;){
-			if( array[i] === a ){
-				if( down ){
-					for(var j=array.length - 1; j > i; --j){
-						if( equal(array[j], b, true) ){
+		for (var i = array.length; i--;) {
+			if (array[i] === a) {
+				if (down) {
+					for (var j = array.length - 1; j > i; --j) {
+						if (equal(array[j], b, true)) {
 							items.set(array.slice(0, i).concat(
 								array.slice(i + 1, j),
 								[b, a],
@@ -117,8 +117,8 @@ function sortable(dragZone, items, options){
 						}
 					}
 				}else{
-					for(var j=i - 1; j >= 0; --j){
-						if( equal(array[j], b, false) ){
+					for (var j = i - 1; j >= 0; --j) {
+						if (equal(array[j], b, false)) {
 							items.set(array.slice(0, j).concat(
 								array.slice(j + 1, i),
 								[a, b],
