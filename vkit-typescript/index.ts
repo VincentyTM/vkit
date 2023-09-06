@@ -21,6 +21,7 @@ import ref from "./ref";
 import render from "./render";
 import shadow from "./shadow";
 import signal from "./signal";
+import style from "./style";
 import text from "./text";
 import tick from "./tick";
 import update from "./update";
@@ -52,6 +53,7 @@ export {
 	render,
 	shadow,
 	signal,
+	style,
     text,
     tick,
     update,
