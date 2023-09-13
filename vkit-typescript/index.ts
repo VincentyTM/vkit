@@ -12,6 +12,7 @@ import htmlTags from "./htmlTags";
 import inject from "./inject";
 import isSignal from "./isSignal";
 import noop from "./noop";
+import objectProperty from "./objectProperty";
 import observable from "./observable";
 import observe from "./observe";
 import of from "./of";
@@ -47,6 +48,7 @@ export {
 	inject,
 	isSignal,
 	noop,
+	objectProperty,
 	observable,
 	observe,
 	of,
