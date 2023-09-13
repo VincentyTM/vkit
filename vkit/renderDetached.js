@@ -3,39 +3,44 @@
 var append = $.append;
 var bind = $.bind;
 var createComponent = $.component;
+var createInjector = $.injector;
 var createProvider = $.provider;
 var emitUnmount = $.emitUnmount;
+var getValueFromClass = $.getValueFromClass;
 var inject = $.inject;
 var update = $.update;
 var WindowService = $.windowService;
 
 function renderDetached(getView, parent){
-	var provider = createProvider(null, null);
-	var component = createComponent(function(){
+	var injector = createInjector(null, function(token) {
+		var provider = createProvider(getValueFromClass, token, component);
+		injector.container.set(token, provider);
+		return provider.getInstance();
+	});
+	
+	var component = createComponent(function() {
 		var win = null;
 		
-		if( parent ){
+		if (parent) {
 			var doc = parent.ownerDocument;
-			
-			if( doc ){
+			if (doc) {
 				win = doc.defaultView || doc.parentWindow;
 			}
 		}
 		
-		if( win ){
+		if (win) {
 			inject(WindowService).window = win;
 		}
 		
-		var view = getView(function(){
+		var view = getView(function() {
 			emitUnmount(component);
 		}, component);
 		
-		if( parent ){
+		if (parent) {
 			append(parent, view, parent, bind);
 		}
-	}, null, provider);
+	}, null, injector);
 	
-	provider.component = component;
 	component.render();
 	update();
 	

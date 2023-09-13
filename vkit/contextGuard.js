@@ -1,36 +1,36 @@
-(function($){
+(function($) {
 
 var currentComponent = null;
-var currentProvider = null;
+var currentInjector = null;
 var errorMessage = "This function can only be called synchronously from a component";
 
-function getComponent(allowNull){
-	if(!allowNull && !currentComponent){
+function getComponent(allowNull) {
+	if (!allowNull && !currentComponent) {
 		throw new Error(errorMessage);
 	}
 	
 	return currentComponent;
 }
 
-function setComponent(component){
+function setComponent(component) {
 	currentComponent = component;
 }
 
-function getProvider(allowNull){
-	if(!allowNull && (!currentComponent || !currentProvider)){
+function getInjector(allowNull) {
+	if (!allowNull && (!currentComponent || !currentInjector)) {
 		throw new Error(errorMessage);
 	}
 	
-	return currentProvider;
+	return currentInjector;
 }
 
-function setProvider(provider){
-	currentProvider = provider;
+function setInjector(injector) {
+	currentInjector = injector;
 }
 
 $.getComponent = getComponent;
-$.getProvider = getProvider;
+$.getInjector = getInjector;
 $.setComponent = setComponent;
-$.setProvider = setProvider;
+$.setInjector = setInjector;
 
 })($);

@@ -1,13 +1,13 @@
-(function($, undefined){
+(function($, undefined) {
 
 var emitUnmount = $.emitUnmount;
 var getComponent = $.getComponent;
-var getProvider = $.getProvider;
+var getInjector = $.getInjector;
 var setComponent = $.setComponent;
-var setProvider = $.setProvider;
+var setInjector = $.setInjector;
 var throwError = $.throwError;
 
-function createComponent(mount, parent, provider){
+function createComponent(mount, parent, injector) {
 	var component = {
 		children: null,
 		emitError: null,
@@ -16,25 +16,25 @@ function createComponent(mount, parent, provider){
 		unmount: null
 	};
 	
-	if( provider === undefined ){
-		provider = getProvider();
+	if (injector === undefined) {
+		injector = getInjector();
 	}
 	
-	function renderComponent(){
+	function renderComponent() {
 		var prevComponent = getComponent(true);
-		var prevProvider = getProvider(true);
+		var prevInjector = getInjector(true);
 		
 		try{
 			setComponent(null);
 			emitUnmount(component);
 			setComponent(component);
-			setProvider(provider);
+			setInjector(injector);
 			mount();
 		}catch(error){
 			throwError(error, component);
 		}finally{
 			setComponent(prevComponent);
-			setProvider(prevProvider);
+			setInjector(prevInjector);
 		}
 	}
 	

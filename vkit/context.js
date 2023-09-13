@@ -1,29 +1,29 @@
-(function($){
+(function($) {
 
 var getComponent = $.getComponent;
-var getProvider = $.getProvider;
+var getInjector = $.getInjector;
 var setComponent = $.setComponent;
-var setProvider = $.setProvider;
+var setInjector = $.setInjector;
 var throwError = $.throwError;
 
-function getContext(){
+function getContext() {
 	var component = getComponent();
-	var provider = getProvider();
+	var injector = getInjector();
 	
-	return function(getView){
+	return function(getView) {
 		var prevComponent = getComponent(true);
-		var prevProvider = getProvider(true);
+		var prevInjector = getInjector(true);
 		
 		try{
 			setComponent(component);
-			setProvider(provider);
+			setInjector(injector);
 			
 			return getView.apply(this, arguments);
 		}catch(error){
 			throwError(error, component);
 		}finally{
 			setComponent(prevComponent);
-			setProvider(prevProvider);
+			setInjector(prevInjector);
 		}
 	};
 }

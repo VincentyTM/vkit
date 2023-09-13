@@ -3,22 +3,22 @@
 var append = $.append;
 var bind = $.bind;
 var rootComponent = $.rootComponent;
-var rootProvider = $.rootProvider;
+var rootInjector = $.rootInjector;
 var setComponent = $.setComponent;
-var setProvider = $.setProvider;
+var setInjector = $.setInjector;
 var update = $.update;
 
 function render(getView, container){
 	try{
 		setComponent(rootComponent);
-		setProvider(rootProvider);
+		setInjector(rootInjector);
 		
 		var view = getView();
 		
 		append(container, view, container, bind);
 	}finally{
 		setComponent(null);
-		setProvider(null);
+		setInjector(null);
 	}
 	
 	update();

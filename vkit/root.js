@@ -1,18 +1,27 @@
 (function($){
 
-var component = $.component;
-var provider = $.provider;
+var createComponent = $.component;
+var createInjector = $.injector;
+var createProvider = $.provider;
 
 function mount(){
 	throw new Error("The root component cannot be rerendered");
 }
 
-var rootProvider = provider(null, null);
-var rootComponent = component(mount, null, rootProvider);
+function getValueFromClass(config) {
+    return new config();
+}
 
-rootProvider.component = rootComponent;
+var rootInjector = createInjector(null, function(token) {
+	var provider = createProvider(getValueFromClass, token, rootComponent);
+	rootInjector.container.set(token, provider);
+	return provider.getInstance();
+});
 
+var rootComponent = createComponent(mount, null, rootInjector);
+
+$.getValueFromClass = getValueFromClass;
 $.rootComponent = rootComponent;
-$.rootProvider = rootProvider;
+$.rootInjector = rootInjector;
 
 })($);

@@ -5,16 +5,16 @@ var createComponent = $.component;
 var createNodeRange = $.nodeRange;
 var emitUnmount = $.emitUnmount;
 var getComponent = $.getComponent;
-var getProvider = $.getProvider;
+var getInjector = $.getInjector;
 var hashCode = $.hashCode;
 var insert = $.insert;
 var isArray = $.isArray;
 var setComponent = $.setComponent;
-var setProvider = $.setProvider;
+var setInjector = $.setInjector;
 var throwError = $.throwError;
 var toArray = $.toArray;
 
-function createBlock(model, getView, container, provider){
+function createBlock(model, getView, container, injector) {
 	var range = createNodeRange();
 	var view;
 	
@@ -25,7 +25,7 @@ function createBlock(model, getView, container, provider){
 			range.clear();
 			range.append(view);
 		}
-	}, container, provider);
+	}, container, injector);
 	
 	component.render();
 	
@@ -42,17 +42,17 @@ function createBlock(model, getView, container, provider){
 			range.insertBefore(end);
 		}else{
 			var prevComponent = getComponent(true);
-			var prevProvider = getProvider(true);
+			var prevInjector = getInjector(true);
 			
 			try{
 				setComponent(component);
-				setProvider(provider);
+				setInjector(injector);
 				insert(render(), end, end.parentNode, bind);
 			}catch(error){
 				throwError(error, component);
 			}finally{
 				setComponent(prevComponent);
-				setProvider(prevProvider);
+				setInjector(prevInjector);
 			}
 		}
 	}
@@ -68,7 +68,7 @@ function createBlock(model, getView, container, provider){
 function views(getView){
 	var signal = this;
 	var container = getComponent();
-	var provider = getProvider();
+	var injector = getInjector();
 	var range = createNodeRange();
 	var oldBlocks = {};
 	var array;
@@ -94,7 +94,7 @@ function views(getView){
 				model,
 				getView,
 				container,
-				provider
+				injector
 			);
 		}
 		

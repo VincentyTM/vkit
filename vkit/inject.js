@@ -1,145 +1,31 @@
-(function($){
+(function($) {
 
-var getComponent = $.getComponent;
-var setComponent = $.setComponent;
-var getProvider = $.getProvider;
-var setProvider = $.setProvider;
-var supportsWeakMap = typeof WeakMap === "function";
+var getInjector = $.getInjector;
 
-function serviceFactory(service){
-	return new service();
-}
-
-function configFactory(config){
-	if( "useValue" in config ){
-		return config.useValue;
+function inject(token, injector) {
+	if (!injector) {
+		injector = getInjector();
 	}
 	
-	if( "useFactory" in config ){
-		return config.useFactory();
-	}
+	var provider;
 	
-	if( "useClass" in config ){
-		return new config.useClass();
-	}
-	
-	if( "useExisting" in config ){
-		return inject(config.useExisting);
-	}
-	
-	return new config.provide();
-}
-
-function Container(service, serviceOrConfig){
-	this.service = service;
-	this.serviceOrConfig = serviceOrConfig;
-	this.instance = null;
-	this.instanceCreated = false;
-	this.createInstance = service === serviceOrConfig ? serviceFactory : configFactory;
-}
-
-Container.prototype.getInstance = function(component){
-	if( this.instanceCreated ){
-		return this.instance;
-	}
-	
-	var prevComponent = getComponent();
-	
-	try{
-		setComponent(component);
-		this.instance = this.createInstance(this.serviceOrConfig);
-	}finally{
-		setComponent(prevComponent);
-	}
-	
-	this.instanceCreated = true;
-	
-	return this.instance;
-};
-
-function Provider(parent, component){
-	this.parent = parent;
-	this.containers = supportsWeakMap ? new WeakMap() : [];
-	this.component = component;
-}
-
-Provider.prototype.getContainer = function(service){
-	var containers = this.containers;
-	
-	if( containers.get ){
-		return containers.get(service);
-	}
-	
-	for(var i=containers.length; i--;){
-		if( containers[i].service === service ){
-			return containers[i];
-		}
-	}
-};
-
-Provider.prototype.registerService = function(service){
-	var key = typeof service === "object" ? service.provide : service;
-	var containers = this.containers;
-	
-	if( supportsWeakMap ){
-		containers.set(key, new Container(key, service));
-	}else{
-		containers.push(new Container(key, service));
-	}
-};
-
-function inject(service, provider){
-	if(!provider){
-		provider = getProvider();
-	}
-	
-	var container = null;
-	
-	while(!(container = provider.getContainer(service)) && provider.parent){
-		provider = provider.parent;
-	}
-	
-	if(!container){
-		container = new Container(service, service);
-		var containers = provider.containers;
-		containers.set ? containers.set(service, container) : containers.push(container);
-	}
-	
-	return container.getInstance(provider.component);
-}
-
-function provide(services, getView){
-	var component = getComponent();
-	var prevProvider = null;
-	
-	if( services ){
-		prevProvider = getProvider();
-	}
-	
-	var provider = new Provider(prevProvider, component);
-	
-	if( services ){
-		var n = services.length;
-		for(var i=0; i<n; ++i){
-			provider.registerService(services[i]);
-		}
-	}
-	
-	try{
-		setProvider(provider);
+	while (!(provider = injector.container.get(token))) {
+		var handleMissingProvider = injector.handleMissingProvider;
+		var parent = injector.parent;
 		
-		return getView();
-	}finally{
-		setProvider(prevProvider);
+		if (!parent) {
+			if (typeof handleMissingProvider === "function") {
+				return handleMissingProvider(token);
+			}
+			throw new Error("There is no provider for this token");
+		}
+		
+		injector = parent;
 	}
-}
-
-function createProvider(parent, component){
-	return new Provider(parent, component);
+	
+	return provider.getInstance();
 }
 
 $.inject = inject;
-$.provide = provide;
-$.provider = createProvider;
 
 })($);
