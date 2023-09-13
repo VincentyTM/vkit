@@ -1,7 +1,7 @@
 import createComponent from "./component";
 import createNodeRange from "./nodeRange";
-
-import type {Signal} from "./signal";
+import isSignal from "./isSignal";
+import {Signal} from "./signal";
 
 type View = any;
 
@@ -10,29 +10,27 @@ function view<ValueType>(
 	getView: (value: ValueType | null) => View
 ) : View {
 	var component = createComponent(mount);
-	var currentView;
+	var currentView: View;
 	var range = createNodeRange();
 	var render = component.render;
 	var signal: Signal<ValueType> | null = this;
 	
-	if(!(signal && typeof signal.get === "function" && typeof signal.subscribe === "function")){
+	if (isSignal(signal)) {
+		signal.subscribe(render);
+	} else {
 		signal = null;
 	}
 	
-	function mount(){
+	function mount() {
 		currentView = getView(signal ? signal.get() : null);
 		
-		if( range.start.nextSibling ){
+		if (range.start.nextSibling) {
 			range.clear();
 			range.append(currentView);
 		}
 	}
 	
 	render();
-	
-	if( signal ){
-		signal.subscribe(render);
-	}
 	
 	return [
 		range.start,
@@ -41,6 +39,5 @@ function view<ValueType>(
 	];
 }
 
-export type {View};
-
+export {View};
 export default view;
