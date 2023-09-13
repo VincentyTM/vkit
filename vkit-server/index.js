@@ -1,6 +1,5 @@
 var htmlTag = require("./htmlTag");
 var htmlTags = require("./htmlTags");
-var inject = require("./inject");
 var languageService = require("./languageService");
 var noop = require("./noop");
 var signal = require("./signal");
@@ -24,7 +23,7 @@ module.exports = {
 	htmlTags: htmlTags,
 	http: require("./http"),
 	ifElse: require("./ifElse"),
-	inject: inject.inject,
+	inject: require("./inject"),
 	interval: noop,
 	isArray: require("./isArray"),
 	isSignal: require("./isSignal"),
@@ -41,7 +40,7 @@ module.exports = {
 	path: require("./path"),
 	preferredLanguages: require("./preferredLanguages"),
 	preload: require("./preload"),
-	provide: inject.provide,
+	provide: require("./provide"),
 	queryParams: require("./queryParams"),
 	queryParamsState: require("./queryParamsState"),
 	router: require("./router"),

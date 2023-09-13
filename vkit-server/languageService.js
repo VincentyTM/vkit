@@ -1,6 +1,6 @@
 var computed = require("./signal").computed;
 var createSignal = require("./signal").writable;
-var inject = require("./inject").inject;
+var inject = require("./inject");
 var slice = Array.prototype.slice;
 
 var assign = Object.assign || function(a, b){

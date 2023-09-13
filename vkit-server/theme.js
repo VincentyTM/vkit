@@ -1,4 +1,4 @@
-var inject = require("./inject.js").inject;
+var inject = require("./inject.js");
 
 function Theme(props){
 	if(!(this instanceof Theme)){

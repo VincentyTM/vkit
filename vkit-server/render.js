@@ -1,6 +1,6 @@
 var append = require("./append.js");
 var bind = require("./bind.js");
-var provide = require("./inject.js").provide;
+var provide = require("./provide.js");
 var scope = require("./scope.js");
 
 function render(req, res, component){
