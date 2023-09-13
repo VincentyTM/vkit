@@ -13,7 +13,7 @@ function getValueFromClass(config: Config) {
 
 var rootInjector = createInjector(null, function(token) {
 	var provider = createProvider(getValueFromClass, token, rootComponent);
-	rootInjector.set(token, provider);
+	rootInjector.container.set(token, provider);
 	return provider.getInstance();
 });
 

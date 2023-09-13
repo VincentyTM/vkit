@@ -11,8 +11,9 @@ export type InstanceOf<TokenType> = (
 );
 
 export type Injector = {
-    inject<TokenType extends TokenLike>(token: TokenType): InstanceOf<TokenType>;
-    set(token: TokenLike, provider: Provider<unknown>): void;
+    container: WeakMap<TokenLike, Provider<unknown>>,
+    handleMissingProvider: ((token: TokenClass) => InstanceOf<TokenClass>) | null,
+    parent: Injector | null
 };
 
 var Container = typeof WeakMap === "function" ? WeakMap : function<KeyType, ValueType>() {
@@ -29,7 +30,7 @@ var Container = typeof WeakMap === "function" ? WeakMap : function<KeyType, Valu
 
     this.set = function(key: KeyType, value: ValueType) {
         for (var i = array.length - 2; i >= 0; i -= 2) {
-            if ( array[i] === key ){
+            if (array[i] === key) {
                 array[i + 1] = value;
                 return;
             }
@@ -38,31 +39,14 @@ var Container = typeof WeakMap === "function" ? WeakMap : function<KeyType, Valu
     };
 } as unknown as WeakMapConstructor;
 
-function createInjector(parent: Injector | null, handleMissingProvider: ((token: TokenClass) => InstanceOf<TokenClass>) | null): Injector {
-    var container = new Container<TokenLike, Provider<unknown>>();
-    
-    function inject<TokenType extends TokenLike>(token: TokenType): InstanceOf<TokenType> {
-        var provider = container.get(token);
-        if (provider) {
-            return provider.getInstance() as InstanceOf<TokenType>;
-        } else {
-            if (!parent) {
-                if (typeof handleMissingProvider === "function") {
-                    return handleMissingProvider(token as TokenClass) as InstanceOf<TokenType>;
-                }
-                throw new Error("Value not provided anywhere");
-            }
-            return parent.inject<TokenType>(token);
-        }
-    }
-
-    function set(token: TokenLike, provider: Provider<unknown>) {
-        container.set(token, provider);
-    }
-
+function createInjector(
+    parent: Injector | null,
+    handleMissingProvider: ((token: TokenClass) => InstanceOf<TokenClass>) | null
+): Injector {
     return {
-        inject: inject,
-        set: set
+        container: new Container<TokenLike, Provider<unknown>>(),
+        handleMissingProvider: handleMissingProvider,
+        parent: parent
     };
 }
 

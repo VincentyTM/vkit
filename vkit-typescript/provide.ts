@@ -51,7 +51,7 @@ function provide(configs: Config[] | null, getView: () => View) {
     var parentInjector = configs ? prevInjector : null;
     var injector = createInjector(parentInjector, configs ? null : function(token) {
         var provider = createProvider(getValueFromClass, token, component);
-        injector.set(token, provider);
+        injector.container.set(token, provider);
         return provider.getInstance();
     });
 
@@ -65,7 +65,7 @@ function provide(configs: Config[] | null, getView: () => View) {
             if ((config as ConfigProvidable).provide) {
                 if ((config as ConfigUseFactory).useFactory) {
                     provider = createProvider(getValueFromUseFactory, config, component);
-                } else if ((config as ConfigUseValue).useValue) {
+                } else if ("useValue" in (config as ConfigUseValue)) {
                     provider = createProvider(getValueFromUseValue, config, component);
                 } else if ((config as ConfigUseClass).useClass) {
                     provider = createProvider(getValueFromUseClass, config, component);
@@ -74,16 +74,15 @@ function provide(configs: Config[] | null, getView: () => View) {
                 } else {
                     provider = createProvider(getValueFromProvide, config, component);
                 }
-
-                injector.set((config as ConfigProvidable).provide, provider);
+                injector.container.set((config as ConfigProvidable).provide, provider);
             } else {
                 provider = createProvider(getValueFromClass, config, component);
-                injector.set(config as ConfigClass, provider);
+                injector.container.set(config as ConfigClass, provider);
             }
         }
     }
 
-    try{
+    try {
         setInjector(injector);
         return getView();
     } finally {
