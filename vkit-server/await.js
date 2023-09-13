@@ -1,11 +1,11 @@
-var createConstantSignal = require("./constant");
+var readOnly = require("./readOnly");
 
-function awaitPromise(promiseOrSignal){
-	var output = createConstantSignal({pending: true});
+function awaitPromise(promiseOrSignal) {
+	var output = readOnly({pending: true});
 	
-	output.then = function(fulfilled, rejected, pending){
-		return output.view(function(data){
-			if( typeof pending === "function" ){
+	output.then = function(fulfilled, rejected, pending) {
+		return output.view(function(data) {
+			if (typeof pending === "function") {
 				return pending();
 			}
 		});

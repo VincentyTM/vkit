@@ -1,25 +1,25 @@
-var constant = require("./constant");
+var readOnly = require("./readOnly");
 
-function classNames(classes){
+function classNames(classes) {
 	var array = [];
 	
-	for(var cname in classes){
+	for (var cname in classes) {
 		var val = classes[cname];
 		
-		if( val && typeof val.get === "function" ){
-			if( val.get() ){
+		if (val && typeof val.get === "function") {
+			if (val.get()) {
 				array.push(cname);
 			}
-		}else if( typeof val === "function" ){
-			if( val() ){
+		} else if (typeof val === "function") {
+			if (val()) {
 				array.push(cname);
 			}
-		}else if( val ){
+		} else if (val) {
 			array.push(cname);
 		}
 	}
 	
-	return constant(array.join(" "));
+	return readOnly(array.join(" "));
 }
 
 module.exports = classNames;
