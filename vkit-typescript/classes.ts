@@ -85,9 +85,9 @@ function classes() {
 	var args = arguments;
 	var n = args.length;
 	
-	return function(el) {
+	return function(element: HTMLElement) {
 		for (var i = 0; i < n; ++i) {
-			bindClasses(el, args[i]);
+			bindClasses(element, args[i]);
 		}
 	};
 }
