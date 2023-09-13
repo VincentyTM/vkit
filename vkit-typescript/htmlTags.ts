@@ -1,9 +1,10 @@
 import htmlTag from "./htmlTag";
+import {View} from "./view";
 
-import type {View} from "./view";
+type HTMLProxy = {[key: string]: (...contents: View[]) => HTMLElement};
 
-var htmlTags = new Proxy({} as {[key: string]: (...contents: View[]) => HTMLElement}, {
-    get: function(_target: object, tagName: string, _receiver: object){
+var htmlTags = new Proxy({}, {
+    get: function(_target: HTMLProxy, tagName: string, _receiver: HTMLProxy){
         return htmlTag(tagName.toLowerCase().replace(/_/g, "-"));
     }
 });
