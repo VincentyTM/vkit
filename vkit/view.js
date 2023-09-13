@@ -1,10 +1,10 @@
-(function($){
+(function($) {
 
 var createComponent = $.component;
 var createNodeRange = $.nodeRange;
 var isSignal = $.isSignal;
 
-function view(getView){
+function view(getView) {
 	var component = createComponent(mount);
 	var currentView;
 	var range = createNodeRange();
@@ -17,10 +17,10 @@ function view(getView){
 		signal = null;
 	}
 	
-	function mount(){
+	function mount() {
 		currentView = getView(signal ? signal.get() : null);
 		
-		if( range.start.nextSibling ){
+		if (range.start.nextSibling) {
 			range.clear();
 			range.append(currentView);
 		}

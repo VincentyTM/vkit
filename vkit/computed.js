@@ -1,4 +1,4 @@
-(function($, undefined){
+(function($, undefined) {
 
 var createComponent = $.component;
 var getComponent = $.getComponent;
@@ -11,32 +11,32 @@ var signalText = $.signalText;
 var view = $.view;
 var views = $.views;
 
-function createComputedSignal(getValue, inputs){
+function createComputedSignal(getValue, inputs) {
 	var parent = getComponent(true);
 	var subscriptions = [];
 	var value;
 	var signalComponent = createComponent(computeValue, parent, getInjector(true));
 	
-	if( inputs ){
+	if (inputs) {
 		var n = inputs.length;
 		
-		for(var i=0; i<n; ++i){
+		for (var i = 0; i < n; ++i) {
 			var input = inputs[i];
 			
-			if( input && typeof input.subscribe === "function" ){
+			if (input && typeof input.subscribe === "function") {
 				input.subscribe(signalComponent.render);
 			}
 		}
 	}
 	
-	function computeValue(){
+	function computeValue() {
 		var newValue;
 		
-		if( inputs ){
+		if (inputs) {
 			var n = inputs.length;
 			var args = new Array(n);
 			
-			for(var i=0; i<n; ++i){
+			for (var i = 0; i < n; ++i) {
 				var input = inputs[i];
 				args[i] = input && typeof input.get === "function" ? input.get() : input;
 			}
@@ -46,55 +46,52 @@ function createComputedSignal(getValue, inputs){
 			newValue = getValue();
 		}
 		
-		if( value !== newValue ){
+		if (value !== newValue) {
 			value = newValue;
 			
 			var n = subscriptions.length;
 			
-			for(var i=0; i<n; ++i){
+			for (var i = 0; i < n; ++i) {
 				subscriptions[i](value);
 			}
 		}
 	}
 	
-	function use(){
+	function use() {
 		var value = get();
-		
 		subscribe(getComponent().render);
-		
 		return value;
 	}
 	
-	function get(){
-		if( value === undefined ){
+	function get() {
+		if (value === undefined) {
 			signalComponent.render();
 		}
-		
 		return value;
 	}
 	
-	function subscribe(callback, persistent){
+	function subscribe(callback, persistent) {
 		var component = getComponent(true);
 		var unmounted = false;
 		
-		subscriptions.push(function(value){
-			if(!unmounted){
+		subscriptions.push(function(value) {
+			if (!unmounted) {
 				callback(value);
 			}
 		});
 		
-		function unsubscribe(){
+		function unsubscribe() {
 			unmounted = true;
 			
-			for(var i=subscriptions.length; i--;){
-				if( subscriptions[i] === callback ){
+			for (var i = subscriptions.length; i--;) {
+				if (subscriptions[i] === callback) {
 					subscriptions.splice(i, 1);
 					break;
 				}
 			}
 		}
 		
-		if( component !== parent && !persistent ){
+		if (component !== parent && !persistent) {
 			onUnmount(unsubscribe);
 		}
 		
@@ -117,22 +114,21 @@ function createComputedSignal(getValue, inputs){
 	return use;
 }
 
-function signalMap(){
+function signalMap() {
 	var args = arguments;
 	var n = args.length;
 	
-	function transform(value){
+	function transform(value) {
 		for(var i=0; i<n; ++i){
 			value = args[i](value);
 		}
-		
 		return value;
 	}
 	
 	return createComputedSignal(n === 1 ? args[0] : transform, [this]);
 }
 
-function toString(){
+function toString() {
 	return "[object ComputedSignal(" + this.get() + ")]";
 }
 

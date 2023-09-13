@@ -1,4 +1,4 @@
-(function($){
+(function($) {
 
 var bind = $.bind;
 var createComponent = $.component;
@@ -18,10 +18,10 @@ function createBlock(model, getView, container, injector) {
 	var range = createNodeRange();
 	var view;
 	
-	var component = createComponent(function(){
+	var component = createComponent(function() {
 		view = getView(model);
 		
-		if( range.start.nextSibling ){
+		if (range.start.nextSibling) {
 			range.clear();
 			range.append(view);
 		}
@@ -29,7 +29,7 @@ function createBlock(model, getView, container, injector) {
 	
 	component.render();
 	
-	function render(){
+	function render() {
 		return [
 			range.start,
 			view,
@@ -37,20 +37,20 @@ function createBlock(model, getView, container, injector) {
 		];
 	}
 	
-	function insertBefore(end){
-		if( range.start.nextSibling ){
+	function insertBefore(end) {
+		if (range.start.nextSibling) {
 			range.insertBefore(end);
-		}else{
+		} else {
 			var prevComponent = getComponent(true);
 			var prevInjector = getInjector(true);
 			
-			try{
+			try {
 				setComponent(component);
 				setInjector(injector);
 				insert(render(), end, end.parentNode, bind);
-			}catch(error){
+			} catch (error) {
 				throwError(error, component);
-			}finally{
+			} finally {
 				setComponent(prevComponent);
 				setInjector(prevInjector);
 			}
@@ -65,7 +65,7 @@ function createBlock(model, getView, container, injector) {
 	};
 }
 
-function views(getView){
+function views(getView) {
 	var signal = this;
 	var container = getComponent();
 	var injector = getInjector();
@@ -73,8 +73,8 @@ function views(getView){
 	var oldBlocks = {};
 	var array;
 	
-	function render(models){
-		if(!isArray(models)){
+	function render(models) {
+		if (!isArray(models)) {
 			models = toArray(models);
 		}
 		
@@ -82,11 +82,11 @@ function views(getView){
 		var n = models.length;
 		var newArray = new Array(n);
 		
-		for(var i=0; i<n; ++i){
+		for (var i = 0; i < n; ++i) {
 			var model = models[i];
 			var key = hashCode(model);
 			
-			while( key in newBlocks ){
+			while (key in newBlocks) {
 				key = "_" + key;
 			}
 			
@@ -98,8 +98,8 @@ function views(getView){
 			);
 		}
 		
-		for(var key in oldBlocks){
-			if(!(key in newBlocks)){
+		for (var key in oldBlocks) {
+			if (!(key in newBlocks)) {
 				var block = oldBlocks[key];
 				block.range.remove();
 				emitUnmount(block.component);
@@ -108,16 +108,16 @@ function views(getView){
 		
 		oldBlocks = newBlocks;
 		
-		if( range.start.nextSibling ){
+		if (range.start.nextSibling) {
 			var m = array.length;
 			var l = m;
 			
-			while( m > 0 && n > 0 && array[m - 1] === newArray[n - 1] ){
+			while (m > 0 && n > 0 && array[m - 1] === newArray[n - 1]) {
 				--m;
 				--n;
 			}
 			
-			if( n === 0 && m === 0 ){
+			if (n === 0 && m === 0) {
 				array = newArray;
 				return;
 			}
@@ -126,11 +126,11 @@ function views(getView){
 			var k = Math.min(m, n);
 			var end = m < l ? array[m].range.start : range.end;
 			
-			while( i < k && array[i] === newArray[i] ){
+			while (i < k && array[i] === newArray[i]) {
 				++i;
 			}
 			
-			while( i < n ){
+			while (i < n) {
 				newArray[i].insertBefore(end);
 				++i;
 			}
@@ -145,7 +145,7 @@ function views(getView){
 	var n = array.length;
 	var output = new Array(n + 2);
 	
-	for(var i=0; i<n; ++i){
+	for (var i = 0; i < n; ++i) {
 		output[i + 1] = array[i].render();
 	}
 	
