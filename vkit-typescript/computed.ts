@@ -13,8 +13,8 @@ export type ComputedSignal<ValueType> = Signal<ValueType> & {
 	update(): void;
 };
 
-type SignalValueType<ValueType> = ValueType extends Signal<unknown> ? ReturnType<ValueType["get"]> : ValueType;
-type SignalValuesType<ArrayType> = {[K in keyof ArrayType]: SignalValueType<ArrayType[K]>};
+export type SignalValueType<ValueType> = ValueType extends Signal<unknown> ? ReturnType<ValueType["get"]> : ValueType;
+export type SignalValuesType<ArrayType> = {[K in keyof ArrayType]: SignalValueType<ArrayType[K]>};
 
 function computed<GetValueType extends (...args: SignalValuesType<Inputs>) => unknown, Inputs extends any[]>(
 	getValue: GetValueType,
@@ -44,14 +44,14 @@ function computed<GetValueType extends (...args: SignalValuesType<Inputs>) => un
 		
 		if (inputs) {
 			var n = inputs.length;
-			var args = new Array(n);
+			var args = new Array<unknown>(n) as SignalValuesType<Inputs>;
 			
 			for (var i = 0; i < n; ++i) {
 				var input = inputs[i];
 				args[i] = input && typeof input.get === "function" ? input.get() : input;
 			}
 			
-			newValue = getValue.apply(null, args);
+			newValue = getValue.apply(null, args) as ValueType;
 		}else{
 			newValue = (getValue as () => ValueType)();
 		}
@@ -127,24 +127,15 @@ function computed<GetValueType extends (...args: SignalValuesType<Inputs>) => un
 	return use as unknown as ComputedSignal<ValueType>;
 }
 
-function signalMap<ValueType>(this: Signal<ValueType>) {
-	var args = arguments;
-	var n = args.length;
-	
-	function transform(value: ValueType) {
-		for (var i = 0; i < n; ++i) {
-			value = args[i](value);
-		}
-		
-		return value;
-	}
-	
-	return computed(n === 1 ? args[0] : transform, [this]);
+export function signalMap<ValueType, TransformType extends (value: ValueType) => unknown>(
+	this: Signal<ValueType>,
+	transform: TransformType
+): ComputedSignal<ReturnType<TransformType>> {
+	return computed(transform as (...values: any[]) => ReturnType<TransformType>, [this]);
 }
 
 function toString(this: Signal<any>) {
 	return "[object ComputedSignal(" + this.get() + ")]";
 }
 
-export {signalMap};
 export default computed;
