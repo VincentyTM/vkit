@@ -2,6 +2,7 @@
 
 var createComponent = $.component;
 var createNodeRange = $.nodeRange;
+var isSignal = $.isSignal;
 
 function view(getView){
 	var component = createComponent(mount);
@@ -10,7 +11,9 @@ function view(getView){
 	var render = component.render;
 	var signal = this;
 	
-	if(!(signal && typeof signal.get === "function" && typeof signal.subscribe === "function")){
+	if (isSignal(signal)) {
+		signal.subscribe(render);
+	} else {
 		signal = null;
 	}
 	
@@ -24,10 +27,6 @@ function view(getView){
 	}
 	
 	render();
-	
-	if( signal ){
-		signal.subscribe(render);
-	}
 	
 	return [
 		range.start,
