@@ -5,6 +5,7 @@ import computed from "./computed";
 import customElement from "./customElement";
 import document from "./document";
 import effect from "./effect";
+import get from "./get";
 import html from "./html";
 import htmlTag from "./htmlTag";
 import htmlTags from "./htmlTags";
@@ -39,6 +40,7 @@ export {
 	customElement,
 	document,
 	effect,
+	get,
 	html,
 	htmlTag,
 	htmlTags,
