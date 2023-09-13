@@ -1,9 +1,10 @@
 import svgTag from "./svgTag";
+import {View} from "./view";
 
-import type {View} from "./view";
+type SVGProxy = {[key: string]: (...contents: View[]) => Element};
 
-var svgTags = new Proxy({} as {[key: string]: (...contents: View[]) => Element}, {
-    get: function(_target: object, tagName: string, _receiver: object){
+var svgTags = new Proxy({}, {
+    get: function(_target: SVGProxy, tagName: string, _receiver: SVGProxy){
         return svgTag(tagName.toLowerCase().replace(/_/g, "-"));
     }
 });
