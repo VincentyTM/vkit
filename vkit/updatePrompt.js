@@ -1,27 +1,32 @@
-(function($, undefined){
+(function($, undefined) {
 
-var createSignal = $.signal;
+var computed = $.computed;
 var getWindow = $.window;
 var onEvent = $.onEvent;
 var onUnmount = $.unmount;
+var signal = $.signal;
 
-function createUpdatePrompt(serviceWorker, message, win){
+function getInstalling(reg) {
+	return reg ? reg.installing : null;
+}
+
+function createUpdatePrompt(serviceWorker, message, win) {
 	if(!win){
 		win = getWindow();
 	}
 	
-	var updatePrompt = createSignal(null);
+	var updatePrompt = signal(null);
 	var refreshing = false;
 	
-	function reset(){
+	function reset() {
 		updatePrompt.set(null);
 	}
 	
-	function showPrompt(reg){
-		function accept(){
+	function showPrompt(reg) {
+		function accept() {
 			updatePrompt.set(null);
 			
-			if( reg.waiting ){
+			if (reg.waiting) {
 				reg.waiting.postMessage(
 					typeof message === "function"
 						? message()
@@ -38,10 +43,10 @@ function createUpdatePrompt(serviceWorker, message, win){
 		});
 	}
 	
-	if( win.navigator.serviceWorker ){
+	if (win.navigator.serviceWorker) {
 		onUnmount(
-			onEvent(win.navigator.serviceWorker, "controllerchange", function(){
-				if(!refreshing){
+			onEvent(win.navigator.serviceWorker, "controllerchange", function() {
+				if (!refreshing) {
 					refreshing = true;
 					win.location.reload();
 				}
@@ -49,27 +54,35 @@ function createUpdatePrompt(serviceWorker, message, win){
 		);
 	}
 	
-	serviceWorker.effect(function(reg, onCleanup){
-		if(!reg){
+	var regInstalling = computed(getInstalling, [serviceWorker]);
+	
+	regInstalling.effect(function(installing, onCleanup) {
+		if (installing) {
+			var reg = serviceWorker.get();
+			
+			onCleanup(
+				onEvent(installing, "statechange", function() {
+					if (this.state === "installed") {
+						showPrompt(reg);
+					}
+				})
+			);
+		}
+	});
+	
+	serviceWorker.effect(function(reg, onCleanup) {
+		if (!reg) {
 			return;
 		}
 		
-		function awaitStateChange(){
-			if( reg.installing ){
-				onCleanup(
-					onEvent(reg.installing, "statechange", function(){
-						if( this.state === "installed" ){
-							showPrompt(reg);
-						}
-					})
-				);
-			}
+		function awaitStateChange() {
+			regInstalling.update();
 		}
 		
-		if( reg.waiting ){
+		if (reg.waiting) {
 			showPrompt(reg);
-		}else{
-			if( reg.installing ){
+		} else {
+			if (reg.installing) {
 				awaitStateChange();
 			}
 			
