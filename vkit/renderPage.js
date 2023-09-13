@@ -27,10 +27,7 @@ function renderPage(root, url, callback, tagName, win){
 			
 			append(
 				container,
-				[
-					root(),
-					StyleService().element
-				],
+				root(),
 				container,
 				bind
 			);
