@@ -9,29 +9,38 @@ import signalText from "./signalText";
 import view from "./view";
 import views from "./views";
 
+type ArrayOfMaybeSignals<ArrayType> = {[K in keyof ArrayType]: ArrayType[K] | Signal<ArrayType[K]>};
+
 export type ComputedSignal<ValueType> = Signal<ValueType> & {
 	update(): void;
 };
 
-export type SignalValueType<ValueType> = ValueType extends Signal<unknown> ? ReturnType<ValueType["get"]> : ValueType;
-export type SignalValuesType<ArrayType> = {[K in keyof ArrayType]: SignalValueType<ArrayType[K]>};
+function computed<FuncType extends () => unknown>(
+	getValue: FuncType,
+	dependencies?: undefined
+): ComputedSignal<ReturnType<FuncType>>
 
-function computed<GetValueType extends (...args: SignalValuesType<Inputs>) => unknown, Inputs extends any[]>(
-	getValue: GetValueType,
-	inputs?: Inputs
-): ComputedSignal<ReturnType<GetValueType>> {
-	type ValueType = ReturnType<GetValueType>;
+function computed<FuncType extends (...args: any[]) => unknown>(
+	getValue: FuncType,
+	dependencies: ArrayOfMaybeSignals<Parameters<FuncType>>
+): ComputedSignal<ReturnType<FuncType>>
+
+function computed<FuncType extends (...args: never[]) => unknown>(
+	getValue: FuncType,
+	dependencies?: ArrayOfMaybeSignals<Parameters<FuncType>>
+): ComputedSignal<ReturnType<FuncType>> {
+	type ValueType = ReturnType<FuncType>;
 
 	var parent = getComponent(true);
 	var subscriptions: ((value: ValueType) => void)[] = [];
 	var value: ValueType;
 	var signalComponent = createComponent(computeValue, parent, getInjector(true));
 	
-	if (inputs) {
-		var n = inputs.length;
+	if (dependencies) {
+		var n = dependencies.length;
 		
 		for (var i = 0; i < n; ++i) {
-			var input = inputs[i];
+			var input = dependencies[i] as unknown as Signal<Parameters<FuncType>[number]>;
 			
 			if (input && typeof input.subscribe === "function") {
 				input.subscribe(signalComponent.render);
@@ -42,26 +51,26 @@ function computed<GetValueType extends (...args: SignalValuesType<Inputs>) => un
 	function computeValue() {
 		var newValue: ValueType;
 		
-		if (inputs) {
-			var n = inputs.length;
-			var args = new Array<unknown>(n) as SignalValuesType<Inputs>;
+		if (dependencies) {
+			var n = dependencies.length;
+			var args = new Array<unknown>(n);
 			
 			for (var i = 0; i < n; ++i) {
-				var input = inputs[i];
+				var input = dependencies[i] as unknown as Signal<Parameters<FuncType>[number]>;
 				args[i] = input && typeof input.get === "function" ? input.get() : input;
 			}
 			
-			newValue = getValue.apply(null, args) as ValueType;
+			newValue = getValue.apply(null, args as never[]) as ValueType;
 		}else{
 			newValue = (getValue as () => ValueType)();
 		}
 		
 		if (value !== newValue) {
 			value = newValue;
+
+			var m = subscriptions.length;
 			
-			var n = subscriptions.length;
-			
-			for(var i = 0; i < n; ++i){
+			for(var i = 0; i < m; ++i){
 				subscriptions[i](value);
 			}
 		}
@@ -131,7 +140,7 @@ export function signalMap<ValueType, TransformType extends (value: ValueType) =>
 	this: Signal<ValueType>,
 	transform: TransformType
 ): ComputedSignal<ReturnType<TransformType>> {
-	return computed(transform as (...values: any[]) => ReturnType<TransformType>, [this]);
+	return computed(transform as (...values: any[]) => ReturnType<TransformType>, [this] as never);
 }
 
 function toString(this: Signal<any>) {
