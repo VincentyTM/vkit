@@ -26,7 +26,7 @@ function useKey<ValueType>(
 	var isFunction = typeof getKey === "function";
 	
 	var signal = computed(function(array){
-		var records = {};
+		var records: {[key: string]: unknown} = {};
 		var n = array ? array.length : 0;
 		var keys = new Array(n);
 		

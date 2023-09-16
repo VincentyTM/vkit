@@ -71,7 +71,7 @@ function bindClasses(el: HTMLElement, arg: ClassArgument, onCleanup?: CleanupFun
 		});
 	} else if (type === "object") {
 		for (var name in arg as {[className: string]: BooleanValue}) {
-			bindClass(el, name, arg[name]);
+			bindClass(el, name, (arg as {[className: string]: BooleanValue})[name]);
 		}
 	} else if (type === "function") {
 		effect(function() {
