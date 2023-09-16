@@ -17,7 +17,7 @@ import observable from "./observable";
 import observe from "./observe";
 import of from "./of";
 import onEvent from "./onEvent";
-import onUnmount from "./onEvent";
+import onUnmount from "./onUnmount";
 import provide from "./provide";
 import ref from "./ref";
 import render from "./render";
