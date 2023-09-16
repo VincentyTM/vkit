@@ -19,29 +19,22 @@ function setAttribute(el: Element, name: string, value: string | null) {
 }
 
 function bindAttribute(el: Element, name: string, value: ReactiveAttributeValue) {
-	switch (typeof value) {
-		case "object":
-			if (!value) {
-				setAttribute(el, name, value);
-			} else if ((value as Signal<AttributeValue>).effect) {
-				(value as Signal<AttributeValue>).effect(function (v) {
-					setAttribute(el, name, v);
-				});
-			} else {
-				bind(el[name], value);
-			}
-			break;
-		case "function":
-			if (name.indexOf("on") === 0) {
-				onEvent(el as unknown as EventTargetType, name.substring(2), value);
-			} else {
-				effect(function () {
-					setAttribute(el, name, (value as () => AttributeValue)());
-				});
-			}
-			break;
-		default:
-			setAttribute(el, name, value);
+	if (typeof value === "function") {
+		if ((value as Signal<AttributeValue>).effect) {
+			(value as Signal<AttributeValue>).effect(function(v) {
+				setAttribute(el, name, v);
+			});
+		} else if (name.indexOf("on") === 0) {
+			onEvent(el as unknown as EventTargetType, name.substring(2), value);
+		} else {
+			effect(function() {
+				setAttribute(el, name, (value as () => AttributeValue)());
+			});
+		}
+	} else if (value && typeof value === "object") {
+		bind((el as any)[name], value);
+	} else {
+		setAttribute(el, name, value);
 	}
 }
 
@@ -52,7 +45,7 @@ function bindAttributes(el: Element, attributes: {[attributeName: string]: React
 }
 
 function svgTag(tagName: string) {
-	return function () {
+	return function() {
 		var el = document.createElementNS(xmlns, tagName);
 		append<View, Element>(el, arguments, el, bindAttributes);
 		return el;
