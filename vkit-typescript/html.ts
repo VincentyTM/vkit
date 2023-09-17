@@ -23,8 +23,13 @@ function findNodes(
 	return count;
 }
 
-function html(strings: ArrayLike<string> & {raw: ArrayLike<string>}, ..._args: any[]): View {
-	if( isArray(strings) && isArray((strings as any).raw) ) {
+export default function html(
+	strings: ArrayLike<string> & {
+		raw: ArrayLike<string>
+	},
+	..._expressions: View[]
+): View[] {
+	if (isArray(strings) && isArray((strings as any).raw)) {
 		var n = strings.length;
 		var a = new Array(2*n - 1);
 		
@@ -140,5 +145,3 @@ function html(strings: ArrayLike<string> & {raw: ArrayLike<string>}, ..._args: a
 	
 	return toArray(container.childNodes);
 }
-
-export default html;
