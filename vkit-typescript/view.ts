@@ -18,6 +18,26 @@ export type View<ContextType = unknown> = (
 	((element: ContextType) => void)
 );
 
+/**
+ * Creates a dynamic view (a part of the DOM) which is rerendered when any of its inputs change.
+ * The inputs can be declared by calling signals within the `getCurrentView` function.
+ * @example
+ * function MyComponent() {
+ * 	const count = signal(0);
+ * 	const isCountMoreThan3 = computed(() => count() > 3);
+ * 	
+ * 	return view(() => {
+ * 		if (isCountMoreThan3()) {
+ * 			return B("Count is more than 3!");
+ * 		}
+ * 		
+ * 		return ["Count is: ", count()];
+ * 	});
+ * }
+ * 
+ * @param getCurrentView A function that returns the current view.
+ * @returns The initial view.
+ */
 export default function view<ValueType>(
 	getCurrentView: (value: ValueType | null) => View
 ) : View;
