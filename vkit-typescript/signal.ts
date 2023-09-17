@@ -29,6 +29,22 @@ export type Signal<ValueType> = {
 		persistent?: boolean
 	): () => void;
 	toString(): string;
+
+	/**
+	 * Creates a dynamic view (a part of the DOM) which is rerendered when the value of the signal changes.
+	 * Note that other signals may trigger a rerender too.
+	 * @example
+	 * function MyComponent() {
+	 * 	const count = signal(0);
+	 * 	
+	 * 	return count.view((c) => {
+	 * 		return ["Count is: ", c];
+	 * 	});
+	 * }
+	 * 
+	 * @param getCurrentView A function that returns the current view.
+	 * @returns The initial view.
+	 */
 	view(getCurrentView: (value: ValueType | null) => View): View;
 	views(getItemView: (value: ItemType<ValueType>) => View): View;
 };
