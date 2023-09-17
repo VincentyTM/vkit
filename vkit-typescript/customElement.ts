@@ -12,24 +12,28 @@ import update from "./update";
 import {View} from "./view";
 import {WindowService} from "./window";
 
-function replaceHyphens(value: string){
+function replaceHyphens(value: string) {
 	return value.charAt(1).toUpperCase();
 }
 
-function attrToPropName(attrName: string){
+function attrToPropName(attrName: string) {
 	return attrName.toLowerCase().replace(/\-[a-z]/g, replaceHyphens);
 }
 
-function createCustomElement(name: string, getView: (
-	this: HTMLElement,
-	observedAttributes: {[key: string]: WritableSignal<string | null>},
-	element: HTMLElement
-) => View, options?: {
-	adoptedCallback?: () => void,
-	observedAttributes?: string[],
-	window?: Window & typeof globalThis
-}){
-	function CustomElement(): typeof win.HTMLElement{
+export default function createCustomElement(
+	name: string,
+	getView: (
+		this: HTMLElement,
+		observedAttributes: {[key: string]: WritableSignal<string | null>},
+		element: HTMLElement
+	) => View,
+	options?: {
+		adoptedCallback?: () => void,
+		observedAttributes?: string[],
+		window?: Window & typeof globalThis
+	}
+) {
+	function CustomElement(): typeof win.HTMLElement {
 		var el = Reflect.construct(
 			win.HTMLElement,
 			[],
@@ -42,7 +46,7 @@ function createCustomElement(name: string, getView: (
 			return provider.getInstance();
 		});
 		
-		var component = createComponent(function(){
+		var component = createComponent(function() {
 			var doc = el.ownerDocument;
 			
 			inject(WindowService).window = doc.defaultView || doc.parentWindow;
@@ -64,8 +68,8 @@ function createCustomElement(name: string, getView: (
 		el.component = component;
 		el.observedAttributes = {};
 		
-		if( CustomElement.observedAttributes ){
-			CustomElement.observedAttributes.forEach(function(attrName){
+		if (CustomElement.observedAttributes) {
+			CustomElement.observedAttributes.forEach(function(attrName) {
 				el.observedAttributes[attrToPropName(attrName)] = createSignal(el.getAttribute(attrName));
 			});
 		}
@@ -76,14 +80,14 @@ function createCustomElement(name: string, getView: (
 	var proto = CustomElement.prototype;
 	var win = window;
 	
-	proto.connectedCallback = function(){
+	proto.connectedCallback = function() {
 		var el = this;
 		
-		while( el.parentNode !== null ){
+		while (el.parentNode !== null) {
 			el = el.parentNode;
 		}
 		
-		if( el.nodeType !== 9 && el.nodeType !== 11 ){
+		if (el.nodeType !== 9 && el.nodeType !== 11) {
 			return;
 		}
 		
@@ -92,8 +96,8 @@ function createCustomElement(name: string, getView: (
 		update();
 	};
 	
-	proto.disconnectedCallback = function(){
-		if( this.shadowRoot ){
+	proto.disconnectedCallback = function() {
+		if (this.shadowRoot) {
 			empty(this.shadowRoot);
 		}
 		
@@ -102,19 +106,23 @@ function createCustomElement(name: string, getView: (
 		update();
 	};
 	
-	if( options ){
-		if( options.window ){
+	if (options) {
+		if (options.window) {
 			win = options.window;
 		}
 		
-		if( options.adoptedCallback ){
+		if (options.adoptedCallback) {
 			proto.adoptedCallback = options.adoptedCallback;
 		}
 		
-		if( options.observedAttributes ){
+		if (options.observedAttributes) {
 			CustomElement.observedAttributes = options.observedAttributes;
 			
-			proto.attributeChangedCallback = function(attrName: string, _oldValue: string | null, newValue: string | null){
+			proto.attributeChangedCallback = function(
+				attrName: string,
+				_oldValue: string | null,
+				newValue: string | null
+			) {
 				this.observedAttributes[attrToPropName(attrName)].set(newValue);
 				update();
 			};
@@ -128,5 +136,3 @@ function createCustomElement(name: string, getView: (
 	
 	return getView;
 }
-
-export default createCustomElement;
