@@ -1,20 +1,17 @@
-import type {Component} from "./component";
+import {Component} from "./component";
 
-function throwError(error: any, component: Component | null){
-	while( component ){
-		if( component.emitError ){
-			try{
+export default function throwError(error: any, component: Component | null): void {
+	while (component) {
+		if (component.emitError) {
+			try {
 				component.emitError(error);
 				return;
-			}catch(ex){
+			} catch (ex) {
 				error = ex;
 			}
 		}
-		
 		component = component.parent;
 	}
-	
+
 	throw error;
 }
-
-export default throwError;

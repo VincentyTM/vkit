@@ -1,23 +1,19 @@
 var ticks: (() => void)[] = [];
 
-function tick(callback: () => void){
+export default function tick(callback: () => void): void {
 	ticks.push(callback);
 }
 
-function callTicks(){
+export function callTicks(): void {
 	var n = ticks.length;
-	
-	if( n ){
+
+	if (n) {
 		var callbacks = ticks;
-		
+
 		ticks = [];
 		
-		for(var i=0; i<n; ++i){
+		for (var i = 0; i < n; ++i) {
 			callbacks[i]();
 		}
 	}
 }
-
-export { callTicks };
-
-export default tick;

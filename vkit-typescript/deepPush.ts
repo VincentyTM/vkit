@@ -1,9 +1,11 @@
 import toArray from "./toArray";
 
-function deepPush<ItemType, ContextType>(
-	array: {
-		push(value: ItemType | Node): number | void;
-	},
+type Pushable<ItemType> = {
+	push(value: ItemType | Text): number | void;
+};
+
+export default function deepPush<ItemType, ContextType>(
+	array: Pushable<ItemType>,
 	item: ItemType,
 	context: ContextType,
 	bind?: (
@@ -11,9 +13,12 @@ function deepPush<ItemType, ContextType>(
 		modifier: ItemType,
 		isExternal?: boolean
 	) => void
-){
-	if( item === null || item === undefined || typeof item === "boolean" ){
-	}else if( typeof (item as any).render === "function" ){
+): Pushable<ItemType> {
+	if (item === null || item === undefined || typeof item === "boolean") {
+		return array;
+	}
+	
+	if (typeof (item as any).render === "function") {
 		deepPush(array, (item as any).render(), context, bind);
 	}else if( typeof item !== "object" ){
 		if( typeof item === "function" ){
@@ -23,22 +28,35 @@ function deepPush<ItemType, ContextType>(
 		}
 	}else if( (item as any).nodeType ){
 		array.push(item);
-	}else if( typeof (item as any).length === "number" ){
+		return array;
+	}
+	
+	if( typeof (item as any).length === "number" ){
 		var n = (item as any).length;
 		var a = toArray<any>(item as any);
-		for(var i=0; i<n; ++i){
+
+		for (var i = 0; i < n; ++i) {
 			deepPush(array, a[i], context, bind);
 		}
-	}else if( typeof (item as any).next === "function" ){
+
+		return array;
+	}
+	
+	if (typeof (item as any).next === "function") {
 		var x;
-		do{
+
+		do {
 			x = (item as any).next();
 			deepPush(array, x.value, context, bind);
-		}while(!x.done);
-	}else if( bind ){
-		bind(context, item, true);
+		} while (!x.done);
+
+		return array;
 	}
+	
+	if (bind) {
+		bind(context, item, true);
+		return array;
+	}
+
 	return array;
 }
-
-export default deepPush;

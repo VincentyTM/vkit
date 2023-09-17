@@ -1,7 +1,5 @@
 import component from "./component";
 
-function effect(callback: () => void){
+export default function effect(callback: () => void): void {
 	component(callback).render();
 }
-
-export default effect;

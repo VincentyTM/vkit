@@ -5,12 +5,12 @@ type Ref<ValueType> = {
 	current: ValueType | null;
 };
 
-function createRef<ValueType = HTMLElement>() {
-	function reset() {
+export default function createRef<ValueType = HTMLElement>() {
+	function reset(): void {
 		ref.current = null;
 	}
 	
-	var ref = <Ref<ValueType>>function (value: ValueType) {
+	var ref = <Ref<ValueType>>function (value: ValueType): void {
 		if (ref.current) {
 			throw new Error("This reference has already been set.");
 		}
@@ -22,5 +22,3 @@ function createRef<ValueType = HTMLElement>() {
 	ref.current = null;
 	return ref;
 }
-
-export default createRef;

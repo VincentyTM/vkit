@@ -13,7 +13,12 @@ export type StyleController = {
 	toString(): string;
 };
 
-function createStyleSheet() {
+type StyleSheetWrapper = {
+	element: HTMLStyleElement,
+	setCSS(value: string): void;
+};
+
+function createStyleSheet(): StyleSheetWrapper {
 	var style = document.createElement("style");
 	var textNode: Text | null = null;
 	
@@ -22,10 +27,10 @@ function createStyleSheet() {
 		style.appendChild(textNode);
 	} catch (ex) {}
 	
-	function setCSS(value: string) {
+	function setCSS(value: string): void {
 		if (textNode) {
 			textNode.nodeValue = value;
-		}else{
+		} else {
 			style.innerText = value;
 		}
 	}
@@ -40,22 +45,22 @@ function createStyleController(name: string, updateStyle: () => void): StyleCont
 	var refCount = 1;
 	var value = "";
 	
-	function setValue(newValue: string) {
-		if( value !== newValue ){
+	function setValue(newValue: string): void {
+		if (value !== newValue) {
 			value = newValue;
 			updateStyle();
 		}
 	}
 	
-	function addRef() {
+	function addRef(): void {
 		++refCount;
 	}
 	
-	function removeRef() {
+	function removeRef(): boolean {
 		return --refCount === 0;
 	}
 	
-	function toString() {
+	function toString(): string {
 		return value;
 	}
 	
@@ -68,16 +73,16 @@ function createStyleController(name: string, updateStyle: () => void): StyleCont
 	};
 }
 
-function createStyleContainer(): StyleContainer {
+export default function createStyleContainer(): StyleContainer {
 	var style = createStyleSheet();
 	var controllers: {[key: string]: StyleController} = {};
 	var controllersArray: StyleController[] = [];
 	
-	function updateStyle() {
+	function updateStyle(): void {
 		style.setCSS(controllersArray.join("\n"));
 	}
 	
-	function add(name: string) {
+	function add(name: string): StyleController {
 		var controller = controllers[name];
 		
 		if (controller) {
@@ -90,7 +95,7 @@ function createStyleContainer(): StyleContainer {
 		return controller;
 	}
 	
-	function remove(name: string) {
+	function remove(name: string): boolean {
 		var controller = controllers[name];
 		
 		if (controller && controller.removeRef()) {
@@ -118,5 +123,3 @@ function createStyleContainer(): StyleContainer {
 		remove: remove
 	};
 }
-
-export default createStyleContainer;

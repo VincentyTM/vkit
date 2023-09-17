@@ -15,17 +15,17 @@ export type ComputedSignal<ValueType> = Signal<ValueType> & {
 	update(): void;
 };
 
-function computed<FuncType extends () => unknown>(
+export default function computed<FuncType extends () => unknown>(
 	getValue: FuncType,
 	dependencies?: undefined
-): ComputedSignal<ReturnType<FuncType>>
+): ComputedSignal<ReturnType<FuncType>>;
 
-function computed<FuncType extends (...args: any[]) => unknown>(
+export default function computed<FuncType extends (...args: any[]) => unknown>(
 	getValue: FuncType,
 	dependencies: ArrayOfMaybeSignals<Parameters<FuncType>>
-): ComputedSignal<ReturnType<FuncType>>
+): ComputedSignal<ReturnType<FuncType>>;
 
-function computed<FuncType extends (...args: never[]) => unknown>(
+export default function computed<FuncType extends (...args: never[]) => unknown>(
 	getValue: FuncType,
 	dependencies?: ArrayOfMaybeSignals<Parameters<FuncType>>
 ): ComputedSignal<ReturnType<FuncType>> {
@@ -48,7 +48,7 @@ function computed<FuncType extends (...args: never[]) => unknown>(
 		}
 	}
 	
-	function computeValue() {
+	function computeValue(): void {
 		var newValue: ValueType;
 		
 		if (dependencies) {
@@ -76,13 +76,13 @@ function computed<FuncType extends (...args: never[]) => unknown>(
 		}
 	}
 	
-	function use() {
+	function use(): ValueType {
 		var value = get();
 		subscribe(getComponent()!.render);
 		return value;
 	}
 	
-	function get() {
+	function get(): ValueType {
 		if (value === undefined) {
 			signalComponent.render();
 		}
@@ -91,18 +91,18 @@ function computed<FuncType extends (...args: never[]) => unknown>(
 	
 	function subscribe(
 		callback: (value: ValueType) => void,
-		persistent = false
-	) {
+		persistent?: boolean
+	): () => void {
 		var component = getComponent(true);
 		var unmounted = false;
 		
-		subscriptions.push(function (value) {
+		subscriptions.push(function(value) {
 			if (!unmounted) {
 				callback(value);
 			}
 		});
 		
-		function unsubscribe(){
+		function unsubscribe(): void {
 			unmounted = true;
 			
 			for (var i = subscriptions.length; i--;) {
@@ -140,11 +140,9 @@ export function signalMap<ValueType, TransformType extends (value: ValueType) =>
 	this: Signal<ValueType>,
 	transform: TransformType
 ): ComputedSignal<ReturnType<TransformType>> {
-	return computed(transform as (...values: any[]) => ReturnType<TransformType>, [this] as never);
+	return computed(transform as (...values: any[]) => ReturnType<TransformType>, [this]);
 }
 
-function toString(this: Signal<any>) {
+function toString(this: Signal<any>): string {
 	return "[object ComputedSignal(" + this.get() + ")]";
 }
-
-export default computed;

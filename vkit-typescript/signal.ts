@@ -29,8 +29,8 @@ export type Signal<ValueType> = {
 		persistent?: boolean
 	): () => void;
 	toString(): string;
-	view(getView: (value: ValueType | null) => View): View;
-	views(getView: (value: ItemType<ValueType>) => View): View;
+	view(getCurrentView: (value: ValueType | null) => View): View;
+	views(getItemView: (value: ItemType<ValueType>) => View): View;
 };
 
 export type WritableSignal<ValueType> = Signal<ValueType> & {
@@ -39,34 +39,34 @@ export type WritableSignal<ValueType> = Signal<ValueType> & {
 	toggle(): void;
 };
 
-function createWritableSignal<ValueType>(value: ValueType): WritableSignal<ValueType> {
+export default function createWritableSignal<ValueType>(value: ValueType): WritableSignal<ValueType> {
 	var parent = getComponent(true);
 	var subscriptions: ((value: ValueType) => void)[] = [];
 	var enqueued = false;
 	
-	function use() {
+	function use(): ValueType {
 		subscribe(getComponent()!.render);
 		return value;
 	}
 	
-	function get() {
+	function get(): ValueType {
 		return value;
 	}
 	
 	function subscribe(
 		callback: (value: ValueType) => void,
-		persistent = false
-	) {
+		persistent?: boolean
+	): () => void {
 		var component = getComponent(true);
 		var unmounted = false;
 		
-		subscriptions.push(function(value) {
+		subscriptions.push(function(value): void {
 			if (!unmounted) {
 				callback(value);
 			}
 		});
 		
-		function unsubscribe() {
+		function unsubscribe(): void {
 			unmounted = true;
 			
 			for (var i = subscriptions.length; i--;) {
@@ -84,7 +84,7 @@ function createWritableSignal<ValueType>(value: ValueType): WritableSignal<Value
 		return unsubscribe;
 	}
 	
-	function set(newValue: ValueType) {
+	function set(newValue: ValueType): void {
 		if (value !== newValue) {
 			value = newValue;
 			
@@ -95,7 +95,7 @@ function createWritableSignal<ValueType>(value: ValueType): WritableSignal<Value
 		}
 	}
 	
-	function updateSignal() {
+	function updateSignal(): void {
 		enqueued = false;
 		var n = subscriptions.length;
 		
@@ -125,16 +125,14 @@ function createWritableSignal<ValueType>(value: ValueType): WritableSignal<Value
 function add<ValueType>(
 	this: WritableSignal<ValueType>,
 	value: ValueType
-) {
+): void {
 	this.set((this.get() as any) + value);
 }
 
-function toggle(this: WritableSignal<boolean>) {
+function toggle(this: WritableSignal<boolean>): void {
 	this.set(!this.get());
 }
 
-function toString(this: WritableSignal<any>) {
+function toString(this: WritableSignal<any>): string {
 	return "[object WritableSignal(" + this.get() + ")]";
 }
-
-export default createWritableSignal;

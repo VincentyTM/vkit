@@ -1,7 +1,9 @@
 import svgTag from "./svgTag";
 import {View} from "./view";
 
-type SVGProxy = {[key: string]: (...contents: View[]) => Element};
+type SVGProxy = {
+	[key: string]: (...contents: View[]) => Element
+};
 
 var svgTags = new Proxy({}, {
     get: function(_target: SVGProxy, tagName: string, _receiver: SVGProxy){

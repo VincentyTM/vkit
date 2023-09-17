@@ -1,10 +1,8 @@
-import bind from "./bind";
 import insert from "./insert";
 import removeNode from "./remove";
+import {View} from "./view";
 
-import type {View} from "./view";
-
-type NodeRange = {
+export type NodeRange = {
 	append(...children: View[]): void;
 	clear(): void;
 	end: ChildNode;
@@ -14,71 +12,65 @@ type NodeRange = {
 	start: ChildNode;
 };
 
-function createNodeRange() : NodeRange {
+export default function createNodeRange() : NodeRange {
 	var start: ChildNode = document.createTextNode("");
 	var end: ChildNode = document.createTextNode("");
 	
-	function clear(){
-		if(!start.nextSibling){
+	function clear(): void {
+		if (!start.nextSibling) {
 			throw new Error("Cannot clear detached range");
 		}
 		
 		var parent = start.parentNode;
 		
-		if( parent ){
-			for(var el = end.previousSibling; el && el !== start; el = end.previousSibling){
+		if (parent) {
+			for (var el = end.previousSibling; el && el !== start; el = end.previousSibling) {
 				parent.removeChild(el);
 			}
 		}
 	}
 	
-	function remove(){
+	function remove(): void {
 		clear();
 		removeNode(start);
 		removeNode(end);
 	}
 	
-	function append(){
-		if(!start.nextSibling){
+	function append(): void {
+		if (!start.nextSibling) {
 			throw new Error("Cannot append to detached range");
 		}
-		
-		insert(arguments, end, (start as any).parentNode, bind);
+		insert(arguments, end, (start as any).parentNode);
 	}
 	
-	function insertBefore(anchor: Node){
-		if(!start.nextSibling){
+	function insertBefore(anchor: Node): void {
+		if (!start.nextSibling) {
 			throw new Error("Cannot insert detached range");
 		}
 		
 		var parent = anchor.parentNode;
 		
-		if( parent ){
-			var el: ChildNode | null = start;
-			
-			while( el && el !== end ){
+		if (parent) {
+			for (var el: ChildNode | null = start; el && el !== end; el = next) {
 				var next: ChildNode | null = el.nextSibling;
 				parent.insertBefore(el, anchor);
-				el = next;
 			}
-			
 			parent.insertBefore(end, anchor);
 		}
 	}
 	
-	function render(){
-		if(!start.nextSibling){
+	function render(): ChildNode[] {
+		if (!start.nextSibling) {
 			throw new Error("Cannot render detached range");
 		}
 		
 		var nodes: ChildNode[] = [];
 		var parent = start.parentNode;
 		
-		if( parent ){
-			for(var el: ChildNode | null = start; el && el !== end; el = el.nextSibling){
+		if (parent) {
+			for (var el: ChildNode | null = start; el && el !== end; el = el.nextSibling) {
 				nodes.push(el);
 			}
-			
 			nodes.push(end);
 		}
 		
@@ -95,7 +87,3 @@ function createNodeRange() : NodeRange {
 		start: start
 	};
 }
-
-export type {NodeRange};
-
-export default createNodeRange;

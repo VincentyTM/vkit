@@ -1,19 +1,18 @@
 import emitUnmount from "./emitUnmount";
 import {getComponent, getInjector, setComponent, setInjector} from "./contextGuard";
+import {Injector} from "./injector";
+import {Observable} from "./observable";
 import throwError from "./throwError";
 
-import type {Observable} from "./observable";
-import type {Injector} from "./injector";
-
-type Component = {
-	children: Component[] | null,
-	emitError: ((error: any) => void) | null,
-	parent: Component | null,
-	render: () => void,
-	unmount: Observable<void> | null
+export type Component = {
+	children: Component[] | null;
+	emitError: ((error: any) => void) | null;
+	parent: Component | null;
+	render: () => void;
+	unmount: Observable<void> | null;
 };
 
-function createComponent(
+export default function createComponent(
 	mount: () => void,
 	parent?: Component | null,
 	injector?: Injector | null
@@ -26,23 +25,23 @@ function createComponent(
 		unmount: null
 	};
 	
-	if( injector === undefined ){
+	if (injector === undefined) {
 		injector = getInjector();
 	}
 	
-	function renderComponent(){
+	function renderComponent(): void {
 		var prevComponent = getComponent(true);
 		var prevInjector = getInjector(true);
 		
-		try{
+		try {
 			setComponent(null);
 			emitUnmount(component);
 			setComponent(component);
 			setInjector(injector || null);
 			mount();
-		}catch(error){
+		} catch (error) {
 			throwError(error, component);
-		}finally{
+		} finally {
 			setComponent(prevComponent);
 			setInjector(prevInjector);
 		}
@@ -50,7 +49,3 @@ function createComponent(
 	
 	return component;
 }
-
-export type {Component};
-
-export default createComponent;

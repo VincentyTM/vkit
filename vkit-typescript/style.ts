@@ -10,11 +10,11 @@ type WithStyleContainer = {
 var map = typeof WeakMap === "function" ? new WeakMap() : null;
 var styleCount = 0;
 
-function prepareCSS(css: string, selector: string) {
+function prepareCSS(css: string, selector: string): string {
 	return css.replace(/::?this\b/ig, selector);
 }
 
-function getRootNode(el: Node) {
+function getRootNode(el: Node): Node {
 	if (el.getRootNode) {
 		return el.getRootNode();
 	}
@@ -60,47 +60,50 @@ function getStyleContainer(el: Node): StyleContainer {
 	return container;
 }
 
-function createStyle(css: string | Signal<string>, attr?: string) {
-	if (!attr) {
-		attr = "vkit-" + (++styleCount);
+export default function style(
+	cssText: string | Signal<string>,
+	attribute?: string
+): (element: Node) => void {
+	if (!attribute) {
+		attribute = "vkit-" + (++styleCount);
 	}
 	
-	var selector = "[" + attr + "]";
+	var selector = "[" + attribute + "]";
 	
-	function bind(el: Node){
+	function bind(element: Node): void {
 		var container: StyleContainer | null = null;
 		var controller: StyleController | null = null;
 		
-		if(!el || !el.nodeType) {
+		if (!element || !element.nodeType) {
 			throw new Error("Style can only be added to a DOM node");
 		}
 		
 		tick(function() {
-			container = getStyleContainer(el);
+			container = getStyleContainer(element);
 			controller = container.add(selector);
 			controller.setValue(
 				prepareCSS(
-					css && typeof (css as Signal<string>).get === "function" ? (css as Signal<string>).get() : (css as string),
+					cssText && typeof (cssText as Signal<string>).get === "function" ? (cssText as Signal<string>).get() : (cssText as string),
 					selector
 				)
 			);
 		});
 		
-		if( css && typeof (css as Signal<string>).subscribe === "function" ) {
-			(css as Signal<string>).subscribe(function(value){
-				if( controller ){
+		if (cssText && typeof (cssText as Signal<string>).subscribe === "function") {
+			(cssText as Signal<string>).subscribe(function(value) {
+				if (controller) {
 					controller.setValue(prepareCSS(value, selector));
 				}
 			});
 		}
 		
-		if( (el as HTMLElement).setAttribute ) {
-			(el as HTMLElement).setAttribute(attr!, "");
+		if ((element as HTMLElement).setAttribute) {
+			(element as HTMLElement).setAttribute(attribute!, "");
 		}
 		
 		onUnmount(function() {
-			if ((el as HTMLElement).removeAttribute) {
-				(el as HTMLElement).removeAttribute(attr!);
+			if ((element as HTMLElement).removeAttribute) {
+				(element as HTMLElement).removeAttribute(attribute!);
 			}
 			
 			if (container && container.remove(selector)) {
@@ -129,5 +132,3 @@ function createStyle(css: string | Signal<string>, attr?: string) {
 	
 	return bind;
 }
-
-export default createStyle;

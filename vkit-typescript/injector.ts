@@ -5,49 +5,54 @@ export type TokenFactory = () => unknown;
 export type TokenLike = TokenClass | TokenFactory;
 
 export type InstanceOf<TokenType> = (
-    TokenType extends TokenClass ? InstanceType<TokenType> :
-    TokenType extends TokenFactory ? ReturnType<TokenType> :
-    never
+	TokenType extends TokenClass ? InstanceType<TokenType> :
+	TokenType extends TokenFactory ? ReturnType<TokenType> :
+	never
 );
 
 export type Injector = {
-    container: WeakMap<TokenLike, Provider<unknown>>,
-    handleMissingProvider: ((token: TokenClass) => InstanceOf<TokenClass>) | null,
-    parent: Injector | null
+	container: WeakMap<TokenLike, Provider<unknown>>,
+	handleMissingProvider: ((token: TokenClass) => InstanceOf<TokenClass>) | null,
+	parent: Injector | null
 };
 
-var Container = typeof WeakMap === "function" ? WeakMap : function<KeyType, ValueType>() {
-    var array: (KeyType | ValueType)[] = [];
+var Container = typeof WeakMap === "function" ? WeakMap : function<KeyType extends object, ValueType>(
+	this: {
+		get(key: KeyType): ValueType | undefined;
+		set(key: KeyType, value: ValueType): void;
+	}
+) {
+	var array: (KeyType | ValueType)[] = [];
 
-    this.get = function(key: KeyType) {
-        for (var i = array.length - 2; i >= 0; i -= 2) {
-            if (array[i] === key) {
-                return array[i + 1];
-            }
-        }
-        return undefined;
-    };
+	this.get = function(key: KeyType): ValueType | undefined {
+		for (var i = array.length - 2; i >= 0; i -= 2) {
+			if (array[i] === key) {
+				return array[i + 1] as ValueType;
+			}
+		}
+		return undefined;
+	};
 
-    this.set = function(key: KeyType, value: ValueType) {
-        for (var i = array.length - 2; i >= 0; i -= 2) {
-            if (array[i] === key) {
-                array[i + 1] = value;
-                return;
-            }
-        }
-        array.push(key, value);
-    };
+	this.set = function(key: KeyType, value: ValueType): void {
+		for (var i = array.length - 2; i >= 0; i -= 2) {
+			if (array[i] === key) {
+				array[i + 1] = value;
+				return;
+			}
+		}
+		array.push(key, value);
+	};
 } as unknown as WeakMapConstructor;
 
 function createInjector(
-    parent: Injector | null,
-    handleMissingProvider: ((token: TokenClass) => InstanceOf<TokenClass>) | null
+	parent: Injector | null,
+	handleMissingProvider: ((token: TokenClass) => InstanceOf<TokenClass>) | null
 ): Injector {
-    return {
-        container: new Container<TokenLike, Provider<unknown>>(),
-        handleMissingProvider: handleMissingProvider,
-        parent: parent
-    };
+	return {
+		container: new Container<TokenLike, Provider<unknown>>(),
+		handleMissingProvider: handleMissingProvider,
+		parent: parent
+	};
 }
 
 export default createInjector;

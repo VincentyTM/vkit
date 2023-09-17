@@ -1,15 +1,13 @@
-import type {Signal} from "./signal";
+import {Signal} from "./signal";
 
-function signalText<ValueType>(
+export default function signalText<ValueType>(
 	this: Signal<ValueType>
-){
+): Text {
 	var node = document.createTextNode(String(this.get()));
-	
-	this.subscribe(function(value: ValueType){
-		node.nodeValue = String(value);
-	});
-	
+	this.subscribe(updateValue);
 	return node;
-}
 
-export default signalText;
+	function updateValue(value: ValueType): void {
+		node.nodeValue = String(value);
+	}
+}

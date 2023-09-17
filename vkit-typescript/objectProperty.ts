@@ -5,7 +5,7 @@ import observe from "./observe";
 import onUnmount from "./onUnmount";
 import signal, {Signal, WritableSignal} from "./signal";
 
-function objectProperty<ObjectType>(
+export default function objectProperty<ObjectType>(
 	object: ObjectType | Signal<ObjectType>,
 	property: keyof ObjectType | Signal<keyof ObjectType>,
 	defaultValue?: () => ObjectType[keyof ObjectType]
@@ -40,5 +40,3 @@ function objectProperty<ObjectType>(
 	
 	return value;
 }
-
-export default objectProperty;

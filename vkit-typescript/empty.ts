@@ -1,13 +1,11 @@
-function empty(parent: HTMLElement){
-	if( parent.replaceChildren ){
+export default function empty(parent: HTMLElement): void {
+	if (parent.replaceChildren) {
 		parent.replaceChildren();
-	}else{
+	} else {
 		var child: Node | null = null;
 		
-		while( child = parent.lastChild ){
+		while (child = parent.lastChild) {
 			parent.removeChild(child);
 		}
 	}
 }
-
-export default empty;

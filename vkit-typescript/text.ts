@@ -1,21 +1,17 @@
 import createComponent from "./component";
 
-function createDynamicText(getText: () => string | number){
+export default function text(getText: () => string | number): Text {
 	var oldText = "";
 	var node = document.createTextNode(oldText);
 	var component = createComponent(setText);
 	
-	function setText(){
+	function setText(): void {
 		var newText = getText();
-		
-		if( oldText !== newText ){
+		if (oldText !== newText) {
 			node.nodeValue = oldText = String(newText);
 		}
 	}
 	
 	component.render();
-	
 	return node;
 }
-
-export default createDynamicText;

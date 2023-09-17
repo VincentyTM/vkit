@@ -2,7 +2,9 @@ import computed, {ComputedSignal} from "./computed";
 import {Signal} from "./signal";
 import {View} from "./view";
 
-type KeyedSignal<ValueType> = ComputedSignal<ValueType> & {key: string | Signal<string>};
+type KeyedSignal<ValueType> = ComputedSignal<ValueType> & {
+	key: string | Signal<string>
+};
 
 type Store<ValueType> = {
 	keys: string[],
@@ -19,13 +21,13 @@ function getRecords<ValueType>(result: Store<ValueType>) {
 	return result.records;
 }
 
-function useKey<ValueType>(
+export default function useKey<ValueType>(
 	arraySignal: Signal<ValueType[]>,
 	getKey: string | ((value: ValueType) => string)
 ) {
 	var isFunction = typeof getKey === "function";
 	
-	var signal = computed(function(array){
+	var signal = computed(function(array) {
 		var records: {[key: string]: unknown} = {};
 		var n = array ? array.length : 0;
 		var keys = new Array(n);
@@ -62,7 +64,6 @@ function useKey<ValueType>(
 		
 		signal.subscribe(selected.update);
 		selected.key = key;
-		
 		return selected;
 	}
 	
@@ -84,5 +85,3 @@ function useKey<ValueType>(
 		views: views
 	};
 }
-
-export default useKey;

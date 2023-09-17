@@ -1,6 +1,6 @@
 import deepPush from "./deepPush";
 
-function append<ItemType, ContextType>(
+export default function append<ItemType, ContextType>(
 	parent: {
 		appendChild(node: ItemType): ItemType | void;
 		append?(...nodes: ItemType[]): void;
@@ -12,12 +12,12 @@ function append<ItemType, ContextType>(
 		modifier: ItemType,
 		isExternal?: boolean
 	) => void
-){
-	function push(node: ItemType){
+): void {
+	function push(node: ItemType): void {
 		parent.appendChild(node);
 	}
 	
-	if( parent.append ){
+	if (parent.append) {
 		var array: ItemType[] = [];
 		
 		deepPush<ItemType, ContextType>(
@@ -28,7 +28,7 @@ function append<ItemType, ContextType>(
 		);
 		
 		parent.append.apply(parent, array);
-	}else{
+	} else {
 		deepPush<ItemType, ContextType>(
 			{push: push},
 			children,
@@ -37,5 +37,3 @@ function append<ItemType, ContextType>(
 		);
 	}
 }
-
-export default append;

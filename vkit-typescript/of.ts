@@ -7,16 +7,16 @@ function getValue<ObjectType>(
 	object: ObjectType,
 	property: keyof ObjectType,
 	_receiver: ObjectType
-){
+): ObjectType[keyof ObjectType] {
 	var value = object[property];
 	
-	if(!getComponent(true)){
+	if (!getComponent(true)) {
 		return value;
 	}
 	
 	var observable = observe(object, property);
 	
-	if(!observable){
+	if (!observable) {
 		throw new ReferenceError("Property '" + String(property) + "' does not exist!");
 	}
 	
@@ -33,8 +33,6 @@ var handler = {
 	get: getValue
 };
 
-function of<ObjectType extends Object>(object: ObjectType){
+export default function of<ObjectType extends Object>(object: ObjectType) {
 	return new Proxy<ObjectType>(object, handler);
 }
-
-export default of;

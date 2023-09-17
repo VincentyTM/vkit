@@ -3,12 +3,12 @@ import {Config, ConfigClass} from "./provide";
 import createInjector from "./injector";
 import createProvider from "./provider";
 
-function mount(){
+function mount() {
 	throw new Error("The root component cannot be rerendered");
 }
 
 function getValueFromClass(config: Config) {
-    return new (config as ConfigClass)();
+	return new (config as ConfigClass)();
 }
 
 var rootInjector = createInjector(null, function(token) {

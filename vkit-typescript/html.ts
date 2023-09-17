@@ -10,7 +10,7 @@ function findNodes(
 	type: number,
 	value: string,
 	count: number
-) {
+): number {
 	if (container.nodeType === type && container.nodeValue === value) {
 		result.push(container);
 		--count;
@@ -41,8 +41,9 @@ function html(strings: ArrayLike<string> & {raw: ArrayLike<string>}, ..._args: a
 		return html.apply(null, a as any);
 	}
 	
-	var result: any = [], operators: Comment[] = [];
+	var operators: Comment[] = [];
 	var placeholder = "<!---->";
+	var result: any = [];
 	
 	for (var i = 0, l = arguments.length; i < l; ++i) {
 		var arg = arguments[i];

@@ -76,10 +76,10 @@ function createBlock<ValueType>(
 	};
 }
 
-function views<ValueType>(
+export default function views<ValueType>(
 	this: Signal<ArrayLike<ValueType>>,
-	getView: (value: ValueType) => View
-) {
+	getItemView: (value: ValueType) => View
+): View[] {
 	var signal = this;
 	var container = getComponent();
 	var injector = getInjector();
@@ -106,7 +106,7 @@ function views<ValueType>(
 			
 			newArray[i] = newBlocks[key] = oldBlocks[key] || createBlock<ValueType>(
 				model,
-				getView,
+				getItemView,
 				container,
 				injector
 			);
@@ -140,7 +140,7 @@ function views<ValueType>(
 			var k = Math.min(m, n);
 			var end = m < l ? array[m].range.start : range.end;
 			
-			while (i < k && array[i] === newArray[i]){
+			while (i < k && array[i] === newArray[i]) {
 				++i;
 			}
 			
@@ -157,7 +157,7 @@ function views<ValueType>(
 	signal.subscribe(render);
 	
 	var n = array!.length;
-	var output = new Array(n + 2);
+	var output: View[] = new Array(n + 2);
 	
 	for (var i = 0; i < n; ++i) {
 		output[i + 1] = array![i].render();
@@ -168,5 +168,3 @@ function views<ValueType>(
 	
 	return output;
 }
-
-export default views;

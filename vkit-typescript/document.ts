@@ -1,8 +1,9 @@
 import bind, {Bindings} from "./bind";
 import getWindow from "./window";
 
-function getDocument(...bindings: Bindings[]): Document;
-function getDocument() {
+export default function getDocument(..._bindings: Bindings<Document>[]): Document;
+
+export default function getDocument(): Document {
 	var doc = getWindow().document;
 	var n = arguments.length;
 	
@@ -12,5 +13,3 @@ function getDocument() {
 	
 	return doc;
 }
-
-export default getDocument;

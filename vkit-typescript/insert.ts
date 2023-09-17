@@ -9,18 +9,18 @@ function insert<ItemType, ContextType>(
 		modifier: ItemType,
 		isExternal?: boolean
 	) => void
-){
+): void {
 	var parent = nextSibling.parentNode;
 	
-	if(!parent){
+	if (!parent) {
 		return;
 	}
 	
-	function push(node: ItemType){
+	function push(node: ItemType): void {
 		parent!.insertBefore(node as unknown as Node, nextSibling);
 	}
 	
-	if( (nextSibling as any).before ){
+	if ((nextSibling as any).before) {
 		var array: ItemType[] = [];
 		
 		deepPush<ItemType, ContextType>(
@@ -31,7 +31,7 @@ function insert<ItemType, ContextType>(
 		);
 		
 		(nextSibling as any).before.apply(nextSibling, array);
-	}else{
+	} else {
 		deepPush<ItemType, ContextType>(
 			{push: push},
 			children,
