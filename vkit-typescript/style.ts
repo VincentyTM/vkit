@@ -126,9 +126,5 @@ export default function style(
 		});	
 	}
 	
-	bind.toString = function() {
-		return selector;
-	};
-	
 	return bind;
 }
