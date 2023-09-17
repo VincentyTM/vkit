@@ -1,4 +1,5 @@
 import {Bindings} from "./bind";
+import directive from "./directive";
 import toArray from "./toArray";
 
 type Pushable<ItemType> = {
@@ -21,13 +22,25 @@ export default function deepPush<ItemType, ContextType>(
 	
 	if (typeof (item as any).render === "function") {
 		deepPush(array, (item as any).render(), context, bind);
-	}else if( typeof item !== "object" ){
-		if( typeof item === "function" ){
+		return array;
+	}
+
+	if (typeof item === "function") {
+		if (directive) {
+			var returnValue = directive(context, item as unknown as (element: ContextType) => string | void) as unknown as ItemType;
+			deepPush(array, returnValue, context, bind);
+		} else {
 			item(context);
-		}else{
-			array.push(document.createTextNode(item as any));
 		}
-	}else if( (item as any).nodeType ){
+		return array;
+	}
+	
+	if (typeof item !== "object") {
+		array.push(document.createTextNode(item as any));
+		return array;
+	}
+	
+	if ((item as any).nodeType) {
 		array.push(item);
 		return array;
 	}
