@@ -18,24 +18,33 @@ export type View<ContextType = unknown> = (
 	((element: ContextType) => void)
 );
 
-function view<ValueType>(
+export default function view<ValueType>(
+	getCurrentView: (value: ValueType | null) => View
+) : View;
+
+export default function view<ValueType>(
 	this: Signal<ValueType>,
-	getView: (value: ValueType | null) => View
+	getCurrentView: (value: ValueType | null) => View
+) : View;
+
+export default function view<ValueType>(
+	this: Signal<ValueType> | void,
+	getCurrentView: (value: ValueType | null) => View
 ) : View {
 	var component = createComponent(mount);
 	var currentView: View;
 	var range = createNodeRange();
 	var render = component.render;
-	var signal: Signal<ValueType> | null = this;
+	var signal: Signal<ValueType> | null | void = this;
 	
 	if (isSignal(signal)) {
-		signal.subscribe(render);
+		(signal as Signal<ValueType>).subscribe(render);
 	} else {
 		signal = null;
 	}
 	
 	function mount() {
-		currentView = getView(signal ? signal.get() : null);
+		currentView = getCurrentView(signal ? signal.get() : null);
 		
 		if (range.start.nextSibling) {
 			range.clear();
@@ -51,5 +60,3 @@ function view<ValueType>(
 		range.end
 	];
 }
-
-export default view;
