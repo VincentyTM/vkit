@@ -1,9 +1,22 @@
+import {Bindings} from "./bind";
 import createComponent from "./component";
 import createNodeRange from "./nodeRange";
 import isSignal from "./isSignal";
 import {Signal} from "./signal";
 
-type View = any;
+export type View<ContextType = unknown> = (
+	Node |
+	string |
+	number |
+	boolean |
+	null |
+	undefined |
+	ArrayLike<View<ContextType>> |
+	Bindings<ContextType> |
+	Generator<View<ContextType>, View<ContextType>> |
+	Signal<unknown> |
+	((element: ContextType) => void)
+);
 
 function view<ValueType>(
 	this: Signal<ValueType>,
@@ -39,5 +52,4 @@ function view<ValueType>(
 	];
 }
 
-export {View};
 export default view;
