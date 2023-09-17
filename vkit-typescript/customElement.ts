@@ -10,14 +10,6 @@ import update from "./update";
 import {View} from "./view";
 import {WindowService} from "./window";
 
-function setPrototypeOf(object: object, proto: object){
-	if( Object.setPrototypeOf ){
-		Object.setPrototypeOf(object, proto);
-	}else{
-		(object as {__proto__: object}).__proto__ = proto;
-	}
-}
-
 function replaceHyphens(value: string){
 	return value.charAt(1).toUpperCase();
 }
@@ -123,8 +115,8 @@ function createCustomElement(name: string, getView: (
 		}
 	}
 	
-	setPrototypeOf(proto, win.HTMLElement.prototype);
-	setPrototypeOf(CustomElement, win.HTMLElement);
+	Object.setPrototypeOf(proto, win.HTMLElement.prototype);
+	Object.setPrototypeOf(CustomElement, win.HTMLElement);
 	
 	win.customElements.define(name, CustomElement as unknown as CustomElementConstructor);
 	
