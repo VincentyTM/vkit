@@ -6,9 +6,9 @@ type HTMLProxy = {
 };
 
 var htmlTags = new Proxy({}, {
-    get: function(_target: HTMLProxy, tagName: string, _receiver: HTMLProxy){
-        return htmlTag(tagName.toLowerCase().replace(/_/g, "-"));
-    }
+	get: function(_target: HTMLProxy, tagName: string, _receiver: HTMLProxy) {
+		return htmlTag(tagName.toLowerCase().replace(/_/g, "-") as keyof HTMLElementTagNameMap);
+	}
 });
 
 export default htmlTags;

@@ -1,17 +1,13 @@
 import append from "./append";
 import bind from "./bind";
+import {View} from "./view";
 
-import type {View} from "./view";
-
-type ItemType = View;
-type ContextType = any;
-
-function htmlTag(tagName: string){
-	return function(){
+export default function htmlTag<K extends keyof HTMLElementTagNameMap>(tagName: K): (
+	...contents: View<HTMLElementTagNameMap[K]>[]
+) => HTMLElementTagNameMap[K] {
+	return function(): HTMLElementTagNameMap[K] {
 		var el = document.createElement(tagName);
-		append<ItemType, ContextType>(el, arguments, el, bind);
+		append<View<typeof el>, typeof el>(el, arguments, el, bind);
 		return el;
 	};
 }
-
-export default htmlTag;
