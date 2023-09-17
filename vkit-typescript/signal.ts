@@ -46,6 +46,30 @@ export type Signal<ValueType> = {
 	 * @returns The initial view.
 	 */
 	view(getCurrentView: (value: ValueType | null) => View): View;
+
+	/**
+	 * Creates a dynamic view with a subview for each element in the array contained in the signal.
+	 * 
+	 * When the value of the signal changes, the items of the old and the new arrays are compared and the changes are reflected in the DOM.
+	 * If an item is not removed during the change, its corresponding subview is preserved.
+	 * @example
+	 * function MyComponent() {
+	 * 	const list = signal([
+	 * 		{text: "A"},
+	 * 		{text: "B"},
+	 * 		{text: "C"}
+	 * 	]);
+	 * 	
+	 * 	return Ul(
+	 * 		list.views((item) => {
+	 * 			return Li(item.text);
+	 * 		})
+	 * 	);
+	 * }
+	 * 
+	 * @param getItemView The function that returns a subview for an array item.
+	 * @returns The initial view containing the subviews for all items in the array.
+	 */
 	views(getItemView: (value: ItemType<ValueType>) => View): View;
 };
 
