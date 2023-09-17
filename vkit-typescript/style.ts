@@ -60,6 +60,29 @@ function getStyleContainer(el: Node): StyleContainer {
 	return container;
 }
 
+/**
+ * Creates a style which can be applied to one or more DOM elements.
+ * 
+ * The style is added to an element with an attribute which is removed when the current component (the component in which the style was added to the element) is unmounted.
+ * 
+ * The stylesheet is removed from the document or shadow root when no DOM elements use it anymore.
+ * A style can be used in multiple documents/shadow DOMs, each having their own independent stylesheet.
+ * @example
+ * const MyStyle = $.style(`
+ * 	::this {
+ * 		color: red;
+ * 	}
+ * `);
+ * 
+ * const MyComponent = () => {
+ * 	return H1("Hello world", MyStyle);
+ * };
+ * 
+ * @param cssText A string containing the CSS. The special `::this` selector in it refers to all DOM elements that use the stylesheet.
+ * A signal containing a string is also accepted, which is useful for creating a dynamic stylesheet.
+ * @param attribute The attribute used as a CSS selector. If not specified, a unique attribute is generated for the stylesheet.
+ * @returns A function which can be used as a directive on a DOM element to apply the stylesheet.
+ */
 export default function style(
 	cssText: string | Signal<string>,
 	attribute?: string
@@ -70,6 +93,13 @@ export default function style(
 	
 	var selector = "[" + attribute + "]";
 	
+	/**
+	 * Adds the stylesheet's selector attribute to a DOM element and keeps a reference to that element.
+	 * The attribute is removed when the current component (the component in which the `bind` function was called) is unmounted.
+	 * 
+	 * @param element The DOM element to which the attribute is added.
+	 * The `::this` selector in the stylesheet selects this element.
+	 */
 	function bind(element: Node): void {
 		var container: StyleContainer | null = null;
 		var controller: StyleController | null = null;
