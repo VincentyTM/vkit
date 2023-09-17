@@ -1,3 +1,4 @@
+import {Bindings} from "./bind";
 import toArray from "./toArray";
 
 type Pushable<ItemType> = {
@@ -10,7 +11,7 @@ export default function deepPush<ItemType, ContextType>(
 	context: ContextType,
 	bind?: (
 		target: ContextType,
-		modifier: ItemType,
+		modifier: ItemType & Bindings<ContextType>,
 		isExternal?: boolean
 	) => void
 ): Pushable<ItemType> {

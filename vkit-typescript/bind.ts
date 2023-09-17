@@ -1,52 +1,54 @@
 import onEvent from "./onEvent";
 import onUnmount from "./onUnmount";
 import prop from "./prop";
+import {Signal} from "./signal";
 
-type Target = {
-	[key: string]: any
+export type Bindings<T> = {
+	[K in keyof T]?: (T[K] extends ((this: GlobalEventHandlers, ev: never) => any) | null
+		? T[K]
+		: T[K] | (() => T[K]) | Signal<T[K]> | Bindings<T[K]>
+	)
 };
 
-export type Bindings = {
-	[key: string]: any
-};
-
-function bind(el: Target, props: Bindings, persistent?: boolean) {
-	for (var name in props) {
-		var value = props[name];
+export default function bind<Target>(
+	element: Target,
+	bindings: Bindings<Target>,
+	persistent?: boolean
+): void {
+	for (var name in bindings) {
+		var value = bindings[name];
 		
 		switch (typeof value) {
 			case "object":
 				if (!value) {
-					el[name] = value;
-				} else if (value.prop) {
-					value.prop(name)(el);
+					(element as any)[name] = value;
+				} else if ((value as any).prop) {
+					(value as any).prop(name)(element);
 				} else {
-					var obj = el[name];
+					var obj = element[name];
 					
 					if (obj) {
-						bind(obj, value, persistent);
+						bind(obj, value as any, persistent);
 					} else {
-						el[name] = value;
+						(element as any)[name] = value;
 					}
 				}
 				break;
 			case "function":
 				if (name.indexOf("on") === 0) {
-					var unsub = onEvent(el, name.substring(2), value);
+					var unsub = onEvent(element, name.substring(2), value);
 					
 					if (!persistent) {
 						onUnmount(unsub);
 					}
 				} else {
-					prop(name, value)(el);
+					prop(name, value as () => unknown)(element);
 				}
 				break;
 			case "undefined":
 				break;
 			default:
-				el[name] = value;
+				(element as any)[name] = value;
 		}
 	}
 }
-
-export default bind;

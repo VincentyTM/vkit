@@ -1,3 +1,4 @@
+import {Bindings} from "./bind";
 import deepPush from "./deepPush";
 
 export default function append<ItemType, ContextType>(
@@ -9,7 +10,7 @@ export default function append<ItemType, ContextType>(
 	context: ContextType,
 	bind: (
 		target: ContextType,
-		modifier: ItemType,
+		modifier: ItemType & Bindings<ContextType>,
 		isExternal?: boolean
 	) => void
 ): void {
