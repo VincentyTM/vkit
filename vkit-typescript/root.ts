@@ -7,7 +7,7 @@ function mount() {
 	throw new Error("The root component cannot be rerendered");
 }
 
-function getValueFromClass(config: Config) {
+export function getValueFromClass(config: Config) {
 	return new (config as ConfigClass)();
 }
 

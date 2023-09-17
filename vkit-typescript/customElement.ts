@@ -1,11 +1,13 @@
 import append from "./append";
 import bind from "./bind";
 import createComponent from "./component";
+import createInjector from "./injector";
+import createProvider from "./provider";
 import createSignal, {WritableSignal} from "./signal";
 import emitUnmount from "./emitUnmount";
 import empty from "./empty";
+import {getValueFromClass} from "./root";
 import inject from "./inject";
-import provide from "./provide";
 import update from "./update";
 import {View} from "./view";
 import {WindowService} from "./window";
@@ -33,27 +35,31 @@ function createCustomElement(name: string, getView: (
 			[],
 			CustomElement
 		);
+
+		var injector = createInjector(null, function(token) {
+			var provider = createProvider(getValueFromClass, token, component);
+			injector.container.set(token, provider);
+			return provider.getInstance();
+		});
 		
 		var component = createComponent(function(){
 			var doc = el.ownerDocument;
 			
-			provide(null, function(){
-				inject(WindowService).window = doc.defaultView || doc.parentWindow;
-				
-				var view = getView.call(
-					el,
-					el.observedAttributes,
-					el
-				);
-				
-				append(
-					el,
-					view,
-					el,
-					bind
-				);
-			});
-		}, null, null);
+			inject(WindowService).window = doc.defaultView || doc.parentWindow;
+			
+			var view = getView.call(
+				el,
+				el.observedAttributes,
+				el
+			);
+			
+			append(
+				el,
+				view,
+				el,
+				bind
+			);
+		}, null, injector);
 		
 		el.component = component;
 		el.observedAttributes = {};
