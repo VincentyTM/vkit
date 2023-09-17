@@ -1,14 +1,10 @@
+import bind from "./bind";
 import deepPush from "./deepPush";
 
 function insert<ItemType, ContextType>(
 	children: ItemType,
 	nextSibling: Node,
-	context: ContextType,
-	bind: (
-		target: ContextType,
-		modifier: ItemType,
-		isExternal?: boolean
-	) => void
+	context: ContextType
 ): void {
 	var parent = nextSibling.parentNode;
 	

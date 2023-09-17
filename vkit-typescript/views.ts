@@ -1,4 +1,3 @@
-import bind from "./bind";
 import createComponent, {Component} from "./component";
 import createNodeRange from "./nodeRange";
 import emitUnmount from "./emitUnmount";
@@ -58,7 +57,7 @@ function createBlock<ValueType>(
 			try {
 				setComponent(component);
 				setInjector(injector);
-				insert(render(), end, end.parentNode as Node, bind);
+				insert(render(), end, end.parentNode as Node);
 			} catch (error) {
 				throwError(error, component);
 			} finally {

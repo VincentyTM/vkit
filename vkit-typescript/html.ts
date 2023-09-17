@@ -1,4 +1,3 @@
-import bind from "./bind";
 import insert from "./insert";
 import isArray from "./isArray";
 import toArray from "./toArray";
@@ -138,7 +137,7 @@ export default function html(
 				context = null;
 			}
 			
-			insert(operator, comment, context as any, bind);
+			insert(operator, comment, context as any);
 			comment.parentNode!.removeChild(comment);
 		}
 	}
