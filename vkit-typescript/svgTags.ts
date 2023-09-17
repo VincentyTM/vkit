@@ -6,9 +6,9 @@ type SVGProxy = {
 };
 
 var svgTags = new Proxy({}, {
-    get: function(_target: SVGProxy, tagName: string, _receiver: SVGProxy){
-        return svgTag(tagName.toLowerCase().replace(/_/g, "-"));
-    }
+	get: function(_target: SVGProxy, tagName: string, _receiver: SVGProxy) {
+		return svgTag(tagName.toLowerCase().replace(/_/g, "-") as keyof SVGElementTagNameMap);
+	}
 });
 
 export default svgTags;

@@ -44,12 +44,12 @@ function bindAttributes(el: Element, attributes: {[attributeName: string]: React
 	}
 }
 
-function svgTag(tagName: string) {
-	return function() {
+export default function svgTag<K extends keyof SVGElementTagNameMap>(tagName: K): (
+	...contents: View<SVGElementTagNameMap[K]>[]
+) => SVGElementTagNameMap[K] {
+	return function(): SVGElementTagNameMap[K] {
 		var el = document.createElementNS(xmlns, tagName);
-		append<View, Element>(el, arguments, el, bindAttributes);
-		return el;
+		append<View<typeof el>, typeof el>(el, arguments, el, bindAttributes as never);
+		return el as SVGElementTagNameMap[K];
 	};
 }
-
-export default svgTag;
