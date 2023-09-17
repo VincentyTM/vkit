@@ -1,46 +1,44 @@
-(function($){
+(function($) {
 
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
 var prop = $.prop;
 
-function bind(el, props, persistent){
-	for(var name in props){
-		var value = props[name];
+function bind(element, bindings, persistent) {
+	for (var name in bindings) {
+		var value = bindings[name];
 		
-		switch( typeof value ){
+		switch (typeof value) {
 			case "object":
-				if(!value){
-					el[name] = value;
-				}else if( value.prop ){
-					value.prop(name)(el);
-				}else{
-					var obj = el[name];
+				if (!value) {
+					element[name] = value;
+				} else if (value.prop) {
+					value.prop(name)(element);
+				} else {
+					var obj = element[name];
 					
-					if( obj ){
+					if (obj) {
 						bind(obj, value, persistent);
-					}else{
-						el[name] = value;
+					} else {
+						element[name] = value;
 					}
 				}
-				
 				break;
 			case "function":
-				if( name.indexOf("on") === 0 ){
-					var unsub = onEvent(el, name.substring(2), value);
+				if (name.indexOf("on") === 0) {
+					var unsub = onEvent(element, name.substring(2), value);
 					
-					if(!persistent){
+					if (!persistent) {
 						onUnmount(unsub);
 					}
-				}else{
-					prop(name, value)(el);
+				} else {
+					prop(name, value)(element);
 				}
-				
 				break;
 			case "undefined":
 				break;
 			default:
-				el[name] = value;
+				element[name] = value;
 		}
 	}
 }
