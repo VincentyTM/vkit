@@ -4,7 +4,7 @@ var computed = $.computed;
 
 function is(condition) {
 	return computed(function() {
-		return condition();
+		return !!condition();
 	})();
 }
 
