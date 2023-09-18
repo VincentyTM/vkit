@@ -3,11 +3,9 @@
 var computed = $.computed;
 
 function is(condition) {
-	if (typeof condition !== "function") {
-		throw new TypeError("Condition must be a function");
-	}
-	
-	return computed(Boolean, condition)();
+	return computed(function() {
+		return condition();
+	})();
 }
 
 $.is = is;
