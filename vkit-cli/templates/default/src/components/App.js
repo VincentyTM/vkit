@@ -35,9 +35,11 @@ function App() {
 			})
 		),
 		
-		P("You have clicked ", count, () => count() === 1 ? " time." : " times.", (el) => {
-			el.className = count();
-		}),
+		P(
+			"You have clicked ",
+			count,
+			() => count() === 1 ? " time." : " times."
+		),
 		
 		$.view(() => {
 			if (!$.is(() => count() >= 3)) {
