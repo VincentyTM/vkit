@@ -13,9 +13,14 @@ function errorBoundary(getView, getFallbackView) {
 	var error;
 	var failed = signal(false);
 	
+	function retry() {
+		failed.set(false);
+		update();
+	}
+	
 	return failed.view(function(hasFailed) {
 		if (hasFailed) {
-			return getFallbackView ? getFallbackView(error) : null;
+			return getFallbackView ? getFallbackView(error, retry) : null;
 		}
 		
 		onError(function(ex) {
