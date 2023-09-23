@@ -1,8 +1,9 @@
 (function($){
 
+var bind = $.bind;
 var deepPush = $.deepPush;
 
-function insert(children, nextSibling, context, bind){
+function insert(children, nextSibling, context){
 	var parent = nextSibling.parentNode;
 	if(!parent){
 		return;

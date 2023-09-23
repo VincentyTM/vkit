@@ -1,6 +1,5 @@
 (function($) {
 
-var bind = $.bind;
 var createComponent = $.component;
 var createNodeRange = $.nodeRange;
 var emitUnmount = $.emitUnmount;
@@ -47,7 +46,7 @@ function createBlock(model, getView, container, injector) {
 			try {
 				setComponent(component);
 				setInjector(injector);
-				insert(render(), end, end.parentNode, bind);
+				insert(render(), end, end.parentNode);
 			} catch (error) {
 				throwError(error, component);
 			} finally {

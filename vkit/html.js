@@ -1,6 +1,5 @@
 (function($, document, undefined){
 
-var bind = $.bind;
 var insert = $.insert;
 var isArray = $.isArray;
 var toArray = $.toArray;
@@ -127,7 +126,7 @@ function html(strings){
 				context = null;
 			}
 			
-			insert(operator, comment, context, bind);
+			insert(operator, comment, context);
 			comment.parentNode.removeChild(comment);
 		}
 	}
