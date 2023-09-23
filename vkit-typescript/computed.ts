@@ -29,10 +29,11 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 	getValue: FuncType,
 	dependencies?: ArrayOfMaybeSignals<Parameters<FuncType>>
 ): ComputedSignal<ReturnType<FuncType>> {
+	type Subscription = {callback: ((value: ValueType) => void) | null};
 	type ValueType = ReturnType<FuncType>;
 
 	var parent = getComponent(true);
-	var subscriptions: ((value: ValueType) => void)[] = [];
+	var subscriptions: Subscription[] = [];
 	var value: ValueType;
 	var signalComponent = createComponent(computeValue, parent, getInjector(true));
 	
@@ -68,10 +69,14 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 		if (value !== newValue) {
 			value = newValue;
 
-			var m = subscriptions.length;
+			var subs = subscriptions.slice();
+			var m = subs.length;
 			
 			for(var i = 0; i < m; ++i){
-				subscriptions[i](value);
+				var sub = subs[i];
+				if (sub.callback) {
+					sub.callback(value);
+				}
 			}
 		}
 	}
@@ -94,19 +99,15 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 		persistent?: boolean
 	): () => void {
 		var component = getComponent(true);
-		var unmounted = false;
+		var subscription: Subscription = {callback: callback};
 		
-		subscriptions.push(function(value) {
-			if (!unmounted) {
-				callback(value);
-			}
-		});
+		subscriptions.push(subscription);
 		
 		function unsubscribe(): void {
-			unmounted = true;
+			subscription.callback = null;
 			
 			for (var i = subscriptions.length; i--;) {
-				if (subscriptions[i] === callback) {
+				if (subscriptions[i] === subscription) {
 					subscriptions.splice(i, 1);
 					break;
 				}

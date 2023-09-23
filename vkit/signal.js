@@ -28,19 +28,15 @@ function createWritableSignal(value){
 	
 	function subscribe(callback, persistent){
 		var component = getComponent(true);
-		var unmounted = false;
+		var subscription = {callback: callback};
 		
-		subscriptions.push(function(value){
-			if(!unmounted){
-				callback(value);
-			}
-		});
+		subscriptions.push(subscription);
 		
 		function unsubscribe(){
-			unmounted = true;
+			subscription.callback = null;
 			
-			for(var i=subscriptions.length; i--;){
-				if( subscriptions[i] === callback ){
+			for (var i = subscriptions.length; i--;) {
+				if (subscriptions[i] === subscription) {
 					subscriptions.splice(i, 1);
 					break;
 				}
@@ -65,13 +61,17 @@ function createWritableSignal(value){
 		}
 	}
 	
-	function updateSignal(){
+	function updateSignal() {
 		enqueued = false;
 		
-		var n = subscriptions.length;
+		var subs = subscriptions.slice();
+		var n = subs.length;
 			
-		for(var i=0; i<n; ++i){
-			subscriptions[i](value);
+		for (var i = 0; i < n; ++i) {
+			var sub = subs[i];
+			if (sub.callback) {
+				sub.callback(value);
+			}
 		}
 	}
 	

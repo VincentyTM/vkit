@@ -80,8 +80,10 @@ export type WritableSignal<ValueType> = Signal<ValueType> & {
 };
 
 export default function createWritableSignal<ValueType>(value: ValueType): WritableSignal<ValueType> {
+	type Subscription = {callback: ((value: ValueType) => void) | null};
+
 	var parent = getComponent(true);
-	var subscriptions: ((value: ValueType) => void)[] = [];
+	var subscriptions: Subscription[] = [];
 	var enqueued = false;
 	
 	function use(): ValueType {
@@ -98,19 +100,15 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 		persistent?: boolean
 	): () => void {
 		var component = getComponent(true);
-		var unmounted = false;
+		var subscription: Subscription = {callback: callback};
 		
-		subscriptions.push(function(value): void {
-			if (!unmounted) {
-				callback(value);
-			}
-		});
+		subscriptions.push(subscription);
 		
 		function unsubscribe(): void {
-			unmounted = true;
+			subscription.callback = null;
 			
 			for (var i = subscriptions.length; i--;) {
-				if (subscriptions[i] === callback) {
+				if (subscriptions[i] === subscription) {
 					subscriptions.splice(i, 1);
 					break;
 				}
@@ -137,10 +135,14 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 	
 	function updateSignal(): void {
 		enqueued = false;
-		var n = subscriptions.length;
+		var subs = subscriptions.slice();
+		var n = subs.length;
 		
 		for (var i = 0; i < n; ++i) {
-			subscriptions[i](value);
+			var sub = subs[i];
+			if (sub.callback) {
+				sub.callback(value);
+			}
 		}
 	}
 	
