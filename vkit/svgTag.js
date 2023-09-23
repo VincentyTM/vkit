@@ -1,6 +1,7 @@
 (function($, document){
 
 var append = $.append;
+var bind = $.bind;
 var effect = $.effect;
 var onEvent = $.onEvent;
 
