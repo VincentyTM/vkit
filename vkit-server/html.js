@@ -1,4 +1,5 @@
 var deepPush = require("./deepPush.js");
+var escapeHTML = require("./escapeHTML.js");
 var isArray = require("./isArray.js");
 
 function createHTML(html) {
@@ -54,6 +55,8 @@ function html(strings) {
 				}
 				break;
 			case "function":
+				parts.push(createHTML(escapeHTML(String(arg(null)))));
+				break;
 			case "undefined":
 			case "boolean":
 			default:
