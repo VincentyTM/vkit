@@ -1,7 +1,7 @@
 (function($){
 
 var easings = $.easing;
-var toString = Object.prototype.toString;
+var isArray = $.isArray;
 
 function getIndexAt(array, time, n){
 	var a = 0;
@@ -23,7 +23,8 @@ function getValueAt(array, time, mix){
 	if( typeof array === "function" ){
 		return array(time, mix);
 	}
-	if( toString.call(array) !== "[object Array]" ){
+	
+	if (!isArray(array)) {
 		return array;
 	}
 	var n = array.length;
