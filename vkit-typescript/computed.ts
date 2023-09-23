@@ -9,6 +9,8 @@ import signalText from "./signalText";
 import view from "./view";
 import views from "./views";
 
+var none = {};
+
 export type ArrayOfMaybeSignals<ArrayType> = {[K in keyof ArrayType]: ArrayType[K] | Signal<ArrayType[K]>};
 
 export type ComputedSignal<ValueType> = Signal<ValueType> & {
@@ -34,7 +36,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 
 	var parent = getComponent(true);
 	var subscriptions: Subscription[] = [];
-	var value: ValueType;
+	var value: ValueType = none as ValueType;
 	var signalComponent = createComponent(computeValue, parent, getInjector(true));
 	
 	if (dependencies) {
@@ -65,18 +67,26 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 		}else{
 			newValue = (getValue as () => ValueType)();
 		}
-		
-		if (value !== newValue) {
-			value = newValue;
 
-			var subs = subscriptions.slice();
-			var m = subs.length;
-			
-			for(var i = 0; i < m; ++i){
-				var sub = subs[i];
-				if (sub.callback) {
-					sub.callback(value);
-				}
+		var oldValue = value;
+		
+		if (oldValue === newValue) {
+			return;
+		}
+
+		value = newValue;
+
+		if (oldValue === none) {
+			return;
+		}
+		
+		var subs = subscriptions.slice();
+		var m = subs.length;
+		
+		for(var i = 0; i < m; ++i){
+			var sub = subs[i];
+			if (sub.callback) {
+				sub.callback(value);
 			}
 		}
 	}
@@ -88,7 +98,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 	}
 	
 	function get(): ValueType {
-		if (value === undefined) {
+		if (value === none) {
 			signalComponent.render();
 		}
 		return value;

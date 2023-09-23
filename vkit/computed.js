@@ -1,4 +1,4 @@
-(function($, undefined) {
+(function($) {
 
 var createComponent = $.component;
 var getComponent = $.getComponent;
@@ -11,10 +11,12 @@ var signalText = $.signalText;
 var view = $.view;
 var views = $.views;
 
+var none = {};
+
 function createComputedSignal(getValue, inputs) {
 	var parent = getComponent(true);
 	var subscriptions = [];
-	var value;
+	var value = none;
 	var signalComponent = createComponent(computeValue, parent, getInjector(true));
 	
 	if (inputs) {
@@ -46,9 +48,18 @@ function createComputedSignal(getValue, inputs) {
 			newValue = getValue();
 		}
 		
-		if (value !== newValue) {
-			value = newValue;
-			
+		var oldValue = value;
+		
+		if (oldValue === newValue) {
+			return;
+		}
+		
+		value = newValue;
+		
+		if (oldValue === none) {
+			return;
+		}
+		
 		var subs = subscriptions.slice();
 		var n = subs.length;
 		
@@ -67,7 +78,7 @@ function createComputedSignal(getValue, inputs) {
 	}
 	
 	function get() {
-		if (value === undefined) {
+		if (value === none) {
 			signalComponent.render();
 		}
 		return value;
