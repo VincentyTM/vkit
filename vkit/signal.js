@@ -1,4 +1,4 @@
-(function($){
+(function($) {
 
 var enqueueUpdate = $.enqueueUpdate;
 var getComponent = $.getComponent;
@@ -11,22 +11,21 @@ var signalText = $.signalText;
 var view = $.view;
 var views = $.views;
 
-function createWritableSignal(value){
+function createWritableSignal(value) {
 	var parent = getComponent(true);
 	var subscriptions = [];
 	var enqueued = false;
 	
-	function use(){
+	function use() {
 		subscribe(getComponent().render);
-		
 		return value;
 	}
 	
-	function get(){
+	function get() {
 		return value;
 	}
 	
-	function subscribe(callback, persistent){
+	function subscribe(callback, persistent) {
 		var component = getComponent(true);
 		var subscription = {callback: callback};
 		
@@ -43,18 +42,18 @@ function createWritableSignal(value){
 			}
 		}
 		
-		if( component !== parent && !persistent ){
+		if (component !== parent && !persistent) {
 			onUnmount(unsubscribe);
 		}
 		
 		return unsubscribe;
 	}
 	
-	function set(newValue){
-		if( value !== newValue ){
+	function set(newValue) {
+		if (value !== newValue) {
 			value = newValue;
 			
-			if(!enqueued){
+			if (!enqueued) {
 				enqueued = true;
 				enqueueUpdate(updateSignal);
 			}
@@ -111,15 +110,15 @@ function createWritableSignal(value){
 	return use;
 }
 
-function add(value){
+function add(value) {
 	this.set(this.get() + value);
 }
 
-function toggle(){
+function toggle() {
 	this.set(!this.get());
 }
 
-function toString(){
+function toString() {
 	return "[object WritableSignal(" + this.get() + ")]";
 }
 

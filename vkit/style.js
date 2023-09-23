@@ -1,113 +1,112 @@
-(function($){
+(function($) {
 
-var createStyleContainer = $.styleContainer;
-var onUnmount = $.unmount;
+var onUnmount = $.onUnmount;
+var styleContainer = $.styleContainer;
 var tick = $.tick;
 
 var map = typeof WeakMap === "function" ? new WeakMap() : null;
 var styleCount = 0;
 
-function prepareCSS(css, selector){
+function prepareCSS(css, selector) {
 	return css.replace(/::?this\b/ig, selector);
 }
 
-function getRootNode(el){
-	if( el.getRootNode ){
+function getRootNode(el) {
+	if (el.getRootNode) {
 		return el.getRootNode();
 	}
 	
-	while( el.parentNode ){
+	while (el.parentNode) {
 		el = el.parentNode;
 	}
 	
 	return el;
 }
 
-function getStyleContainer(el){
+function getStyleContainer(el) {
 	var docOrShadow = getRootNode(el);
 	var parent = docOrShadow.head;
 	
-	if(!parent && docOrShadow.getElementsByTagName){
+	if (!parent && docOrShadow.getElementsByTagName) {
 		parent = docOrShadow.getElementsByTagName("head")[0];
 	}
 	
-	if(!parent){
+	if (!parent) {
 		parent = docOrShadow;
 	}
 	
 	var container = map ? map.get(parent) : parent.__styleContainer;
 	
-	if( container ){
+	if (container) {
 		return container;
 	}
 	
-	var container = createStyleContainer();
+	var container = styleContainer();
 	var styleEl = container.element;
 	
-	if( map ){
+	if (map) {
 		map.set(parent, container);
-	}else{
+	} else {
 		parent.__styleContainer = container;
 	}
 	
 	parent.appendChild(styleEl);
-	
 	container.parent = parent;
 	
 	return container;
 }
 
-function createStyle(css, attr){
-	if(!attr){
+function createStyle(css, attr) {
+	if (!attr) {
 		attr = "vkit-" + (++styleCount);
 	}
 	
 	var selector = "[" + attr + "]";
 	
-	function bind(el){
+	function bind(el) {
 		var container = null;
 		var controller = null;
 		
-		if(!el || !el.nodeType){
+		if (!el || !el.nodeType) {
 			throw new Error("Style can only be added to a DOM node");
 		}
 		
-		tick(function(){
+		tick(function (){
 			container = getStyleContainer(el);
 			controller = container.add(selector);
 			controller.setValue(prepareCSS(css && typeof css.get === "function" ? css.get() : css, selector));
 		});
 		
-		if( css && typeof css.subscribe === "function" ){
-			css.subscribe(function(value){
-				if( controller ){
+		if (css && typeof css.subscribe === "function") {
+			css.subscribe(function(value) {
+				if (controller) {
 					controller.setValue(prepareCSS(value, selector));
 				}
 			});
 		}
 		
-		if( el.setAttribute ){
+		if (el.setAttribute) {
 			el.setAttribute(attr, "");
 		}
 		
-		onUnmount(function(){
-			if( el.removeAttribute ){
+		onUnmount(function() {
+			if (el.removeAttribute) {
 				el.removeAttribute(attr);
 			}
 			
-			if( container && container.remove(selector) ){
+			if (container && container.remove(selector)) {
 				var parent = container.element.parentNode;
 				
-				if( parent ){
+				if (parent) {
 					parent.removeChild(container.element);
 				}
 				
 				parent = container.parent;
 				
-				if( parent ){
-					if( map ){
+				if (parent) {
+					if (map) {
 						map["delete"](parent);
-					}else{
+					} else {
 						delete parent.__styleContainer;
 					}
 				}
@@ -115,7 +114,7 @@ function createStyle(css, attr){
 		});	
 	}
 	
-	bind.toString = function(){
+	bind.toString = function() {
 		return selector;
 	};
 	
