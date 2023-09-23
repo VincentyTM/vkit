@@ -100,6 +100,7 @@ function createComputedSignal(getValue, inputs) {
 	use.component = parent;
 	use.effect = signalEffect;
 	use.get = get;
+	use.isSignal = true;
 	use.map = signalMap;
 	use.pipe = signalPipe;
 	use.prop = signalProp;

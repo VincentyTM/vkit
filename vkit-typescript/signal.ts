@@ -17,6 +17,7 @@ export type Signal<ValueType> = {
 	component: Component | null;
 	effect(callback: (value: ValueType) => void): void;
 	get(): ValueType;
+	isSignal: true;
 	map<OutputType>(transform: (value: ValueType) => OutputType): ComputedSignal<OutputType>;
 	pipe<OutputType>(
 		output: WritableSignal<OutputType>,
@@ -167,6 +168,7 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 	use.component = parent;
 	use.effect = signalEffect<ValueType>;
 	use.get = get;
+	use.isSignal = true;
 	use.map = signalMap;
 	use.pipe = signalPipe<ValueType, any>;
 	use.prop = signalProp<ValueType>;

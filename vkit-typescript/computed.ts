@@ -124,6 +124,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 	use.component = parent;
 	use.effect = signalEffect<ValueType>;
 	use.get = get;
+	use.isSignal = true;
 	use.map = signalMap;
 	use.pipe = signalPipe<ValueType, any>;
 	use.prop = signalProp<ValueType>;
