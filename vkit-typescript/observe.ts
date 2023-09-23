@@ -1,10 +1,13 @@
 import observable, {Observable} from "./observable";
 
+var defineProperty = Object.defineProperty;
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+
 export default function observe<ObjectType>(
 	object: ObjectType,
 	property: keyof ObjectType
 ): Observable<ObjectType[keyof ObjectType]> | null {
-	var desc = Object.getOwnPropertyDescriptor(object, property);
+	var desc = getOwnPropertyDescriptor(object, property);
 	
 	if (!desc) {
 		return null;
@@ -16,15 +19,15 @@ export default function observe<ObjectType>(
 	
 	var value = object[property];
 	
-	function get() {
+	function get(): ObjectType[keyof ObjectType] {
 		return value;
 	}
 	
 	var emitChange = get.emitChange = observable<ObjectType[keyof ObjectType]>();
 	
-	Object.defineProperty(object, property, {
+	defineProperty(object, property, {
 		get: get,
-		set: function(v) {
+		set: function(v: any): void {
 			if (value !== v) {
 				value = v;
 				emitChange(v);

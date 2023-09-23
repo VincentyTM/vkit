@@ -2,8 +2,11 @@
 
 var createObservable = $.observable;
 
+var defineProperty = Object.defineProperty;
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+
 function observe(obj, prop){
-	var desc = Object.getOwnPropertyDescriptor(obj, prop);
+	var desc = getOwnPropertyDescriptor(obj, prop);
 	
 	if(!desc){
 		return null;
@@ -21,7 +24,7 @@ function observe(obj, prop){
 	
 	var emitChange = get.emitChange = createObservable();
 	
-	Object.defineProperty(obj, prop, {
+	defineProperty(obj, prop, {
 		get: get,
 		set: function(v){
 			if( value !== v ){

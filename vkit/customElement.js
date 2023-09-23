@@ -11,6 +11,8 @@ var provide = $.provide;
 var update = $.update;
 var WindowService = $.windowService;
 
+var setPrototypeOf = Object.setPrototypeOf;
+
 function replaceHyphens(value){
 	return value.charAt(1).toUpperCase();
 }
@@ -108,8 +110,8 @@ function createCustomElement(name, getView, options){
 		}
 	}
 	
-	Object.setPrototypeOf(proto, win.HTMLElement.prototype);
-	Object.setPrototypeOf(CustomElement, win.HTMLElement);
+	setPrototypeOf(proto, win.HTMLElement.prototype);
+	setPrototypeOf(CustomElement, win.HTMLElement);
 	
 	win.customElements.define(name, CustomElement);
 	

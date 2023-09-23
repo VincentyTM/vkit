@@ -12,6 +12,8 @@ import update from "./update";
 import {View} from "./view";
 import {WindowService} from "./window";
 
+var setPrototypeOf = Object.setPrototypeOf;
+
 function replaceHyphens(value: string) {
 	return value.charAt(1).toUpperCase();
 }
@@ -129,8 +131,8 @@ export default function createCustomElement(
 		}
 	}
 	
-	Object.setPrototypeOf(proto, win.HTMLElement.prototype);
-	Object.setPrototypeOf(CustomElement, win.HTMLElement);
+	setPrototypeOf(proto, win.HTMLElement.prototype);
+	setPrototypeOf(CustomElement, win.HTMLElement);
 	
 	win.customElements.define(name, CustomElement as unknown as CustomElementConstructor);
 	
