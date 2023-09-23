@@ -76,6 +76,7 @@ export type Signal<ValueType> = {
 export type WritableSignal<ValueType> = Signal<ValueType> & {
 	add(value: ValueType): void;
 	set(value: ValueType): void;
+	setEagerly(value: ValueType): void;
 	toggle(): void;
 };
 
@@ -133,6 +134,22 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 		}
 	}
 	
+	function setEagerly(newValue: ValueType): void {
+		if (value !== newValue) {
+			value = newValue;
+			
+			var subs = subscriptions.slice();
+			var n = subs.length;
+				
+			for (var i = 0; i < n; ++i) {
+				var sub = subs[i];
+				if (sub.callback) {
+					sub.callback(value);
+				}
+			}
+		}
+	}
+	
 	function updateSignal(): void {
 		enqueued = false;
 		var subs = subscriptions.slice();
@@ -155,6 +172,7 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 	use.prop = signalProp<ValueType>;
 	use.render = signalText<ValueType>;
 	use.set = set;
+	use.setEagerly = setEagerly;
 	use.subscribe = subscribe;
 	use.toggle = toggle;
 	use.toString = toString;

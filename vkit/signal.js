@@ -61,6 +61,22 @@ function createWritableSignal(value){
 		}
 	}
 	
+	function setEagerly(newValue) {
+		if (value !== newValue) {
+			value = newValue;
+			
+			var subs = subscriptions.slice();
+			var n = subs.length;
+				
+			for (var i = 0; i < n; ++i) {
+				var sub = subs[i];
+				if (sub.callback) {
+					sub.callback(value);
+				}
+			}
+		}
+	}
+	
 	function updateSignal() {
 		enqueued = false;
 		
@@ -84,6 +100,7 @@ function createWritableSignal(value){
 	use.prop = signalProp;
 	use.render = signalText;
 	use.set = set;
+	use.setEagerly = setEagerly;
 	use.subscribe = subscribe;
 	use.toggle = toggle;
 	use.toString = toString;
