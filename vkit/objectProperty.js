@@ -9,10 +9,7 @@ var signal = $.signal;
 
 function objectProperty(object, property, defaultValue) {
 	var value = signal(get(object)[get(property)]);
-	
-	function setValue(v) {
-		value.set(v);
-	}
+	var setEagerly = value.setEagerly;
 	
 	value.subscribe(function(v) {
 		get(object)[get(property)] = v;
@@ -35,8 +32,8 @@ function objectProperty(object, property, defaultValue) {
 			change = observe(o, p);
 		}
 		
-		onUnmount(change.subscribe(setValue));
-		value.set(o[p]);
+		onUnmount(change.subscribe(setEagerly));
+		setEagerly(o[p]);
 	});
 	
 	return value;

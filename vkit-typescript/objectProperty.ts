@@ -11,10 +11,7 @@ export default function objectProperty<ObjectType>(
 	defaultValue?: () => ObjectType[keyof ObjectType]
 ): WritableSignal<ObjectType[keyof ObjectType]> {
 	var value = signal<ObjectType[keyof ObjectType]>(get(object)[get(property)]);
-	
-	function setValue(v: ObjectType[keyof ObjectType]) {
-		value.set(v);
-	}
+	var setEagerly = value.setEagerly;
 	
 	value.subscribe(function(v: ObjectType[keyof ObjectType]) {
 		get(object)[get(property)] = v;
@@ -34,8 +31,8 @@ export default function objectProperty<ObjectType>(
 			change = observe(o, p);
 		}
 		
-		onUnmount(change!.subscribe(setValue));
-		value.set(o[p]);
+		onUnmount(change!.subscribe(setEagerly));
+		setEagerly(o[p]);
 	});
 	
 	return value;
