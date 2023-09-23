@@ -9,7 +9,7 @@ import signalText from "./signalText";
 import view from "./view";
 import views from "./views";
 
-type ArrayOfMaybeSignals<ArrayType> = {[K in keyof ArrayType]: ArrayType[K] | Signal<ArrayType[K]>};
+export type ArrayOfMaybeSignals<ArrayType> = {[K in keyof ArrayType]: ArrayType[K] | Signal<ArrayType[K]>};
 
 export type ComputedSignal<ValueType> = Signal<ValueType> & {
 	update(): void;
