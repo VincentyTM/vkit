@@ -17,6 +17,26 @@ export type ComputedSignal<ValueType> = Signal<ValueType> & {
 	update(): void;
 };
 
+/**
+ * Creates and returns a computed signal.
+ * @example
+ * function SomeComponent() {
+ * 	const count = signal(4);
+ * 	const doubleCount = computed(() => count() * 2);
+ * 
+ * 	return Div(
+ * 		"Double count: ", doubleCount
+ * 	);
+ * }
+ * @param getValue A function which returns some value.
+ * If other signals are called within the function,
+ * the computed signal will depend on them, which means that its value will
+ * be recalculated when any of its dependencies change.
+ * @param dependencies An optional array of values used as `getValue`'s arguments.
+ * If some values are signals, their contained value is used instead, and
+ * the computed signal subscribes to them, waiting for changes.
+ * @returns A computed signal.
+ */
 export default function computed<FuncType extends () => unknown>(
 	getValue: FuncType,
 	dependencies?: undefined
