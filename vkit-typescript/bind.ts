@@ -11,7 +11,7 @@ export type Bindings<T> = {
 };
 
 export default function bind<Target>(
-	element: Target,
+	target: Target,
 	bindings: Bindings<Target>,
 	persistent?: boolean
 ): void {
@@ -21,34 +21,34 @@ export default function bind<Target>(
 		switch (typeof value) {
 			case "object":
 				if (!value) {
-					(element as any)[name] = value;
+					(target as any)[name] = value;
 				} else if ((value as any).prop) {
-					(value as any).prop(name)(element);
+					(value as any).prop(name)(target);
 				} else {
-					var obj = element[name];
+					var obj = target[name];
 					
 					if (obj) {
 						bind(obj, value as any, persistent);
 					} else {
-						(element as any)[name] = value;
+						(target as any)[name] = value;
 					}
 				}
 				break;
 			case "function":
 				if (name.indexOf("on") === 0) {
-					var unsub = onEvent(element, name.substring(2), value);
+					var unsub = onEvent(target, name.substring(2), value);
 					
 					if (!persistent) {
 						onUnmount(unsub);
 					}
 				} else {
-					prop(name, value as () => unknown)(element);
+					prop(name, value as () => unknown)(target);
 				}
 				break;
 			case "undefined":
 				break;
 			default:
-				(element as any)[name] = value;
+				(target as any)[name] = value;
 		}
 	}
 }
