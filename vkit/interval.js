@@ -1,17 +1,21 @@
-(function($){
+(function($) {
 
 var getWindow = $.window;
-var onUnmount = $.unmount;
+var onUnmount = $.onUnmount;
 var update = $.update;
 
 var slice = Array.prototype.slice;
 
-function createInterval(func, delay){
+function createInterval(callback, delay) {
+	if (typeof callback !== "function") {
+		throw new Error("Interval callback must be a function");
+	}
+	
 	var win = getWindow();
 	var args = slice.call(arguments, 2);
 	
-	function tick(){
-		func.apply(null, args);
+	function tick() {
+		callback.apply(null, args);
 		update();
 	}
 	
