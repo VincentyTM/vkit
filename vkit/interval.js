@@ -7,6 +7,7 @@ var update = $.update;
 var slice = Array.prototype.slice;
 
 function createInterval(func, delay){
+	var win = getWindow();
 	var args = slice.call(arguments, 2);
 	
 	function tick(){
@@ -14,11 +15,11 @@ function createInterval(func, delay){
 		update();
 	}
 	
-	function clear(){
-		clearInterval(interval);
+	function clear() {
+		win.clearInterval(interval);
 	}
 	
-	var interval = getWindow().setInterval(tick, delay);
+	var interval = win.setInterval(tick, delay);
 	
 	onUnmount(clear);
 }
