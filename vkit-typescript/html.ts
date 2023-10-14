@@ -26,7 +26,13 @@ export default function html(
 	strings: ArrayLike<string> & {
 		raw: ArrayLike<string>
 	},
-	..._expressions: View[]
+	...expressions: View[]
+): View[];
+
+export default function html(
+	strings: ArrayLike<string> & {
+		raw: ArrayLike<string>
+	}
 ): View[] {
 	if (isArray(strings) && isArray((strings as any).raw)) {
 		var n = strings.length;
