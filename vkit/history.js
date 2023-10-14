@@ -1,66 +1,68 @@
-(function($, undefined){
+(function($, undefined) {
 
-var createObservable = $.observable;
-var createState = $.state;
+var computed = $.computed;
 var getWindow = $.window;
+var observable = $.observable;
 var onEvent = $.onEvent;
-var unmount = $.unmount;
-var update = $.update;
+var onUnmount = $.onUnmount;
 
-var emitUpdate = createObservable();
+var updateHistory = observable();
 
-function getURL(win){
+function getURL(win) {
 	return win.location.href.replace(win.location.origin, "");
 }
 
-function createHistoryHandler(win){
-	if(!win) win = getWindow();
+function createHistoryHandler(win) {
+	if (!win) {
+		win = getWindow();
+	}
+	
 	var history = win.history;
 	
-	function push(url, state){
+	function push(url, state) {
 		history.pushState(state === undefined ? null : state, "", typeof url === "string" ? url : getURL(win));
-		emitUpdate(history);
+		updateHistory(history);
 	}
 	
-	function replace(url, state){
+	function replace(url, state) {
 		history.replaceState(state === undefined ? null : state, "", typeof url === "string" ? url : getURL(win));
-		emitUpdate(history);
+		updateHistory(history);
 	}
 	
-	function selectState(){
-		var state = createState(history.state);
-		unmount(
-			onEvent(win, "popstate", function(){
-				state.set(history.state);
-			})
-		);
-		unmount(
-			emitUpdate.subscribe(function(h){
-				if( h === history ){
-					state.set(history.state);
-					update();
-				}
-			})
-		);
-		return state.map();
+	function selectState() {
+		var historyState = computed(function() {
+			return history.state;
+		});
+		var update = historyState.update;
+		
+		onUnmount(onEvent(win, "popstate", update));
+		onUnmount(updateHistory.subscribe(updateLocal));
+		
+		function updateLocal(h) {
+			if (h === history) {
+				update();
+			}
+		}
+		
+		return historyState;
 	}
 	
-	function selectURL(){
-		var state = createState(getURL(win));
-		unmount(
-			onEvent(win, "popstate", function(){
-				state.set(getURL(win));
-			})
-		);
-		unmount(
-			emitUpdate.subscribe(function(h){
-				if( h === history ){
-					state.set(getURL(win));
-					update();
-				}
-			})
-		);
-		return state.map();
+	function selectURL() {
+		var historyURL = computed(function() {
+			return getURL(win);
+		});
+		var update = historyURL.update;
+		
+		onUnmount(onEvent(win, "popstate", update));
+		onUnmount(updateHistory.subscribe(updateLocal));
+		
+		function updateLocal(h) {
+			if (h === history) {
+				update();
+			}
+		}
+		
+		return historyURL;
 	}
 	
 	return {
