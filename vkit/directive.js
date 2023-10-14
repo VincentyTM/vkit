@@ -18,7 +18,7 @@ function directive(element, callback) {
 	}
 	
 	node = document.createTextNode(text);
-	text = undefined;
+	
 	return node;
 }
 
