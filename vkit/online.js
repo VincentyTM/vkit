@@ -1,33 +1,27 @@
-(function($){
+(function($) {
 
-var createState = $.state;
+var computed = $.computed;
 var getWindow = $.window;
 var onEvent = $.onEvent;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
 
-function createOnlineState(win){
+function online(win) {
 	if(!win){
 		win = getWindow();
 	}
 	
 	var nav = win.navigator;
+	var value = computed(function() {
+		return nav.onLine !== false;
+	});
+	var update = value.update;
 	
-	var state = createState(nav.onLine !== false);
+	onUnmount(onEvent(win, "online", update));
+	onUnmount(onEvent(win, "offline", update));
 	
-	function emitOnline(){
-		state.set(true);
-	}
-	
-	function emitOffline(){
-		state.set(false);
-	}
-	
-	unmount(onEvent(win, "online", emitOnline));
-	unmount(onEvent(win, "offline", emitOffline));
-	
-	return state.map();
+	return value;
 }
 
-$.online = createOnlineState;
+$.online = online;
 
 })($);
