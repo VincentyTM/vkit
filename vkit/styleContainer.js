@@ -7,7 +7,9 @@ function createStyleSheet(){
 	try{
 		textNode = document.createTextNode("");
 		style.appendChild(textNode);
-	}catch(ex){}
+	}catch(ex){
+		textNode = null;
+	}
 	
 	function setCSS(value){
 		if( textNode ){
