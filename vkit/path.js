@@ -1,10 +1,10 @@
 (function($){
 
-var createHistoryHandler = $.history;
-var url = $.url;
+var history = $.history;
+var parseURL = $.parseURL;
 
 function path(win){
-	return url(createHistoryHandler(win).url()).base;
+	return parseURL(history(win).url()).base;
 }
 
 $.path = path;

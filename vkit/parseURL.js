@@ -1,38 +1,39 @@
-(function($){
+(function($) {
 
+var isSignal = $.isSignal;
 var queryParams = $.queryParams;
 
-function removeHash(url){
+function removeHash(url) {
 	var hmp = url.indexOf("#");
 	return hmp === -1 ? url : url.substring(0, hmp);
 }
 
-function getBase(url){
+function getBase(url) {
 	url = removeHash(url);
 	var qmp = url.indexOf("?");
 	return qmp === -1 ? url : url.substring(0, qmp);
 }
 
-function getQueryParams(url){
+function getQueryParams(url) {
 	url = removeHash(url);
 	var qmp = url.indexOf("?");
-	return queryParams(qmp === -1 ? "" : url.substring(qmp+1));
+	return queryParams(qmp === -1 ? "" : url.substring(qmp + 1));
 }
 
-function URL(url){
-	if( url.map ){
+function parseURL(url) {
+	if (isSignal(url)) {
 		return {
 			base: url.map(getBase),
 			queryParams: url.map(getQueryParams)
 		};
-	}else{
-		return {
-			base: getBase(url),
-			queryParams: getQueryParams(url)
-		};
 	}
+	
+	return {
+		base: getBase(url),
+		queryParams: getQueryParams(url)
+	};
 }
 
-$.url = URL;
+$.parseURL = parseURL;
 
 })($);
