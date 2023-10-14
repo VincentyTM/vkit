@@ -22,6 +22,21 @@ function findNodes(
 	return count;
 }
 
+/**
+ * Parses the HTML text from the template literal and returns an array of DOM nodes.
+ * Escapes template literal expressions.
+ * @example
+ * html`
+ * 	<h1>Hello ${name}</h1>
+ * 	<div>
+ * 		${{className: "a-class-on-the-div"}}
+ * 		${SomeOtherComponent()}
+ * 		<input>
+ * 		${{value: "The value of the input"}}
+ * 	</div>
+ * `
+ * @returns An array of DOM nodes.
+ */
 export default function html(
 	strings: ArrayLike<string> & {
 		raw: ArrayLike<string>
