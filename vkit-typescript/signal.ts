@@ -23,7 +23,7 @@ export type Signal<ValueType> = {
 		output: WritableSignal<OutputType>,
 		transform?: (value: ValueType) => OutputType
 	): void;
-	prop(name: string, getValue: () => ValueType): (element: any) => void;
+	prop(name: string): (element: any) => void;
 	render(): Text;
 	subscribe(
 		callback: (value: ValueType) => void,
