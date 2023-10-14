@@ -59,6 +59,24 @@ function addAttribute(el: HTMLElement, name: string, value: ReactiveAttributeVal
 	el.removeAttribute(name);
 }
 
+/**
+ * Creates a binding for attributes which can be applied on one or more HTML elements.
+ * @example
+ * Div(
+ * 	attributes({
+ * 		"my-attribute": "Static binding",
+ * 		"my-attribute-2": () => "Dynamic binding with a function",
+ * 		"my-attribute-3": computed(() => "Dynamic binding with a signal")
+ * 	})
+ * )
+ * @param attributes An object which contains attributes as key-value pairs.
+ * The keys are the attribute names and the values are the attribute values.
+ * 
+ * The attributes values can be given as strings, functions returning strings or signals containing strings.
+ * In order to remove an attribute, you can specify null instead of a string.
+ * You can also use boolean or numeric values which are converted to string or null values.
+ * @returns A function directive which can be added to an HTML element.
+ */
 export default function bindAttributes(attributes: Attributes): (element: HTMLElement) => void {
 	return function(element: HTMLElement) {
 		for (var name in attributes) {
