@@ -10,6 +10,7 @@ import html from "./html";
 import htmlTag from "./htmlTag";
 import htmlTags from "./htmlTags";
 import inject from "./inject";
+import interval from "./interval";
 import isSignal from "./isSignal";
 import map from "./map";
 import noop from "./noop";
@@ -47,6 +48,7 @@ export {
 	htmlTag,
 	htmlTags,
 	inject,
+	interval,
 	isSignal,
 	map,
 	noop,
