@@ -14,21 +14,170 @@ export type ItemType<ValueType> = ValueType extends (infer ItemType)[] ? ItemTyp
 
 export type Signal<ValueType> = {
 	(): ValueType;
+
+	/**
+	 * The component in which the signal was created.
+	 * It is null if the signal was created outside the component tree (for example, in an event listener).
+	 */
 	component: Component | null;
+
+	/**
+	 * Subscribes a side effect to the signal.
+	 * @example
+	 * const delay = signal(1000);
+	 * 
+	 * delay.effect((currentDelay) => {
+	 * 	console.log("The delay is", currentDelay);
+	 * 
+	 * 	const interval = setInterval(() => {
+	 * 		console.log("Hello world");
+	 * 	}, currentDelay);
+	 * 
+	 * 	onUnmount(() => clearInterval(interval));
+	 * });
+	 * 
+	 * @param callback A function containing the side effect.
+	 * It is called everytime the signal's value changes.
+	 * Remember to call onUnmount in it to clean up the side effect.
+	 */
 	effect(callback: (value: ValueType) => void): void;
+
+	/**
+	 * @returns The current value of the signal.
+	 */
 	get(): ValueType;
+
+	/**
+	 * A boolean which is always true. It is used internally to check if a value is a signal.
+	 */
 	isSignal: true;
+
+	/**
+	 * Creates and returns a computed signal whose value depends on the current signal.
+	 * This method is useful for chaining signal mappings.
+	 * 
+	 * @example
+	 * const count = signal(4);
+	 * const doubleCount = count.map((x: number) => x * 2);
+	 * 
+	 * // It is essentially the same as:
+	 * const doubleCount = computed(() => count() * 2);
+	 * 
+	 * @param transform Takes the signal's value and returns a new value.
+	 * @returns The computed signal which contains the new value.
+	 */
 	map<OutputType>(transform: (value: ValueType) => OutputType): ComputedSignal<OutputType>;
+
+	/**
+	 * Sets a destination signal's value to the current signal's value immediately and also when the value changes.
+	 * 
+	 * @example
+	 * const firstSignal = signal(1);
+	 * const secondSignal = signal(2);
+	 * 
+	 * firstSignal.pipe(secondSignal, (x: number) => x * 10);
+	 * console.log(secondSignal.get()); // 10
+	 * 
+	 * firstSignal.set(5);
+	 * console.log(secondSignal.get()); // 10
+	 * 
+	 * update();
+	 * console.log(secondSignal.get()); // 50
+	 * 
+	 * @param output The destination signal.
+	 * @param transform An optional function that returns a new value.
+	 * The destination signal is set to this new value instead of the source state's value.
+	 */
 	pipe<OutputType>(
 		output: WritableSignal<OutputType>,
 		transform?: (value: ValueType) => OutputType
 	): void;
+
+	/**
+	 * Binds a property to the signal.
+	 * 
+	 * You should use a property binding object instead of this method.
+	 * 
+	 * @example
+	 * function MyComponent() {
+	 * 	const bgColor = signal("yellow");
+	 * 	const h1Color = signal("red");
+	 * 	const h1Title = signal("Some title");
+	 * 	
+	 * 	// It is not recommended to explicitly write prop:
+	 * 	// bgColor.prop(document.body.style, "backgroundColor");
+	 * 	bind(document.body, {
+	 * 		style: {
+	 * 			backgroundColor: bgColor
+	 * 		}
+	 * 	});
+	 * 	
+	 * 	// Binding multiple properties of the same element:
+	 * 	// (el) => {
+	 * 	// 	h1Color.prop(el.style, "color");
+	 * 	// 	h1Title.prop(el, "title");
+	 * 	// }
+	 * 	return H1("Hello world", {
+	 * 		style: {
+	 * 			color: h1Color
+	 * 		},
+	 * 		title: h1Title
+	 * 	});
+	 * }
+	 * 
+	 * @param name The name of the property.
+	 * @returns A function that takes an element and binds its property to the signal.
+	 */
 	prop(name: string): (element: any) => void;
+
+	/**
+	 * Creates and returns a text node with the signal's value in it.
+	 * 
+	 * When the signal's value changes, so does the text node's value.
+	 * You do not need to call this method manually, just put the signal in an element factory call.
+	 * @example
+	 * function MyComponent() {
+	 * 	const count = signal(0);
+	 * 	
+	 * 	return [
+	 * 		// This could also be written as Div(count.render())
+	 * 		Div(count),
+	 * 		
+	 * 		// Even if the text is a top-level node,
+	 * 		// there is no need to call .render()
+	 * 		count
+	 * 	];
+	 * }
+	 * 
+	 * @returns The text node.
+	 */
 	render(): Text;
+
+	/**
+	 * Subscribes a change handler function to the signal and returns a function to unsubscribe.
+	 * @example
+	 * const count = signal(0);
+	 * count.subscribe((value) => console.log(`Count has changed to ${count}`));
+	 * count.set(1);
+	 * 
+	 * @param callback A function which is called when the value of the signal changes.
+	 * @param persistent If true, there will be no automatic unsubscription based on the current component.
+	 * If you use signals outside components, you might want to set it to true.
+	 * Remember to manually unsubscribe in that case.
+	 * @returns The unsubscribe function. It removes the callback from the signal, so it will
+	 * not be called anymore when its value changes.
+	 */
 	subscribe(
 		callback: (value: ValueType) => void,
 		persistent?: boolean
 	): () => void;
+
+	/**
+	 * Returns a string generated from the signal's current value.
+	 * This method should only be used for debugging.
+	 * Note that you cannot concatenate a signal with a string using the + operator.
+	 * @returns A string for debugging purposes.
+	 */
 	toString(): string;
 
 	/**
