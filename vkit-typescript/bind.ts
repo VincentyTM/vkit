@@ -10,6 +10,26 @@ export type Bindings<T> = {
 	)
 };
 
+/**
+ * Binds some properties to a specific target.
+ * @example
+ * bind(document.body, {
+ * 	className: "some-class",
+ * 	style: {
+ * 		backgroundColor: () => isDarkModeOn() ? "black" : "white",
+ * 		color: () => isDarkModeOn() ? "white" : "black",
+ * 		margin: "5em"
+ * 	},
+ * 	onclick() {
+ * 		console.log("Clicked.");
+ * 	}
+ * });
+ * @param target The target object.
+ * @param bindings The properties given as key-value pairs.
+ * For dynamic bindings, signals and functions can also be used as values.
+ * If the key starts with "on", the value is attached as an event listener instead.
+ * @param persistent If true, the attached event listeners are not removed when the current component unmounts.
+ */
 export default function bind<Target>(
 	target: Target,
 	bindings: Bindings<Target>,
