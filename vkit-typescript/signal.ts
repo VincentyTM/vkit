@@ -81,6 +81,28 @@ export type WritableSignal<ValueType> = Signal<ValueType> & {
 	toggle(): void;
 };
 
+/**
+ * Creates and returns a writable signal.
+ * A signal is a container whose value may change over time and it can have
+ * multiple subscribers which are notified when the value changes.
+ * @example
+ * function Counter() {
+ * 	const count = signal(0);
+ * 	
+ * 	return [
+ * 		H1("Count: ", count),
+ * 		Button("Increment", {
+ * 			onclick: () => count.add(1)
+ * 		}),
+ * 		Button("Reset", {
+ * 			disabled: () => count() === 0,
+ * 			onclick: () => count.set(0)
+ * 		})
+ * 	];
+ * }
+ * @param value The initial value of the signal.
+ * @returns A writable signal.
+ */
 export default function createWritableSignal<ValueType>(value: ValueType): WritableSignal<ValueType> {
 	type Subscription = {callback: ((value: ValueType) => void) | null};
 
