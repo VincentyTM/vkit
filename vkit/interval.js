@@ -21,10 +21,6 @@ function createInterval(func, delay){
 	var interval = getWindow().setInterval(tick, delay);
 	
 	onUnmount(clear);
-	
-	return {
-		clear: clear
-	};
 }
 
 $.interval = createInterval;
