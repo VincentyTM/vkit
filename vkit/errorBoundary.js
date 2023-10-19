@@ -34,7 +34,6 @@ function errorBoundary(getView, getFallbackView) {
 		} catch(ex) {
 			error = ex;
 			failed.set(true);
-			update();
 		}
 	});
 }
