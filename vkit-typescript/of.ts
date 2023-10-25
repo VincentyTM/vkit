@@ -49,6 +49,13 @@ var handler = {
  * @param object The object whose properties need to be observed.
  * @returns The proxy of the object.
  */
-export default function of<ObjectType extends Object>(object: ObjectType) {
-	return new Proxy<ObjectType>(object, handler);
+export default function of<
+	ObjectType extends Object,
+	ObjectParamType extends ObjectType | null | undefined
+>(object: ObjectParamType): ObjectParamType {
+	if (!object) {
+		return object;
+	}
+
+	return new Proxy<ObjectType>(object as ObjectType, handler) as never;
 }
