@@ -8,6 +8,12 @@ import {View} from "./view";
 type AttributeValue = string | null;
 type ReactiveAttributeValue = AttributeValue | Signal<AttributeValue> | (() => AttributeValue);
 
+export type SVGAttributes<ElementType> = {
+	[K in keyof ElementType]: ElementType[K] extends CSSStyleDeclaration | ((this: GlobalEventHandlers, ev: never) => any) | null
+		? ElementType[K]
+		: string | number;
+};
+
 var xmlns = "http://www.w3.org/2000/svg";
 
 function setAttribute(el: Element, name: string, value: string | null) {
@@ -45,7 +51,7 @@ function bindAttributes(el: Element, attributes: {[attributeName: string]: React
 }
 
 export default function svgTag<K extends keyof SVGElementTagNameMap>(tagName: K): (
-	...contents: View<SVGElementTagNameMap[K]>[]
+	...contents: View<SVGAttributes<SVGElementTagNameMap[K]>>[]
 ) => SVGElementTagNameMap[K] {
 	return function(): SVGElementTagNameMap[K] {
 		var el = document.createElementNS(xmlns, tagName);
