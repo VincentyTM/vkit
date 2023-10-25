@@ -1,14 +1,15 @@
 (function($){
 
-var createSignal = $.signal;
+var enqueueUpdate = $.enqueueUpdate;
 var getComponent = $.getComponent;
 var observe = $.observe;
 var onUnmount = $.onUnmount;
 
 function getValue(object, property){
 	var value = object[property];
+	var component = getComponent(true);
 	
-	if(!getComponent(true)){
+	if(!component){
 		return value;
 	}
 	
@@ -18,13 +19,30 @@ function getValue(object, property){
 		throw new ReferenceError("Property '" + property + "' does not exist!");
 	}
 	
-	var signal = createSignal(object[property]);
+	var enqueued = false;
+	var render = component.render;
+	
+	function set(newValue) {
+		if (value !== newValue) {
+			value = newValue;
+			
+			if (!enqueued) {
+				enqueued = true;
+				enqueueUpdate(updateOf);
+			}
+		}
+	}
+	
+	function updateOf() {
+		enqueued = false;
+		render();
+	}
 	
 	onUnmount(
-		observable.subscribe(signal.set)
+		observable.subscribe(set)
 	);
 	
-	return signal();
+	return value;
 }
 
 var handler = {

@@ -1,4 +1,4 @@
-import createSignal from "./signal";
+import {enqueueUpdate} from "./update";
 import {getComponent} from "./contextGuard";
 import observe from "./observe";
 import onUnmount from "./onUnmount";
@@ -9,8 +9,9 @@ function getValue<ObjectType>(
 	_receiver: ObjectType
 ): ObjectType[keyof ObjectType] {
 	var value = object[property];
+	var component = getComponent(true);
 	
-	if (!getComponent(true)) {
+	if (!component) {
 		return value;
 	}
 	
@@ -20,13 +21,30 @@ function getValue<ObjectType>(
 		throw new ReferenceError("Property '" + String(property) + "' does not exist!");
 	}
 	
-	var signal = createSignal(object[property]);
+	var enqueued = false;
+	var render = component.render;
+
+	function set(newValue: ObjectType[keyof ObjectType]): void {
+		if (value !== newValue) {
+			value = newValue;
+			
+			if (!enqueued) {
+				enqueued = true;
+				enqueueUpdate(updateOf);
+			}
+		}
+	}
 	
+	function updateOf(): void {
+		enqueued = false;
+		render();
+	}
+
 	onUnmount(
-		observable.subscribe(signal.set)
+		observable.subscribe(set)
 	);
 	
-	return signal();
+	return value;
 }
 
 var handler = {
