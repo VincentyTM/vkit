@@ -7,8 +7,7 @@ import signal, {Signal, WritableSignal} from "./signal";
 
 export default function objectProperty<ObjectType>(
 	object: ObjectType | Signal<ObjectType>,
-	property: keyof ObjectType | Signal<keyof ObjectType>,
-	defaultValue?: () => ObjectType[keyof ObjectType]
+	property: keyof ObjectType | Signal<keyof ObjectType>
 ): WritableSignal<ObjectType[keyof ObjectType]> {
 	var value = signal<ObjectType[keyof ObjectType]>(get(object)[get(property)]);
 	var setEagerly = value.setEagerly;
@@ -23,12 +22,7 @@ export default function objectProperty<ObjectType>(
 		var change = observe(o, p);
 		
 		if (!change) {
-			if (typeof defaultValue === "function") {
-				o[p] = defaultValue!();
-			} else {
-				throw new Error("Property '" + String(p) + "' does not exist and there is no default value provided");
-			}
-			change = observe(o, p);
+			throw new Error("Property '" + String(p) + "' does not exist and there is no default value provided");
 		}
 		
 		onUnmount(change!.subscribe(setEagerly));
