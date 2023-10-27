@@ -24,7 +24,7 @@ async function readDirectory(dir, handleItem, {signal} = {}){
 							if( signal && signal.aborted ){
 								reject(signal.reason);
 							}else{
-								handleItem(path);
+								await handleItem(path);
 							}
 						}else{
 							reject(ex);

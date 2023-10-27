@@ -4,9 +4,9 @@ const createDirectory = require("./createDirectory");
 const isTextFile = require("./isTextFile");
 
 module.exports = async (fileCache, srcDir, templateSrcDir, handleError) => {
-	const updateCache = (path, eventType) => {
+	const updateCache = async (path, eventType) => {
 		if( isTextFile(path) ){
-			fileCache.update(path, eventType);
+			await fileCache.update(path, eventType);
 		}
 	};
 	
