@@ -1,7 +1,7 @@
 import attributes from "./attributes";
 import bind from "./bind";
 import classes from "./classes";
-import computed from "./computed";
+import computed, {ComputedSignal} from "./computed";
 import customElement from "./customElement";
 import document from "./document";
 import effect from "./effect";
@@ -24,7 +24,7 @@ import provide from "./provide";
 import ref from "./ref";
 import render from "./render";
 import shadow from "./shadow";
-import signal from "./signal";
+import signal, {Signal, WritableSignal} from "./signal";
 import style from "./style";
 import svgTag from "./svgTag";
 import svgTags from "./svgTags";
@@ -40,6 +40,7 @@ export {
 	bind,
 	classes,
 	computed,
+	ComputedSignal,
 	customElement,
 	document,
 	effect,
@@ -63,6 +64,7 @@ export {
 	render,
 	shadow,
 	signal,
+	Signal,
 	style,
 	svgTag,
 	svgTags,
@@ -71,5 +73,6 @@ export {
 	update,
 	useKey,
 	view,
-	window
+	window,
+	WritableSignal
 };
