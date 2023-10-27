@@ -5,7 +5,7 @@ type Ref<ValueType> = {
 	current: ValueType | null;
 };
 
-export default function createRef<ValueType = HTMLElement>() {
+export default function createRef<ValueType extends object = HTMLElement>() {
 	function reset(): void {
 		ref.current = null;
 	}
