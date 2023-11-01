@@ -57,12 +57,12 @@ function createElement(tagName) {
 		attributes[name] = value;
 	}
 	
-				setAttribute(name, "");
-				removeAttribute(name);
 	function setProperty(name, value) {
 		if (typeof value === "boolean") {
 			if (value) {
+				setAttribute(propToAttr(name), "");
 			} else {
+				removeAttribute(propToAttr(name));
 			}
 		} else if (name === "value" && tagName === "textarea") {
 			appendChild(createTextNode(value));
