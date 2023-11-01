@@ -16,6 +16,7 @@ module.exports = {
 	dragZone: require("./dragZone"),
 	effect: noop,
 	escapeHTML: require("./escapeHTML"),
+	get: require("./get"),
 	history: require("./history"),
 	href: require("./href"),
 	html: require("./html"),
