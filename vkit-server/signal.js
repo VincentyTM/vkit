@@ -16,6 +16,13 @@ function map() {
 	return createComputedSignal(n === 1 ? args[0] : transform, [this]);
 }
 
+function pipe(output, transform) {
+	var input = this;
+	var hasTransform = typeof transform === "function";
+	var value = input.get();
+	output.set(hasTransform ? transform(value, output.get()) : value);
+}
+
 function prop(key) {
 	var value = this.get();
 	
@@ -79,7 +86,7 @@ function createComputedSignal(getValue, inputs) {
 	get.effect = noop;
 	get.get = get;
 	get.map = map;
-	get.pipe = noop;
+	get.pipe = pipe;
 	get.prop = prop;
 	get.render = render;
 	get.subscribe = noop;
@@ -113,7 +120,7 @@ function createWritableSignal(value) {
 	get.effect = noop;
 	get.get = get;
 	get.map = map;
-	get.pipe = noop;
+	get.pipe = pipe;
 	get.prop = prop;
 	get.render = render;
 	get.set = set;
