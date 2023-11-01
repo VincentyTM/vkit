@@ -1,42 +1,49 @@
 (function($){
 
-var createState = $.state;
+var computed = $.computed;
 var getWindow = $.window;
-var unmount = $.unmount;
-var update = $.update;
+var onUnmount = $.onUnmount;
 
-function createMediaQuery(mediaQuery, win){
-	if(!win){
+function createMediaQuery(mediaQuery, win) {
+	if (!win) {
 		win = getWindow();
 	}
 	
-	if(!win.matchMedia){
-		return createState(false);
+	var matches = false;
+	
+	var result = computed(function() {
+		return matches;
+	});
+	
+	if (!win.matchMedia) {
+		return result;
 	}
 	
+	var updateResult = result.update;
 	var matcher = win.matchMedia(mediaQuery);
-	var state = createState(matcher.matches);
 	
-	function onChange(e){
-		state.set(e.matches);
-		update();
+	matches = matcher.matches;
+	
+	function handleChange(e) {
+		matches = e.matches;
+		updateResult();
 	}
 	
-	if( matcher.addEventListener ){
-		matcher.addEventListener("change", onChange);
+	if (matcher.addEventListener) {
+		matcher.addEventListener("change", handleChange);
 		
-		unmount(function(){
-			matcher.removeEventListener("change", onChange);
+		onUnmount(function() {
+			matcher.removeEventListener("change", handleChange);
 		});
-	}else{
-		matcher.addListener(onChange);
+	} else {
+		matcher.addListener(handleChange);
 		
-		unmount(function(){
-			matcher.removeListener(onChange);
+		onUnmount(function() {
+			matcher.removeListener(handleChange);
 		});
 	}
 	
-	return state;
+	return result;
 }
 
 $.mediaQuery = createMediaQuery;
