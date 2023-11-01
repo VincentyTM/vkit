@@ -18,6 +18,7 @@ function createComputedSignal(getValue, inputs) {
 	var subscriptions = [];
 	var value = none;
 	var signalComponent = createComponent(computeValue, parent, getInjector(true));
+	var update = signalComponent.render;
 	
 	if (inputs) {
 		var n = inputs.length;
@@ -26,7 +27,7 @@ function createComputedSignal(getValue, inputs) {
 			var input = inputs[i];
 			
 			if (input && typeof input.subscribe === "function") {
-				input.subscribe(signalComponent.render);
+				input.subscribe(update);
 			}
 		}
 	}
@@ -79,7 +80,7 @@ function createComputedSignal(getValue, inputs) {
 	
 	function get() {
 		if (value === none) {
-			signalComponent.render();
+			update();
 		}
 		return value;
 	}
@@ -118,7 +119,7 @@ function createComputedSignal(getValue, inputs) {
 	use.render = signalText;
 	use.subscribe = subscribe;
 	use.toString = toString;
-	use.update = signalComponent.render;
+	use.update = update;
 	use.view = view;
 	use.views = views;
 	

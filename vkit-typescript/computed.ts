@@ -58,6 +58,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 	var subscriptions: Subscription[] = [];
 	var value: ValueType = none as ValueType;
 	var signalComponent = createComponent(computeValue, parent, getInjector(true));
+	var update = signalComponent.render;
 	
 	if (dependencies) {
 		var n = dependencies.length;
@@ -66,7 +67,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 			var input = dependencies[i] as unknown as Signal<Parameters<FuncType>[number]>;
 			
 			if (input && typeof input.subscribe === "function") {
-				input.subscribe(signalComponent.render);
+				input.subscribe(update);
 			}
 		}
 	}
@@ -119,7 +120,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 	
 	function get(): ValueType {
 		if (value === none) {
-			signalComponent.render();
+			update();
 		}
 		return value;
 	}
@@ -161,7 +162,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 	use.render = signalText<ValueType>;
 	use.subscribe = subscribe;
 	use.toString = toString;
-	use.update = signalComponent.render;
+	use.update = update;
 	use.view = view<ValueType>;
 	use.views = views<ItemType<ValueType>>;
 	
