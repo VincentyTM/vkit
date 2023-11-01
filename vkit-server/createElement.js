@@ -21,6 +21,9 @@ var selfClosingTags = {
 function propToAttr(name) {
 	if (name === "className") return "class";
 	if (name === "htmlFor") return "for";
+	if (name.indexOf("aria") === 0) {
+		return name.replace(/[A-Z]/g, replaceUpperCase);
+	}
 	return name.toLowerCase();
 }
 
