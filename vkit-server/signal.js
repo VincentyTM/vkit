@@ -1,12 +1,12 @@
 var createTextNode = require("./createTextNode");
 var noop = require("./noop");
 
-function map(){
+function map() {
 	var args = arguments;
 	var n = args.length;
 	
-	function transform(value){
-		for(var i=0; i<n; ++i){
+	function transform(value) {
+		for (var i = 0; i < n; ++i) {
 			value = args[i](value);
 		}
 		
@@ -16,58 +16,58 @@ function map(){
 	return createComputedSignal(n === 1 ? args[0] : transform, [this]);
 }
 
-function prop(key){
+function prop(key) {
 	var value = this.get();
 	
-	return function(element){
+	return function(element) {
 		element[key] = value;
 	};
 }
 
-function render(){
+function render() {
 	return createTextNode(this.get());
 }
 
-function toStringWritable(){
+function toStringWritable() {
 	return "[object WritableSignal(" + this.get() + ")]";
 }
 
-function toStringComputed(){
+function toStringComputed() {
 	return "[object ComputedSignal(" + this.get() + ")]";
 }
 
-function view(getView){
+function view(getView) {
 	return getView(this.get());
 }
 
-function views(getView){
+function views(getView) {
 	var items = this.get();
 	var n = items.length;
 	var array = new Array(n);
 	
-	for(var i=0; i<n; ++i){
+	for (var i = 0; i < n; ++i) {
 		array[i] = getView(items[i]);
 	}
 	
 	return array;
 }
 
-function createComputedSignal(getValue, inputs){
+function createComputedSignal(getValue, inputs) {
 	var value;
 	
-	function get(){
-		if( value === undefined ){
-			if( inputs ){
+	function get() {
+		if (value === undefined) {
+			if (inputs) {
 				var n = inputs.length;
 				var args = new Array(n);
 				
-				for(var i=0; i<n; ++i){
+				for (var i = 0; i < n; ++i) {
 					var input = inputs[i];
 					args[i] = input && typeof input.get === "function" ? input.get() : input;
 				}
 				
 				value = getValue.apply(null, args);
-			}else{
+			} else {
 				value = getValue();
 			}
 		}
@@ -91,20 +91,20 @@ function createComputedSignal(getValue, inputs){
 	return get;
 }
 
-function createWritableSignal(value){
-	function add(v){
+function createWritableSignal(value) {
+	function add(v) {
 		value += v;
 	}
 	
-	function get(){
+	function get() {
 		return value;
 	}
 	
-	function set(v){
+	function set(v) {
 		value = v;
 	}
 	
-	function toggle(){
+	function toggle() {
 		value = !value;
 	}
 	
