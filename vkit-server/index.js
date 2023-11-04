@@ -6,6 +6,7 @@ var signal = require("./signal");
 var styledHtmlTag = require("./styledHtmlTag");
 
 module.exports = {
+	array: require("./array"),
 	attributes: require("./attributes"),
 	await: require("./await"),
 	classes: require("./classes"),
