@@ -17,6 +17,7 @@ module.exports = {
 	define: languageService.define,
 	dragZone: require("./dragZone"),
 	effect: noop,
+	errorBoundary: require("./errorBoundary"),
 	escapeHTML: require("./escapeHTML"),
 	get: require("./get"),
 	history: require("./history"),
