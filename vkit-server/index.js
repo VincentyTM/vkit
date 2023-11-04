@@ -4,6 +4,7 @@ var languageService = require("./languageService");
 var noop = require("./noop");
 var signal = require("./signal");
 var styledHtmlTag = require("./styledHtmlTag");
+var userMedia = require("./userMedia");
 
 module.exports = {
 	array: require("./array"),
@@ -17,6 +18,7 @@ module.exports = {
 	customElement: require("./customElement"),
 	define: languageService.define,
 	dialogs: require("./dialogs"),
+	displayMedia: userMedia,
 	dragZone: require("./dragZone"),
 	effect: noop,
 	errorBoundary: require("./errorBoundary"),
@@ -69,6 +71,7 @@ module.exports = {
 	toArray: require("./toArray"),
 	unmount: noop,
 	useKey: require("./useKey"),
+	userMedia: userMedia,
 	virtualHtmlTag: htmlTag,
 	virtualHtmlTags: htmlTags,
 	virtualStyledHtmlTag: styledHtmlTag,
