@@ -78,6 +78,7 @@ module.exports = {
 	virtualHtmlTag: htmlTag,
 	virtualHtmlTags: htmlTags,
 	virtualStyledHtmlTag: styledHtmlTag,
+	webPush: require("./webPush"),
 	window: require("./window"),
 	windowContent: require("./windowContent"),
 	word: languageService.word
