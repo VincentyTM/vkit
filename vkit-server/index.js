@@ -62,6 +62,7 @@ module.exports = {
 	state: signal,
 	string: require("./string"),
 	style: require("./style"),
+	styleSelector: require("./styleSelector"),
 	styledHtmlTag: styledHtmlTag,
 	svgTag: htmlTag,
 	svgTags: htmlTags,
