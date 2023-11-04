@@ -16,6 +16,7 @@ module.exports = {
 	concat: require("./concat"),
 	customElement: require("./customElement"),
 	define: languageService.define,
+	dialogs: require("./dialogs"),
 	dragZone: require("./dragZone"),
 	effect: noop,
 	errorBoundary: require("./errorBoundary"),
