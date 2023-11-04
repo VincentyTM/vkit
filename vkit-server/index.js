@@ -7,6 +7,7 @@ var styledHtmlTag = require("./styledHtmlTag");
 
 module.exports = {
 	array: require("./array"),
+	assets: require("./assets"),
 	attributes: require("./attributes"),
 	await: require("./await"),
 	classes: require("./classes"),
