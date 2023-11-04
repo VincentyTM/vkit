@@ -41,6 +41,7 @@ module.exports = {
 	meta: require("./meta"),
 	navigate: require("./navigate"),
 	noop: noop,
+	objectProperty: require("./objectProperty"),
 	observable: require("./observable"),
 	of: require("./of"),
 	onUnmount: noop,
