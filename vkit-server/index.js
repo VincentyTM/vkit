@@ -2,6 +2,7 @@ var htmlTag = require("./htmlTag");
 var htmlTags = require("./htmlTags");
 var languageService = require("./languageService");
 var noop = require("./noop");
+var returnNull = require("./returnNull");
 var signal = require("./signal");
 var styledHtmlTag = require("./styledHtmlTag");
 var userMedia = require("./userMedia");
@@ -19,6 +20,7 @@ module.exports = {
 	define: languageService.define,
 	dialogs: require("./dialogs"),
 	displayMedia: userMedia,
+	document: returnNull,
 	dragZone: require("./dragZone"),
 	effect: noop,
 	errorBoundary: require("./errorBoundary"),
