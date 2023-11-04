@@ -103,6 +103,7 @@ function createScope(req, res){
 	return {
 		addStyle: addStyle,
 		addWindowData: addWindowData,
+		cookies: {},
 		getStyles: getStyles,
 		getWindowData: getWindowData,
 		meta: meta,

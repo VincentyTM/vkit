@@ -17,6 +17,7 @@ module.exports = {
 	classNames: require("./classNames"),
 	computed: require("./computed"),
 	concat: require("./concat"),
+	cookies: require("./cookies"),
 	customElement: require("./customElement"),
 	define: languageService.define,
 	dialogs: require("./dialogs"),
