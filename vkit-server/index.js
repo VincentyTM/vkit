@@ -33,6 +33,7 @@ module.exports = {
 	lang: languageService.lang,
 	languageService: languageService.languageService,
 	lazy: require("./lazy"),
+	map: require("./map"),
 	meta: require("./meta"),
 	navigate: require("./navigate"),
 	noop: noop,
