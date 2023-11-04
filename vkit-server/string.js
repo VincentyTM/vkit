@@ -1,4 +1,4 @@
-var createComputedSignal = require("./signal").computed;
+var createComputedSignal = require("./computed");
 var slice = Array.prototype.slice;
 
 function templateTag(strings) {

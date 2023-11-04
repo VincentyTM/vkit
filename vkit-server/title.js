@@ -1,4 +1,4 @@
-var createComputedSignal = require("./signal.js").computed;
+var createComputedSignal = require("./computed.js");
 var scope = require("./scope.js");
 
 function setTitle(title) {

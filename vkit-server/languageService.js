@@ -1,5 +1,5 @@
-var computed = require("./signal").computed;
-var createSignal = require("./signal").writable;
+var computed = require("./computed");
+var signal = require("./signal");
 var inject = require("./inject");
 var slice = Array.prototype.slice;
 
@@ -18,8 +18,8 @@ function LanguageService() {
 		return inject(LanguageService);
 	}
 	
-	var langCode = createSignal(null);
-	var dictionary = createSignal({});
+	var langCode = signal(null);
+	var dictionary = signal({});
 	var wordsOfLang = computed(selectWordsOfLang, [dictionary, langCode]);
 	
 	function define(update) {

@@ -1,4 +1,4 @@
-var createComputedSignal = require("./signal.js").computed;
+var computed = require("./computed.js");
 var scope = require("./scope.js");
 
 function history() {
@@ -6,7 +6,7 @@ function history() {
 		var currentScope = scope.get();
 		var url = currentScope.req.url;
 		
-		return createComputedSignal(function(){
+		return computed(function() {
 			return url;
 		});
 	}

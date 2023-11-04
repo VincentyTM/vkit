@@ -1,4 +1,4 @@
-var computed = require("./signal").computed;
+var computed = require("./computed");
 
 function getSelf(value) {
 	return value;
