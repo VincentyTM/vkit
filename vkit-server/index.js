@@ -52,6 +52,7 @@ module.exports = {
 	path: require("./path"),
 	preferredLanguages: require("./preferredLanguages"),
 	preload: require("./preload"),
+	promise: require("./promise"),
 	provide: require("./provide"),
 	queryParams: require("./queryParams"),
 	queryParamsState: require("./queryParamsState"),
