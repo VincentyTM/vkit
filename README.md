@@ -893,20 +893,46 @@ function NewWindowOpener() {
 
 ## Cookies
 
-There is no easy way to get or set cookies natively. `$.cookie` provides a powerful interface for this purpose.
+There is no easy way to get or set cookies natively. `$.cookies` provides a powerful interface for this purpose which also works on the server.
 
 ```javascript
-console.log( $.cookie("name").get() );
-
-$.cookie("name").remove();
-$.cookie("name").set("value");
-
-$.cookie.each(cookie => {
-    console.log( cookie.name, cookie.value );
-    cookie.expires( Date.now() + 30*60*1000 );
-    cookie.set("new value");
-    cookie.remove();
-});
+function CookieComponent() {
+    const cookies = $.cookies();
+    
+    cookies.forEach((name, value) => {
+        console.log("Cookie:", name, value);
+    });
+    
+    const cookieName = "MyCookie";
+    
+    return [
+        Input({
+            value: cookies.getCookie(cookieName),
+            oninput() {
+                const expiry = Date.now() + 1000 * 60 * 30; // null for session cookie
+                
+                const options = {
+                    httpOnly: false,
+                    path: "/",
+                    sameSite: "Strict",
+                    secure: true
+                };
+                
+                cookies.setCookie(
+                    cookieName,
+                    this.value,
+                    expiry,
+                    options
+                );
+            }
+        }),
+        Button("Delete", {
+            onclick() {
+                cookies.deleteCookie(cookieName);
+            }
+        })
+    ];
+}
 ```
 
 ## Dragging Elements
