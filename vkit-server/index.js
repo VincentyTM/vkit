@@ -65,6 +65,7 @@ module.exports = {
 	theme: require("./theme"),
 	title: require("./title"),
 	toArray: require("./toArray"),
+	useKey: require("./useKey"),
 	virtualHtmlTag: htmlTag,
 	virtualHtmlTags: htmlTags,
 	virtualStyledHtmlTag: styledHtmlTag,
