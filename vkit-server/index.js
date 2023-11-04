@@ -34,6 +34,7 @@ module.exports = {
 	languageService: languageService.languageService,
 	lazy: require("./lazy"),
 	map: require("./map"),
+	mediaQuery: require("./mediaQuery"),
 	meta: require("./meta"),
 	navigate: require("./navigate"),
 	noop: noop,
