@@ -13,6 +13,7 @@ module.exports = {
 	classes: require("./classes"),
 	classNames: require("./classNames"),
 	computed: require("./computed"),
+	concat: require("./concat"),
 	customElement: require("./customElement"),
 	define: languageService.define,
 	dragZone: require("./dragZone"),
