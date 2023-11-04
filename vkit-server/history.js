@@ -1,8 +1,8 @@
 var createComputedSignal = require("./signal.js").computed;
 var scope = require("./scope.js");
 
-function createHistoryHandler(){
-	function selectURL(){
+function history() {
+	function selectURL() {
 		var currentScope = scope.get();
 		var url = currentScope.req.url;
 		
@@ -16,4 +16,4 @@ function createHistoryHandler(){
 	};
 }
 
-module.exports = createHistoryHandler;
+module.exports = history;

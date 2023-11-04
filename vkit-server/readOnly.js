@@ -4,7 +4,7 @@ function getSelf(value) {
 	return value;
 }
 
-function readOnly(signalOrValue){
+function readOnly(signalOrValue) {
 	return computed(getSelf, [signalOrValue]);
 }
 

@@ -1,4 +1,4 @@
-function getValue(object, property){
+function getValue(object, property) {
 	return object[property];
 }
 
@@ -6,7 +6,7 @@ var handler = {
 	get: getValue
 };
 
-function of(object){
+function of(object) {
 	return new Proxy(object, handler);
 }
 

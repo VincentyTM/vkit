@@ -5,17 +5,17 @@ var getComponent = $.getComponent;
 var observe = $.observe;
 var onUnmount = $.onUnmount;
 
-function getValue(object, property){
+function getValue(object, property) {
 	var value = object[property];
 	var component = getComponent(true);
 	
-	if(!component){
+	if (!component) {
 		return value;
 	}
 	
 	var observable = observe(object, property);
 	
-	if(!observable){
+	if (!observable) {
 		throw new ReferenceError("Property '" + property + "' does not exist!");
 	}
 	
@@ -49,7 +49,7 @@ var handler = {
 	get: getValue
 };
 
-function of(object){
+function of(object) {
 	if (!object || !(typeof object === "object" || typeof object === "function")) {
 		return object;
 	}
