@@ -2,6 +2,7 @@ var htmlTag = require("./htmlTag");
 var htmlTags = require("./htmlTags");
 var languageService = require("./languageService");
 var noop = require("./noop");
+var returnComputedNull = require("./returnComputedNull");
 var returnNull = require("./returnNull");
 var signal = require("./signal");
 var styledHtmlTag = require("./styledHtmlTag");
@@ -34,6 +35,7 @@ module.exports = {
 	http: require("./http"),
 	ifElse: require("./ifElse"),
 	inject: require("./inject"),
+	installPrompt: returnComputedNull,
 	interval: noop,
 	isArray: require("./isArray"),
 	isSignal: require("./isSignal"),
@@ -62,6 +64,7 @@ module.exports = {
 	queryParamsState: require("./queryParamsState"),
 	router: require("./router"),
 	server: require("./server"),
+	serviceWorker: returnComputedNull,
 	shuffle: require("./shuffle"),
 	signal: signal,
 	state: signal,
@@ -76,6 +79,7 @@ module.exports = {
 	title: require("./title"),
 	toArray: require("./toArray"),
 	unmount: noop,
+	updatePrompt: returnComputedNull,
 	useKey: require("./useKey"),
 	userMedia: userMedia,
 	virtualHtmlTag: htmlTag,
