@@ -43,6 +43,7 @@ module.exports = {
 	meta: require("./meta"),
 	navigate: require("./navigate"),
 	noop: noop,
+	notification: require("./notification"),
 	objectProperty: require("./objectProperty"),
 	observable: require("./observable"),
 	of: require("./of"),
