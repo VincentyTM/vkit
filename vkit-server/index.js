@@ -51,6 +51,7 @@ module.exports = {
 	param: require("./param"),
 	params: require("./params"),
 	path: require("./path"),
+	persistentStorage: require("./persistentStorage"),
 	preferredLanguages: require("./preferredLanguages"),
 	preload: require("./preload"),
 	promise: require("./promise"),
