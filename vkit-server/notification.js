@@ -1,5 +1,6 @@
 var computed = require("./computed");
 var noop = require("./noop");
+var returnNull = require("./returnNull");
 
 function granted() {
 	return false;
@@ -16,6 +17,6 @@ module.exports = function() {
 		granted: granted,
 		permission: prompt,
 		requestPermission: noop,
-		show: noop
+		show: returnNull
 	};
 }
