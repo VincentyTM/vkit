@@ -1,5 +1,7 @@
 (function($) {
 
+var isSignal = $.isSignal;
+
 var MAX_COUNT = 9007199254740991;
 
 function getNumber(num) {
@@ -21,10 +23,9 @@ function createRangeArray(length) {
 	return array;
 }
 
-function repeat(count, getView){
-	if( count && typeof count.map === "function" ){
+function repeat(count, getView) {
+	if (isSignal(count)) {
 		var arrayState = count.map(createRangeArray);
-		
 		return arrayState.views(getView);
 	}
 	
