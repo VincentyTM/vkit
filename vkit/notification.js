@@ -1,14 +1,15 @@
-(function($, window){
+(function($) {
 
 var createObservable = $.observable;
 var createState = $.state;
+var getWindow = $.window;
 var onEvent = $.onEvent;
 var unmount = $.unmount;
 var update = $.update;
 
 function createNotificationManager(onError, win){
 	if(!win){
-		win = window;
+		win = getWindow();
 	}
 	
 	var nav = win.navigator;
