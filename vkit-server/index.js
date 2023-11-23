@@ -89,5 +89,6 @@ module.exports = {
 	webPush: require("./webPush"),
 	window: require("./window"),
 	windowContent: require("./windowContent"),
+	windowData: require("./windowData"),
 	word: languageService.word
 };
