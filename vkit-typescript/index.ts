@@ -1,78 +1,36 @@
-import attributes from "./attributes";
-import bind from "./bind";
-import classes from "./classes";
-import computed, {ComputedSignal} from "./computed";
-import customElement from "./customElement";
-import document from "./document";
-import effect from "./effect";
-import get from "./get";
-import html from "./html";
-import htmlTag from "./htmlTag";
-import htmlTags from "./htmlTags";
-import inject from "./inject";
-import interval from "./interval";
-import isSignal from "./isSignal";
-import map from "./map";
-import noop from "./noop";
-import objectProperty from "./objectProperty";
-import observable from "./observable";
-import observe from "./observe";
-import of from "./of";
-import onEvent from "./onEvent";
-import onUnmount from "./onUnmount";
-import provide from "./provide";
-import ref from "./ref";
-import render from "./render";
-import shadow from "./shadow";
-import signal, {Signal, WritableSignal} from "./signal";
-import style from "./style";
-import svgTag from "./svgTag";
-import svgTags from "./svgTags";
-import text from "./text";
-import tick from "./tick";
-import update from "./update";
-import useKey from "./useKey";
-import view from "./view";
-import window from "./window";
-
-export {
-	attributes,
-	bind,
-	classes,
-	computed,
-	ComputedSignal,
-	customElement,
-	document,
-	effect,
-	get,
-	html,
-	htmlTag,
-	htmlTags,
-	inject,
-	interval,
-	isSignal,
-	map,
-	noop,
-	objectProperty,
-	observable,
-	observe,
-	of,
-	onEvent,
-	onUnmount,
-	provide,
-	ref,
-	render,
-	shadow,
-	signal,
-	Signal,
-	style,
-	svgTag,
-	svgTags,
-	text,
-	tick,
-	update,
-	useKey,
-	view,
-	window,
-	WritableSignal
-};
+export {default as attributes} from "./attributes";
+export {default as bind} from "./bind";
+export {default as classes} from "./classes";
+export {default as computed, ComputedSignal} from "./computed";
+export {default as customElement} from "./customElement";
+export {default as document} from "./document";
+export {default as effect} from "./effect";
+export {default as get} from "./get";
+export {default as html} from "./html";
+export {default as htmlTag} from "./htmlTag";
+export {default as htmlTags} from "./htmlTags";
+export {default as inject} from "./inject";
+export {default as interval} from "./interval";
+export {default as isSignal} from "./isSignal";
+export {default as map} from "./map";
+export {default as noop} from "./noop";
+export {default as objectProperty} from "./objectProperty";
+export {default as observable} from "./observable";
+export {default as observe} from "./observe";
+export {default as of} from "./of";
+export {default as onEvent} from "./onEvent";
+export {default as onUnmount} from "./onUnmount";
+export {default as provide} from "./provide";
+export {default as ref} from "./ref";
+export {default as render} from "./render";
+export {default as shadow} from "./shadow";
+export {default as signal, Signal, WritableSignal} from "./signal";
+export {default as style} from "./style";
+export {default as svgTag} from "./svgTag";
+export {default as svgTags} from "./svgTags";
+export {default as text} from "./text";
+export {default as tick} from "./tick";
+export {default as update} from "./update";
+export {default as useKey} from "./useKey";
+export {default as view} from "./view";
+export {default as window} from "./window";
