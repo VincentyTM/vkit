@@ -6,7 +6,7 @@ var onUnmount = $.onUnmount;
 var signal = $.signal;
 var update = $.update;
 
-function createNotificationManager(onError, win){
+function createNotificationManager(handleError, win) {
 	if(!win){
 		win = getWindow();
 	}
@@ -60,9 +60,9 @@ function createNotificationManager(onError, win){
 					permission.set(perm.state || perm.status);
 				})
 			);
-		}, function(error){
-			if( typeof onError === "function" ){
-				onError(error);
+		}, function(error) {
+			if (typeof handleError === "function") {
+				handleError(error);
 			}
 			
 			update();
@@ -88,39 +88,41 @@ function createNotificationManager(onError, win){
 		return permission.get() === "granted";
 	}
 	
-	function showNotification(title, options, onError){
-		if(!isSupported ){
-			if( typeof onError === "function" ){
-				onError(new Error("Notification API is not supported"));
+	function showNotification(title, options, handleError) {
+		if (!isSupported) {
+			if (typeof handleError === "function") {
+				handleError(new Error("Notification API is not supported"));
 			}
 			
-			return;
+			return null;
 		}
 		
-		if(!granted()){
-			if( typeof onError === "function" ){
-				onError(new Error("Notifications are not granted by the user"));
+		if (!granted()) {
+			if (typeof handleError === "function") {
+				handleError(new Error("Notifications are not granted by the user"));
 			}
 			
-			return;
+			return null;
 		}
 		
-		if( nav.serviceWorker ){
-			nav.serviceWorker.ready.then(function(reg){
-				return reg.showNotification(title, options);
-			}, function(error){
-				try{
-					new Notification(title, options);
-				}catch(ex){
-					if( typeof onError === "function" ){
-						onError(error);
+		try {
+			return new Notification(title, options);
+		} catch(ex) {
+			if (nav.serviceWorker) {
+				nav.serviceWorker.ready.then(function(reg) {
+					return reg.showNotification(title, options);
+				}, function(error) {
+					if (typeof handleError === "function") {
+						handleError(error);
 					}
-				}
-				
-				update();
-			});
-		}else{
-			new Notification(title, options);
+					
+					update();
+				});
+			} else if (typeof handleError === "function") {
+				handleError(ex);
+			}
+			
+			return null;
 		}
 	}
 	
