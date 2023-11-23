@@ -84,6 +84,7 @@ module.exports = {
 	updatePrompt: returnComputedNull,
 	useKey: require("./useKey"),
 	userMedia: userMedia,
+	view: require("./view"),
 	virtualHtmlTag: htmlTag,
 	virtualHtmlTags: htmlTags,
 	virtualStyledHtmlTag: styledHtmlTag,
