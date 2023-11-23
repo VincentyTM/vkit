@@ -6,6 +6,7 @@ export {default as customElement} from "./customElement";
 export {default as document} from "./document";
 export {default as effect} from "./effect";
 export {default as get} from "./get";
+export {default as history} from "./history";
 export {default as html} from "./html";
 export {default as htmlTag} from "./htmlTag";
 export {default as htmlTags} from "./htmlTags";
