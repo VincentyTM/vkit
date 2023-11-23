@@ -1,10 +1,9 @@
 (function($) {
 
-var createObservable = $.observable;
-var createState = $.state;
 var getWindow = $.window;
 var onEvent = $.onEvent;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
+var signal = $.signal;
 var update = $.update;
 
 function createNotificationManager(onError, win){
@@ -16,7 +15,7 @@ function createNotificationManager(onError, win){
 	var Notification = win.Notification;
 	var isSupported = typeof Notification === "function";
 	
-	var permission = createState(
+	var permission = signal(
 		isSupported
 			? (Notification.permission === "default" ? "prompt" : Notification.permission)
 			: "default"
@@ -51,7 +50,7 @@ function createNotificationManager(onError, win){
 		};
 	});
 	
-	var asyncUnmount = unmount();
+	var asyncUnmount = onUnmount();
 	
 	if (nav.permissions) {
 		nav.permissions.query({name: "notifications"}).then(function(perm) {
