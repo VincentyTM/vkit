@@ -24,6 +24,7 @@ export {default as onUnmount} from "./onUnmount";
 export {default as provide} from "./provide";
 export {default as ref} from "./ref";
 export {default as render} from "./render";
+export {default as repeat} from "./repeat";
 export {default as shadow} from "./shadow";
 export {default as signal, Signal, WritableSignal} from "./signal";
 export {default as style} from "./style";
