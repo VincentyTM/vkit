@@ -63,6 +63,7 @@ module.exports = {
 	provide: require("./provide"),
 	queryParams: require("./queryParams"),
 	queryParamsState: require("./queryParamsState"),
+	repeat: require("./repeat"),
 	router: require("./router"),
 	server: require("./server"),
 	serviceWorker: returnComputedNull,
