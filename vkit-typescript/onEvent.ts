@@ -1,14 +1,12 @@
 import update from "./update";
 
-export type EventListenerType = {
-	call: (target: EventTargetType, event: EventType) => any;
-};
+export type EventListenerType = (this: unknown, event: EventType) => unknown;
 
 export type EventTargetType = {
-	addEventListener?: (eventType: string, eventListener: EventListenerType, capturing: boolean) => void;
-	removeEventListener?: (eventType: string, eventListener: EventListenerType, capturing: boolean) => void;
-	attachEvent?: (eventType: string, eventListener: EventListenerType) => void;
-	detachEvent?: (eventType: string, eventListener: EventListenerType) => void;
+	addEventListener: (type: string, listener: EventListenerType, options?: boolean | AddEventListenerOptions | undefined) => void;
+	removeEventListener: (type: string, listener: EventListenerType, options?: boolean | AddEventListenerOptions | undefined) => void;
+	attachEvent?: (type: string, listener: EventListenerType) => void;
+	detachEvent?: (type: string, listener: EventListenerType) => void;
 };
 
 type EventType = {
