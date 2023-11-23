@@ -85,7 +85,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 			}
 			
 			newValue = getValue.apply(null, args as never[]) as ValueType;
-		}else{
+		} else {
 			newValue = (getValue as () => ValueType)();
 		}
 
@@ -104,7 +104,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 		var subs = subscriptions.slice();
 		var m = subs.length;
 		
-		for(var i = 0; i < m; ++i){
+		for (var i = 0; i < m; ++i) {
 			var sub = subs[i];
 			if (sub.callback) {
 				sub.callback(value);

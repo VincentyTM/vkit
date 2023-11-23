@@ -21,22 +21,22 @@ function createNotificationManager(onError, win){
 			: "default"
 	);
 	
-	var prompt = permission.map(function(perm){
-		if( perm === "granted" ){
+	var prompt = permission.map(function(perm) {
+		if (perm === "granted") {
 			return {
 				state: "granted",
 				granted: true
 			};
 		}
 		
-		if( perm === "denied" ){
+		if (perm === "denied") {
 			return {
 				state: "denied",
 				denied: true
 			};
 		}
 		
-		if( perm === "prompt" ){
+		if (perm === "prompt") {
 			return {
 				state: "prompt",
 				prompt: true,
@@ -52,11 +52,11 @@ function createNotificationManager(onError, win){
 	
 	var asyncUnmount = unmount();
 	
-	if( nav.permissions ){
-		nav.permissions.query({name: "notifications"}).then(function(perm){
+	if (nav.permissions) {
+		nav.permissions.query({name: "notifications"}).then(function(perm) {
 			permission.set(perm.state || perm.status);
 			asyncUnmount(
-				onEvent(perm, "change", function(){
+				onEvent(perm, "change", function() {
 					permission.set(perm.state || perm.status);
 				})
 			);
@@ -69,22 +69,22 @@ function createNotificationManager(onError, win){
 		});
 	}
 	
-	function request(){
-		if( isSupported && Notification.permission !== "granted" && permission.get() === "prompt" ){
-			Notification.requestPermission(function(perm){
+	function request() {
+		if (isSupported && Notification.permission !== "granted" && permission.get() === "prompt") {
+			Notification.requestPermission(function(perm) {
 				permission.set(perm === "default" ? "prompt" : perm);
 				update();
 			});
 		}
 	}
 	
-	function dismiss(){
-		if( permission.get() === "prompt" ){
+	function dismiss() {
+		if (permission.get() === "prompt") {
 			permission.set("default");
 		}
 	}
 	
-	function granted(){
+	function granted() {
 		return permission.get() === "granted";
 	}
 	
