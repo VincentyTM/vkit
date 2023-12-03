@@ -1,6 +1,7 @@
-(function($, window){
+(function($) {
 
 var createState = $.state;
+var getWindow = $.window;
 var map = $.map;
 var notification = $.notification;
 var tick = $.tick;
@@ -21,12 +22,8 @@ function areEqual(a, b){
 	return true;
 }
 
-function createWebPushManager(serviceWorker, serverKey, handleError, win){
-	if(!win){
-		win = window;
-	}
-	
-	function onError(error){
+function createWebPushManager(serviceWorker, serverKey, handleError) {
+	function onError(error) {
 		locked = false;
 		
 		if( typeof handleError === "function" ){
@@ -45,6 +42,7 @@ function createWebPushManager(serviceWorker, serverKey, handleError, win){
 		}
 	}
 	
+	var win = getWindow();
 	var nav = win.navigator;
 	var permission = notification(onError, win).permission;
 	var subscription = createState(null);
