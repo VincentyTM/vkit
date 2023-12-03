@@ -25,6 +25,7 @@ module.exports = {
 	document: returnNull,
 	dragZone: require("./dragZone"),
 	effect: noop,
+	emitter: require("./emitter"),
 	errorBoundary: require("./errorBoundary"),
 	escapeHTML: require("./escapeHTML"),
 	get: require("./get"),
