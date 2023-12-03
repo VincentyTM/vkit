@@ -116,12 +116,6 @@ function createEmitter(base){
 		return subscribe(createEmitter(base), null, onError);
 	}
 
-	function createStateFrom(init){
-		var state = createState(init);
-		pipe(state);
-		return state;
-	}
-
 	function pipe(state, transform){
 		function onData(data){
 			if( transform ){
@@ -155,7 +149,6 @@ function createEmitter(base){
 	e.when = when;
 	e.then = then;
 	e.catchError = catchError;
-	e.state = createStateFrom;
 	e.pipe = pipe;
 
 	return e;
