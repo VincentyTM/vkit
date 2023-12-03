@@ -1,10 +1,15 @@
-(function($, window){
+(function($, window) {
 
 var createHistoryHandler = $.history;
 var createObservable = $.observable;
 var emitNavigate = createObservable();
+var getWindow = $.window;
 
-function createHref(url, win){
+function createHref(url, win) {
+	if (!win) {
+		win = getWindow();
+	}
+	
 	return {
 		href: url,
 		onclick: function(e){
