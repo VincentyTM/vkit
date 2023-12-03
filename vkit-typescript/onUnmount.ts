@@ -24,7 +24,7 @@ export default function onUnmount(
 		return noop;
 	}
 	
-	var c = component;
+	var c: Component | null = component;
 	
 	while (c && !c.unmount) {
 		c.unmount = observable();

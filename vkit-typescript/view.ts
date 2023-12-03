@@ -38,19 +38,19 @@ export type View<ContextType = unknown> = (
  * @param getCurrentView A function that returns the current view.
  * @returns The initial view.
  */
-export default function view<ValueType>(
-	getCurrentView: (value: ValueType | null) => View
-) : View;
+export default function view<ValueType, ContextType>(
+	getCurrentView: (value: ValueType | null) => View<ContextType>
+) : View<ContextType>;
 
-export default function view<ValueType>(
+export default function view<ValueType, ContextType>(
 	this: Signal<ValueType>,
-	getCurrentView: (value: ValueType | null) => View
-) : View;
+	getCurrentView: (value: ValueType | null) => View<ContextType>
+) : View<ContextType>;
 
-export default function view<ValueType>(
+export default function view<ValueType, ContextType>(
 	this: Signal<ValueType> | void,
-	getCurrentView: (value: ValueType | null) => View
-) : View {
+	getCurrentView: (value: ValueType | null) => View<ContextType>
+) : View<ContextType> {
 	var component = createComponent(mount);
 	var currentView: View;
 	var range = createNodeRange();

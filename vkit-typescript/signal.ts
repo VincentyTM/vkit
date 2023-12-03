@@ -195,7 +195,7 @@ export type Signal<ValueType> = {
 	 * @param getCurrentView A function that returns the current view.
 	 * @returns The initial view.
 	 */
-	view(getCurrentView: (value: ValueType | null) => View): View;
+	view<ContextType>(getCurrentView: (value: ValueType) => View<ContextType>): View<ContextType>;
 
 	/**
 	 * Creates a dynamic view with a subview for each element in the array contained in the signal.
@@ -220,7 +220,7 @@ export type Signal<ValueType> = {
 	 * @param getItemView The function that returns a subview for an array item.
 	 * @returns The initial view containing the subviews for all items in the array.
 	 */
-	views(getItemView: (value: ItemType<ValueType>) => View): View;
+	views<ContextType>(getItemView: (value: ItemType<ValueType>) => View<ContextType>): View<ContextType>[];
 };
 
 export type WritableSignal<ValueType> = Signal<ValueType> & {
@@ -337,22 +337,22 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 	
 	use.add = add;
 	use.component = parent;
-	use.effect = signalEffect<ValueType>;
+	use.effect = signalEffect;
 	use.get = get;
 	use.isSignal = true;
 	use.map = signalMap;
-	use.pipe = signalPipe<ValueType, any>;
-	use.prop = signalProp<ValueType>;
-	use.render = signalText<ValueType>;
+	use.pipe = signalPipe;
+	use.prop = signalProp;
+	use.render = signalText;
 	use.set = set;
 	use.setEagerly = setEagerly;
 	use.subscribe = subscribe;
 	use.toggle = toggle;
 	use.toString = toString;
-	use.view = view<ValueType>;
-	use.views = views<ItemType<ValueType>>;
+	use.view = view;
+	use.views = views;
 	
-	return use as unknown as WritableSignal<ValueType>;
+	return use as WritableSignal<ValueType>;
 }
 
 function add<ValueType>(

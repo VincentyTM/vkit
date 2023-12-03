@@ -4,11 +4,11 @@ import {View} from "./view";
 
 var MAX_COUNT = 9007199254740991;
 
-function getNumber(num: number) {
+function getNumber(num: number): number {
 	return !(num >= 0) ? 0 : num >= MAX_COUNT ? MAX_COUNT : Math.floor(num);
 }
 
-function createRangeArray(length: number) {
+function createRangeArray(length: number): number[] {
 	length = getNumber(length);
 	var array = new Array<number>(length);
 	
@@ -16,21 +16,31 @@ function createRangeArray(length: number) {
 		array[i] = i;
 	}
 	
-	return array;
+	return array; 
 }
 
+export default function repeat<ItemType>(
+	count: number,
+	getView: (index: number) => ItemType
+): ItemType[];
+
+export default function repeat<ContextType>(
+	count: Signal<number>,
+	getView: (index: number) => View<ContextType>
+): View<ContextType>[];
+
 export default function repeat(
-	count: number | Signal<number>,
-	getView: (index: number) => View
-) {
+	count: Signal<number> | number,
+	getView: (index: number) => unknown
+): unknown[] {
 	if (isSignal(count)) {
 		var arrayState = (count as Signal<number>).map(createRangeArray);
-		return arrayState.views(getView);
+		return arrayState.views(getView as (index: number) => View<unknown>);
 	}
 	
 	count = getNumber(count as number);
 	
-	var array = new Array<View>(count);
+	var array: unknown[] = new Array(count);
 	
 	for (var i = 0; i < count; ++i) {
 		array[i] = getView(i);

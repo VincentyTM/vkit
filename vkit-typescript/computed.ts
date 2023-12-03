@@ -1,7 +1,7 @@
 import createComponent from "./component";
 import {getComponent, getInjector} from "./contextGuard";
 import onUnmount from "./onUnmount";
-import {ItemType, Signal} from "./signal";
+import {Signal} from "./signal";
 import signalEffect from "./signalEffect";
 import signalPipe from "./signalPipe";
 import signalProp from "./signalProp";
@@ -153,20 +153,20 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 	}
 	
 	use.component = parent;
-	use.effect = signalEffect<ValueType>;
+	use.effect = signalEffect;
 	use.get = get;
 	use.isSignal = true;
 	use.map = signalMap;
-	use.pipe = signalPipe<ValueType, any>;
-	use.prop = signalProp<ValueType>;
-	use.render = signalText<ValueType>;
+	use.pipe = signalPipe;
+	use.prop = signalProp;
+	use.render = signalText;
 	use.subscribe = subscribe;
 	use.toString = toString;
 	use.update = update;
-	use.view = view<ValueType>;
-	use.views = views<ItemType<ValueType>>;
+	use.view = view;
+	use.views = views;
 	
-	return use as unknown as ComputedSignal<ValueType>;
+	return use as ComputedSignal<ValueType>;
 }
 
 export function signalMap<ValueType, TransformType extends (value: ValueType) => unknown>(

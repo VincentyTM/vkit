@@ -40,8 +40,8 @@ export default function onEvent(
 		
 		var ret = listener.call(target, e);
 		
-		if (ret && typeof ret.then === "function") {
-			ret.then(update);
+		if (ret && typeof (ret as Promise<unknown>).then === "function") {
+			(ret as Promise<unknown>).then(update);
 		}
 		
 		update();
