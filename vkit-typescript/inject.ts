@@ -1,6 +1,6 @@
 import {getInjector} from "./contextGuard";
 import {Injector, InstanceOf, TokenClass, TokenLike} from "./injector";
-import {Provider} from "vkit/vkit-typescript/provider";
+import {Provider} from "./provider";
 
 /**
  * This method can be used to inject a service instance instead of passing it as a parameter.
