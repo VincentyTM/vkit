@@ -1,9 +1,10 @@
 (function($, window) {
 
-var createHistoryHandler = $.history;
-var createObservable = $.observable;
-var emitNavigate = createObservable();
 var getWindow = $.window;
+var history = $.history;
+var observable = $.observable;
+
+var emitNavigate = observable();
 
 function createHref(url, win) {
 	if (!win) {
@@ -12,37 +13,39 @@ function createHref(url, win) {
 	
 	return {
 		href: url,
-		onclick: function(e){
+		onclick: function(e) {
 			e.preventDefault();
 			navigate(url, win);
 		}
 	};
 }
 
-function navigate(url, win){
-	if(!win) win = window;
+function navigate(url, win) {
+	if (!win) {
+		win = window;
+	}
 	
-	if( typeof url.get === "function" ){
+	if (typeof url.get === "function") {
 		url = url.get();
 	}
 	
-	if( emitNavigate.count() > 0 ){
+	if (emitNavigate.count() > 0) {
 		var prevented = false;
 		
 		emitNavigate({
 			url: url,
 			window: win,
-			prevent: function(){
+			prevent: function() {
 				prevented = true;
 			}
 		});
 		
-		if( prevented ){
+		if (prevented) {
 			return;
 		}
 	}
 	
-	createHistoryHandler(win).push(url);
+	history(win).push(url);
 	win.scrollTo(0, 0);
 }
 
