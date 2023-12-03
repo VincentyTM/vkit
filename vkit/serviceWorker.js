@@ -1,15 +1,12 @@
 (function($){
 
-var createSignal = $.signal;
 var getWindow = $.window;
+var signal = $.signal;
 var update = $.update;
 
-function createServiceWorker(src, options, onError, nav){
-	if(!nav){
-		nav = getWindow().navigator;
-	}
-	
-	var registration = createSignal(null);
+function serviceWorker(src, options, onError) {
+	var nav = getWindow().navigator;
+	var registration = signal(null);
 	
 	if( nav.serviceWorker && typeof nav.serviceWorker.register === "function" ){
 		nav.serviceWorker.register(src, options).then(function(reg){
