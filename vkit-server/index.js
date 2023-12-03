@@ -90,6 +90,7 @@ module.exports = {
 	virtualHtmlTags: htmlTags,
 	virtualStyledHtmlTag: styledHtmlTag,
 	webPush: require("./webPush"),
+	webSocket: require("./webSocket"),
 	window: require("./window"),
 	windowContent: require("./windowContent"),
 	windowData: require("./windowData"),
