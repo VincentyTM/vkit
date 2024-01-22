@@ -24,8 +24,8 @@
     "vkit-cli"
   ],
   "license": "MIT",
-  "main": "vkit-typescript",
   "name": "vkit",
+  "main": "index",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VincentyTM/vkit.git"
