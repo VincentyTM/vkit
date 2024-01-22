@@ -50,16 +50,31 @@ function createNotificationManager(handleError, win) {
 		};
 	});
 	
-	var asyncUnmount = onUnmount();
+	var whenUnmount = onUnmount();
 	
 	if (nav.permissions) {
 		nav.permissions.query({name: "notifications"}).then(function(perm) {
-			permission.set(perm.state || perm.status);
-			asyncUnmount(
+			var state = perm.state || perm.status;
+			
+			if (Notification.permission === "denied" && state === "prompt") {
+				state = "default";
+			}
+			
+			permission.set(state);
+			
+			whenUnmount(
 				onEvent(perm, "change", function() {
-					permission.set(perm.state || perm.status);
+					var state = perm.state || perm.status;
+					
+					if (Notification.permission === "denied" && state === "prompt") {
+						state = "default";
+					}
+					
+					permission.set(state);
 				})
 			);
+			
+			update();
 		}, function(error) {
 			if (typeof handleError === "function") {
 				handleError(error);
