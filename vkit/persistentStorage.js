@@ -1,15 +1,14 @@
-(function($, navigator){
+(function($) {
 
 var createPermissionState = $.permission;
 var createState = $.state;
+var getWindow = $.window;
 var update = $.update;
 
 function noop(){}
 
-function persistentStorage(nav){
-	if(!nav){
-		nav = navigator;
-	}
+function persistentStorage() {
+	var nav = getWindow().navigator;
 	
 	function requestPermission(grant, deny){
 		if( isSupported ){
@@ -42,4 +41,4 @@ function persistentStorage(nav){
 
 $.persistentStorage = persistentStorage;
 
-})($, navigator);
+})($);
