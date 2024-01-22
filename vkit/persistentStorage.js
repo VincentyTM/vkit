@@ -1,22 +1,21 @@
 (function($) {
 
-var createPermissionState = $.permission;
-var createState = $.state;
 var getWindow = $.window;
+var noop = $.noop;
+var permission = $.permission;
+var signal = $.signal;
 var update = $.update;
-
-function noop(){}
 
 function persistentStorage() {
 	var nav = getWindow().navigator;
 	
-	function requestPermission(grant, deny){
-		if( isSupported ){
-			nav.storage.persist().then(function(value){
+	function requestPermission(grant, deny) {
+		if (isSupported) {
+			nav.storage.persist().then(function(value) {
 				value ? grant() : deny();
 				persisted.set(value);
 				update();
-			}, function(){
+			}, function() {
 				deny();
 				update();
 			});
@@ -24,17 +23,17 @@ function persistentStorage() {
 	}
 	
 	var isSupported = nav.storage && typeof nav.storage.persist === "function";
-	var persisted = createState(false);
+	var persisted = signal(false);
 	
-	if( isSupported && typeof nav.storage.persisted === "function" ){
-		nav.storage.persisted().then(function(p){
+	if (isSupported && typeof nav.storage.persisted === "function") {
+		nav.storage.persisted().then(function(p) {
 			persisted.set(p);
 			update();
 		}, noop);
 	}
 	
 	return {
-		permission: createPermissionState("persistent-storage", requestPermission, null, nav),
+		permission: permission("persistent-storage", requestPermission, null),
 		persisted: persisted.map()
 	};
 }

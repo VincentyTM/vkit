@@ -1,57 +1,57 @@
 (function($) {
 
-var createState = $.state;
 var getWindow = $.window;
 var onEvent = $.onEvent;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
+var signal = $.signal;
 var update = $.update;
 
 function permissionPrompt(name, requestPermission, onError) {
 	var nav = getWindow().navigator;
 	
-	function grant(){
-		if( permission.get() === "prompt" ){
+	function grant() {
+		if (permission.get() === "prompt") {
 			permission.set("granted");
 		}
 	}
 	
-	function deny(){
-		if( permission.get() === "prompt" ){
+	function deny() {
+		if (permission.get() === "prompt") {
 			permission.set("denied");
 		}
 	}
 	
-	function request(){
-		if( permission.get() === "prompt" ){
+	function request() {
+		if (permission.get() === "prompt") {
 			requestPermission(grant, deny);
 		}
 	}
 	
-	function dismiss(){
-		if( permission.get() === "prompt" ){
+	function dismiss() {
+		if (permission.get() === "prompt") {
 			permission.set("default");
 		}
 	}
 	
-	var whenUnmount = unmount();
+	var whenUnmount = onUnmount();
+	var permission = signal("default");
 	
-	var permission = createState("default");
-	var prompt = permission.map(function(perm){
-		if( perm === "granted" ){
+	var prompt = permission.map(function(perm) {
+		if (perm === "granted") {
 			return {
 				state: "granted",
 				granted: true
 			};
 		}
 		
-		if( perm === "denied" ){
+		if (perm === "denied") {
 			return {
 				state: "denied",
 				denied: true
 			};
 		}
 		
-		if( perm === "prompt" ){
+		if (perm === "prompt") {
 			return {
 				state: "prompt",
 				prompt: true,
@@ -65,19 +65,19 @@ function permissionPrompt(name, requestPermission, onError) {
 		};
 	});
 	
-	if( nav.permissions ){
-		nav.permissions.query({name: name}).then(function(perm){
+	if (nav.permissions) {
+		nav.permissions.query({name: name}).then(function(perm) {
 			permission.set(perm.state || perm.status);
 			
 			whenUnmount(
-				onEvent(perm, "change", function(){
+				onEvent(perm, "change", function() {
 					permission.set(perm.state || perm.status);
 				})
 			);
 			
 			update();
-		}, function(error){
-			if( typeof onError === "function" ){
+		}, function(error) {
+			if (typeof onError === "function") {
 				onError(error);
 			}
 			
@@ -88,6 +88,6 @@ function permissionPrompt(name, requestPermission, onError) {
 	return prompt;
 }
 
-$.permission = createPermissionState;
+$.permission = permissionPrompt;
 
 })($);
