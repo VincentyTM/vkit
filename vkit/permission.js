@@ -1,14 +1,13 @@
-(function($, navigator){
+(function($) {
 
 var createState = $.state;
+var getWindow = $.window;
 var onEvent = $.onEvent;
 var unmount = $.unmount;
 var update = $.update;
 
-function createPermissionState(name, requestPermission, onError, nav){
-	if(!nav){
-		nav = navigator;
-	}
+function permissionPrompt(name, requestPermission, onError) {
+	var nav = getWindow().navigator;
 	
 	function grant(){
 		if( permission.get() === "prompt" ){
@@ -91,4 +90,4 @@ function createPermissionState(name, requestPermission, onError, nav){
 
 $.permission = createPermissionState;
 
-})($, navigator);
+})($);
