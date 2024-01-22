@@ -4,17 +4,19 @@
   <img src="img/vkit-logo-200.png" alt="vKit logo" width="100" height="100">
 </p>
 
-<p align="center"><i>vKit</i> is a flexible JavaScript library for building dynamic UI declaratively, handling asynchronous calls, managing threads, serializing forms, parsing syntax, and much more.</p>
+<p align="center"><i>vKit</i> is a flexible JavaScript/TypeScript library for building dynamic UI declaratively, handling asynchronous calls, managing threads, serializing forms, parsing syntax, and much more.</p>
 
 <hr>
 
-Example app:
+Example app using the TypeScript module:
 
 ```javascript
-const {Br, Button} = $.htmlTags;
+import {htmlTags, signal, render} from "vkit-js";
+
+const {Br, Button} = htmlTags;
 
 function CounterApp() {
-    const count = $.signal(0);
+    const count = signal(0);
     
     return [
         Button("Increment", {
@@ -29,7 +31,7 @@ function CounterApp() {
     ];
 }
 
-$.render(CounterApp, document.body);
+render(CounterApp, document.body);
 ```
 
 ## Table of Contents
@@ -56,26 +58,24 @@ $.render(CounterApp, document.body);
 
 ## Getting Started
 
-Before using vKit, you need to have NodeJS, npm and Git installed:
-1. Install [NodeJS](https://nodejs.org/) with npm
-2. Install [Git](https://git-scm.com/download/)
+Before using vKit, you need to have [NodeJS](https://nodejs.org/) installed with npm.
 
 ### Install as a TypeScript module
 
 You can add vKit to your existing TypeScript web project:
-1. Install vKit with `npm i VincentyTM/vkit`
+1. Install vKit with `npm i vkit-js`
 2. Import the required dependencies
 
 You can import the dependencies by name:
-`import {htmlTags, render, signal} from "vkit";`
+`import {htmlTags, render, signal} from "vkit-js";`
 
 Or as a single object:
-`import * as $ from "vkit";`
+`import * as $ from "vkit-js";`
 
 ### Use the CLI
 
 You can also use the vKit CLI if you do not want to use any other build tools and you prefer simple JavaScript:
-1. Run `npm i -g VincentyTM/vkit` to install vKit globally
+1. Run `npm i -g vkit-js` to install vKit globally
 2. Run `vkit` to create/open a project in the current directory
 
 If you edit your `js` and `css` files inside the generated `src` directory, you can immediately see the changes in your browser.
@@ -87,12 +87,12 @@ Use the `export` command to create a standalone `html` or `js` file.
 There is also a limited version of vKit that can be run on a NodeJS server. It includes templating, styling and routing but no reactivity.
 
 You can install the vKit module with this command:
-`npm i VincentyTM/vkit`
+`npm i vkit-js`
 
 An example server app:
 ```javascript
 const http = require("http");
-const $ = require("vkit");
+const $ = require("vkit-js");
 
 const {A, Li, Main, Nav, Ul} = $.htmlTags;
 
