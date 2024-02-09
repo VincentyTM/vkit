@@ -1,12 +1,13 @@
-(function($, undefined){
+(function($, undefined) {
 
-var createObservable = $.observable;
-var createState = $.state;
-var unmount = $.unmount;
+var effect = $.effect;
+var observable = $.observable;
+var onUnmount = $.onUnmount;
+var signal = $.signal;
 var update = $.update;
 
-function createRequest(data){
-	if(!data){
+function createRequest(data) {
+	if (!data) {
 		data = {};
 	}
 	
@@ -22,11 +23,11 @@ function createRequest(data){
 		abortable: true
 	};
 	
-	if( typeof data === "string" ){
+	if (typeof data === "string") {
 		request.url = data;
-	}else if( data && typeof data === "object" ){
-		for(var key in data){
-			if( key in request ){
+	} else if (data && typeof data === "object") {
+		for (var key in data) {
+			if (key in request) {
 				request[key] = data[key];
 			}
 		}
@@ -35,27 +36,27 @@ function createRequest(data){
 	return request;
 }
 
-function sendRequest(request, pendingResponse, responseState, complete){
-	if( request.url === null || request.url === undefined ){
+function sendRequest(request, pendingResponse, responseState, complete) {
+	if (request.url === null || request.url === undefined) {
 		return null;
 	}
 	
 	var xhr = new XMLHttpRequest();
 	
-	xhr.onprogress = function(e){
+	xhr.onprogress = function(e) {
 		pendingResponse.progress.set(e);
 		update();
 	};
 	
-	if( xhr.upload ){
-		xhr.upload.onprogress = function(e){
+	if (xhr.upload) {
+		xhr.upload.onprogress = function(e) {
 			pendingResponse.uploadProgress.set(e);
 			update();
 		};
 	}
 	
-	xhr.onreadystatechange = function(){
-		if( xhr.readyState === 4 || xhr.readyState === 0 ){
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === 4 || xhr.readyState === 0) {
 			var response = createResponse(xhr);
 			responseState.set(response);
 			complete(response);
@@ -64,12 +65,19 @@ function sendRequest(request, pendingResponse, responseState, complete){
 		update();
 	};
 	
-	xhr.open(request.method, request.url, request.async, request.user, request.password);
+	xhr.open(
+		request.method,
+		request.url,
+		request.async,
+		request.user,
+		request.password
+	);
+	
 	xhr.responseType = request.responseType;
 	
 	var headers = request.headers;
 	
-	for(var name in headers){
+	for (var name in headers) {
 		xhr.setRequestHeader(name, headers[name]);
 	}
 	
@@ -78,7 +86,7 @@ function sendRequest(request, pendingResponse, responseState, complete){
 	return xhr;
 }
 
-function createProgressEvent(){
+function createProgressEvent() {
 	return {
 		lengthComputable: false,
 		loaded: 0,
@@ -86,12 +94,12 @@ function createProgressEvent(){
 	};
 }
 
-function createResponse(xhr){
-	function getHeader(name){
+function createResponse(xhr) {
+	function getHeader(name) {
 		return xhr.getResponseHeader(name);
 	}
 	
-	function getHeaders(){
+	function getHeaders() {
 		return xhr.getAllResponseHeaders();
 	}
 	
@@ -106,21 +114,21 @@ function createResponse(xhr){
 	};
 }
 
-function createPendingResponse(abort){
+function createPendingResponse(abort) {
 	return {
 		abort: abort,
-		progress: createState(createProgressEvent()),
-		uploadProgress: createState(createProgressEvent())
+		progress: signal(createProgressEvent()),
+		uploadProgress: signal(createProgressEvent())
 	};
 }
 
-function createResponseState(requestState, options, onAbort){
-	function abort(){
-		if( xhr && isAbortable ){
+function createResponseState(requestData, options, onAbort) {
+	function abort() {
+		if (xhr && isAbortable) {
 			xhr.onreadystatechange = null;
 			xhr.onprogress = null;
 			
-			if( xhr.upload ){
+			if (xhr.upload) {
 				xhr.upload.onprogress = null;
 			}
 			
@@ -132,14 +140,14 @@ function createResponseState(requestState, options, onAbort){
 		unsubscribe.clear();
 	}
 	
-	function setRequest(req){
+	function setRequest(req) {
 		abort();
 		
 		var request = createRequest(req);
 		
-		if( options && typeof options === "object" ){
-			for(var key in options){
-				if( key in request ){
+		if (options && typeof options === "object") {
+			for (var key in options) {
+				if (key in request) {
 					request[key] = options[key];
 				}
 			}
@@ -152,19 +160,19 @@ function createResponseState(requestState, options, onAbort){
 		xhr = sendRequest(request, pendingResponse, responseState, complete);
 		responseState.set(xhr ? pendingResponse : {unsent: true});
 		
-		if( xhr ){
+		if (xhr) {
 			unsubscribe.subscribe(onAbort.subscribe(abort));
 		}
 	}
 	
-	function complete(response){
+	function complete(response) {
 		onResponse(response);
 		onResponse.clear();
 		abort();
 	}
 	
-	var onResponse = createObservable();
-	var unsubscribe = createObservable();
+	var onResponse = observable();
+	var unsubscribe = observable();
 	var xhr = null;
 	var isAbortable = true;
 	var responseState = createState();
@@ -177,18 +185,17 @@ function createResponseState(requestState, options, onAbort){
 	
 	var result = responseState.map();
 	result.then = onResponse.subscribe;
-	
 	return result;
 }
 
-function createHttpHandle(request, options){
-	var abort = createObservable();
+function createHttpHandle(request, options) {
+	var abort = observable();
 	var hasAborter = options && typeof options.aborter === "function";
 	
-	if( hasAborter ){
+	if (hasAborter) {
 		options.aborter(abort);
-	}else{
-		unmount(abort);
+	} else {
+		onUnmount(abort);
 	}
 	
 	return createResponseState(request, options, abort);
