@@ -3,30 +3,26 @@
 var computed = $.computed;
 var getWindow = $.window;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
+var update = $.update;
 
 function createMediaQuery(mediaQuery, win) {
 	if (!win) {
 		win = getWindow();
 	}
 	
-	var matches = false;
-	
-	var result = computed(function() {
-		return matches;
-	});
-	
 	if (!win.matchMedia) {
-		return result;
+		return computed(function() {
+			return false;
+		});
 	}
 	
-	var updateResult = result.update;
 	var matcher = win.matchMedia(mediaQuery);
-	
-	matches = matcher.matches;
+	var matches = signal(matcher.matches);
 	
 	function handleChange(e) {
-		matches = e.matches;
-		updateResult();
+		matches.set(e.matches);
+		update();
 	}
 	
 	if (matcher.addEventListener) {
@@ -43,7 +39,7 @@ function createMediaQuery(mediaQuery, win) {
 		});
 	}
 	
-	return result;
+	return matches.map();
 }
 
 $.mediaQuery = createMediaQuery;
