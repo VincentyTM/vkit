@@ -90,13 +90,13 @@ function createComputedSignal(getValue, inputs) {
 	get.component = null;
 	get.effect = noop;
 	get.get = get;
+	get.invalidate = invalidate;
 	get.map = map;
 	get.pipe = pipe;
 	get.prop = prop;
 	get.render = render;
 	get.subscribe = noop;
 	get.toString = toStringComputed;
-	get.update = update;
 	get.view = view;
 	get.views = views;
 	
