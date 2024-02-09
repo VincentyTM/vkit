@@ -1,11 +1,9 @@
-(function($, g){
+(function($) {
 
 var callTicks = $.callTicks;
-var queue = [];
+var queueMicrotask = $.queueMicrotask;
 
-var queueMicrotask = g.queueMicrotask || (typeof Promise === "function" && typeof Promise.resolve === "function"
-	? function(callback){ Promise.resolve().then(callback); }
-	: function(callback){ setTimeout(callback, 0); });
+var queue = [];
 
 function enqueueUpdate(callback) {
 	if (queue.push(callback) === 1) {
@@ -41,4 +39,4 @@ $.dequeueUpdate = dequeueUpdate;
 $.enqueueUpdate = enqueueUpdate;
 $.update = update;
 
-})($, this);
+})($);
