@@ -42,9 +42,9 @@ function getUserMedia(constraints, displayMedia) {
 				result.set(stream);
 				pending.set(false);
 				update();
-			}, function(error) {
+			}, function(ex) {
 				pending.set(false);
-				error.set(error);
+				error.set(ex);
 				update();
 			});
 		}
