@@ -6,10 +6,8 @@ var onEvent = $.onEvent;
 var onUnmount = $.unmount;
 var update = $.update;
 
-function createInstallPrompt(win) {
-	if (!win) {
-		win = getWindow();
-	}
+function createInstallPrompt() {
+	var win = getWindow();
 	
 	var isAppInstalled = (
 		win.navigator.standalone ||
