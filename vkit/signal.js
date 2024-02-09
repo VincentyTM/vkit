@@ -90,6 +90,10 @@ function createWritableSignal(value) {
 		}
 	}
 	
+	function update(map, argument) {
+		set(map(value, argument));
+	}
+	
 	use.add = add;
 	use.component = parent;
 	use.effect = signalEffect;
@@ -104,6 +108,7 @@ function createWritableSignal(value) {
 	use.subscribe = subscribe;
 	use.toggle = toggle;
 	use.toString = toString;
+	use.update = update;
 	use.view = view;
 	use.views = views;
 	

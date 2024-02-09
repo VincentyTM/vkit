@@ -273,6 +273,23 @@ export type WritableSignal<ValueType> = Signal<ValueType> & {
 	 * // count.get() === false
 	 */
 	toggle(): void;
+
+	/**
+	 * Sets the signal's current value to the return value of the callback.
+	 * @example
+	 * const count = signal(10);
+	 * count.update((x) => x * 2);
+	 * // count.get() === 20
+	 * count.update((x, y) => x + y, 10);
+	 * // count.get() === 30
+	 * 
+	 * @param map A function which takes the old signal value and returns the new one.
+	 * @param argument An optional argument for `map`.
+	 */
+	update<ArgumentType>(
+		map: (value: ValueType, argument: ArgumentType) => ValueType,
+		argument?: ArgumentType
+	): void;
 };
 
 /**
