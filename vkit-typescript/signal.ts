@@ -224,9 +224,54 @@ export type Signal<ValueType> = {
 };
 
 export type WritableSignal<ValueType> = Signal<ValueType> & {
+	/**
+	 * Adds a value to the the signal's current value.
+	 * It behaves the same as `signal.set(signal.get() + value);`.
+	 * @example
+	 * const count = signal(10);
+	 * count.add(20);
+	 * // count.get() === 30
+	 * 
+	 * @param value The new value of the signal.
+	 */
 	add(value: ValueType): void;
+	
+	/**
+	 * Sets the signal's value and enqueues a notification of its subscribers.
+	 * It behaves the same as `signal.set(!signal.get());`.
+	 * @example
+	 * const count = signal(10);
+	 * count.subscribe((value) => console.log("The value has changed to: " + value));
+	 * count.set(20);
+	 * // count.get() === 20
+	 * console.log("The subscribers have not been notified yet.");
+	 * 
+	 * @param value The new value of the signal.
+	 */
 	set(value: ValueType): void;
+	
+	/**
+	 * Sets the signal's value and immediately notifies its subscribers about the change.
+	 * @example
+	 * const count = signal(10);
+	 * count.subscribe((value) => console.log("The value has changed to: " + value));
+	 * count.set(20);
+	 * console.log("This will run after the previous console.log.");
+	 * 
+	 * @param value The new value of the signal.
+	 */
 	setEagerly(value: ValueType): void;
+
+	/**
+	 * Negates the signal's current value.
+	 * If it is true, it turns into false and vice versa.
+	 * @example
+	 * const isVisible = signal(false);
+	 * count.toggle();
+	 * // count.get() === true
+	 * count.toggle();
+	 * // count.get() === false
+	 */
 	toggle(): void;
 };
 
