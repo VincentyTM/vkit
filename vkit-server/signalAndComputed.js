@@ -83,7 +83,7 @@ function createComputedSignal(getValue, inputs) {
 		return value;
 	}
 	
-	function update() {
+	function invalidate() {
 		value = none;
 	}
 	

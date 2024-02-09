@@ -39,7 +39,7 @@ function LanguageService() {
 		}
 		
 		dictionary.set(newDict);
-		wordsOfLang.update();
+		wordsOfLang.invalidate();
 	}
 	
 	function createWord(key) {
