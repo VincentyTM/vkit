@@ -1,42 +1,43 @@
-(function($){
+(function($) {
 
-var createState = $.state;
-var unmount = $.unmount;
+var signal = $.signal;
+var onUnmount = $.onUnmount;
 var update = $.update;
 
-function createLazyArray(arrayState){
-	var interval = 0;
-	var optimized = createState([]);
+function lazyArray(arraySignal, backwards) {
+	var optimized = signal([]);
 	
-	arrayState.effect(function(array){
-		clearInterval(interval);
+	arraySignal.effect(function(array) {
 		var opt = optimized.get();
 		var n = opt.length;
 		var m = array.length;
 		
-		if( m - n <= 3 ){
+		if (m - n <= 3) {
 			optimized.set(array);
-		}else{
+		} else {
 			n += 10;
-			optimized.set(array.slice(0, n));
-			interval = setInterval(function(){
+			optimized.set(backwards ? array.slice(m - n) : array.slice(0, n));
+			
+			var interval = setInterval(function() {
 				n += 10;
-				if( m <= n ){
+				
+				if (m <= n) {
 					clearInterval(interval);
 				}
-				optimized.set(array.slice(0, n));
+				
+				optimized.set(backwards ? array.slice(m - n) : array.slice(0, n));
 				update();
 			}, 1);
+			
+			onUnmount(function() {
+				clearInterval(interval);
+			});
 		}
 	});
 	
-	unmount(function(){
-		clearInterval(interval);
-	});
-	
-	return optimized;
+	return result;
 }
 
-$.lazyArray = createLazyArray;
+$.lazyArray = lazyArray;
 
 })($);
