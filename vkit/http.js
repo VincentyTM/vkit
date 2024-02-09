@@ -175,12 +175,18 @@ function createResponseState(requestData, options, onAbort) {
 	var unsubscribe = observable();
 	var xhr = null;
 	var isAbortable = true;
-	var responseState = createState();
+	var responseState = signal();
 	
-	if( requestState && typeof requestState.effect === "function" ){
-		requestState.effect(setRequest);
-	}else{
-		setRequest(requestState);
+	if (typeof requestData === "function") {
+		if (typeof requestData.effect === "function") {
+			requestData.effect(setRequest);
+		} else {
+			effect(function() {
+				setRequest(requestData());
+			});
+		}
+	} else {
+		setRequest(requestData);
 	}
 	
 	var result = responseState.map();
