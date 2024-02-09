@@ -1,26 +1,11 @@
 (function($, window) {
 
-var getWindow = $.window;
 var history = $.history;
 var observable = $.observable;
 
 var emitNavigate = observable();
 
-function createHref(url, win) {
-	if (!win) {
-		win = getWindow();
-	}
-	
-	return {
-		href: url,
-		onclick: function(e) {
-			e.preventDefault();
-			navigate(url, win);
-		}
-	};
-}
-
-function navigate(url, win) {
+function navigate(url, win, noScroll) {
 	if (!win) {
 		win = window;
 	}
@@ -46,10 +31,12 @@ function navigate(url, win) {
 	}
 	
 	history(win).push(url);
-	win.scrollTo(0, 0);
+	
+	if (!noScroll) {
+		win.scrollTo(0, 0);
+	}
 }
 
-$.href = createHref;
 $.navigate = navigate;
 $.onNavigate = emitNavigate.subscribe;
 
