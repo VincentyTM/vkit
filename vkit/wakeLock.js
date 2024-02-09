@@ -1,5 +1,6 @@
 (function($) {
 
+var computed = $.computed;
 var getWindow = $.window;
 var onUnmount = $.onUnmount;
 var signal = $.signal;
@@ -50,8 +51,13 @@ function wakeLock(controller) {
 		}
 	}
 	
-	if (controller && typeof controller.effect === "function") {
-		controller.map(Boolean).effect(function(doLock) {
+	if (typeof controller === "function") {
+		(typeof controller.effect === "function"
+			? controller.map(Boolean)
+			: computed(function() {
+				return !!controller();
+			})
+		).effect(function(doLock) {
 			doLock ? lock() : unlock();
 		});
 	} else {
