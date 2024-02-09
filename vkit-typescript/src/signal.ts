@@ -286,9 +286,13 @@ export type WritableSignal<ValueType> = Signal<ValueType> & {
 	 * @param map A function which takes the old signal value and returns the new one.
 	 * @param argument An optional argument for `map`.
 	 */
+	update(
+		map: (value: ValueType) => ValueType
+	): void;
+	
 	update<ArgumentType>(
 		map: (value: ValueType, argument: ArgumentType) => ValueType,
-		argument?: ArgumentType
+		argument: ArgumentType
 	): void;
 };
 
@@ -395,6 +399,13 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 				sub.callback(value);
 			}
 		}
+	}
+	
+	function update<ArgumentType>(
+		map: (value: ValueType, argument: ArgumentType) => ValueType,
+		argument?: ArgumentType
+	): void {
+		set(map(value, argument));
 	}
 	
 	use.add = add;

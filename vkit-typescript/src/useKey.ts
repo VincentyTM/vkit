@@ -59,10 +59,10 @@ export default function useKey<ValueType>(
 		}) as unknown as KeyedSignal<ValueType>;
 		
 		if (key && typeof (key as Signal<string>).subscribe === "function") {
-			(key as Signal<string>).subscribe(selected.update);
+			(key as Signal<string>).subscribe(selected.invalidate);
 		}
 		
-		signal.subscribe(selected.update);
+		signal.subscribe(selected.invalidate);
 		selected.key = key;
 		return selected;
 	}

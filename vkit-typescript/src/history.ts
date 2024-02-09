@@ -40,14 +40,14 @@ function createHistoryHandler(win?: Window & typeof globalThis): HistoryHandle {
 		var historyState = computed(function(): HistoryState {
 			return history.state;
 		});
-		var update = historyState.update;
+		var invalidate = historyState.invalidate;
 		
-		onUnmount(onEvent(win!, "popstate", update));
+		onUnmount(onEvent(win!, "popstate", invalidate));
 		onUnmount(updateHistory.subscribe(updateLocal));
 		
 		function updateLocal(h: History): void {
 			if (h === history) {
-				update();
+				invalidate();
 			}
 		}
 		
@@ -58,14 +58,14 @@ function createHistoryHandler(win?: Window & typeof globalThis): HistoryHandle {
 		var historyURL = computed(function(): string {
 			return getURL(win!);
 		});
-		var update = historyURL.update;
+		var invalidate = historyURL.invalidate;
 		
-		onUnmount(onEvent(win!, "popstate", update));
+		onUnmount(onEvent(win!, "popstate", invalidate));
 		onUnmount(updateHistory.subscribe(updateLocal));
 		
 		function updateLocal(h: HistoryState): void {
 			if (h === history) {
-				update();
+				invalidate();
 			}
 		}
 		
