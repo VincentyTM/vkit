@@ -1,10 +1,12 @@
-(function($, navigator) {
+(function($) {
 
+var getWindow = $.window;
 var onUnmount = $.onUnmount;
 var signal = $.signal;
 var update = $.update;
 
 function wakeLock(controller) {
+	var navigator = getWindow().navigator;
 	var currentSentinel = signal(null);
 	var isPending = false;
 	
@@ -63,4 +65,4 @@ function wakeLock(controller) {
 
 $.wakeLock = wakeLock;
 
-})($, navigator);
+})($);
