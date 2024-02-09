@@ -75,9 +75,7 @@ function createUpdatePrompt(serviceWorker, message, win) {
 			return;
 		}
 		
-		function awaitStateChange() {
-			regInstalling.update();
-		}
+		var awaitStateChange = regInstalling.invalidate;
 		
 		if (reg.waiting) {
 			showPrompt(reg);

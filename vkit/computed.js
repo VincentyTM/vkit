@@ -13,12 +13,12 @@ var views = $.views;
 
 var none = {};
 
-function createComputedSignal(getValue, inputs) {
+function computed(getValue, inputs) {
 	var parent = getComponent(true);
 	var subscriptions = [];
 	var value = none;
 	var signalComponent = createComponent(computeValue, parent, getInjector(true));
-	var update = signalComponent.render;
+	var invalidate = signalComponent.render;
 	
 	if (inputs) {
 		var n = inputs.length;
@@ -27,7 +27,7 @@ function createComputedSignal(getValue, inputs) {
 			var input = inputs[i];
 			
 			if (input && typeof input.subscribe === "function") {
-				input.subscribe(update);
+				input.subscribe(invalidate);
 			}
 		}
 	}
@@ -80,7 +80,7 @@ function createComputedSignal(getValue, inputs) {
 	
 	function get() {
 		if (value === none) {
-			update();
+			invalidate();
 		}
 		return value;
 	}
@@ -112,6 +112,7 @@ function createComputedSignal(getValue, inputs) {
 	use.component = parent;
 	use.effect = signalEffect;
 	use.get = get;
+	use.invalidate = invalidate;
 	use.isSignal = true;
 	use.map = signalMap;
 	use.pipe = signalPipe;
@@ -137,13 +138,14 @@ function signalMap() {
 		return value;
 	}
 	
+	return computed(n === 1 ? args[0] : transform, [this]);
 }
 
 function toString() {
 	return "[object ComputedSignal(" + this.get() + ")]";
 }
 
-$.computed = createComputedSignal;
+$.computed = computed;
 $.signalMap = signalMap;
 
 })($);

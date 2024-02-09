@@ -14,7 +14,7 @@ var none = {};
 export type ArrayOfMaybeSignals<ArrayType> = {[K in keyof ArrayType]: ArrayType[K] | Signal<ArrayType[K]>};
 
 export type ComputedSignal<ValueType> = Signal<ValueType> & {
-	update(): void;
+	invalidate(): void;
 };
 
 /**
@@ -58,7 +58,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 	var subscriptions: Subscription[] = [];
 	var value: ValueType = none as ValueType;
 	var signalComponent = createComponent(computeValue, parent, getInjector(true));
-	var update = signalComponent.render;
+	var invalidate = signalComponent.render;
 	
 	if (dependencies) {
 		var n = dependencies.length;
@@ -67,7 +67,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 			var input = dependencies[i] as unknown as Signal<Parameters<FuncType>[number]>;
 			
 			if (input && typeof input.subscribe === "function") {
-				input.subscribe(update);
+				input.subscribe(invalidate);
 			}
 		}
 	}
@@ -120,7 +120,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 	
 	function get(): ValueType {
 		if (value === none) {
-			update();
+			invalidate();
 		}
 		return value;
 	}
@@ -155,6 +155,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 	use.component = parent;
 	use.effect = signalEffect;
 	use.get = get;
+	use.invalidate = invalidate;
 	use.isSignal = true;
 	use.map = signalMap;
 	use.pipe = signalPipe;
@@ -162,7 +163,6 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 	use.render = signalText;
 	use.subscribe = subscribe;
 	use.toString = toString;
-	use.update = update;
 	use.view = view;
 	use.views = views;
 	

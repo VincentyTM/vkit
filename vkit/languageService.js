@@ -40,7 +40,7 @@ function LanguageService() {
 		}
 		
 		dictionary.set(newDict);
-		wordsOfLang.update();
+		wordsOfLang.invalidate();
 	}
 	
 	function createWord(key) {
@@ -93,7 +93,7 @@ function LanguageService() {
 			isSignal(key) || typeof key !== "function" ? key : computed(key)
 		].concat(args));
 		
-		c.update();
+		c.invalidate();
 		
 		return c;
 	}
