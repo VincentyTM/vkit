@@ -120,6 +120,10 @@ function createWritableSignal(value) {
 		value = !value;
 	}
 	
+	function update(map, argument) {
+		value = map(value, argument);
+	}
+	
 	get.add = add;
 	get.component = null;
 	get.effect = noop;
@@ -132,7 +136,7 @@ function createWritableSignal(value) {
 	get.subscribe = noop;
 	get.toggle = toggle;
 	get.toString = toStringWritable;
-	get.update = noop;
+	get.update = update;
 	get.view = view;
 	get.views = views;
 	
