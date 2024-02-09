@@ -69,7 +69,7 @@ function provide(configs, getView) {
 		}
 	}
 	
-	try{
+	try {
 		setInjector(injector);
 		return getView();
 	} finally {

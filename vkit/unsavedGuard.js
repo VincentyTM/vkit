@@ -1,54 +1,59 @@
-(function($){
+(function($) {
 
-var createObservable = $.observable;
-var createState = $.state;
 var getWindow = $.window;
+var observable = $.observable;
 var onEvent = $.onEvent;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
+var signal = $.signal;
 
 var count = 0;
-var countChange = createObservable();
+var countChange = observable();
 
-function prevent(e){
-	if( e && e.preventDefault ){
+function prevent(e) {
+	if (e && e.preventDefault) {
 		e.preventDefault();
 	}
 	return "";
 }
 
-function unsavedGuard(state, win){
+function unsavedGuard(condition, win) {
 	if(!win) win = getWindow();
 	var unsubscribe = null;
 	
-	function add(){
-		if(!unsubscribe){
+	function add() {
+		if (!unsubscribe) {
 			unsubscribe = onEvent(win, "beforeunload", prevent);
 			countChange(++count);
 		}
 	}
 	
-	function remove(){
-		if( unsubscribe ){
+	function remove() {
+		if (unsubscribe) {
 			unsubscribe();
 			unsubscribe = null;
 			countChange(--count);
 		}
 	}
 	
-	function update(value){
+	function update(value) {
 		value ? add() : remove();
 	}
 	
-	state && state.map ? state.map(Boolean).effect(update) : add();
-	unmount(remove);
-	return state;
+	if (condition && condition.map) {
+		condition.map(Boolean).effect(update);
+	} else {
+		add();
+	}
+	
+	onUnmount(remove);
+	return condition;
 }
 
-function allSaved(){
-	var saved = createState(count === 0);
+function allSaved() {
+	var saved = signal(count === 0);
 	
-	unmount(
-		countChange.subscribe(function(c){
+	onUnmount(
+		countChange.subscribe(function(c) {
 			saved.set(c === 0);
 		})
 	);
@@ -56,7 +61,7 @@ function allSaved(){
 	return saved.map();
 }
 
-allSaved.get = function(){
+allSaved.get = function() {
 	return count === 0;
 };
 

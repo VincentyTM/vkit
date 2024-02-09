@@ -1,51 +1,51 @@
-(function($, document){
+(function($, document) {
 
 var insert = $.insert;
 var removeNode = $.remove;
 
-function createNodeRange(){
+function createNodeRange() {
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
 	
-	function clear(){
-		if(!start.nextSibling){
+	function clear() {
+		if (!start.nextSibling) {
 			throw new Error("Cannot clear detached range");
 		}
 		
 		var parent = start.parentNode;
 		
-		if( parent ){
-			for(var el = end.previousSibling; el && el !== start; el = end.previousSibling){
+		if (parent) {
+			for (var el = end.previousSibling; el && el !== start; el = end.previousSibling) {
 				parent.removeChild(el);
 			}
 		}
 	}
 	
-	function remove(){
+	function remove() {
 		clear();
 		removeNode(start);
 		removeNode(end);
 	}
 	
-	function append(){
-		if(!start.nextSibling){
+	function append() {
+		if (!start.nextSibling) {
 			throw new Error("Cannot append to detached range");
 		}
 		
 		insert(arguments, end, start.parentNode);
 	}
 	
-	function insertBefore(anchor){
-		if(!start.nextSibling){
+	function insertBefore(anchor) {
+		if (!start.nextSibling) {
 			throw new Error("Cannot insert detached range");
 		}
 		
 		var parent = anchor.parentNode;
 		
-		if( parent ){
+		if (parent) {
 			var el = start;
 			
-			while( el && el !== end ){
+			while (el && el !== end) {
 				var next = el.nextSibling;
 				parent.insertBefore(el, anchor);
 				el = next;
@@ -55,16 +55,16 @@ function createNodeRange(){
 		}
 	}
 	
-	function render(){
-		if(!start.nextSibling){
+	function render() {
+		if (!start.nextSibling) {
 			throw new Error("Cannot render detached range");
 		}
 		
 		var nodes = [];
 		var parent = start.parentNode;
 		
-		if( parent ){
-			for(var el = start; el && el !== end; el = el.nextSibling){
+		if (parent) {
+			for (var el = start; el && el !== end; el = el.nextSibling) {
 				nodes.push(el);
 			}
 			
