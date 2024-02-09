@@ -33,14 +33,14 @@ function createHistoryHandler(win) {
 		var historyState = computed(function() {
 			return history.state;
 		});
-		var update = historyState.update;
+		var invalidate = historyState.invalidate;
 		
-		onUnmount(onEvent(win, "popstate", update));
+		onUnmount(onEvent(win, "popstate", invalidate));
 		onUnmount(updateHistory.subscribe(updateLocal));
 		
 		function updateLocal(h) {
 			if (h === history) {
-				update();
+				invalidate();
 			}
 		}
 		
@@ -51,14 +51,14 @@ function createHistoryHandler(win) {
 		var historyURL = computed(function() {
 			return getURL(win);
 		});
-		var update = historyURL.update;
+		var invalidate = historyURL.invalidate;
 		
-		onUnmount(onEvent(win, "popstate", update));
+		onUnmount(onEvent(win, "popstate", invalidate));
 		onUnmount(updateHistory.subscribe(updateLocal));
 		
 		function updateLocal(h) {
 			if (h === history) {
-				update();
+				invalidate();
 			}
 		}
 		

@@ -14,10 +14,10 @@ function online(win) {
 	var value = computed(function() {
 		return nav.onLine !== false;
 	});
-	var update = value.update;
+	var invalidate = value.invalidate;
 	
-	onUnmount(onEvent(win, "online", update));
-	onUnmount(onEvent(win, "offline", update));
+	onUnmount(onEvent(win, "online", invalidate));
+	onUnmount(onEvent(win, "offline", invalidate));
 	
 	return value;
 }

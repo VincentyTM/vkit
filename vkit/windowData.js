@@ -73,7 +73,7 @@ function createWindowData(key, init) {
 		var parts = data.parts;
 		
 		if (part && typeof part.subscribe === "function") {
-			part.subscribe(data.signal.update);
+			part.subscribe(data.signal.invalidate);
 		}
 		
 		parts.set(parts.get().concat([part]));

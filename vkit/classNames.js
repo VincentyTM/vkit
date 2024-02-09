@@ -25,17 +25,17 @@ function classNames(classes) {
 		return array.join(" ");
 	});
 	
-	var update = signal.update;
+	var invalidate = cnames.invalidate;
 	
-	for(var cname in classes){
+	for (var cname in classes) {
 		var val = classes[cname];
 		
-		if( val && typeof val.subscribe === "function" ){
-			val.subscribe(update);
+		if (val && typeof val.subscribe === "function") {
+			val.subscribe(invalidate);
 		}
 	}
 	
-	return signal;
+	return cnames;
 }
 
 $.classNames = classNames;

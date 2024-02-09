@@ -40,7 +40,7 @@ function selectMethod(parent, name, args, dependencies) {
 			throw new Error("Invalid dependency " + dep);
 		}
 		
-		dep.subscribe(signal.update);
+		dep.subscribe(signal.invalidate);
 	}
 	
 	return signal;

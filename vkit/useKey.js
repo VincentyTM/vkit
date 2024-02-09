@@ -45,10 +45,10 @@ function useKey(arraySignal, getKey, transformValue) {
 		});
 		
 		if (key && typeof key.subscribe === "function") {
-			key.subscribe(selected.update);
+			key.subscribe(selected.invalidate);
 		}
 		
-		signal.subscribe(selected.update);
+		signal.subscribe(selected.invalidate);
 		selected.key = key;
 		
 		if (typeof transformValue === "function") {
