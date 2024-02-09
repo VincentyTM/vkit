@@ -411,6 +411,7 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 	use.subscribe = subscribe;
 	use.toggle = toggle;
 	use.toString = toString;
+	use.update = update;
 	use.view = view;
 	use.views = views;
 	
