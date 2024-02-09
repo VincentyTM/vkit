@@ -1,8 +1,8 @@
-(function($){
+(function($) {
 
 var createState = $.state;
 var getWindow = $.window;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
 var update = $.update;
 
 function getUserMedia(constraints, onError, nav, displayMedia){
@@ -16,14 +16,14 @@ function getUserMedia(constraints, onError, nav, displayMedia){
 	function setConstraints(constraints){
 		var stream = state.get();
 		
-		if( stream ){
-			stream.getTracks().forEach(function(track){
+		if (stream) {
+			stream.getTracks().forEach(function(track) {
 				track.stop();
 			});
 			state.set(null);
 		}
 		
-		if( constraints ){
+		if (constraints) {
 			if(
 				!nav.mediaDevices ||
 				(!displayMedia && typeof nav.mediaDevices.getUserMedia !== "function") ||
@@ -63,7 +63,7 @@ function getUserMedia(constraints, onError, nav, displayMedia){
 		setConstraints(constraints);
 	}
 	
-	unmount(function(){
+	onUnmount(function() {
 		setConstraints(null);
 	});
 	

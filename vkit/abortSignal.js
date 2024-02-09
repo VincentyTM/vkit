@@ -1,11 +1,11 @@
-(function($){
+(function($) {
 
 var onUnmount = $.unmount;
 
-function createAbortSignal(){
+function createAbortSignal() {
 	var abortController = new AbortController();
 	
-	onUnmount(function(){
+	onUnmount(function() {
 		abortController.abort();
 	});
 	

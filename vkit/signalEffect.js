@@ -1,25 +1,25 @@
-(function($){
+(function($) {
 
 var createComponent = $.component;
 var getComponent = $.getComponent;
 var onUnmount = $.unmount;
 
-function signalEffect(callback){
+function signalEffect(callback) {
 	var signal = this;
 	var prev = getComponent(true);
 	
-	if( prev ){
-		var component = createComponent(function(){
+	if (prev) {
+		var component = createComponent(function() {
 			callback(signal.get(), onUnmount);
 		});
 		
 		component.render();
 		
 		return signal.subscribe(component.render);
-	}else{
+	} else {
 		callback(signal.get());
 		
-		return signal.subscribe(function(value){
+		return signal.subscribe(function(value) {
 			callback(value);
 		});
 	}

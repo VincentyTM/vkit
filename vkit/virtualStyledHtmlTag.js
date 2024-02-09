@@ -1,19 +1,19 @@
-(function($){
+(function($) {
 
-var createHtmlTag = $.virtualHtmlTag;
+var htmlTag = $.virtualHtmlTag;
 var createStyle = $.style;
 
-function createStyledHtmlTag(tagName, css, attr, baseProps){
-	var tag = createHtmlTag(tagName);
+function virtualStyledHtmlTag(tagName, css, attr, baseProps) {
+	var tag = htmlTag(tagName);
 	var style = createStyle(css, attr);
 	
-	function Component(){
+	function Component() {
 		return tag(style, baseProps, arguments);
 	}
 	
 	return Component;
 }
 
-$.virtualStyledHtmlTag = createStyledHtmlTag;
+$.virtualStyledHtmlTag = virtualStyledHtmlTag;
 
 })($);

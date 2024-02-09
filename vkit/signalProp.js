@@ -1,13 +1,13 @@
-(function($){
+(function($) {
 
-function signalProp(key){
+function signalProp(name) {
 	var signal = this;
 	
-	return function(node){
-		node[key] = signal.get();
+	return function(element) {
+		element[name] = signal.get();
 		
-		signal.subscribe(function(value){
-			node[key] = value;
+		signal.subscribe(function(value) {
+			element[name] = value;
 		});
 	};
 }

@@ -1,10 +1,10 @@
-(function($){
+(function($) {
 
-function signalPipe(output, transform){
+function signalPipe(output, transform) {
 	var input = this;
 	var hasTransform = typeof transform === "function";
 	
-	function update(value){
+	function update(value) {
 		output.set(hasTransform ? transform(value, output.get()) : value);
 	}
 	

@@ -55,7 +55,7 @@ function createWritableSignal(value) {
 			
 			if (!enqueued) {
 				enqueued = true;
-				enqueueUpdate(updateSignal);
+				enqueueUpdate(notify);
 			}
 		}
 	}
@@ -76,7 +76,7 @@ function createWritableSignal(value) {
 		}
 	}
 	
-	function updateSignal() {
+	function notify() {
 		enqueued = false;
 		
 		var subs = subscriptions.slice();

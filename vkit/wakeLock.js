@@ -1,27 +1,30 @@
-(function($, navigator){
+(function($, navigator) {
 
-var createState = $.state;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
+var signal = $.signal;
 var update = $.update;
 
-function wakeLock(controller){
-	var currentSentinel = createState(null);
+function wakeLock(controller) {
+	var currentSentinel = signal(null);
 	var isPending = false;
 	
-	function lock(){
-		if( navigator.wakeLock && !isPending && !currentSentinel.get() ){
+	function lock() {
+		if (navigator.wakeLock && !isPending && !currentSentinel.get()) {
 			isPending = true;
-			navigator.wakeLock.request("screen").then(function(sentinel){
+			
+			navigator.wakeLock.request("screen").then(function(sentinel) {
 				isPending = false;
-				if(!sentinel.released){
-					sentinel.onrelease = function(){
+				
+				if (!sentinel.released) {
+					sentinel.onrelease = function() {
 						currentSentinel.set(null);
 						update();
 					};
+					
 					currentSentinel.set(sentinel);
 					update();
 				}
-			}, function(err){
+			}, function(err) {
 				isPending = false;
 				currentSentinel.set(null);
 				update();
@@ -29,29 +32,31 @@ function wakeLock(controller){
 		}
 	}
 	
-	function unlock(){
+	function unlock() {
 		var sentinel = currentSentinel.get();
-		if( sentinel && !isPending ){
+		
+		if (sentinel && !isPending) {
 			isPending = true;
-			sentinel.release().then(function(){
+			
+			sentinel.release().then(function() {
 				isPending = false;
 				currentSentinel.set(null);
 				update();
-			}, function(){
+			}, function() {
 				isPending = false;
 			});
 		}
 	}
 	
-	if( controller && typeof controller.effect === "function" ){
-		controller.map(Boolean).effect(function(doLock){
+	if (controller && typeof controller.effect === "function") {
+		controller.map(Boolean).effect(function(doLock) {
 			doLock ? lock() : unlock();
 		});
-	}else{
+	} else {
 		lock();
 	}
 	
-	unmount(unlock);
+	onUnmount(unlock);
 	
 	return currentSentinel.map(Boolean);
 }

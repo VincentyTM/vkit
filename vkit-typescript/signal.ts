@@ -301,7 +301,7 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 			
 			if (!enqueued) {
 				enqueued = true;
-				enqueueUpdate(updateSignal);
+				enqueueUpdate(notify);
 			}
 		}
 	}
@@ -322,7 +322,7 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 		}
 	}
 	
-	function updateSignal(): void {
+	function notify(): void {
 		enqueued = false;
 		var subs = subscriptions.slice();
 		var n = subs.length;

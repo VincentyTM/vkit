@@ -1,10 +1,10 @@
-(function($){
+(function($) {
 
-var createSignal = $.signal;
+var signal = $.signal;
 var isSignal = $.isSignal;
 
-function signalFrom(value){
-	return isSignal(value) ? value : createSignal(value);
+function signalFrom(value) {
+	return isSignal(value) ? value : signal(value);
 }
 
 $.signalFrom = signalFrom;

@@ -33,7 +33,7 @@ function persistentStorage() {
 	}
 	
 	return {
-		permission: permission("persistent-storage", requestPermission, null),
+		permission: permission("persistent-storage", requestPermission),
 		persisted: persisted.map()
 	};
 }

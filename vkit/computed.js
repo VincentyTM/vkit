@@ -3,7 +3,7 @@
 var createComponent = $.component;
 var getComponent = $.getComponent;
 var getInjector = $.getInjector;
-var onUnmount = $.unmount;
+var onUnmount = $.onUnmount;
 var signalEffect = $.signalEffect;
 var signalPipe = $.signalPipe;
 var signalProp = $.signalProp;
@@ -119,7 +119,6 @@ function createComputedSignal(getValue, inputs) {
 	use.render = signalText;
 	use.subscribe = subscribe;
 	use.toString = toString;
-	use.update = update;
 	use.view = view;
 	use.views = views;
 	
@@ -138,7 +137,6 @@ function signalMap() {
 		return value;
 	}
 	
-	return createComputedSignal(n === 1 ? args[0] : transform, [this]);
 }
 
 function toString() {

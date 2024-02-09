@@ -1,39 +1,38 @@
-(function($){
+(function($) {
 
 var createSignal = $.signal;
 var update = $.update;
 
 var delay = typeof Promise === "function" && typeof Promise.resolve === "function"
-	? function(callback){ Promise.resolve().then(callback); }
-	: function(callback){ setTimeout(callback, 0); };
+	? function(callback) { Promise.resolve().then(callback); }
+	: function(callback) { setTimeout(callback, 0); };
 
-function makeThenable(signal){
+function thenable(signal) {
 	signal.error = mapError;
 	signal.pending = mapPending;
 	signal.status = mapStatus;
 	signal.then = then;
 	signal.value = mapValue;
-	
 	return signal;
 }
 
-function mapStatus(){
+function mapStatus() {
 	return this.map(getStatus);
 }
 
-function mapError(){
+function mapError() {
 	return this.map(getError);
 }
 
-function mapPending(){
+function mapPending() {
 	return this.map(getPending);
 }
 
-function mapValue(){
+function mapValue() {
 	return this.map(getValue);
 }
 
-function getStatus(result){
+function getStatus(result) {
 	return (
 		result.fulfilled ? "fulfilled" :
 		result.rejected ? "rejected" :
@@ -42,78 +41,76 @@ function getStatus(result){
 	);
 }
 
-function getError(result){
+function getError(result) {
 	return result.error;
 }
 
-function getPending(result){
+function getPending(result) {
 	return !!result.pending;
 }
 
-function getValue(result){
+function getValue(result) {
 	return result.value;
 }
 
-function then(onResolve, onReject){
+function then(onResolve, onReject) {
 	var newSignal = createSignal({pending: true});
 	
-	function updateValue(result){
-		if( result.fulfilled ){
+	function updateValue(result) {
+		if (result.fulfilled) {
 			unsubscribe();
 			
-			if( typeof onResolve === "function" ){
+			if (typeof onResolve === "function") {
 				var value = result.value;
 				
-				delay(function(){
-					try{
+				delay(function() {
+					try {
 						var ret = onResolve(value);
 						
-						if( ret && typeof ret.then === "function" ){
-							ret.then(function(val){
+						if (ret && typeof ret.then === "function") {
+							ret.then(function(val) {
 								newSignal.set({fulfilled: true, value: val});
 								update();
-							}, function(error){
+							}, function(error) {
 								newSignal.set({rejected: true, error: error});
 								update();
 							});
-						}else{
+						} else {
 							newSignal.set({fulfilled: true, value: ret});
 						}
-					}catch(error){
+					} catch (error) {
 						newSignal.set({rejected: true, error: error});
-					}finally{
+					} finally {
 						update();
 					}
 				});
 			}
-		}else if( result.rejected ){
+		} else if (result.rejected) {
 			unsubscribe();
 			
-			if( typeof onReject === "function" ){
+			if (typeof onReject === "function") {
 				var error = result.error;
 				
-				delay(function(){
-					try{
+				delay(function() {
+					try {
 						newSignal.set(result);
 						onReject(error);
-					}finally{
+					} finally {
 						update();
 					}
 				});
 			}
-		}else if(!result.pending){
+		} else if (!result.pending) {
 			unsubscribe();
 			newSignal.set({});
 		}
 	}
 	
 	var unsubscribe = this.subscribe(updateValue, true);
-	
 	updateValue(this.get());
-	
-	return makeThenable(newSignal.map());
+	return thenable(newSignal.map());
 }
 
-$.thenable = makeThenable;
+$.thenable = thenable;
 
 })($);

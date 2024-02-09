@@ -1,13 +1,13 @@
-(function($){
+(function($) {
 
 var htmlTag = $.htmlTag;
 
-function renderThis(){
+function renderThis() {
 	return htmlTag(this.nodeName)(this.arguments);
 }
 
-function createVirtualHtmlTag(nodeName){
-	return function(){
+function virtualHtmlTag(nodeName) {
+	return function() {
 		return {
 			arguments: arguments,
 			isVirtual: true,
@@ -18,12 +18,12 @@ function createVirtualHtmlTag(nodeName){
 }
 
 var virtualHtmlTags = new Proxy({}, {
-	get: function(target, prop, receiver){
-		return createVirtualHtmlTag(prop.toLowerCase().replace(/_/g, "-"));
+	get: function(target, prop, receiver) {
+		return virtualHtmlTag(prop.toLowerCase().replace(/_/g, "-"));
 	}
 });
 
-$.virtualHtmlTag = createVirtualHtmlTag;
+$.virtualHtmlTag = virtualHtmlTag;
 $.virtualHtmlTags = virtualHtmlTags;
 
 })($);

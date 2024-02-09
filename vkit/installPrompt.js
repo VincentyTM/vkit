@@ -1,13 +1,13 @@
-(function($){
+(function($) {
 
-var createSignal = $.signal;
+var signal = $.signal;
 var getWindow = $.window;
 var onEvent = $.onEvent;
 var onUnmount = $.unmount;
 var update = $.update;
 
-function createInstallPrompt(win){
-	if(!win){
+function createInstallPrompt(win) {
+	if (!win) {
 		win = getWindow();
 	}
 	
@@ -17,13 +17,14 @@ function createInstallPrompt(win){
 		win.document.referrer.indexOf("android-app://") > -1
 	);
 	
-	var installPrompt = createSignal(null);
-	var result = createSignal(isAppInstalled ? "installed" : "default");
+	var installPrompt = signal(null);
+	var result = signal(isAppInstalled ? "installed" : "default");
 	
-	function beforeInstall(e){
+	function beforeInstall(e) {
 		e.preventDefault();
+		
 		installPrompt.set({
-			accept: function(){
+			accept: function() {
 				e.prompt();
 				e.userChoice.then(setChoice);
 			},
@@ -31,17 +32,17 @@ function createInstallPrompt(win){
 		});
 	}
 	
-	function setChoice(choiceResult){
+	function setChoice(choiceResult) {
 		result.set(choiceResult.outcome);
 		installPrompt.set(null);
 		update();
 	}
 	
-	function appInstalled(){
+	function appInstalled() {
 		result.set("installed");
 	}
 	
-	function deny(){
+	function deny() {
 		installPrompt.set(null);
 		result.set("dismissed");
 	}
@@ -50,9 +51,7 @@ function createInstallPrompt(win){
 	onUnmount(onEvent(win, "appinstalled", appInstalled));
 	
 	var installPromptState = installPrompt.map();
-	
 	installPromptState.result = result.map();
-	
 	return installPromptState;
 }
 
