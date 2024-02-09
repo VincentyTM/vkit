@@ -56,7 +56,7 @@ export default function bind<Target>(
 				break;
 			case "function":
 				if (name.indexOf("on") === 0) {
-					var unsub = onEvent(target, name.substring(2), value);
+					var unsub = onEvent(target as never, name.substring(2), value as never);
 					
 					if (!persistent) {
 						onUnmount(unsub);

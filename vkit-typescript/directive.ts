@@ -9,7 +9,7 @@ export default function directive<ElementType>(
 
 	effect(function() {
 		if (node) {
-			node.nodeValue = callback(element)!;
+			node.nodeValue = callback(element) as string;
 		} else {
 			text = callback(element) as string | undefined;
 		}

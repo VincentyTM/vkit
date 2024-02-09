@@ -65,9 +65,9 @@ function bindClasses(el: HTMLElement, arg: ClassArgument, onCleanup?: CleanupFun
 	}
 	
 	if (isArray(arg)) {
-		var n = arg.length;
+		var n = (arg as ArrayLike<ClassArgument>).length;
 		for (var i = 0; i < n; ++i) {
-			bindClasses(el, arg[i], onCleanup);
+			bindClasses(el, (arg as ArrayLike<ClassArgument>)[i], onCleanup);
 		}
 		return;
 	}
