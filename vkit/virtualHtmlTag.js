@@ -17,13 +17,6 @@ function virtualHtmlTag(nodeName) {
 	};
 }
 
-var virtualHtmlTags = new Proxy({}, {
-	get: function(target, prop, receiver) {
-		return virtualHtmlTag(prop.toLowerCase().replace(/_/g, "-"));
-	}
-});
-
 $.virtualHtmlTag = virtualHtmlTag;
-$.virtualHtmlTags = virtualHtmlTags;
 
 })($);
