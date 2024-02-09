@@ -1,23 +1,23 @@
-(function($){
+(function($) {
 
 var computed = $.computed;
 
-function classNames(classes){
-	var signal = computed(function(){
+function classNames(classes) {
+	var cnames = computed(function() {
 		var array = [];
 		
-		for(var cname in classes){
+		for (var cname in classes) {
 			var val = classes[cname];
 			
-			if( val && typeof val.get === "function" ){
-				if( val.get() ){
+			if (val && typeof val.get === "function") {
+				if (val.get()) {
 					array.push(cname);
 				}
-			}else if( typeof val === "function" ){
-				if( val() ){
+			} else if (typeof val === "function") {
+				if (val()) {
 					array.push(cname);
 				}
-			}else if( val ){
+			} else if (val) {
 				array.push(cname);
 			}
 		}

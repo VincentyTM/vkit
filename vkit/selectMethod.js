@@ -1,18 +1,18 @@
-(function($){
+(function($) {
 
 var computed = $.computed;
 var isArray = $.isArray;
 var selectProperty = $.selectProperty;
 
-function selectMethod(parent, name, args, dependencies){
-	var signal = computed(function(){
+function selectMethod(parent, name, args, dependencies) {
+	var signal = computed(function() {
 		var value = parent.get();
 		
-		if(!value){
+		if (!value) {
 			return;
 		}
 		
-		if( typeof value[name] !== "function" ){
+		if (typeof value[name] !== "function") {
 			throw new TypeError(name + " is not a function");
 		}
 		
@@ -22,21 +22,21 @@ function selectMethod(parent, name, args, dependencies){
 	var m = dependencies.length;
 	var deps = new Array(m);
 	
-	for(var i=0; i<m; ++i){
+	for (var i = 0; i < m; ++i) {
 		var dep = dependencies[i];
 		
-		if( typeof dep === "string" ){
+		if (typeof dep === "string") {
 			dep = selectProperty(parent, dep);
-		}else if( isArray(dep) ){
+		} else if (isArray(dep)) {
 			var arr = dep;
 			var l = arr.length;
 			
 			dep = parent;
 			
-			for(var j=0; j<l; ++j){
+			for (var j = 0; j < l; ++j) {
 				dep = selectProperty(dep, arr[j]);
 			}
-		}else{
+		} else {
 			throw new Error("Invalid dependency " + dep);
 		}
 		

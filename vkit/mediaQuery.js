@@ -1,4 +1,4 @@
-(function($){
+(function($) {
 
 var computed = $.computed;
 var getWindow = $.window;
