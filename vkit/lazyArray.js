@@ -35,7 +35,7 @@ function lazyArray(arraySignal, backwards) {
 		}
 	});
 	
-	return result;
+	return optimized;
 }
 
 $.lazyArray = lazyArray;
