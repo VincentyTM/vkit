@@ -39,8 +39,13 @@ function unsavedGuard(condition, win) {
 		value ? add() : remove();
 	}
 	
-	if (condition && condition.map) {
-		condition.map(Boolean).effect(update);
+	if (typeof condition === "function") {
+		(typeof condition.effect === "function"
+			? condition.map(Boolean)
+			: computed(function() {
+				return !!condition();
+			})
+		).effect(update);
 	} else {
 		add();
 	}
