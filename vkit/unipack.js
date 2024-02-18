@@ -4,6 +4,7 @@ var createObservable = $.observable;
 var createState = $.state;
 var makeThenable = $.thenable;
 var unmount = $.unmount;
+var effect = $.effect;
 var update = $.update;
 
 function pack(files){
@@ -125,9 +126,15 @@ function unpack(currentFile, options){
 		reader.abort();
 	}
 	
-	if( currentFile && typeof currentFile.effect === "function" ){
-		currentFile.effect(setFile);
-	}else{
+	if (typeof currentFile === "function") {
+		if (typeof currentFile.effect === "function") {
+			currentFile.effect(setFile);
+		} else {
+			effect(function() {
+				setFile(currentFile());
+			});
+		}
+	} else {
 		setFile(currentFile);
 	}
 	

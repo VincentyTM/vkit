@@ -2,6 +2,7 @@
 
 var createState = $.state;
 var unmount = $.unmount;
+var effect = $.effect;
 
 function createAssetState(refs, assetName, defaultValue){
 	var state = createState();
@@ -30,10 +31,16 @@ function createAssetState(refs, assetName, defaultValue){
 		});
 	}
 	
-	if( assetName && typeof assetName.effect === "function" ){
-		assetName.effect(setAssetName);
-	}else{
-		setAssetName(assetName, unmount);
+	if (typeof assetName === "function") {
+		if (typeof assetName.effect === "function") {
+			assetName.effect(setAssetName);
+		} else {
+			effect(function() {
+				setAssetName(assetName(), onUnmount);
+			});
+		}
+	} else {
+		setAssetName(assetName, onUnmount);
 	}
 	
 	return state.map();

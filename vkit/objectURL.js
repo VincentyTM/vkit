@@ -1,4 +1,5 @@
 (function($, global){
+var effect = $.effect;
 
 var createState = $.state;
 var unmount = $.unmount;
@@ -22,10 +23,18 @@ function createObjectURL(file){
 			}
 		}
 		
-		file.effect(function(value){
+		function setURL(value) {
 			revoke();
 			urlState.set(value ? (typeof value === "string" ? value : URL.createObjectURL(value)) : "");
-		});
+		}
+		
+		if (typeof file.effect === "function") {
+			file.effect(setURL);
+		} else {
+			effect(function() {
+				setURL(file());
+			});
+		}
 		
 		unmount(revoke);
 		

@@ -1,6 +1,7 @@
 (function($, document){
 
 var createState = $.state;
+var effect = $.effect;
 var getComponent = $.getComponent;
 var getWindow = $.window;
 var unmount = $.unmount;
@@ -60,9 +61,15 @@ function createFont(name, url, onError, doc){
 		}
 	}
 	
-	if( url && typeof url.effect === "function" ){
-		url.effect(setFont);
-	}else{
+	if (typeof url === "function") {
+		if (typeof url.effect === "function") {
+			url.effect(setFont);
+		} else {
+			effect(function() {
+				setFont(url());
+			});
+		}
+	} else {
 		setFont(url);
 	}
 	

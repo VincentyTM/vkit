@@ -2,6 +2,7 @@
 
 var createState = $.state;
 var unmount = $.unmount;
+var effect = $.effect;
 var update = $.update;
 
 function createFileReader(input, options){
@@ -69,9 +70,15 @@ function createFileReader(input, options){
 		update();
 	};
 	
-	if( input && typeof input.effect === "function" ){
-		input.effect(updateOutput);
-	}else{
+	if (typeof input === "function") {
+		if (typeof input.effect === "function") {
+			input.effect(updateOutput);
+		} else {
+			effect(function() {
+				updateOutput(input());
+			});
+		}
+	} else {
 		updateOutput(input);
 	}
 	
