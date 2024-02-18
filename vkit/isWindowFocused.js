@@ -1,31 +1,24 @@
-(function($){
+(function($) {
 
-var createSignal = $.signal;
+var computed = $.computed;
 var getWindow = $.window;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
 
-function isWindowFocused(win){
-	if(!win){
-		win = getWindow();
-	}
+function isWindowFocused() {
+	var win = getWindow();
+	var doc = win.document;
 	
-	var state = createSignal(win.document.hasFocus());
+	var focused = computed(function() {
+		return doc.hasFocus();
+	});
 	
-	function focus(){
-		state.set(true);
-	}
+	onUnmount(onEvent(win, "blur", focused.invalidate));
+	onUnmount(onEvent(win, "focus", focused.invalidate));
 	
-	function blur(){
-		state.set(false);
-	}
-	
-	onUnmount(onEvent(win, "blur", blur));
-	onUnmount(onEvent(win, "focus", focus));
-	
-	return state.map();
+	return focused;
 }
 
 $.isWindowFocused = isWindowFocused;
 
-})($, window);
+})($);
