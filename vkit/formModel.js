@@ -69,8 +69,8 @@ function createFormModel(data){
 				isFormValid.set(false);
 			}
 			
-			if( getComponent() !== component ){
-				unmount(validate);
+			if (getComponent() !== component) {
+				onUnmount(validate);
 			}
 			
 			onUnmount(
