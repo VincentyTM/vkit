@@ -19,6 +19,7 @@ function getWindow(){
 	return win;
 }
 
+$.getWindow = getWindow;
 $.window = getWindow;
 $.windowService = WindowService;
 

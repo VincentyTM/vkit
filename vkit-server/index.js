@@ -29,6 +29,7 @@ module.exports = {
 	errorBoundary: require("./errorBoundary"),
 	escapeHTML: require("./escapeHTML"),
 	get: require("./get"),
+	getWindow: require("./getWindow"),
 	history: require("./history"),
 	href: require("./href"),
 	html: require("./html"),
@@ -91,7 +92,7 @@ module.exports = {
 	virtualStyledHtmlTag: styledHtmlTag,
 	webPush: require("./webPush"),
 	webSocket: require("./webSocket"),
-	window: require("./window"),
+	window: require("./getWindow"),
 	windowContent: require("./windowContent"),
 	windowData: require("./windowData"),
 	word: languageService.word
