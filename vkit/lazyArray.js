@@ -16,7 +16,7 @@ function lazyArray(arraySignal, backwards) {
 			optimized.set(array);
 		} else {
 			n += 10;
-			optimized.set(backwards ? array.slice(m - n) : array.slice(0, n));
+			optimized.set(backwards ? array.slice(Math.max(0, m - n)) : array.slice(0, n));
 			
 			var interval = setInterval(function() {
 				n += 10;
@@ -25,7 +25,7 @@ function lazyArray(arraySignal, backwards) {
 					clearInterval(interval);
 				}
 				
-				optimized.set(backwards ? array.slice(m - n) : array.slice(0, n));
+				optimized.set(backwards ? array.slice(Math.max(0, m - n)) : array.slice(0, n));
 				update();
 			}, 1);
 			
