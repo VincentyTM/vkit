@@ -2,7 +2,7 @@
 
 var createState = $.state;
 var onEvent = $.onEvent;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
 var update = $.update;
 
 function mediaDevices(onError, nav){
@@ -25,8 +25,8 @@ function mediaDevices(onError, nav){
 		});
 	}
 	
-	if( nav.mediaDevices && typeof nav.mediaDevices.enumerateDevices === "function" ){
-		unmount(
+	if (nav.mediaDevices && typeof nav.mediaDevices.enumerateDevices === "function") {
+		onUnmount(
 			onEvent(nav.mediaDevices, "devicechange", fetchDevices)
 		);
 		

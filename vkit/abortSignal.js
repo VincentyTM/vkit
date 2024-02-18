@@ -1,6 +1,6 @@
 (function($) {
 
-var onUnmount = $.unmount;
+var onUnmount = $.onUnmount;
 
 function createAbortSignal() {
 	var abortController = new AbortController();

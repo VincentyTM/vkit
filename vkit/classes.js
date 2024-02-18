@@ -2,7 +2,7 @@
 
 var effect = $.effect;
 var isArray = $.isArray;
-var onUnmount = $.unmount;
+var onUnmount = $.onUnmount;
 
 function addClass(el, name) {
 	if (el.classList) {

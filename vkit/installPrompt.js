@@ -3,7 +3,7 @@
 var signal = $.signal;
 var getWindow = $.window;
 var onEvent = $.onEvent;
-var onUnmount = $.unmount;
+var onUnmount = $.onUnmount;
 var update = $.update;
 
 function createInstallPrompt() {

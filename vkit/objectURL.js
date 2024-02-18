@@ -1,8 +1,8 @@
 (function($, global){
 var effect = $.effect;
+var onUnmount = $.onUnmount;
 
 var createState = $.state;
-var unmount = $.unmount;
 var URL = global.URL || global.webkitURL || global.mozURL || {
 	createObjectURL: function(){ return ""; },
 	revokeObjectURL: function(){}
@@ -36,14 +36,14 @@ function createObjectURL(file){
 			});
 		}
 		
-		unmount(revoke);
+		onUnmount(revoke);
 		
 		return urlState;
 	}
 	
 	var url = typeof file === "string" ? file : URL.createObjectURL(file);
 	
-	unmount(function(){
+	onUnmount(function() {
 		URL.revokeObjectURL(url);
 	});
 	

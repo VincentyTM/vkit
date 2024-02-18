@@ -4,7 +4,7 @@ var createHistoryHandler = $.history;
 var createSignal = $.signal;
 var getWindow = $.window;
 var onEvent = $.onEvent;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
 
 function getHash(url){
 	var pos = url.indexOf("#");
@@ -26,9 +26,9 @@ function createHashSignal(win){
 		location.replace("#" + encodeURIComponent(value));
 	});
 	
-	unmount(
-		onEvent(win, "hashchange", function(){
-			signal.set(decodeURIComponent(location.hash.substring(1)));
+	onUnmount(
+		onEvent(win, "hashchange", function() {
+			hash.set(decodeURIComponent(location.hash.substring(1)));
 		})
 	);
 	

@@ -1,7 +1,7 @@
 (function($){
 
 var createObservable = $.observable;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
 
 function replaceScriptEnds(text){
 	return "<\\" + text.substring(1);
@@ -33,7 +33,7 @@ function createSandbox(code, sandboxFlags){
 		}
 		
 		iframe.sandbox = sandboxFlags || "allow-scripts";
-		unmount(emitRun.subscribe(runCode));
+		onUnmount(emitRun.subscribe(runCode));
 		runCode(code);
 	}
 	

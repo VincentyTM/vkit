@@ -3,7 +3,7 @@
 var createSignal = $.signal;
 var getWindow = $.window;
 var onEvent = $.onEvent;
-var onUnmount = $.unmount;
+var onUnmount = $.onUnmount;
 
 function useStorage(storage, key, win){
 	var signal = createSignal(storage.getItem(key));

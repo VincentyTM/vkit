@@ -1,8 +1,8 @@
 (function($){
 
-var unmount = $.unmount;
 var createObservable = $.observable;
 var getComponent = $.getComponent;
+var onUnmount = $.onUnmount;
 
 function onError(errorHandler){
 	var component = getComponent();
@@ -13,7 +13,7 @@ function onError(errorHandler){
 	
 	var unsubscribe = component.emitError.subscribe(errorHandler);
 	
-	unmount(function(){
+	onUnmount(function() {
 		unsubscribe();
 		
 		if( component.emitError.count() === 0 ){

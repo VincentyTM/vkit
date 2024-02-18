@@ -6,7 +6,7 @@ var createState = $.state;
 var inject = $.inject;
 var navigate = $.navigate;
 var onNavigate = $.onNavigate;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
 var update = $.update;
 
 function getSavePrompt(options){
@@ -28,22 +28,25 @@ function SavePromptService(){
 		var discard = options.discard;
 		var save = options.save;
 		var showIf = options.showIf;
-		if( typeof showIf === "function" ){
-			unmount(
-				emitNavigate.subscribe(function(nav){
-					if( showIf(nav) ){
+		
+		if (typeof showIf === "function") {
+			onUnmount(
+				emitNavigate.subscribe(function(nav) {
+					if (showIf(nav)) {
 						enabled = false;
 					}
 				})
 			);
 		}
-		if( typeof save === "function" ){
-			unmount(
+		
+		if (typeof save === "function") {
+			onUnmount(
 				emitSave.subscribe(save)
 			);
 		}
-		if( typeof discard === "function" ){
-			unmount(
+		
+		if (typeof discard === "function") {
+			onUnmount(
 				emitDiscard.subscribe(discard)
 			);
 		}
@@ -53,9 +56,9 @@ function SavePromptService(){
 		prompt.set(null);
 	}
 	
-	unmount(
-		onNavigate(function(nav){
-			if( allSaved.get() ){
+	onUnmount(
+		onNavigate(function(nav) {
+			if (allSaved.get()) {
 				return;
 			}
 			

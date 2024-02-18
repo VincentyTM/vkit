@@ -3,7 +3,7 @@
 var computed = $.computed;
 var getWindow = $.window;
 var onEvent = $.onEvent;
-var onUnmount = $.unmount;
+var onUnmount = $.onUnmount;
 var signal = $.signal;
 
 function getInstalling(reg) {

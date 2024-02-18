@@ -1,8 +1,8 @@
 (function($){
 
 var createState = $.state;
-var unmount = $.unmount;
 var effect = $.effect;
+var onUnmount = $.onUnmount;
 var update = $.update;
 
 function createFileReader(input, options){
@@ -84,7 +84,7 @@ function createFileReader(input, options){
 	
 	var unsubscribe = options && typeof options.aborter === "function"
 		? options.aborter(abort)
-		: unmount(abort);
+		: onUnmount(abort);
 	
 	return output.map();
 }

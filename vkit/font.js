@@ -4,7 +4,7 @@ var createState = $.state;
 var effect = $.effect;
 var getComponent = $.getComponent;
 var getWindow = $.window;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
 var update = $.update;
 
 function renderFont(){

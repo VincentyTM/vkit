@@ -3,7 +3,7 @@
 var createSignal = $.signal;
 var isSignal = $.isSignal;
 var observe = $.observe;
-var onUnmount = $.unmount;
+var onUnmount = $.onUnmount;
 
 function signalOf(obj, prop){
 	if( prop === undefined ){

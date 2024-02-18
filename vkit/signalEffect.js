@@ -2,7 +2,7 @@
 
 var createComponent = $.component;
 var getComponent = $.getComponent;
-var onUnmount = $.unmount;
+var onUnmount = $.onUnmount;
 
 function signalEffect(callback) {
 	var signal = this;

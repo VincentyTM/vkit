@@ -2,7 +2,7 @@
 
 var animate = $.animate;
 var createState = $.state;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
 var update = $.update;
 
 function animateTo(state, duration, options){
@@ -35,8 +35,8 @@ function animateTo(state, duration, options){
 		currentAnimation = animate(animationLoop, duration * Math.abs(end - start));
 	});
 	
-	unmount(function(){
-		if( currentAnimation ){
+	onUnmount(function() {
+		if (currentAnimation) {
 			currentAnimation.stop();
 		}
 	});

@@ -1,7 +1,7 @@
 (function($){
+var onUnmount = $.onUnmount;
 
 var createEffect = $.effect;
-var unmount = $.unmount;
 var count = 0;
 
 function createStyleSelector(attr, attrValue){
@@ -15,7 +15,7 @@ function createStyleSelector(attr, attrValue){
 	function directive(cond){
 		if( cond && typeof cond.setAttribute === "function" ){
 			cond.setAttribute(attr, attrValue);
-			unmount(function(){
+			onUnmount(function() {
 				cond.removeAttribute(attr);
 			});
 			return;

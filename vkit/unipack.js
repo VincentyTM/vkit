@@ -3,8 +3,8 @@
 var createObservable = $.observable;
 var createState = $.state;
 var makeThenable = $.thenable;
-var unmount = $.unmount;
 var effect = $.effect;
+var onUnmount = $.onUnmount;
 var update = $.update;
 
 function pack(files){
@@ -140,8 +140,8 @@ function unpack(currentFile, options){
 	
 	if( options && typeof options.aborter === "function" ){
 		options.aborter(abort);
-	}else{
-		unmount(abort);
+	} else {
+		onUnmount(abort);
 	}
 	
 	return makeThenable(result.map());

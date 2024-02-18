@@ -2,7 +2,7 @@
 
 var createScript = $.script;
 var createState = $.state;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
 var update = $.update;
 
 function call(component){
@@ -32,7 +32,7 @@ function lazyComponent(promise, pendingComponent, errorComponent){
 			onLoad(promise);
 		}, 0);
 		
-		unmount(function(){
+		onUnmount(function() {
 			clearTimeout(timeout);
 		});
 	}else{

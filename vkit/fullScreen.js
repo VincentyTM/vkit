@@ -3,7 +3,7 @@
 var createState = $.state;
 var getWindow = $.window;
 var onEvent = $.onEvent;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
 
 function createFullScreenState(doc){
 	if(!doc){
@@ -46,7 +46,7 @@ function createFullScreenState(doc){
 		}
 	});
 	
-	unmount(
+	onUnmount(
 		onEvent(
 			doc,
 			"onfullscreenchange" in doc ? "fullscreenchange" : "webkitfullscreenchange",

@@ -1,8 +1,8 @@
 (function($){
 
 var createState = $.state;
-var unmount = $.unmount;
 var effect = $.effect;
+var onUnmount = $.onUnmount;
 
 function createAssetState(refs, assetName, defaultValue){
 	var state = createState();

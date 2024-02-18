@@ -6,8 +6,8 @@ var createSignal = $.signal;
 var getComponent = $.getComponent;
 var isArray = $.isArray;
 var observe = $.observe;
+var onUnmount = $.onUnmount;
 var setComponent = $.setComponent;
-var unmount = $.unmount;
 
 function select(key, factory){
 	return selectProperty(this, key, factory);
@@ -121,8 +121,8 @@ function selectProperty(parent, key, factory){
 		setComponent(prev);
 	}
 	
-	unmount(function(){
-		if( --substore.refCount === 0 ){
+	onUnmount(function() {
+		if (--substore.refCount === 0) {
 			delete parent.substores[key];
 			substore.unsubscribe();
 		}

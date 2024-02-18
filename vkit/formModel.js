@@ -3,7 +3,7 @@
 var createState = $.state;
 var createObservable = $.observable;
 var getComponent = $.getComponent;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
 
 function not(value){
 	return !value;
@@ -41,14 +41,14 @@ function createFormModel(data){
 			return function(input){
 				getter(input, data);
 				
-				unmount(
-					dataChange.subscribe(function(){
+				onUnmount(
+					dataChange.subscribe(function() {
 						getter(input, data);
 					})
 				);
 				
-				unmount(
-					updateModel.subscribe(function(){
+				onUnmount(
+					updateModel.subscribe(function() {
 						setter(input, data);
 					})
 				);
@@ -73,9 +73,9 @@ function createFormModel(data){
 				unmount(validate);
 			}
 			
-			unmount(
-				validators.subscribe(function(options){
-					if( rule(data) ){
+			onUnmount(
+				validators.subscribe(function(options) {
+					if (rule(data)) {
 						isValid.set(true);
 					}else if(!submitOnly || (options && options.submitted)){
 						isFormValid.set(false);

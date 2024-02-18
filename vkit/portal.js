@@ -1,15 +1,21 @@
-(function($){
+(function($) {
 
 var append = $.append;
-var createNodeRange = $.nodeRange;
-var unmount = $.unmount;
+var nodeRange = $.nodeRange;
+var onUnmount = $.onUnmount;
 
-function createPortal(children, parent){
-	var range = createNodeRange();
-	append(parent, [range.start, children, range.end]);
-	unmount(range.remove);
+function portal(children, parent) {
+	var range = nodeRange();
+	
+	append(parent, [
+		range.start,
+		children,
+		range.end
+	]);
+	
+	onUnmount(range.remove);
 }
 
-$.portal = createPortal;
+$.portal = portal;
 
 })($);

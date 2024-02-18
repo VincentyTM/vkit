@@ -2,7 +2,7 @@
 
 var enqueueUpdate = $.enqueueUpdate;
 var getComponent = $.getComponent;
-var onUnmount = $.unmount;
+var onUnmount = $.onUnmount;
 var signalEffect = $.signalEffect;
 var signalMap = $.signalMap;
 var signalPipe = $.signalPipe;

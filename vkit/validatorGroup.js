@@ -1,8 +1,8 @@
 (function($){
 
 var createState = $.state;
+var onUnmount = $.onUnmount;
 var valuesOf = $.valuesOf;
-var unmount = $.unmount;
 
 function not(value){
 	return !value;
@@ -36,7 +36,7 @@ function createValidatorGroup(){
 		
 		inputs.set(inputs.get().concat([validity]));
 		
-		unmount(function(){
+		onUnmount(function() {
 			var validities = inputs.get();
 			for(var i=validities.length; i--;){
 				if( validities[i] === validity ){
