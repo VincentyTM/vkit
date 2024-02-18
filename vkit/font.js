@@ -1,61 +1,56 @@
-(function($, document){
+(function($) {
 
-var createState = $.state;
 var effect = $.effect;
 var getComponent = $.getComponent;
 var getWindow = $.window;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
 var update = $.update;
 
-function renderFont(){
+function renderFont() {
 	return null;
 }
 
-function createFont(name, url, onError, doc){
-	if( typeof name !== "string" ){
+function createFont(name, url, doc) {
+	if (typeof name !== "string") {
 		throw new TypeError("Font name must be a string");
 	}
 	
-	if(!doc){
+	if (!doc) {
 		doc = getWindow().document;
 	}
 	
-	var fontFaceState = createState(null);
+	var error = signal(null);
+	var fontFaceState = signal(null);
 	
-	if(!(doc.fonts && typeof FontFace === "function")){
-		if( typeof onError === "function" ){
-			onError(new Error("FontFace API is not supported"));
-		}
-		
+	if (!(doc.fonts && typeof FontFace === "function")) {
+		error.set(new Error("FontFace API is not supported"));
 		return fontFaceState;
 	}
 	
-	function setFont(url){
+	function setFont(url) {
 		var fontFace = fontFaceState.get();
 		
-		if( fontFace ){
+		if (fontFace) {
 			doc.fonts["delete"](fontFace);
 		}
 		
 		fontFaceState.set(null);
 		
-		if( url ){
+		if (url) {
 			var fontFace = new FontFace(name, "url(" + url + ")");
 			doc.fonts.add(fontFace);
-			doc.fonts.load("1em " + name).then(function(array){
-				for(var i=array.length; i--;){
-					if( array[i] === fontFace ){
+			doc.fonts.load("1em " + name).then(function(array) {
+				for (var i = array.length; i--;) {
+					if (array[i] === fontFace) {
 						fontFaceState.set(fontFace);
 						break;
 					}
 				}
 				
 				update();
-			}, function(error){
-				if( typeof onError === "function" ){
-					onError(error);
-				}
-				
+			}, function(ex) {
+				error.set(ex);
 				update();
 			});
 		}
@@ -73,15 +68,16 @@ function createFont(name, url, onError, doc){
 		setFont(url);
 	}
 	
-	function remove(){
+	function remove() {
 		setFont(null);
 	}
 	
-	if( getComponent(true) ){
-		unmount(remove);
+	if (getComponent(true)) {
+		onUnmount(remove);
 	}
 	
 	var result = fontFaceState.map();
+	result.onError = error.subscribe;
 	result.remove = remove;
 	result.render = renderFont;
 	
@@ -90,4 +86,4 @@ function createFont(name, url, onError, doc){
 
 $.font = createFont;
 
-})($, document);
+})($);
