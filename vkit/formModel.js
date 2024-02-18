@@ -1,24 +1,24 @@
-(function($){
+(function($) {
 
-var createState = $.state;
-var createObservable = $.observable;
 var getComponent = $.getComponent;
+var observable = $.observable;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
 
-function not(value){
+function not(value) {
 	return !value;
 }
 
-function createFormModel(data){
-	var dataChange = createObservable();
-	var submitSuccess = createObservable();
-	var submitError = createObservable();
-	var updateModel = createObservable();
-	var validators = createObservable();
-	var isFormValid = createState(true);
+function formModel(data) {
+	var dataChange = observable();
+	var submitSuccess = observable();
+	var submitError = observable();
+	var updateModel = observable();
+	var validators = observable();
+	var isFormValid = signal(true);
 	var component = getComponent(true);
 	
-	function validate(options){
+	function validate(options) {
 		updateModel();
 		isFormValid.set(true);
 		validators(options);
@@ -27,18 +27,20 @@ function createFormModel(data){
 	
 	return {
 		bind: {
-			onsubmit: function(e){
+			onsubmit: function(e) {
 				e.preventDefault();
 				updateModel();
-				if( validate({submitted: true}) ){
+				
+				if (validate({submitted: true})) {
 					submitSuccess(data, this);
-				}else{
+				} else {
 					submitError(this);
 				}
 			}
 		},
-		control: function(getter, setter){
-			return function(input){
+		
+		control: function(getter, setter) {
+			return function(input) {
 				getter(input, data);
 				
 				onUnmount(
@@ -54,6 +56,7 @@ function createFormModel(data){
 				);
 			};
 		},
+		
 		data: data,
 		invalid: isFormValid.map(not),
 		onError: submitError.subscribe,
@@ -61,11 +64,12 @@ function createFormModel(data){
 		update: dataChange,
 		valid: isFormValid.map(),
 		validate: validate,
-		validator: function(rule, options){
+		
+		validator: function(rule, options) {
 			var submitOnly = options && options.submitOnly;
 			var isValid = createState(Boolean(submitOnly || rule(data)));
 			
-			if(!isValid.get()){
+			if (!isValid.get()) {
 				isFormValid.set(false);
 			}
 			
@@ -77,7 +81,7 @@ function createFormModel(data){
 				validators.subscribe(function(options) {
 					if (rule(data)) {
 						isValid.set(true);
-					}else if(!submitOnly || (options && options.submitted)){
+					} else if (!submitOnly || (options && options.submitted)) {
 						isFormValid.set(false);
 						isValid.set(false);
 					}
@@ -92,6 +96,6 @@ function createFormModel(data){
 	};
 }
 
-$.formModel = createFormModel;
+$.formModel = formModel;
 
 })($);

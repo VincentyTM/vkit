@@ -1,14 +1,14 @@
-(function($){
+(function($) {
 
-var createState = $.state;
 var effect = $.effect;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
 
-function createAssetState(refs, assetName, defaultValue){
-	var state = createState();
+function createAssetState(refs, assetName, defaultValue) {
+	var state = signal();
 	
-	function setAssetName(name, cleanup){
-		if(!name && name !== ""){
+	function setAssetName(name, onCleanup) {
+		if (!name && name !== "") {
 			state.set(defaultValue);
 			return;
 		}
@@ -16,15 +16,15 @@ function createAssetState(refs, assetName, defaultValue){
 		var asset = refs.add(name);
 		state.set(asset.isFulfilled() ? asset.get() : defaultValue);
 		
-		var removeLoadHandler = asset.onLoad(function(value){
+		var removeLoadHandler = asset.onLoad(function(value) {
 			state.set(value);
 		});
 		
-		var removeResetHandler = asset.onReset(function(){
+		var removeResetHandler = asset.onReset(function() {
 			state.set(defaultValue);
 		});
 		
-		cleanup(function(){
+		onCleanup(function() {
 			removeLoadHandler();
 			removeResetHandler();
 			refs.remove(name);

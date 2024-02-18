@@ -1,71 +1,71 @@
-(function($, undefined){
+(function($, undefined) {
 
 var compose = $.compose;
-var createObservable = $.observable;
-var createSignal = $.signal;
 var getComponent = $.getComponent;
 var isArray = $.isArray;
+var observable = $.observable;
 var observe = $.observe;
 var onUnmount = $.onUnmount;
 var setComponent = $.setComponent;
+var signal = $.signal;
 
-function select(key, factory){
+function select(key, factory) {
 	return selectProperty(this, key, factory);
 }
 
-function selectProperty(parent, key, factory){
-	if( key === undefined || key === null ){
-		if( typeof Proxy !== "function" ){
+function selectProperty(parent, key, factory) {
+	if (key === undefined || key === null) {
+		if (typeof Proxy !== "function") {
 			throw new ReferenceError("Proxy is not supported in your browser!");
 		}
 		
 		return new Proxy({}, {
-			get: function(target, key, receiver){
+			get: function(target, key, receiver) {
 				return selectProperty(parent, key);
 			}
 		});
 	}
 	
-	if(!parent.substores){
+	if (!parent.substores) {
 		parent.substores = {};
 	}
 	
 	var substore = parent.substores[key];
 	
-	if( substore ){
+	if (substore) {
 		++substore.refCount;
-	}else{
+	} else {
 		var prev = getComponent();
 		setComponent(parent.component);
 		
-		var child = createSignal();
+		var child = signal();
 		var value = typeof factory === "function" ? factory() : undefined;
 		var object = parent.get();
 		
-		if( object && !isArray(object) ){
-			if( object[key] === undefined && value !== undefined ){
+		if (object && !isArray(object)) {
+			if (object[key] === undefined && value !== undefined) {
 				object[key] = value;
 			}
 		}
 		
 		child.select = select;
 		
-		var cleanup = createObservable();
+		var cleanup = observable();
 		
-		function addChangeHandler(object, i){
+		function addChangeHandler(object, i) {
 			cleanup.subscribe(
-				observe(object, key).subscribe(function(value){
+				observe(object, key).subscribe(function(value) {
 					var values = child.get();
 					child.set(values.slice(0, i).concat([value]).concat(values.slice(i + 1)));
 				})
 			);
 		}
 		
-		function addChangeHandlers(array){
+		function addChangeHandlers(array) {
 			var n = array.length;
 			var value = new Array(n);
 			
-			for(var i=0; i<n; ++i){
+			for (var i = 0; i < n; ++i) {
 				var object = array[i];
 				value[i] = object[key];
 				addChangeHandler(object, i);
@@ -74,34 +74,34 @@ function selectProperty(parent, key, factory){
 			return value;
 		}
 		
-		function updateObject(object){
+		function updateObject(object) {
 			cleanup();
 			cleanup.clear();
 			
-			if( isArray(object) ){
+			if (isArray(object)) {
 				child.set(addChangeHandlers(object));
-			}else if( object ){
+			} else if (object) {
 				var observable = observe(object, key);
 				
-				if(!observable){
+				if (!observable) {
 					throw new ReferenceError("Property '" + key + "' does not exist");
 				}
 				
 				child.set(object[key]);
 				cleanup.subscribe(
-					observable.subscribe(function(value){
+					observable.subscribe(function(value) {
 						child.set(value);
 					})
 				);
-			}else{
+			} else {
 				child.set(null);
 			}
 		}
 		
-		function updateValue(value){
+		function updateValue(value) {
 			var object = parent.get();
 			
-			if( object ){
+			if (object) {
 				object[key] = value;
 			}
 		}

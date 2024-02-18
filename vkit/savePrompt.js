@@ -1,30 +1,32 @@
-(function($){
+(function($) {
 
 var allSaved = $.allSaved;
-var createObservable = $.observable;
-var createState = $.state;
 var inject = $.inject;
 var navigate = $.navigate;
+var observable = $.observable;
 var onNavigate = $.onNavigate;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
 var update = $.update;
 
-function getSavePrompt(options){
+function getSavePrompt(options) {
 	var service = inject(SavePromptService);
-	if( options ){
+	
+	if (options) {
 		service.configure(options);
 	}
+	
 	return service.prompt;
 }
 
-function SavePromptService(){
-	var emitDiscard = createObservable();
-	var emitNavigate = createObservable();
-	var emitSave = createObservable();
-	var prompt = createState(null);
+function SavePromptService() {
+	var emitDiscard = observable();
+	var emitNavigate = observable();
+	var emitSave = observable();
+	var prompt = signal(null);
 	var enabled = false;
 	
-	function configure(options){
+	function configure(options) {
 		var discard = options.discard;
 		var save = options.save;
 		var showIf = options.showIf;
@@ -52,7 +54,7 @@ function SavePromptService(){
 		}
 	}
 	
-	function close(){
+	function close() {
 		prompt.set(null);
 	}
 	
@@ -65,27 +67,32 @@ function SavePromptService(){
 			enabled = true;
 			emitNavigate(nav);
 			
-			function navigateAway(){
+			function navigateAway() {
 				navigate(nav.url, nav.window);
 			}
 			
-			if(!enabled){
+			if (!enabled) {
 				nav.prevent();
+				
 				prompt.set({
-					canDiscard: function(){
+					canDiscard: function() {
 						return emitDiscard.count() > 0;
 					},
-					canSave: function(){
+					
+					canSave: function() {
 						return emitSave.count() > 0;
 					},
+					
 					close: close,
-					discard: function(){
+					
+					discard: function() {
 						prompt.set(null);
 						emitDiscard();
 						update();
 						navigate(nav.url, nav.window);
 					},
-					save: function(){
+					
+					save: function() {
 						prompt.set(null);
 						emitSave(navigateAway);
 					}

@@ -1,23 +1,23 @@
-(function($){
+(function($) {
 
 var animate = $.animate;
-var createState = $.state;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
 var update = $.update;
 
-function animateTo(state, duration, options){
+function animateTo(state, duration, options) {
 	var latest = +state.get();
 	var start = latest;
 	var end = latest;
-	var currentState = createState(latest);
+	var currentState = signal(latest);
 	var currentAnimation = null;
 	var easing = options ? options.easing : null;
 	
-	function animationLoop(t){
+	function animationLoop(t) {
 		latest = start + (end - start) * (easing ? easing(t) : t);
 		currentState.set(latest);
 		
-		if( t >= 1 ){
+		if (t >= 1) {
 			currentAnimation = null;
 			start = end = +state.get();
 		}
@@ -25,8 +25,8 @@ function animateTo(state, duration, options){
 		update();
 	}
 	
-	state.subscribe(function(value){
-		if( currentAnimation ){
+	state.subscribe(function(value) {
+		if (currentAnimation) {
 			currentAnimation.stop();
 		}
 		

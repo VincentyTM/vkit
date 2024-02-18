@@ -1,18 +1,18 @@
-(function($, undefined){
+(function($, undefined) {
 
-var createSignal = $.signal;
 var isSignal = $.isSignal;
 var observe = $.observe;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
 
-function signalOf(obj, prop){
-	if( prop === undefined ){
-		if( typeof Proxy !== "function" ){
+function signalOf(obj, prop) {
+	if (prop === undefined) {
+		if (typeof Proxy !== "function") {
 			throw new ReferenceError("Proxy is not supported in your browser!");
 		}
 		
 		return new Proxy(obj, {
-			get: function(obj, prop, receiver){
+			get: function(obj, prop, receiver) {
 				return signalOf(obj, prop);
 			}
 		});
@@ -20,28 +20,28 @@ function signalOf(obj, prop){
 	
 	var value = obj[prop];
 	
-	if( isSignal(value) ){
+	if (isSignal(value)) {
 		return value;
 	}
 	
-	var observable = observe(obj, prop);
+	var change = observe(obj, prop);
 	
-	if(!observable){
+	if (!change) {
 		throw new ReferenceError("Property '" + prop + "' does not exist!");
 	}
 	
-	var signal = createSignal(obj[prop]);
-	var set = signal.set;
+	var sig = signal(obj[prop]);
+	var set = sig.set;
 	
-	signal.set = function(value){
+	sig.set = function(value) {
 		obj[prop] = value;
 	};
 	
 	onUnmount(
-		observable.subscribe(set)
+		change.subscribe(set)
 	);
 	
-	return signal;
+	return sig;
 }
 
 $.signalOf = signalOf;

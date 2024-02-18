@@ -1,9 +1,9 @@
-(function($){
+(function($) {
 
 var onUnmount = $.onUnmount;
 
-function createRef(){
-	function reset(){
+function createRef() {
+	function reset() {
 		ref.current = null;
 	}
 	
@@ -15,6 +15,7 @@ function createRef(){
 		ref.current = value;
 		onUnmount(reset);
 	}
+	
 	ref.current = null;
 	return ref;
 }

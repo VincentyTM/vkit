@@ -1,30 +1,30 @@
-(function($){
+(function($) {
 
-var createSignal = $.signal;
 var getWindow = $.window;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
 
-function useStorage(storage, key, win){
-	var signal = createSignal(storage.getItem(key));
+function useStorage(storageArea, key, win) {
+	var storage = signal(storageArea.getItem(key));
 	
-	signal.subscribe(function(value){
-		if( value === null ){
-			storage.removeItem(key);
-		}else{
-			storage.setItem(key, value);
+	storage.subscribe(function(value) {
+		if (value === null) {
+			storageArea.removeItem(key);
+		} else {
+			storageArea.setItem(key, value);
 		}
 	});
 	
 	onUnmount(
-		onEvent(win || getWindow(), "storage", function(e){
-			if( e.storageArea === storage && e.key === key ){
-				signal.set(e.newValue);
+		onEvent(win || getWindow(), "storage", function(e) {
+			if (e.storageArea === storageArea && e.key === key) {
+				storage.set(e.newValue);
 			}
 		})
 	);
 	
-	return signal;
+	return storage;
 }
 
 $.storage = useStorage;

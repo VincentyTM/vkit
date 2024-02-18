@@ -1,24 +1,26 @@
-(function($, global){
+(function($, global) {
+
 var effect = $.effect;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
 
-var createState = $.state;
 var URL = global.URL || global.webkitURL || global.mozURL || {
-	createObjectURL: function(){ return ""; },
-	revokeObjectURL: function(){}
+	createObjectURL: function() { return ""; },
+	revokeObjectURL: function() {}
 };
 
-function createObjectURL(file){
-	if(!file && file !== ""){
+function createObjectURL(file) {
+	if (!file && file !== "") {
 		return null;
 	}
 	
-	if( file.effect ){
-		var urlState = createState("");
+	if (typeof file === "function") {
+		var urlState = signal("");
 		
-		function revoke(){
+		function revoke() {
 			var url = urlState.get();
-			if( url ){
+			
+			if (url) {
 				URL.revokeObjectURL(url);
 			}
 		}

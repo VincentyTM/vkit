@@ -1,33 +1,36 @@
-(function($){
+(function($) {
 
-var createObservable = $.observable;
+var observable = $.observable;
 var onUnmount = $.onUnmount;
 
-function replaceScriptEnds(text){
+function replaceScriptEnds(text) {
 	return "<\\" + text.substring(1);
 }
 
-function createSandbox(code, sandboxFlags){
-	if(!code) code = "";
-	var emitRun = createObservable();
+function createSandbox(code, sandboxFlags) {
+	if (!code) {
+		code = "";
+	}
 	
-	function run(newCode){
-		if( typeof newCode === "string" ){
+	var emitRun = observable();
+	
+	function run(newCode) {
+		if (typeof newCode === "string") {
 			code = newCode;
 		}
 		emitRun(code);
 	}
 	
-	function bind(iframe){
-		function runCode(c){
+	function bind(iframe) {
+		function runCode(c) {
 			c = c.replace(/<\/script\b/ig, replaceScriptEnds);
 			
 			var prefix = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body><script>';
 			var suffix = '<\/script></body></html>';
 			
-			if( "srcdoc" in iframe ){
+			if ("srcdoc" in iframe) {
 				iframe.srcdoc = prefix + c + suffix;
-			}else{
+			} else {
 				iframe.src = 'data:text/html;charset=UTF-8,' + prefix + c + suffix;
 			}
 		}
@@ -37,7 +40,7 @@ function createSandbox(code, sandboxFlags){
 		runCode(code);
 	}
 	
-	function render(){
+	function render() {
 		return bind;
 	}
 	

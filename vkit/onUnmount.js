@@ -1,36 +1,36 @@
-(function($){
+(function($) {
 
 var getComponent = $.getComponent;
 var noop = $.noop;
 var observable = $.observable;
 var rootComponent = $.rootComponent;
 
-function onUnmount(callback, component){
-	if(!callback){
+function onUnmount(callback, component) {
+	if (!callback) {
 		component = getComponent();
 		
-		return function(callback){
+		return function(callback) {
 			return onUnmount(callback, component);
 		};
 	}
 	
-	if(!component){
+	if (!component) {
 		component = getComponent();
 	}
 	
-	if( component === rootComponent ){
+	if (component === rootComponent) {
 		return noop;
 	}
 	
 	var c = component;
 	
-	while( c && !c.unmount ){
+	while (c && !c.unmount) {
 		c.unmount = observable();
 		
-		if( c.parent ){
-			if( c.parent.children ){
+		if (c.parent) {
+			if (c.parent.children) {
 				c.parent.children.push(c);
-			}else{
+			} else {
 				c.parent.children = [c];
 			}
 		}

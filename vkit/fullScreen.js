@@ -1,15 +1,15 @@
 (function($) {
 
-var createState = $.state;
 var getWindow = $.window;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
 
-	var state = createState();
 function createFullScreenState() {
 	var doc = getWindow().document;
+	var state = signal();
 	
-	function updateState(){
+	function updateState() {
 		state.set(
 			doc.fullscreenElement ||
 			doc.mozFullScreenElement ||
@@ -21,19 +21,19 @@ function createFullScreenState() {
 	
 	updateState();
 	
-	state.subscribe(function(el){
-		if( el ){
+	state.subscribe(function(el) {
+		if (el) {
 			el.requestFullscreen ? el.requestFullscreen() :
 			el.mozRequestFullScreen ? el.mozRequestFullScreen() :
 			el.webkitRequestFullscreen ? el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT) :
 			el.webkitEnterFullscreen ? el.webkitEnterFullscreen() :
 			state.set(null);
-		}else if(
+		} else if (
 			doc.fullscreenElement ||
 			doc.mozFullScreenElement ||
 			doc.webkitFullscreenElement ||
 			doc.webkitCurrentFullScreenElement
-		){
+		) {
 			doc.cancelFullScreen ? doc.cancelFullScreen() :
 			doc.mozCancelFullScreen ? doc.mozCancelFullScreen() :
 			doc.webkitCancelFullScreen ? doc.webkitCancelFullScreen() :

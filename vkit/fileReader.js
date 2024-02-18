@@ -1,21 +1,21 @@
-(function($){
+(function($) {
 
-var createState = $.state;
 var effect = $.effect;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
 var update = $.update;
 
-function createFileReader(input, options){
-	function abort(){
+function createFileReader(input, options) {
+	function abort() {
 		reader.abort();
 	}
 	
-	function updateOutput(value){
+	function updateOutput(value) {
 		abort();
 		
-		if( value ){
+		if (value) {
 			output.set({
-				progress: createState({
+				progress: signal({
 					lengthComputable: false,
 					loaded: 0,
 					total: 0
@@ -26,46 +26,46 @@ function createFileReader(input, options){
 			var as = value.as || (options ? options.as : null) || "text";
 			var file = value.file || value;
 			
-			switch(as){
+			switch (as) {
 				case "arrayBuffer": reader.readAsArrayBuffer(file); break;
 				case "binaryString": reader.readAsBinaryString(file); break;
 				case "dataURL": reader.readAsDataURL(file); break;
 				case "text": reader.readAsText(file); break;
 				default: reader.readAsText(file);
 			}
-		}else{
+		} else {
 			output.set({});
 		}
 	}
 	
-	var output = createState();
+	var output = signal();
 	var reader = new FileReader();
 	
-	reader.onerror = function(){
+	reader.onerror = function() {
 		output.set({
 			error: reader.error
 		});
 		
-		if( typeof unsubscribe === "function" ){
+		if (typeof unsubscribe === "function") {
 			unsubscribe();
 		}
 		
 		update();
 	};
 	
-	reader.onload = function(){
+	reader.onload = function() {
 		output.set({
 			result: reader.result
 		});
 		
-		if( typeof unsubscribe === "function" ){
+		if (typeof unsubscribe === "function") {
 			unsubscribe();
 		}
 		
 		update();
 	};
 	
-	reader.onprogress = function(e){
+	reader.onprogress = function(e) {
 		output.get().progress.set(e);
 		update();
 	};

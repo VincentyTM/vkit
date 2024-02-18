@@ -1,28 +1,25 @@
-(function($){
+(function($) {
 
-var createHistoryHandler = $.history;
-var createSignal = $.signal;
 var getWindow = $.window;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
+var useHistory = $.history;
 
-function getHash(url){
+function getHash(url) {
 	var pos = url.indexOf("#");
 	return pos === -1 ? "" : url.substring(pos + 1);
 }
 
-function createHashSignal(win){
-	if(!win){
-		win = getWindow();
-	}
-	
+function createHashSignal() {
+	var win = getWindow();
 	var location = win.location;
-	var signal = createSignal(decodeURIComponent(location.hash.substring(1)));
-	var history = createHistoryHandler(win);
+	var hash = signal(decodeURIComponent(location.hash.substring(1)));
+	var history = useHistory(win);
 	
-	history.url().map(getHash).pipe(signal);
+	history.url().map(getHash).pipe(hash);
 	
-	signal.subscribe(function(value){
+	hash.subscribe(function(value) {
 		location.replace("#" + encodeURIComponent(value));
 	});
 	
@@ -32,15 +29,15 @@ function createHashSignal(win){
 		})
 	);
 	
-	signal.push = function(value){
+	hash.push = function(value) {
 		location.assign("#" + encodeURIComponent(value));
 	};
 	
-	signal.replace = function(value){
+	hash.replace = function(value) {
 		history.replace("#" + value);
 	};
 	
-	return signal;
+	return hash;
 }
 
 $.hash = createHashSignal;
