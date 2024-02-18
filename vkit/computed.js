@@ -14,6 +14,10 @@ var views = $.views;
 var none = {};
 
 function computed(getValue, inputs) {
+	if (typeof getValue !== "function") {
+		throw new TypeError("getValue is not a function");
+	}
+	
 	var parent = getComponent(true);
 	var subscriptions = [];
 	var value = none;
