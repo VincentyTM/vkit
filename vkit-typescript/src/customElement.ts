@@ -8,11 +8,17 @@ import emitUnmount from "./emitUnmount";
 import empty from "./empty";
 import {getValueFromClass} from "./root";
 import inject from "./inject";
+import tick from "./tick";
 import update from "./update";
 import {View} from "./view";
 import {WindowService} from "./getWindow";
 
 var setPrototypeOf = Object.setPrototypeOf;
+var rendered = false;
+
+tick(function() {
+	rendered = true;
+});
 
 function replaceHyphens(value: string) {
 	return value.charAt(1).toUpperCase();
@@ -83,6 +89,10 @@ export default function createCustomElement(
 	var win = window;
 	
 	proto.connectedCallback = function() {
+		if (!rendered) {
+			return;
+		}
+		
 		var el = this;
 		
 		while (el.parentNode !== null) {
@@ -99,6 +109,10 @@ export default function createCustomElement(
 	};
 	
 	proto.disconnectedCallback = function() {
+		if (!rendered) {
+			return;
+		}
+		
 		if (this.shadowRoot) {
 			empty(this.shadowRoot);
 		}
@@ -125,6 +139,10 @@ export default function createCustomElement(
 				_oldValue: string | null,
 				newValue: string | null
 			) {
+				if (!rendered) {
+					return;
+				}
+				
 				this.observedAttributes[attrToPropName(attrName)].set(newValue);
 				update();
 			};

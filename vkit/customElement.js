@@ -3,17 +3,23 @@
 var append = $.append;
 var bind = $.bind;
 var createComponent = $.component;
-var createSignal = $.signal;
 var emitUnmount = $.emitUnmount;
 var empty = $.empty;
 var inject = $.inject;
 var provide = $.provide;
+var signal = $.signal;
+var tick = $.tick;
 var update = $.update;
 var WindowService = $.windowService;
 
 var setPrototypeOf = Object.setPrototypeOf;
+var rendered = false;
 
-function replaceHyphens(value){
+tick(function() {
+	rendered = true;
+});
+
+function replaceHyphens(value) {
 	return value.charAt(1).toUpperCase();
 }
 
@@ -38,9 +44,9 @@ function createCustomElement(name, getView, options) {
 		el.component = component;
 		el.observedAttributes = {};
 		
-		if( CustomElement.observedAttributes ){
-			CustomElement.observedAttributes.forEach(function(attrName){
-				el.observedAttributes[attrToPropName(attrName)] = createSignal(el.getAttribute(attrName));
+		if (CustomElement.observedAttributes) {
+			CustomElement.observedAttributes.forEach(function(attrName) {
+				el.observedAttributes[attrToPropName(attrName)] = signal(el.getAttribute(attrName));
 			});
 		}
 		
@@ -50,7 +56,11 @@ function createCustomElement(name, getView, options) {
 	var proto = CustomElement.prototype;
 	var win = window;
 	
-	proto.connectedCallback = function(){
+	proto.connectedCallback = function() {
+		if (!rendered) {
+			return;
+		}
+		
 		var el = this;
 		
 		while (el.parentNode !== null) {
@@ -66,8 +76,12 @@ function createCustomElement(name, getView, options) {
 		update();
 	};
 	
-	proto.disconnectedCallback = function(){
-		if( this.shadowRoot ){
+	proto.disconnectedCallback = function() {
+		if (!rendered) {
+			return;
+		}
+		
+		if (this.shadowRoot) {
 			empty(this.shadowRoot);
 		}
 		
@@ -88,7 +102,11 @@ function createCustomElement(name, getView, options) {
 		if (options.observedAttributes) {
 			CustomElement.observedAttributes = options.observedAttributes;
 			
-			proto.attributeChangedCallback = function(attrName, oldValue, newValue){
+			proto.attributeChangedCallback = function(attrName, oldValue, newValue) {
+				if (!rendered) {
+					return;
+				}
+				
 				this.observedAttributes[attrToPropName(attrName)].set(newValue);
 				update();
 			};
