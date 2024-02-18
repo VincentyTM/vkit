@@ -10,7 +10,7 @@ import {getValueFromClass} from "./root";
 import inject from "./inject";
 import update from "./update";
 import {View} from "./view";
-import {WindowService} from "./window";
+import {WindowService} from "./getWindow";
 
 var setPrototypeOf = Object.setPrototypeOf;
 

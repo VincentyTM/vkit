@@ -1,4 +1,4 @@
-import getWindow from "./window";
+import getWindow from "./getWindow";
 import onUnmount from "./onUnmount";
 import update from "./update";
 

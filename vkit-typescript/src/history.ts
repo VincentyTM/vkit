@@ -1,5 +1,5 @@
 import computed, {ComputedSignal} from "./computed";
-import getWindow from "./window";
+import getWindow from "./getWindow";
 import observable from "./observable";
 import onEvent from "./onEvent";
 import onUnmount from "./onUnmount";
