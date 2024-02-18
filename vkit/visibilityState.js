@@ -1,30 +1,24 @@
-(function($){
+(function($) {
 
-var createState = $.state;
+var computed = $.computed;
 var getWindow = $.window;
 var onEvent = $.onEvent;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
 
-function createVisibilityState(doc){
-	if(!doc){
-		doc = getWindow().document;
-	}
+function visibilityState() {
+	var doc = getWindow().document;
 	
-	function onChange(){
-		visibility.set(doc.visibilityState === "visible");
-	}
+	var visibility = computed(function() {
+		return doc.visibilityState === "visible" || !doc.visibilityState;
+	});
 	
-	var visibility = createState(
-		doc.visibilityState === "visible" || !doc.visibilityState
-	);
-	
-	unmount(
-		onEvent(doc, "visibilitychange", onChange)
+	onUnmount(
+		onEvent(doc, "visibilitychange", visibility.invalidate)
 	);
 	
 	return visibility;
 }
 
-$.visibilityState = createVisibilityState;
+$.visibilityState = visibilityState;
 
 })($);
