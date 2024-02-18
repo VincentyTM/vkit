@@ -1,26 +1,22 @@
-(function($, navigator){
+(function($) {
 
-var createState = $.state;
+var getWindow = $.window;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
 var update = $.update;
 
-function mediaDevices(onError, nav){
-	if(!nav){
-		nav = navigator;
-	}
+function mediaDevices() {
+	var nav = getWindow().navigator;
+	var devices = signal([]);
+	var error = signal(null);
 	
-	var devices = createState([]);
-	
-	function fetchDevices(){
-		nav.mediaDevices.enumerateDevices().then(function(list){
+	function fetchDevices() {
+		nav.mediaDevices.enumerateDevices().then(function(list) {
 			devices.set(list);
 			update();
-		}, function(error){
-			if( typeof onError === "function" ){
-				onError(error);
-			}
-			
+		}, function(ex) {
+			error.set(ex);
 			update();
 		});
 	}
@@ -29,15 +25,16 @@ function mediaDevices(onError, nav){
 		onUnmount(
 			onEvent(nav.mediaDevices, "devicechange", fetchDevices)
 		);
-		
 		fetchDevices();
-	}else if( typeof onError === "function" ){
-		onError(new Error("MediaDevices API is not supported"));
+	} else {
+		error.set(new Error("MediaDevices API is not supported"));
 	}
 	
-	return devices.map();
+	var result = devices.map();
+	result.onError = error.subscribe;
+	return result;
 }
 
 $.mediaDevices = mediaDevices;
 
-})($, navigator);
+})($);
