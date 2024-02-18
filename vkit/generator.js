@@ -1,72 +1,73 @@
-(function($, undefined){
+(function($, undefined) {
 
-var createObservable = $.observable;
-var createSignal = $.signal;
 var getComponent = $.getComponent;
-var onUnmount = $.unmount;
+var observable = $.observable;
+var onUnmount = $.onUnmount;
 var setComponent = $.setComponent;
+var signal = $.signal;
 var update = $.update;
 
-function createGeneratorSignal(generator, updater){
-	function next(){
+function useGenerator(generator, updater) {
+	function next() {
 		var current = generator.next();
-		if( current && typeof current.then === "function" ){
-			current.then(function(curr){
-				signal.set(curr.value);
+		
+		if (current && typeof current.then === "function") {
+			current.then(function(curr) {
+				gen.set(curr.value);
 				cleanup();
 				cleanup.clear();
 				
-				if(!curr.done && autoNext){
+				if (!curr.done && autoNext) {
 					next();
 				}
 				
 				update();
 			});
-		}else{
-			if(!current.done || current.value !== undefined){
-				signal.set(current.value);
+		} else {
+			if (!current.done || current.value !== undefined) {
+				gen.set(current.value);
 			}
 		}
 	}
 	
-	if( typeof generator === "function" ){
-		return function(){
-			function cleanup(callback){
-				signal.unmount(callback);
+	if (typeof generator === "function") {
+		return function() {
+			function cleanup(callback) {
+				g.unmount(callback);
 			}
 			
-			var signal = createGeneratorSignal(generator.apply(
+			var g = createGeneratorSignal(generator.apply(
 				{unmount: cleanup},
 				arguments
 			));
 			
-			return signal;
+			return g;
 		};
 	}
 	
-	var cleanup = createObservable();
+	var cleanup = observable();
 	var autoNext = typeof updater !== "function";
 	var prev = getComponent();
-	var signal = createSignal();
+	var gen = signal();
 	
 	setComponent(null);
 	next();
 	setComponent(prev);
 	
-	if( autoNext ){
-		onUnmount(function(){
+	if (autoNext) {
+		onUnmount(function() {
 			autoNext = false;
 			cleanup();
 		});
-	}else{
+	} else {
 		updater(next);
 	}
 	
-	state.unmount = cleanup.subscribe;
+	gen.unmount = cleanup.subscribe;
 	
-	return state;
+	return gen;
 }
 
-$.generator = createGeneratorSignal;
+$.generator = useGenerator;
 
 })($);
