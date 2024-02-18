@@ -1,42 +1,40 @@
-(function($){
+(function($) {
 
-var createSignal = $.signal;
 var getWindow = $.window;
-var onUnmount = $.unmount;
+var onUnmount = $.onUnmount;
+var signal = $.signal;
 var update = $.update;
 
-function createGeoLocationState(options, onError, geolocation){
-	if(!geolocation){
-		geolocation = getWindow().navigator.geolocation;
-	}
+function useGeoLocation(options) {
+	var geolocation = getWindow().navigator.geolocation;
+	var error = signal(null);
+	var pos = signal({});
 	
-	var signal = createSignal({});
-	
-	function updatePosition(position){
-		signal.set(position);
+	function updatePosition(position) {
+		pos.set(position);
 		update();
 	}
 	
-	function handleError(error){
-		if( typeof onError === "function" ){
-			onError(error);
-			update();
-		}
+	function handleError(ex) {
+		error.set(ex);
+		update();
 	}
 	
-	if( geolocation ){
+	if (geolocation) {
 		var id = geolocation.watchPosition(updatePosition, handleError, options);
 		
-		onUnmount(function(){
+		onUnmount(function() {
 			geolocation.clearWatch(id);
 		});
-	}else if( typeof onError === "function" ){
-		onError(new ReferenceError("GeoLocation API is not supported"));
+	} else {
+		error.set(new ReferenceError("GeoLocation API is not supported"));
 	}
 	
-	return signal.map();
+	var result = pos.map();
+	result.onError = error.subscribe;
+	return result;
 }
 
-$.geoLocation = createGeoLocationState;
+$.geoLocation = useGeoLocation;
 
 })($);
