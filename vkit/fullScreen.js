@@ -1,16 +1,13 @@
-(function($, document){
+(function($) {
 
 var createState = $.state;
 var getWindow = $.window;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
 
-function createFullScreenState(doc){
-	if(!doc){
-		doc = getWindow().document;
-	}
-	
 	var state = createState();
+function createFullScreenState() {
+	var doc = getWindow().document;
 	
 	function updateState(){
 		state.set(
@@ -59,4 +56,4 @@ function createFullScreenState(doc){
 
 $.fullScreen = createFullScreenState;
 
-})($, document);
+})($);
