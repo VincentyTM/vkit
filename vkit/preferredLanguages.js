@@ -1,11 +1,11 @@
-(function($){
+(function($) {
 
-var createState = $.state;
+var computed = $.computed;
 var getWindow = $.window;
 var onEvent = $.onEvent;
-var unmount = $.unmount;
+var onUnmount = $.onUnmount;
 
-function getPreferredLanguages(nav){
+function getPreferredLanguages(nav) {
 	return nav.languages || [
 		nav.language ||
 		nav.browserLanguage ||
@@ -14,21 +14,19 @@ function getPreferredLanguages(nav){
 	];
 }
 
-function preferredLanguages(win){
-	if(!win){
-		win = getWindow();
-	}
-	
+function preferredLanguages() {
+	var win = getWindow();
 	var nav = win.navigator;
-	var langs = createState(getPreferredLanguages(nav));
 	
-	unmount(
-		onEvent(win, "languagechange", function(){
-			langs.set(getPreferredLanguages(nav));
-		})
+	var langs = computed(function() {
+		return getPreferredLanguages(nav);
+	});
+	
+	onUnmount(
+		onEvent(win, "languagechange", langs.invalidate)
 	);
 	
-	return langs.map();
+	return langs;
 }
 
 $.preferredLanguages = preferredLanguages;
