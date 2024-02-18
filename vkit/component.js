@@ -24,15 +24,15 @@ function createComponent(mount, parent, injector) {
 		var prevComponent = getComponent(true);
 		var prevInjector = getInjector(true);
 		
-		try{
+		try {
 			setComponent(null);
 			emitUnmount(component);
 			setComponent(component);
 			setInjector(injector);
 			mount();
-		}catch(error){
+		} catch (error) {
 			throwError(error, component);
-		}finally{
+		} finally {
 			setComponent(prevComponent);
 			setInjector(prevInjector);
 		}

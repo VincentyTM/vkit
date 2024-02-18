@@ -1,4 +1,4 @@
-(function($, window){
+(function($, window) {
 
 var append = $.append;
 var bind = $.bind;
@@ -17,36 +17,21 @@ function replaceHyphens(value){
 	return value.charAt(1).toUpperCase();
 }
 
-function attrToPropName(attrName){
+function attrToPropName(attrName) {
 	return attrName.toLowerCase().replace(/\-[a-z]/g, replaceHyphens);
 }
 
-function createCustomElement(name, getView, options){
-	function CustomElement(){
-		var el = Reflect.construct(
-			win.HTMLElement,
-			[],
-			CustomElement
-		);
+function createCustomElement(name, getView, options) {
+	function CustomElement() {
+		var el = Reflect.construct(win.HTMLElement, [], CustomElement);
 		
-		var component = createComponent(function(){
+		var component = createComponent(function() {
 			var doc = el.ownerDocument;
 			
-			provide(null, function(){
+			provide(null, function() {
 				inject(WindowService).window = doc.defaultView || doc.parentWindow;
-				
-				var view = getView.call(
-					el,
-					el.observedAttributes,
-					el
-				);
-				
-				append(
-					el,
-					view,
-					el,
-					bind
-				);
+				var view = getView.call(el, el.observedAttributes, el);
+				append(el, view, el, bind);
 			});
 		}, null, null);
 		
@@ -68,11 +53,11 @@ function createCustomElement(name, getView, options){
 	proto.connectedCallback = function(){
 		var el = this;
 		
-		while( el.parentNode !== null ){
+		while (el.parentNode !== null) {
 			el = el.parentNode;
 		}
 		
-		if( el.nodeType !== 9 && el.nodeType !== 11 ){
+		if (el.nodeType !== 9 && el.nodeType !== 11) {
 			return;
 		}
 		
@@ -91,16 +76,16 @@ function createCustomElement(name, getView, options){
 		update();
 	};
 	
-	if( options ){
-		if( options.window ){
+	if (options) {
+		if (options.window) {
 			win = options.window;
 		}
 		
-		if( options.adoptedCallback ){
+		if (options.adoptedCallback) {
 			proto.adoptedCallback = options.adoptedCallback;
 		}
 		
-		if( options.observedAttributes ){
+		if (options.observedAttributes) {
 			CustomElement.observedAttributes = options.observedAttributes;
 			
 			proto.attributeChangedCallback = function(attrName, oldValue, newValue){

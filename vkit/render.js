@@ -1,4 +1,4 @@
-(function($){
+(function($) {
 
 var append = $.append;
 var bind = $.bind;
@@ -8,15 +8,12 @@ var setComponent = $.setComponent;
 var setInjector = $.setInjector;
 var update = $.update;
 
-function render(getView, container){
-	try{
+function render(getView, container) {
+	try {
 		setComponent(rootComponent);
 		setInjector(rootInjector);
-		
-		var view = getView();
-		
-		append(container, view, container, bind);
-	}finally{
+		append(container, getView(), container, bind);
+	} finally {
 		setComponent(null);
 		setInjector(null);
 	}
