@@ -1,28 +1,28 @@
-(function($){
+(function($) {
 
 var update = $.update;
 
-function preventDefault(){
+function preventDefault() {
 	this.returnValue = false;
 }
 
-function stopPropagation(){
+function stopPropagation() {
 	this.cancelBubble = true;
 }
 
-function onEvent(target, type, listener){
-	function eventListener(e){
-		if(!e.preventDefault){
+function onEvent(target, type, listener) {
+	function eventListener(e) {
+		if (!e.preventDefault) {
 			e.preventDefault = preventDefault;
 		}
 		
-		if(!e.stopPropagation){
+		if (!e.stopPropagation) {
 			e.stopPropagation = stopPropagation;
 		}
 		
 		var ret = listener.call(target, e);
 		
-		if( ret && typeof ret.then === "function" ){
+		if (ret && typeof ret.then === "function") {
 			ret.then(update);
 		}
 		
@@ -31,17 +31,17 @@ function onEvent(target, type, listener){
 		return ret;
 	}
 	
-	if( target.addEventListener ){
+	if (target.addEventListener) {
 		target.addEventListener(type, eventListener, false);
 		
-		return function(){
+		return function() {
 			target.removeEventListener(type, eventListener, false);
 		};
-	}else if( target.attachEvent ){
+	} else if (target.attachEvent) {
 		type = "on" + type;
 		target.attachEvent(type, eventListener);
 		
-		return function(){
+		return function() {
 			target.detachEvent(type, eventListener);
 		};
 	}

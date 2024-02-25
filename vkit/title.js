@@ -1,11 +1,11 @@
-(function($){
+(function($) {
 
 var createWindowData = $.windowData;
 
-function init(win, callback){
+function init(win, callback) {
 	var document = win.document;
 	
-	callback(document.title, function(title){
+	callback(document.title, function(title) {
 		document.title = title;
 	});
 }

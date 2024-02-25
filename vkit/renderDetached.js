@@ -1,4 +1,4 @@
-(function($){
+(function($) {
 
 var append = $.append;
 var bind = $.bind;
@@ -11,7 +11,7 @@ var inject = $.inject;
 var update = $.update;
 var WindowService = $.windowService;
 
-function renderDetached(getView, parent){
+function renderDetached(getView, parent) {
 	var injector = createInjector(null, function(token) {
 		var provider = createProvider(getValueFromClass, token, component);
 		injector.container.set(token, provider);

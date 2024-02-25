@@ -1,20 +1,20 @@
-(function($, document){
+(function($, document) {
 
-function currentScript(doc){
-	if(!doc){
+function currentScript(doc) {
+	if (!doc) {
 		doc = document;
 	}
 	
-	if( doc.currentScript ){
+	if (doc.currentScript) {
 		return doc.currentScript;
 	}
 	
 	var scripts = doc.scripts;
 	
-	for(var i = scripts.length-1; i >= 0; --i){
+	for (var i = scripts.length - 1; i >= 0; --i) {
 		var script = scripts[i];
 		
-		if(!script.readyState || script.readyState === "interactive"){
+		if (!script.readyState || script.readyState === "interactive") {
 			return script;
 		}
 	}

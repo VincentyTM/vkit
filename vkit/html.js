@@ -1,32 +1,32 @@
-(function($, document, undefined){
+(function($, document, undefined) {
 
 var insert = $.insert;
 var isArray = $.isArray;
 var toArray = $.toArray;
 
-function findNodes(result, container, type, value, count){
-	if( container.nodeType === type && container.nodeValue === value ){
+function findNodes(result, container, type, value, count) {
+	if (container.nodeType === type && container.nodeValue === value) {
 		result.push(container);
 		--count;
 	}
 	
-	for(var child = container.firstChild; 0 < count && child; child = child.nextSibling){
+	for (var child = container.firstChild; 0 < count && child; child = child.nextSibling) {
 		count = findNodes(result, child, type, value, count);
 	}
 	
 	return count;
 }
 
-function html(strings){
-	if( isArray(strings) && isArray(strings.raw) ){
+function html(strings) {
+	if (isArray(strings) && isArray(strings.raw)) {
 		var n = strings.length;
 		var a = new Array(2*n - 1);
 		
-		if( n > 0 ){
+		if (n > 0) {
 			a[0] = strings[0];
 		}
 		
-		for(var i = 1, j = 1; i < n; ++i){
+		for (var i = 1, j = 1; i < n; ++i) {
 			var arg = arguments[i];
 			a[j++] = typeof arg === "string" ? [arg] : arg;
 			a[j++] = strings[i];
@@ -38,29 +38,29 @@ function html(strings){
 	var result = [], operators = [];
 	var placeholder = "<!---->";
 	
-	for(var i = 0, l = arguments.length; i < l; ++i){
+	for (var i = 0, l = arguments.length; i < l; ++i) {
 		var arg = arguments[i];
 		
-		if( arg === null || arg === undefined ){
+		if (arg === null || arg === undefined) {
 			continue;
 		}
 		
 		var type = typeof arg;
 		
-		if( type === "string" ){
+		if (type === "string") {
 			result.push(arg);
 			
-			if( l > 1 ){
+			if (l > 1) {
 				var index = arg.indexOf(placeholder);
 				
-				while( index !== -1 ){
+				while (index !== -1) {
 					operators.push(document.createComment(""));
 					index = arg.indexOf(placeholder, index + placeholder.length);
 				}
 			}
-		}else if( type === "number" || type === "bigint" ){
+		} else if (type === "number" || type === "bigint") {
 			result.push(arg);
-		}else if( type === "function" || type === "object" ){
+		} else if (type === "function" || type === "object") {
 			result.push(placeholder);
 			operators.push(arg);
 		}
@@ -70,10 +70,10 @@ function html(strings){
 	var content = result.join("");
 	var tagMatch = content.match(/<[a-zA-Z0-9\-]+/);
 	
-	if( tagMatch && tagMatch.length ){
+	if (tagMatch && tagMatch.length) {
 		var firstTag = tagMatch[0].substring(1).toLowerCase();
 		
-		switch( firstTag ){
+		switch (firstTag) {
 			case "th":
 			case "td":
 				cTag = "tr"; break;
@@ -92,37 +92,37 @@ function html(strings){
 	
 	var container = document.createElement(cTag);
 	container.innerHTML = content;
-	
 	var n = operators.length;
-	if( n ){
+	
+	if (n) {
 		var comments = [];
 		findNodes(comments, container, 8, "", n);
 		
-		for(i=0; i<n; ++i){
+		for (i = 0; i < n; ++i) {
 			var operator = operators[i];
 			var comment = comments[i];
 			
-			if(!comment){
+			if (!comment) {
 				throw new Error("Some object or function could not be inserted");
 			}
 			
 			var context = comment.previousElementSibling;
 			
-			if( context === undefined ){
+			if (context === undefined) {
 				context = comment;
 				
-				while( context = context.previousSibling ){
-					if( context.nodeType === 1 ){
+				while (context = context.previousSibling) {
+					if (context.nodeType === 1) {
 						break;
 					}
 				}
 			}
 			
-			if(!context){
+			if (!context) {
 				context = comment.parentNode;
 			}
 			
-			if( context === container ){
+			if (context === container) {
 				context = null;
 			}
 			

@@ -1,9 +1,9 @@
 (function($) {
 
-var signal = $.signal;
 var getWindow = $.getWindow;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
 var update = $.update;
 
 function createInstallPrompt() {

@@ -5,8 +5,8 @@ var customElementRegistry = require("./customElementRegistry.js");
 var provide = require("./provide");
 var signal = require("./signal");
 
-function htmlTag(tagName){
-	return function(){
+function htmlTag(tagName) {
+	return function() {
 		var el = createElement(tagName);
 		append(el, arguments, el, bind);
 		

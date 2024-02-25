@@ -1,13 +1,14 @@
-(function($){
+(function($) {
 
-var createWindowData = $.windowData;
+var windowData = $.windowData;
 
-function getMetaElement(head, name, document){
+function getMetaElement(head, name, document) {
 	var metas = head.getElementsByTagName("meta");
 	
-	for(var i=metas.length; i--;){
+	for (var i = metas.length; i--;) {
 		var meta = metas[i];
-		if( meta.name === name ){
+		
+		if (meta.name === name) {
 			return meta;
 		}
 	}
@@ -18,18 +19,18 @@ function getMetaElement(head, name, document){
 	return meta;
 }
 
-function setMeta(name, content){
-	function init(win, callback){
+function setMeta(name, content) {
+	function init(win, callback) {
 		var document = win.document;
 		var head = document.head || document.getElementsByTagName("head")[0];
 		var meta = getMetaElement(head, name, document);
 		
-		callback(meta.content, function(content){
+		callback(meta.content, function(content) {
 			meta.content = content;
 		});
 	}
 	
-	createWindowData("meta:" + name, init)(content);
+	windowData("meta:" + name, init)(content);
 }
 
 $.meta = setMeta;

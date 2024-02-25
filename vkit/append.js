@@ -1,17 +1,17 @@
-(function($){
+(function($) {
 
 var deepPush = $.deepPush;
 
-function append(parent, children, context, bind){
-	function push(node){
+function append(parent, children, context, bind) {
+	function push(node) {
 		parent.appendChild(node);
 	}
 	
-	if( parent.append ){
+	if (parent.append) {
 		var array = [];
 		deepPush(array, children, context, bind);
 		parent.append.apply(parent, array);
-	}else{
+	} else {
 		deepPush({push: push}, children, context, bind);
 	}
 }

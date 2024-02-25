@@ -1,24 +1,24 @@
-(function($, window){
+(function($, window) {
 
 var append = $.append;
 var bind = $.bind;
-var createHistoryHandler = $.history;
 var inject = $.inject;
 var renderDetached = $.renderDetached;
 var update = $.update;
+var useHistory = $.history;
 var WindowService = $.windowService;
 
-function renderPage(root, url, callback, tagName, win){
-	if(!win){
+function renderPage(root, url, callback, tagName, win) {
+	if (!win) {
 		win = window;
 	}
 	
-	var history = createHistoryHandler(win);
+	var history = useHistory(win);
 	var prevURL = win.location.href;
 	var state = history.state;
 	
-	renderDetached(function(unmount){
-		try{
+	renderDetached(function(unmount) {
+		try {
 			history.replace(url);
 			
 			var container = win.document.createElement(tagName || "body");
@@ -35,7 +35,7 @@ function renderPage(root, url, callback, tagName, win){
 			update();
 			callback(container);
 			unmount();
-		}finally{
+		} finally {
 			history.replace(prevURL);
 			update();
 		}

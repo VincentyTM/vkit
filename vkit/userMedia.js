@@ -1,9 +1,9 @@
 (function($) {
 
 var effect = $.effect;
-var signal = $.signal;
 var getWindow = $.getWindow;
 var onUnmount = $.onUnmount;
+var signal = $.signal;
 var update = $.update;
 
 function getUserMedia(constraints, displayMedia) {

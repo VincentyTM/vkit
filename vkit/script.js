@@ -1,56 +1,56 @@
-(function($){
+(function($) {
 
-var createPromise = $.promise;
-var getCurrentScript = $.currentScript;
-var getWindow = $.window;
+var currentScript = $.currentScript;
+var getWindow = $.getWindow;
+var promise = $.promise;
 var update = $.update;
 
-function respond(response){
-	getCurrentScript().request.resolve(response);
+function respond(response) {
+	currentScript().request.resolve(response);
 }
 
-function createScript(url, options){
-	if(!url){
-		return getCurrentScript().request;
+function createScript(url, options) {
+	if (!url) {
+		return currentScript().request;
 	}
 	
-	if(!options){
+	if (!options) {
 		options = {};
 	}
 	
 	var d = options.document || getWindow().document;
 	
-	return createPromise(function(resolve, reject){
+	return promise(function(resolve, reject) {
 		var t = d.getElementsByTagName("script")[0];
 		var s = d.createElement("script");
 		
-		function reset(){
+		function reset() {
 			s.onload = s.onerror = s.onreadystatechange = null;
 			s.request = null;
 			
 			var p = s.parentNode;
 			
-			if( p ){
+			if (p) {
 				p.removeChild(s);
 			}
 		}
 		
-		function fail(error){
+		function fail(error) {
 			reset();
 			reject(error);
 			update();
 		}
 		
-		function done(data){
+		function done(data) {
 			reset();
 			resolve(data);
 			update();
 		}
 		
-		function loadHandler(){
+		function loadHandler() {
 			var r = s.readyState;
 			
-			if(!r || r === "loaded" || r === "complete"){
+			if (!r || r === "loaded" || r === "complete") {
 				done();
 			}
 		}
@@ -62,16 +62,16 @@ function createScript(url, options){
 			"resolve": done
 		};
 		
-		if( options.referrerPolicy) s.referrerPolicy = options.referrerPolicy;
-		if( options.crossOrigin ) s.crossOrigin = options.crossOrigin;
-		if( options.integrity ) s.integrity = options.integrity;
-		if( options.nonce ) s.nonce = options.nonce;
+		if (options.referrerPolicy) s.referrerPolicy = options.referrerPolicy;
+		if (options.crossOrigin) s.crossOrigin = options.crossOrigin;
+		if (options.integrity) s.integrity = options.integrity;
+		if (options.nonce) s.nonce = options.nonce;
 		
 		s.onerror = reject;
 		
-		if( "onload" in s ){
+		if ("onload" in s) {
 			s.onload = loadHandler;
-		}else{
+		} else {
 			s.onreadystatechange = loadHandler;
 		}
 		
@@ -79,9 +79,9 @@ function createScript(url, options){
 		s.async = true;
 		s.src = url;
 		
-		if( t ){
+		if (t) {
 			t.parentNode.insertBefore(s, t);
-		}else{
+		} else {
 			(d.head || d.getElementsByTagName("head")[0]).appendChild(s);
 		}
 	});
