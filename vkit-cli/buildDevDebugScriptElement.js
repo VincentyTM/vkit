@@ -163,7 +163,8 @@ window.onerror = function(message, source, lineno, colno, error) {
 		fontFamily: "Helvetica, Arial, sans-serif",
 		padding: "0.2em 0.2em 1em 1em",
 		backgroundColor: "#f5f5f5",
-		color: "#333333"
+		color: "#333333",
+		textAlign: "left"
 	});
 	document.body.appendChild(container);
 };
