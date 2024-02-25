@@ -4,6 +4,20 @@ var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
 var prop = $.prop;
 
+function setValue(element, name, value, persistent) {
+	if (!persistent) {
+		var old = element[name];
+		
+		onUnmount(function() {
+			if (element[name] === value) {
+				element[name] = old;
+			}
+		});
+	}
+	
+	element[name] = value;
+}
+
 function bind(element, bindings, persistent) {
 	for (var name in bindings) {
 		var value = bindings[name];
@@ -11,7 +25,7 @@ function bind(element, bindings, persistent) {
 		switch (typeof value) {
 			case "object":
 				if (!value) {
-					element[name] = value;
+					setValue(element, name, value, persistent);
 				} else if (value.prop) {
 					value.prop(name)(element);
 				} else {
@@ -20,7 +34,7 @@ function bind(element, bindings, persistent) {
 					if (obj) {
 						bind(obj, value, persistent);
 					} else {
-						element[name] = value;
+						setValue(element, name, value, persistent);
 					}
 				}
 				break;
@@ -38,7 +52,7 @@ function bind(element, bindings, persistent) {
 			case "undefined":
 				break;
 			default:
-				element[name] = value;
+				setValue(element, name, value, persistent);
 		}
 	}
 }
