@@ -25,14 +25,10 @@ function areEqual(a, b) {
 	return true;
 }
 
-function createWebPushManager(serviceWorker, serverKey, handleError) {
-	function onError(error) {
+function createWebPushManager(serviceWorker, serverKey) {
+	function onError(ex) {
 		locked = false;
-		
-		if (typeof handleError === "function") {
-			handleError(error);
-		}
-		
+		error.set(ex);
 		update();
 	}
 	
@@ -49,6 +45,7 @@ function createWebPushManager(serviceWorker, serverKey, handleError) {
 	var nav = win.navigator;
 	var permission = notification(onError, win).permission;
 	var subscription = signal(null);
+	var error = signal(null);
 	var locked = false;
 	var queued = false;
 	
@@ -123,7 +120,9 @@ function createWebPushManager(serviceWorker, serverKey, handleError) {
 	
 	getSubscription(serviceWorker, serverKey, permission);
 	
-	return subscription;
+	var result = subscription.map();
+	result.onError = error.subscribe;
+	return result;
 }
 
 $.webPush = createWebPushManager;
