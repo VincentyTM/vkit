@@ -13,6 +13,7 @@ export {default as htmlTag} from "./htmlTag";
 export {default as htmlTags} from "./htmlTags";
 export {default as inject} from "./inject";
 export {default as interval} from "./interval";
+export {default as is} from "./is";
 export {default as isSignal} from "./isSignal";
 export {default as map} from "./map";
 export {default as noop} from "./noop";
