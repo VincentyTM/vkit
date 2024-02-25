@@ -8,6 +8,7 @@ var signalEffect = $.signalEffect;
 var signalPipe = $.signalPipe;
 var signalProp = $.signalProp;
 var signalText = $.signalText;
+var throwError = $.throwError;
 var view = $.view;
 var views = $.views;
 
@@ -81,6 +82,13 @@ function computed(getValue, inputs) {
 		var component = getComponent(true);
 		
 		if (component) {
+			if (component === parent) {
+				throwError(
+					new Error("A signal cannot be used in the reactive block it was created in"),
+					parent.parent
+				);
+			}
+			
 			subscribe(component.render);
 		}
 		
