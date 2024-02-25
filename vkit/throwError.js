@@ -1,12 +1,12 @@
-(function($){
+(function($) {
 
-function throwError(error, component){
-	while( component ){
-		if( component.emitError ){
-			try{
+function throwError(error, component) {
+	while (component) {
+		if (component.emitError) {
+			try {
 				component.emitError(error);
 				return;
-			}catch(ex){
+			} catch (ex) {
 				error = ex;
 			}
 		}
