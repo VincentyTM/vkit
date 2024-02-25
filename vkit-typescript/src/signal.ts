@@ -407,7 +407,7 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 	}
 	
 	function update<ArgumentType>(
-		map: (value: ValueType, argument: ArgumentType) => ValueType,
+		map: (value: ValueType, argument?: ArgumentType) => ValueType,
 		argument?: ArgumentType
 	): void {
 		set(map(value, argument));
