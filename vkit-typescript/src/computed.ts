@@ -114,7 +114,12 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 	
 	function use(): ValueType {
 		var value = get();
-		subscribe(getComponent()!.render);
+		var component = getComponent(true);
+		
+		if (component) {
+			subscribe(component.render);
+		}
+		
 		return value;
 	}
 	

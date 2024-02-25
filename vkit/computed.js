@@ -78,7 +78,12 @@ function computed(getValue, inputs) {
 	
 	function use() {
 		var value = get();
-		subscribe(getComponent().render);
+		var component = getComponent(true);
+		
+		if (component) {
+			subscribe(component.render);
+		}
+		
 		return value;
 	}
 	

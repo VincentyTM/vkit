@@ -326,7 +326,12 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 	var enqueued = false;
 	
 	function use(): ValueType {
-		subscribe(getComponent()!.render);
+		var component = getComponent(true);
+		
+		if (component) {
+			subscribe(component.render);
+		}
+		
 		return value;
 	}
 	
