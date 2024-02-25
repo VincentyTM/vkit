@@ -27,7 +27,6 @@ function createBlock<ValueType>(
 	injector: Injector | null
 ): Block {
 	var range = createNodeRange(true);
-	var view: View;
 	
 	var component = createComponent(function() {
 		var view = getView(model);
