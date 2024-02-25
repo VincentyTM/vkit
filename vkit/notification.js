@@ -6,11 +6,8 @@ var onUnmount = $.onUnmount;
 var signal = $.signal;
 var update = $.update;
 
-function createNotificationManager(handleError, win) {
-	if(!win){
-		win = getWindow();
-	}
-	
+function createNotificationManager(handleError) {
+	var win = getWindow();
 	var nav = win.navigator;
 	var Notification = win.Notification;
 	var isSupported = typeof Notification === "function";
