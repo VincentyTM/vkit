@@ -10,6 +10,25 @@ export type Bindings<T> = {
 	)
 };
 
+function setValue<Target>(
+	target: Target,
+	name: keyof Target,
+	value: Target[keyof Target],
+	persistent: boolean
+) {
+	if (!persistent) {
+		var old = target[name];
+
+		onUnmount(function() {
+			if (target[name] === value) {
+				target[name] = old;
+			}
+		});
+	}
+
+	target[name] = value;
+}
+
 /**
  * Binds some properties to a specific target.
  * @example
@@ -41,7 +60,7 @@ export default function bind<Target>(
 		switch (typeof value) {
 			case "object":
 				if (!value) {
-					(target as any)[name] = value;
+					setValue(target, name, value, !!persistent);
 				} else if ((value as any).prop) {
 					(value as any).prop(name)(target);
 				} else {
@@ -50,7 +69,7 @@ export default function bind<Target>(
 					if (obj) {
 						bind(obj, value as any, persistent);
 					} else {
-						(target as any)[name] = value;
+						setValue(target, name, value, !!persistent);
 					}
 				}
 				break;
@@ -68,7 +87,7 @@ export default function bind<Target>(
 			case "undefined":
 				break;
 			default:
-				(target as any)[name] = value;
+				setValue(target, name, value, !!persistent);
 		}
 	}
 }

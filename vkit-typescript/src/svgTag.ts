@@ -2,6 +2,7 @@ import append from "./append";
 import bind from "./bind";
 import effect from "./effect";
 import onEvent, {EventTargetType} from "./onEvent";
+import onUnmount from "./onUnmount";
 import {Signal} from "./signal";
 import {View} from "./view";
 
@@ -16,7 +17,22 @@ export type SVGAttributes<ElementType> = {
 
 var xmlns = "http://www.w3.org/2000/svg";
 
-function setAttribute(el: Element, name: string, value: string | null) {
+function setAttribute(
+	el: Element,
+	name: string,
+	value: string | null,
+	persistent: boolean
+) {
+	if (!persistent) {
+		var old = el.getAttributeNS(null, name);
+
+		onUnmount(function() {
+			if (el.getAttributeNS(null, name) === value) {
+				setAttribute(el, name, old, true);
+			}
+		});
+	}
+	
 	if (value === null) {
 		el.removeAttributeNS(null, name);
 	} else {
@@ -24,29 +40,42 @@ function setAttribute(el: Element, name: string, value: string | null) {
 	}
 }
 
-function bindAttribute(el: Element, name: string, value: ReactiveAttributeValue) {
+function bindAttribute(
+	el: Element,
+	name: string,
+	value: ReactiveAttributeValue,
+	persistent: boolean
+) {
 	if (typeof value === "function") {
 		if ((value as Signal<AttributeValue>).effect) {
 			(value as Signal<AttributeValue>).effect(function(v) {
-				setAttribute(el, name, v);
+				setAttribute(el, name, v, persistent);
 			});
 		} else if (name.indexOf("on") === 0) {
-			onEvent(el as unknown as EventTargetType, name.substring(2), value);
+			var unsub = onEvent(el as unknown as EventTargetType, name.substring(2), value);
+
+			if (!persistent) {
+				onUnmount(unsub);
+			}
 		} else {
 			effect(function() {
-				setAttribute(el, name, (value as () => AttributeValue)());
+				setAttribute(el, name, (value as () => AttributeValue)(), persistent);
 			});
 		}
 	} else if (value && typeof value === "object") {
 		bind((el as any)[name], value);
 	} else {
-		setAttribute(el, name, value);
+		setAttribute(el, name, value, persistent);
 	}
 }
 
-function bindAttributes(el: Element, attributes: {[attributeName: string]: ReactiveAttributeValue}) {
+function bindAttributes(
+	el: Element,
+	attributes: {[attributeName: string]: ReactiveAttributeValue},
+	persistent?: boolean
+) {
 	for (var name in attributes) {
-		bindAttribute(el, name, attributes[name]);
+		bindAttribute(el, name, attributes[name], !!persistent);
 	}
 }
 
