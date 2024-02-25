@@ -6,14 +6,6 @@ var observable = $.observable;
 var rootComponent = $.rootComponent;
 
 function onUnmount(callback, component) {
-	if (!callback) {
-		component = getComponent();
-		
-		return function(callback) {
-			return onUnmount(callback, component);
-		};
-	}
-	
 	if (!component) {
 		component = getComponent();
 	}
