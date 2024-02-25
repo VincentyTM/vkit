@@ -6,10 +6,8 @@ var onUnmount = $.onUnmount;
 var signal = $.signal;
 var update = $.update;
 
-function createMediaQuery(mediaQuery, win) {
-	if (!win) {
-		win = getWindow();
-	}
+function createMediaQuery(mediaQuery) {
+	var win = getWindow();
 	
 	if (!win.matchMedia) {
 		return computed(function() {
