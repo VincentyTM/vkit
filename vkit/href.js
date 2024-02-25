@@ -1,7 +1,7 @@
 (function($) {
 
 var computed = $.computed;
-var getWindow = $.window;
+var getWindow = $.getWindow;
 var isSignal = $.isSignal;
 var navigate = $.navigate;
 

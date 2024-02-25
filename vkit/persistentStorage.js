@@ -1,6 +1,6 @@
 (function($) {
 
-var getWindow = $.window;
+var getWindow = $.getWindow;
 var noop = $.noop;
 var permission = $.permission;
 var signal = $.signal;

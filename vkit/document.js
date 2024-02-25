@@ -1,7 +1,7 @@
 (function($){
 
 var bind = $.bind;
-var getWindow = $.window;
+var getWindow = $.getWindow;
 
 function getDocument(){
 	var doc = getWindow().document;

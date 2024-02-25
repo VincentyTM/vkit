@@ -1,7 +1,7 @@
 (function($, undefined) {
 
 var computed = $.computed;
-var getWindow = $.window;
+var getWindow = $.getWindow;
 var observable = $.observable;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;

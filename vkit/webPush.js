@@ -1,6 +1,6 @@
 (function($) {
 
-var getWindow = $.window;
+var getWindow = $.getWindow;
 var map = $.map;
 var notification = $.notification;
 var signal = $.signal;

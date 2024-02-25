@@ -2,7 +2,7 @@
 
 var effect = $.effect;
 var signal = $.signal;
-var getWindow = $.window;
+var getWindow = $.getWindow;
 var onUnmount = $.onUnmount;
 var update = $.update;
 

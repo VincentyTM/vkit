@@ -1,6 +1,6 @@
 (function($) {
 
-var getWindow = $.window;
+var getWindow = $.getWindow;
 var history = $.history;
 var parseURL = $.parseURL;
 var queryParams = $.queryParams;

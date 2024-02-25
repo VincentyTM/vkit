@@ -1,6 +1,6 @@
 (function($) {
 
-var getWindow = $.window;
+var getWindow = $.getWindow;
 var onUnmount = $.onUnmount;
 var update = $.update;
 

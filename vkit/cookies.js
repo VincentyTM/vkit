@@ -1,6 +1,6 @@
 (function($, undefined) {
 
-var getWindow = $.window;
+var getWindow = $.getWindow;
 
 var leadingAndTrailingWhitespaces = /(^\s+)|(\s+$)/g;
 

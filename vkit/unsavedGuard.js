@@ -1,6 +1,6 @@
 (function($) {
 
-var getWindow = $.window;
+var getWindow = $.getWindow;
 var observable = $.observable;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
