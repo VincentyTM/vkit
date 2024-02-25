@@ -7,7 +7,7 @@ var isSignal = $.isSignal;
 function view(getView) {
 	var component = createComponent(mount);
 	var currentView;
-	var range = createNodeRange();
+	var range = createNodeRange(true);
 	var render = component.render;
 	var signal = this;
 	

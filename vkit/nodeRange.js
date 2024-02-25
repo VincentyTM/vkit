@@ -3,7 +3,7 @@
 var insert = $.insert;
 var removeNode = $.remove;
 
-function createNodeRange() {
+function createNodeRange(crossView) {
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
 	
@@ -32,7 +32,7 @@ function createNodeRange() {
 			throw new Error("Cannot append to detached range");
 		}
 		
-		insert(arguments, end, start.parentNode);
+		insert(arguments, end, start.parentNode, crossView);
 	}
 	
 	function insertBefore(anchor) {

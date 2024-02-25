@@ -14,7 +14,7 @@ var throwError = $.throwError;
 var toArray = $.toArray;
 
 function createBlock(model, getView, container, injector) {
-	var range = createNodeRange();
+	var range = createNodeRange(true);
 	var view;
 	
 	var component = createComponent(function() {
@@ -46,7 +46,7 @@ function createBlock(model, getView, container, injector) {
 			try {
 				setComponent(component);
 				setInjector(injector);
-				insert(render(), end, end.parentNode);
+				insert(render(), end, end.parentNode, true);
 			} catch (error) {
 				throwError(error, component);
 			} finally {
