@@ -2,11 +2,11 @@
 
 var createComponent = $.component;
 var createNodeRange = $.nodeRange;
+var enqueueUpdate = $.enqueueUpdate;
 var isSignal = $.isSignal;
 
 function view(getView) {
 	var component = createComponent(mount);
-	var currentView;
 	var range = createNodeRange(true);
 	var render = component.render;
 	var signal = this;
@@ -18,7 +18,7 @@ function view(getView) {
 	}
 	
 	function mount() {
-		currentView = getView(signal ? signal.get() : null);
+		var currentView = getView(signal ? signal.get() : null);
 		
 		if (range.start.nextSibling) {
 			range.clear();
@@ -26,11 +26,10 @@ function view(getView) {
 		}
 	}
 	
-	render();
+	enqueueUpdate(render);
 	
 	return [
 		range.start,
-		currentView,
 		range.end
 	];
 }

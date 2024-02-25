@@ -3,6 +3,7 @@
 var createComponent = $.component;
 var createNodeRange = $.nodeRange;
 var emitUnmount = $.emitUnmount;
+var enqueueUpdate = $.enqueueUpdate;
 var getComponent = $.getComponent;
 var getInjector = $.getInjector;
 var hashCode = $.hashCode;
@@ -15,10 +16,8 @@ var toArray = $.toArray;
 
 function createBlock(model, getView, container, injector) {
 	var range = createNodeRange(true);
-	var view;
-	
 	var component = createComponent(function() {
-		view = getView(model);
+		var view = getView(model);
 		
 		if (range.start.nextSibling) {
 			range.clear();
@@ -26,12 +25,11 @@ function createBlock(model, getView, container, injector) {
 		}
 	}, container, injector);
 	
-	component.render();
-	
 	function render() {
+		enqueueUpdate(component.render);
+		
 		return [
 			range.start,
-			view,
 			range.end
 		];
 	}
@@ -70,7 +68,7 @@ function views(getView) {
 	var injector = getInjector();
 	var range = createNodeRange();
 	var oldBlocks = {};
-	var array;
+	var array = [];
 	
 	function render(models) {
 		if (!isArray(models)) {
@@ -138,20 +136,16 @@ function views(getView) {
 		array = newArray;
 	}
 	
-	render(signal.get());
 	signal.subscribe(render);
 	
-	var n = array.length;
-	var output = new Array(n + 2);
+	enqueueUpdate(function() {
+		render(signal.get());
+	});
 	
-	for (var i = 0; i < n; ++i) {
-		output[i + 1] = array[i].render();
-	}
-	
-	output[0] = range.start;
-	output[n + 1] = range.end;
-	
-	return output;
+	return [
+		range.start,
+		range.end
+	];
 }
 
 $.views = views;
