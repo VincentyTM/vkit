@@ -2,7 +2,7 @@
 
 function throwError(error, component) {
 	while (component) {
-		if (component.parent) {
+		if (component.parent && component.stack && error && typeof error.stack === "string") {
 			error.stack += "\n" + component.stack;
 		}
 		
