@@ -10,25 +10,26 @@ export default function deepPush<ItemType, ContextType>(
 	array: Pushable<ItemType>,
 	item: ItemType,
 	context: ContextType,
-	bind?: (
+	bind: (
 		target: ContextType,
 		modifier: ItemType & Bindings<ContextType>,
 		isExternal?: boolean
-	) => void
+	) => void,
+	crossView: boolean
 ): Pushable<ItemType> {
 	if (item === null || item === undefined || typeof item === "boolean") {
 		return array;
 	}
 	
 	if (typeof (item as any).render === "function") {
-		deepPush(array, (item as any).render(), context, bind);
+		deepPush(array, (item as any).render(), context, bind, crossView);
 		return array;
 	}
 
 	if (typeof item === "function") {
 		if (directive) {
 			var returnValue = directive(context, item as unknown as (element: ContextType) => string | void) as unknown as ItemType;
-			deepPush(array, returnValue, context, bind);
+			deepPush(array, returnValue, context, bind, crossView);
 		} else {
 			item(context);
 		}
@@ -50,7 +51,7 @@ export default function deepPush<ItemType, ContextType>(
 		var a = toArray<any>(item as any);
 
 		for (var i = 0; i < n; ++i) {
-			deepPush(array, a[i], context, bind);
+			deepPush(array, a[i], context, bind, crossView);
 		}
 
 		return array;
@@ -61,14 +62,14 @@ export default function deepPush<ItemType, ContextType>(
 
 		do {
 			x = (item as any).next();
-			deepPush(array, x.value, context, bind);
+			deepPush(array, x.value, context, bind, crossView);
 		} while (!x.done);
 
 		return array;
 	}
 	
 	if (bind) {
-		bind(context, item, true);
+		bind(context, item, !crossView);
 		return array;
 	}
 

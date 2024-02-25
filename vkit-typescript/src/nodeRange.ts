@@ -12,7 +12,7 @@ export type NodeRange = {
 	start: ChildNode;
 };
 
-export default function createNodeRange() : NodeRange {
+export default function createNodeRange(crossView?: boolean) : NodeRange {
 	var start: ChildNode = document.createTextNode("");
 	var end: ChildNode = document.createTextNode("");
 	
@@ -40,7 +40,7 @@ export default function createNodeRange() : NodeRange {
 		if (!start.nextSibling) {
 			throw new Error("Cannot append to detached range");
 		}
-		insert(arguments, end, (start as any).parentNode);
+		insert(arguments, end, (start as any).parentNode, crossView);
 	}
 	
 	function insertBefore(anchor: Node): void {

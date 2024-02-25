@@ -4,7 +4,8 @@ import deepPush from "./deepPush";
 function insert<ItemType, ContextType>(
 	children: ItemType,
 	nextSibling: Node,
-	context: ContextType
+	context: ContextType,
+	crossView?: boolean
 ): void {
 	var parent = nextSibling.parentNode;
 	
@@ -23,7 +24,8 @@ function insert<ItemType, ContextType>(
 			array,
 			children,
 			context,
-			bind
+			bind,
+			!!crossView
 		);
 		
 		(nextSibling as any).before.apply(nextSibling, array);
@@ -32,7 +34,8 @@ function insert<ItemType, ContextType>(
 			{push: push},
 			children,
 			context,
-			bind
+			bind,
+			!!crossView
 		);
 	}
 }

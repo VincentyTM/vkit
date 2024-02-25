@@ -25,7 +25,7 @@ function createBlock<ValueType>(
 	container: Component | null,
 	injector: Injector | null
 ): Block {
-	var range = createNodeRange();
+	var range = createNodeRange(true);
 	var view: View;
 	
 	var component = createComponent(function() {
@@ -57,7 +57,7 @@ function createBlock<ValueType>(
 			try {
 				setComponent(component);
 				setInjector(injector);
-				insert(render(), end, end.parentNode as Node);
+				insert(render(), end, end.parentNode as Node, true);
 			} catch (error) {
 				throwError(error, component);
 			} finally {

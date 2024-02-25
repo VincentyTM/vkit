@@ -53,7 +53,7 @@ export default function view<ValueType, ContextType>(
 ) : View<ContextType> {
 	var component = createComponent(mount);
 	var currentView: View;
-	var range = createNodeRange();
+	var range = createNodeRange(true);
 	var render = component.render;
 	var signal: Signal<ValueType> | null | void = this;
 	

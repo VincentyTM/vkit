@@ -12,7 +12,8 @@ export default function append<ItemType, ContextType>(
 		target: ContextType,
 		modifier: ItemType & Bindings<ContextType>,
 		isExternal?: boolean
-	) => void
+	) => void,
+	crossView?: boolean
 ): void {
 	function push(node: ItemType): void {
 		parent.appendChild(node);
@@ -25,7 +26,8 @@ export default function append<ItemType, ContextType>(
 			array,
 			children,
 			context,
-			bind
+			bind,
+			!!crossView
 		);
 		
 		parent.append.apply(parent, array);
@@ -34,7 +36,8 @@ export default function append<ItemType, ContextType>(
 			{push: push},
 			children,
 			context,
-			bind
+			bind,
+			!!crossView
 		);
 	}
 }
