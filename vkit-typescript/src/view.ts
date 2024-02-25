@@ -1,6 +1,7 @@
 import {Bindings} from "./bind";
 import createComponent from "./component";
 import createNodeRange from "./nodeRange";
+import {enqueueUpdate} from "./update";
 import isSignal from "./isSignal";
 import {Signal} from "./signal";
 
@@ -52,7 +53,6 @@ export default function view<ValueType, ContextType>(
 	getCurrentView: (value: ValueType | null) => View<ContextType>
 ) : View<ContextType> {
 	var component = createComponent(mount);
-	var currentView: View;
 	var range = createNodeRange(true);
 	var render = component.render;
 	var signal: Signal<ValueType> | null | void = this;
@@ -64,7 +64,7 @@ export default function view<ValueType, ContextType>(
 	}
 	
 	function mount() {
-		currentView = getCurrentView(signal ? signal.get() : null);
+		var currentView = getCurrentView(signal ? signal.get() : null);
 		
 		if (range.start.nextSibling) {
 			range.clear();
@@ -72,11 +72,10 @@ export default function view<ValueType, ContextType>(
 		}
 	}
 	
-	render();
+	enqueueUpdate(render);
 	
 	return [
 		range.start,
-		currentView,
 		range.end
 	];
 }

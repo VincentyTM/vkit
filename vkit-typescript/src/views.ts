@@ -1,6 +1,7 @@
 import createComponent, {Component} from "./component";
 import createNodeRange from "./nodeRange";
 import emitUnmount from "./emitUnmount";
+import {enqueueUpdate} from "./update";
 import {getComponent, getInjector, setComponent, setInjector} from "./contextGuard";
 import hashCode from "./hashCode";
 import {Injector} from "./injector";
@@ -29,7 +30,7 @@ function createBlock<ValueType>(
 	var view: View;
 	
 	var component = createComponent(function() {
-		view = getView(model);
+		var view = getView(model);
 		
 		if (range.start.nextSibling) {
 			range.clear();
@@ -37,12 +38,11 @@ function createBlock<ValueType>(
 		}
 	}, container, injector);
 	
-	component.render();
-	
 	function render() {
+		enqueueUpdate(component.render);
+		
 		return [
 			range.start,
-			view,
 			range.end
 		];
 	}
@@ -84,7 +84,7 @@ export default function views<ValueType, ContextType>(
 	var injector = getInjector();
 	var range = createNodeRange();
 	var oldBlocks: {[key: string]: Block} = {};
-	var array: Block[];
+	var array: Block[] = [];
 	
 	function render(models: ArrayLike<ValueType>) {
 		if (!isArray(models)) {
@@ -152,18 +152,14 @@ export default function views<ValueType, ContextType>(
 		array = newArray;
 	}
 	
-	render(signal.get());
 	signal.subscribe(render);
 	
-	var n = array!.length;
-	var output: View<ContextType>[] = new Array(n + 2);
+	enqueueUpdate(function() {
+		render(signal.get());
+	});
 	
-	for (var i = 0; i < n; ++i) {
-		output[i + 1] = array![i].render();
-	}
-	
-	output[0] = range.start;
-	output[n + 1] = range.end;
-	
-	return output;
+	return [
+		range.start,
+		range.end
+	];
 }
