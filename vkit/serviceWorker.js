@@ -4,26 +4,26 @@ var getWindow = $.getWindow;
 var signal = $.signal;
 var update = $.update;
 
-function serviceWorker(src, options, onError) {
+function serviceWorker(src, options) {
 	var nav = getWindow().navigator;
+	var error = signal(null);
 	var registration = signal(null);
 	
 	if (nav.serviceWorker && typeof nav.serviceWorker.register === "function") {
 		nav.serviceWorker.register(src, options).then(function(reg) {
 			registration.set(reg);
 			update();
-		}, function(error) {
-			if (typeof onError === "function") {
-				onError(error);
-			}
-			
+		}, function(ex) {
+			error.set(ex);
 			update();
 		});
-	} else if (typeof onError === "function") {
-		onError(new Error("ServiceWorker API is not supported"));
+	} else {
+		error.set(new Error("ServiceWorker API is not supported"));
 	}
 	
-	return registration.map();
+	var result = registration.map();
+	result.onError = error.subscribe;
+	return result;
 }
 
 $.serviceWorker = serviceWorker;
