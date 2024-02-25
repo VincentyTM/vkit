@@ -6,7 +6,7 @@ var onUnmount = $.onUnmount;
 var signal = $.signal;
 var update = $.update;
 
-function createMediaQuery(mediaQuery) {
+function mediaQuery(query) {
 	var win = getWindow();
 	
 	if (!win.matchMedia) {
@@ -15,7 +15,7 @@ function createMediaQuery(mediaQuery) {
 		});
 	}
 	
-	var matcher = win.matchMedia(mediaQuery);
+	var matcher = win.matchMedia(query);
 	var matches = signal(matcher.matches);
 	
 	function handleChange(e) {
@@ -40,6 +40,6 @@ function createMediaQuery(mediaQuery) {
 	return matches.map();
 }
 
-$.mediaQuery = createMediaQuery;
+$.mediaQuery = mediaQuery;
 
 })($);
