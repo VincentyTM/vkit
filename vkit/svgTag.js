@@ -30,7 +30,7 @@ function bindAttribute(el, name, value, persistent) {
 	if (typeof value === "function") {
 		if (value.effect) {
 			value.effect(function(v) {
-				setAttribute(el, name, v);
+				setAttribute(el, name, v, persistent);
 			});
 		} else if (name.indexOf("on") === 0) {
 			var unsub = onEvent(el, name.substring(2), value);
@@ -40,13 +40,13 @@ function bindAttribute(el, name, value, persistent) {
 			}
 		} else {
 			effect(function() {
-				setAttribute(el, name, value());
+				setAttribute(el, name, value(), persistent);
 			});
 		}
 	} else if (value && typeof value === "object") {
 		bind(el[name], value);
 	} else {
-		setAttribute(el, name, value);
+		setAttribute(el, name, value, persistent);
 	}
 }
 
