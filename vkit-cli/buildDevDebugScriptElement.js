@@ -99,6 +99,10 @@ window.onerror = function(message, source, lineno, colno, error) {
 		}
 		var functionName = match[2];
 		var sourceWithNumbers = match[3];
+		if (/^[0-9]+$/.test(sourceWithNumbers)) {
+			sourceWithNumbers = functionName;
+			functionName = "(anonymous)";
+		}
 		var lastColonPos = sourceWithNumbers.lastIndexOf(":");
 		var secondLastColonPos = sourceWithNumbers.lastIndexOf(":", lastColonPos - 1);
 		var ln = parseInt(sourceWithNumbers.substring(secondLastColonPos + 1, lastColonPos));
