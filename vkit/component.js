@@ -13,6 +13,7 @@ function createComponent(mount, parent, injector) {
 		emitError: null,
 		parent: parent === undefined ? getComponent() : parent,
 		render: renderComponent,
+		stack: new Error().stack,
 		unmount: null
 	};
 	

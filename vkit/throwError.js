@@ -2,6 +2,10 @@
 
 function throwError(error, component) {
 	while (component) {
+		if (component.parent) {
+			error.stack += "\n" + component.stack;
+		}
+		
 		if (component.emitError) {
 			try {
 				component.emitError(error);
