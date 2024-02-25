@@ -6,11 +6,13 @@ var onUnmount = $.onUnmount;
 var signal = $.signal;
 var update = $.update;
 
-function createNotificationManager(handleError) {
+function createNotificationManager() {
 	var win = getWindow();
 	var nav = win.navigator;
 	var Notification = win.Notification;
 	var isSupported = typeof Notification === "function";
+	
+	var error = signal(null);
 	
 	var permission = signal(
 		isSupported
@@ -72,11 +74,8 @@ function createNotificationManager(handleError) {
 			);
 			
 			update();
-		}, function(error) {
-			if (typeof handleError === "function") {
-				handleError(error);
-			}
-			
+		}, function(ex) {
+			error.set(ex);
 			update();
 		});
 	}
@@ -140,6 +139,7 @@ function createNotificationManager(handleError) {
 	
 	return {
 		granted: granted,
+		onError: error.subscribe,
 		permission: prompt,
 		requestPermission: request,
 		show: showNotification
