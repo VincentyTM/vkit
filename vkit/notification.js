@@ -1,5 +1,6 @@
 (function($) {
 
+var getComponent = $.getComponent;
 var getWindow = $.getWindow;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
@@ -7,6 +8,7 @@ var signal = $.signal;
 var update = $.update;
 
 function createNotificationManager() {
+	var component = getComponent();
 	var win = getWindow();
 	var nav = win.navigator;
 	var Notification = win.Notification;
@@ -49,8 +51,6 @@ function createNotificationManager() {
 		};
 	});
 	
-	var whenUnmount = onUnmount();
-	
 	if (nav.permissions) {
 		nav.permissions.query({name: "notifications"}).then(function(perm) {
 			var state = perm.state || perm.status;
@@ -61,7 +61,7 @@ function createNotificationManager() {
 			
 			permission.set(state);
 			
-			whenUnmount(
+			onUnmount(
 				onEvent(perm, "change", function() {
 					var state = perm.state || perm.status;
 					
@@ -70,7 +70,9 @@ function createNotificationManager() {
 					}
 					
 					permission.set(state);
-				})
+				}),
+				
+				component
 			);
 			
 			update();

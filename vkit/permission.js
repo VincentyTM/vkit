@@ -1,5 +1,6 @@
 (function($) {
 
+var getComponent = $.getComponent;
 var getWindow = $.getWindow;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
@@ -7,6 +8,7 @@ var signal = $.signal;
 var update = $.update;
 
 function permissionPrompt(name, requestPermission, onError) {
+	var component = getComponent();
 	var nav = getWindow().navigator;
 	
 	function grant() {
@@ -33,7 +35,6 @@ function permissionPrompt(name, requestPermission, onError) {
 		}
 	}
 	
-	var whenUnmount = onUnmount();
 	var permission = signal("default");
 	
 	var prompt = permission.map(function(perm) {
@@ -69,10 +70,12 @@ function permissionPrompt(name, requestPermission, onError) {
 		nav.permissions.query({name: name}).then(function(perm) {
 			permission.set(perm.state || perm.status);
 			
-			whenUnmount(
+			onUnmount(
 				onEvent(perm, "change", function() {
 					permission.set(perm.state || perm.status);
-				})
+				}),
+				
+				component
 			);
 			
 			update();
