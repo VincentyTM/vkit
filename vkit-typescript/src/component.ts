@@ -9,6 +9,7 @@ export type Component = {
 	emitError: ((error: any) => void) | null;
 	parent: Component | null;
 	render: () => void;
+	stack: string | undefined;
 	unmount: Observable<void> | null;
 };
 
@@ -22,6 +23,7 @@ export default function createComponent(
 		emitError: null,
 		parent: parent === undefined ? getComponent() : parent,
 		render: renderComponent,
+		stack: new Error().stack,
 		unmount: null
 	};
 	
