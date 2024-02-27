@@ -1,7 +1,7 @@
-var noop = require("./noop");
+import noop from "./noop.js";
 
-function dragZone(zoneTarget){
-	function draggable(target, after){
+export default function dragZone(zoneTarget) {
+	function draggable(target, after) {
 		return {
 			style: {
 				touchAction: "none"
@@ -14,5 +14,3 @@ function dragZone(zoneTarget){
 		draggable: draggable
 	};
 }
-
-module.exports = dragZone;

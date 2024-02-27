@@ -1,7 +1,7 @@
-var htmlTag = require("./htmlTag.js");
+import htmlTag from "./htmlTag.js";
 
-module.exports = new Proxy({}, {
-	get: function(target, prop, receiver){
+export default new Proxy({}, {
+	get: function(target, prop, receiver) {
 		return htmlTag(prop.toLowerCase().replace(/_/g, "-"));
 	}
 });

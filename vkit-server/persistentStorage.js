@@ -1,6 +1,6 @@
-var computed = require("./computed");
+import computed from "./computed.js";
 
-function persistentStorage() {
+export default function persistentStorage() {
 	return {
 		permission: computed(function() {
 			return {
@@ -13,5 +13,3 @@ function persistentStorage() {
 		})
 	};
 }
-
-module.exports = persistentStorage;

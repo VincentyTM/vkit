@@ -1,7 +1,7 @@
-var computed = require("./computed");
-var noop = require("./noop");
+import computed from "./computed.js";
+import noop from "./noop.js";
 
-function userMedia() {
+export default function userMedia() {
 	var media = computed(function() {
 		return null;
 	});
@@ -14,5 +14,3 @@ function userMedia() {
 	
 	return media;
 }
-
-module.exports = userMedia;

@@ -1,8 +1,6 @@
-var createHistoryHandler = require("./history.js");
-var url = require("./url.js");
+import history from "./history.js";
+import parseURL from "./parseURL.js";
 
-function path(){
-	return url(createHistoryHandler().url()).base;
+export default function path() {
+	return parseURL(history().url()).base;
 }
-
-module.exports = path;

@@ -1,7 +1,5 @@
-var isSignal = require("./isSignal");
+import isSignal from "./isSignal.js";
 
-function get(signalOrValue){
+export default function get(signalOrValue) {
 	return isSignal(signalOrValue) ? signalOrValue.get() : signalOrValue;
 }
-
-module.exports = get;

@@ -1,4 +1,4 @@
-var computed = require("./computed");
+import computed from "./computed.js";
 
 function getKeys(result) {
 	return result.keys;
@@ -8,7 +8,7 @@ function getRecords(result) {
 	return result.records;
 }
 
-function useKey(arraySignal, getKey, transformValue) {
+export default function useKey(arraySignal, getKey, transformValue) {
 	var isFunction = typeof getKey === "function";
 	
 	var signal = arraySignal.map(function(array) {
@@ -69,5 +69,3 @@ function useKey(arraySignal, getKey, transformValue) {
 		views: views
 	};
 }
-
-module.exports = useKey;

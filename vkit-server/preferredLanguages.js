@@ -1,8 +1,8 @@
-var readOnly = require("./readOnly");
-var scope = require("./scope");
+import readOnly from "./readOnly.js";
+import {getScope} from "./scope.js";
 
-function preferredLanguages() {
-	var currentScope = scope.get();
+export default function preferredLanguages() {
+	var currentScope = getScope();
 	var header = currentScope.req.headers["accept-language"];
 	
 	if (!header) {
@@ -22,5 +22,3 @@ function preferredLanguages() {
 	
 	return readOnly(langs);
 }
-
-module.exports = preferredLanguages;

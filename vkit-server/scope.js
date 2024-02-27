@@ -1,11 +1,12 @@
-var escapeHTML = require("./escapeHTML");
+import escapeHTML from "./escapeHTML.js";
+
 var scope = null;
 
 function replaceStyleEnds(text) {
 	return '<\\/' + text.substring(2);
 }
 
-function createScope(req, res) {
+export function createScope(req, res) {
 	var interceptors = [];
 	var styles = [];
 	var styleCount = 0;
@@ -137,7 +138,7 @@ function createScope(req, res) {
 	};
 }
 
-function getScope(allowNullScope) {
+export function getScope(allowNullScope) {
 	if (!scope && !allowNullScope) {
 		throw new Error("This function can only be called synchronously from a component");
 	}
@@ -145,12 +146,6 @@ function getScope(allowNullScope) {
 	return scope;
 }
 
-function setScope(newScope) {
+export function setScope(newScope) {
 	scope = newScope;
 }
-
-module.exports = {
-	create: createScope,
-	get: getScope,
-	set: setScope
-};

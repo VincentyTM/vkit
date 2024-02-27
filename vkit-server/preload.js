@@ -1,9 +1,7 @@
-var emptyComponent = function(){
+var emptyComponent = function() {
 	return null;
 };
 
-function preload(promise, pendingComponent, errorComponent){
+export default function preload(promise, pendingComponent, errorComponent) {
 	return pendingComponent || emptyComponent;
 }
-
-module.exports = preload;

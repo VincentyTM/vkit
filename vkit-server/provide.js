@@ -1,9 +1,7 @@
-var contextGuard = require("./contextGuard");
-var createInjector = require("./injector");
-var createProvider = require("./provider");
-var getInjector = contextGuard.getInjector;
-var inject = require("./inject");
-var setInjector = contextGuard.setInjector;
+import {getInjector, setInjector} from "./contextGuard.js";
+import createInjector from "./injector.js";
+import createProvider from "./provider.js";
+import inject from "./inject.js";
 
 function getValueFromClass(config) {
 	return new config();
@@ -29,9 +27,10 @@ function getValueFromUseValue(config) {
 	return config.useValue;
 }
 
-function provide(configs, getView) {
+export default function provide(configs, getView) {
 	var prevInjector = getInjector(true);
 	var parentInjector = configs ? prevInjector : null;
+	
 	var injector = createInjector(parentInjector, configs ? null : function(token) {
 		var provider = createProvider(getValueFromClass, token);
 		injector.container.set(token, provider);
@@ -72,5 +71,3 @@ function provide(configs, getView) {
 		setInjector(prevInjector);
 	}
 }
-
-module.exports = provide;

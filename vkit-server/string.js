@@ -1,7 +1,8 @@
-var createComputedSignal = require("./computed");
+import computed from "./computed.js";
+
 var slice = Array.prototype.slice;
 
-function templateTag(strings) {
+export default function templateTag(strings) {
 	var n = strings.length;
 	var inputs = slice.call(arguments, 1);
 	
@@ -20,7 +21,5 @@ function templateTag(strings) {
 		return a.join("");
 	}
 	
-	return createComputedSignal(getValue, inputs);
+	return computed(getValue, inputs);
 }
-
-module.exports = templateTag;

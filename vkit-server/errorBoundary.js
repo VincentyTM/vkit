@@ -1,11 +1,9 @@
-var noop = require("./noop");
+import noop from "./noop.js";
 
-function errorBoundary(getView, getFallbackView) {
+export default function errorBoundary(getView, getFallbackView) {
 	try {
 		return getView();
 	} catch (error) {
 		return getFallbackView(error, noop);
 	}
 }
-
-module.exports = errorBoundary;

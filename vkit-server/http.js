@@ -1,6 +1,6 @@
-var noop = require("./noop");
-var readOnly = require("./readOnly");
-var scope = require("./scope");
+import noop from "./noop.js";
+import readOnly from "./readOnly.js";
+import {getScope} from "./scope.js";
 
 function createRequest(data) {
 	if (!data) {
@@ -32,8 +32,8 @@ function createRequest(data) {
 	return request;
 }
 
-function http(request, options) {
-	var currentScope = scope.get();
+export default function http(request, options) {
+	var currentScope = getScope();
 	
 	if (typeof request === "function") {
 		request = request();
@@ -54,5 +54,3 @@ function http(request, options) {
 	result.then = noop;
 	return result;
 }
-
-module.exports = http;

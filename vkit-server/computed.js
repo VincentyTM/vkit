@@ -1,1 +1,1 @@
-module.exports = require("./signalAndComputed").computed;
+export {computed as default} from "./signalAndComputed.js";

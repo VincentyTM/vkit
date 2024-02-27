@@ -1,8 +1,6 @@
-var computed = require("./computed");
-var returnNull = require("./returnNull");
+import computed from "./computed.js";
+import returnNull from "./returnNull.js";
 
-function returnComputedNull() {
+export default function returnComputedNull() {
 	return computed(returnNull);
 }
-
-module.exports = returnComputedNull;

@@ -1,12 +1,12 @@
-var computed = require("./computed");
-var noop = require("./noop");
-var returnNull = require("./returnNull");
+import computed from "./computed.js";
+import noop from "./noop.js";
+import returnNull from "./returnNull.js";
 
 function granted() {
 	return false;
 }
 
-module.exports = function() {
+export default function notification() {
 	var prompt = computed(function(perm) {
 		return {
 			state: "default"

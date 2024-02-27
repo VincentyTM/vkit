@@ -1,4 +1,4 @@
-var isSignal = require("./isSignal");
+import isSignal from "./isSignal.js";
 
 var MAX_COUNT = 9007199254740991;
 
@@ -21,7 +21,7 @@ function createRangeArray(length) {
 	return array;
 }
 
-function repeat(count, getView) {
+export default function repeat(count, getView) {
 	if (isSignal(count)) {
 		var arrayState = count.map(createRangeArray);
 		return arrayState.views(getView);
@@ -37,5 +37,3 @@ function repeat(count, getView) {
 	
 	return array;
 }
-
-module.exports = repeat;

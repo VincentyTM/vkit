@@ -1,99 +1,100 @@
-var htmlTag = require("./htmlTag");
-var htmlTags = require("./htmlTags");
-var languageService = require("./languageService");
-var noop = require("./noop");
-var returnComputedNull = require("./returnComputedNull");
-var returnNull = require("./returnNull");
-var signal = require("./signal");
-var styledHtmlTag = require("./styledHtmlTag");
-var userMedia = require("./userMedia");
+import htmlTag from "./htmlTag.js";
+import htmlTags from "./htmlTags.js";
+import {define, lang, LanguageService, word} from "./languageService.js";
+import noop from "./noop.js";
+import returnComputedNull from "./returnComputedNull.js";
+import returnNull from "./returnNull.js";
+import signal from "./signal.js";
+import styledHtmlTag from "./styledHtmlTag.js";
+import userMedia from "./userMedia.js";
 
-module.exports = {
-	array: require("./array"),
-	assets: require("./assets"),
-	attributes: require("./attributes"),
-	await: require("./await"),
-	classes: require("./classes"),
-	classNames: require("./classNames"),
-	computed: require("./computed"),
-	concat: require("./concat"),
-	cookies: require("./cookies"),
-	customElement: require("./customElement"),
-	define: languageService.define,
-	dialogs: require("./dialogs"),
-	displayMedia: userMedia,
-	document: returnNull,
-	dragZone: require("./dragZone"),
-	effect: noop,
-	emitter: require("./emitter"),
-	errorBoundary: require("./errorBoundary"),
-	escapeHTML: require("./escapeHTML"),
-	get: require("./get"),
-	getWindow: require("./getWindow"),
-	history: require("./history"),
-	href: require("./href"),
-	html: require("./html"),
-	htmlTag: htmlTag,
-	htmlTags: htmlTags,
-	http: require("./http"),
-	ifElse: require("./ifElse"),
-	inject: require("./inject"),
-	installPrompt: returnComputedNull,
-	interval: noop,
-	isArray: require("./isArray"),
-	isSignal: require("./isSignal"),
-	lang: languageService.lang,
-	languageService: languageService.languageService,
-	lazy: require("./lazy"),
-	map: require("./map"),
-	mediaQuery: require("./mediaQuery"),
-	meta: require("./meta"),
-	navigate: require("./navigate"),
-	noop: noop,
-	notification: require("./notification"),
-	objectProperty: require("./objectProperty"),
-	observable: require("./observable"),
-	of: require("./of"),
-	onUnmount: noop,
-	param: require("./param"),
-	params: require("./params"),
-	path: require("./path"),
-	persistentStorage: require("./persistentStorage"),
-	preferredLanguages: require("./preferredLanguages"),
-	preload: require("./preload"),
-	promise: require("./promise"),
-	provide: require("./provide"),
-	queryParams: require("./queryParams"),
-	queryParamsState: require("./queryParamsState"),
-	repeat: require("./repeat"),
-	router: require("./router"),
-	server: require("./server"),
-	serviceWorker: returnComputedNull,
-	shuffle: require("./shuffle"),
-	signal: signal,
-	state: signal,
-	string: require("./string"),
-	style: require("./style"),
-	styleSelector: require("./styleSelector"),
-	styledHtmlTag: styledHtmlTag,
-	svgTag: htmlTag,
-	svgTags: htmlTags,
-	text: require("./text"),
-	theme: require("./theme"),
-	title: require("./title"),
-	toArray: require("./toArray"),
-	unmount: noop,
-	updatePrompt: returnComputedNull,
-	useKey: require("./useKey"),
-	userMedia: userMedia,
-	view: require("./view"),
-	virtualHtmlTag: htmlTag,
-	virtualHtmlTags: htmlTags,
-	virtualStyledHtmlTag: styledHtmlTag,
-	webPush: require("./webPush"),
-	webSocket: require("./webSocket"),
-	window: require("./getWindow"),
-	windowContent: require("./windowContent"),
-	windowData: require("./windowData"),
-	word: languageService.word
+export {
+	define,
+	userMedia as displayMedia,
+	htmlTag,
+	htmlTags,
+	returnNull as document,
+	noop as effect,
+	returnComputedNull as installPrompt,
+	noop as interval,
+	lang,
+	LanguageService,
+	noop,
+	noop as onUnmount,
+	returnComputedNull as serviceWorker,
+	signal,
+	signal as state,
+	styledHtmlTag,
+	htmlTag as svgTag,
+	htmlTags as svgTags,
+	noop as unmount,
+	returnComputedNull as updatePrompt,
+	userMedia,
+	htmlTag as virtualHtmlTag,
+	htmlTags as virtualHtmlTags,
+	styledHtmlTag as virtualStyledHtmlTag,
+	word,
 };
+
+export {default as array} from "./array.js";
+export {default as assets} from "./assets.js";
+export {default as attributes} from "./attributes.js";
+export {default as await} from "./await.js";
+export {default as classes} from "./classes.js";
+export {default as classNames} from "./classNames.js";
+export {default as computed} from "./computed.js";
+export {default as concat} from "./concat.js";
+export {default as cookies} from "./cookies.js";
+export {default as customElement} from "./customElement.js";
+export {default as dialogs} from "./dialogs.js";
+export {default as dragZone} from "./dragZone.js";
+export {default as emitter} from "./emitter.js";
+export {default as errorBoundary} from "./errorBoundary.js";
+export {default as escapeHTML} from "./escapeHTML.js";
+export {default as get} from "./get.js";
+export {default as getWindow} from "./getWindow.js";
+export {default as history} from "./history.js";
+export {default as href} from "./href.js";
+export {default as html} from "./html.js";
+export {default as http} from "./http.js";
+export {default as ifElse} from "./ifElse.js";
+export {default as inject} from "./inject.js";
+export {default as isArray} from "./isArray.js";
+export {default as isSignal} from "./isSignal.js";
+export {default as lazy} from "./lazy.js";
+export {default as map} from "./map.js";
+export {default as mediaQuery} from "./mediaQuery.js";
+export {default as meta} from "./meta.js";
+export {default as navigate} from "./navigate.js";
+export {default as notification} from "./notification.js";
+export {default as objectProperty} from "./objectProperty.js";
+export {default as observable} from "./observable.js";
+export {default as of} from "./of.js";
+export {default as param} from "./param.js";
+export {default as params} from "./params.js";
+export {default as path} from "./path.js";
+export {default as persistentStorage} from "./persistentStorage.js";
+export {default as preferredLanguages} from "./preferredLanguages.js";
+export {default as preload} from "./preload.js";
+export {default as promise} from "./promise.js";
+export {default as provide} from "./provide.js";
+export {default as queryParams} from "./queryParams.js";
+export {default as queryParamsState} from "./queryParamsState.js";
+export {default as repeat} from "./repeat.js";
+export {default as router} from "./router.js";
+export {default as server} from "./server.js";
+export {default as shuffle} from "./shuffle.js";
+export {default as string} from "./string.js";
+export {default as style} from "./style.js";
+export {default as styleSelector} from "./styleSelector.js";
+export {default as text} from "./text.js";
+export {default as theme} from "./theme.js";
+export {default as title} from "./title.js";
+export {default as toArray} from "./toArray.js";
+export {default as useKey} from "./useKey.js";
+export {default as view} from "./view.js";
+export {default as webPush} from "./webPush.js";
+export {default as webSocket} from "./webSocket.js";
+export {default as window} from "./getWindow.js";
+export {default as windowContent} from "./windowContent.js";
+export {default as windowData} from "./windowData.js";

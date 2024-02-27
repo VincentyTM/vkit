@@ -1,7 +1,5 @@
-var queryParamsState = require("./queryParamsState.js");
+import queryParamsState from "./queryParamsState.js";
 
-function param(name){
+export default function param(name) {
 	return queryParamsState()(name);
 }
-
-module.exports = param;

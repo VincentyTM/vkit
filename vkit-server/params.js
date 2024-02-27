@@ -1,13 +1,11 @@
-var queryParamsState = require("./queryParamsState");
+import queryParamsState from "./queryParamsState.js";
 
-function params(){
+export default function params() {
 	var qps = queryParamsState();
 	
 	return new Proxy({}, {
-		get: function(target, name, receiver){
+		get: function(target, name, receiver) {
 			return qps(name);
 		}
 	});
 }
-
-module.exports = params;

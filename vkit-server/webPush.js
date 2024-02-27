@@ -1,7 +1,5 @@
-var signal = require("./signal");
+import signal from "./signal.js";
 
-function webPush() {
+export default function webPush() {
 	return signal(null);
 }
-
-module.exports = webPush;

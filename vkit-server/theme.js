@@ -1,22 +1,23 @@
-var inject = require("./inject.js");
+import inject from "./inject.js";
 
-function Theme(props){
-	if(!(this instanceof Theme)){
-		if( typeof props === "string" ){
+export default function Theme(props) {
+	if (!(this instanceof Theme)) {
+		if (typeof props === "string") {
 			return inject(Theme).props[props];
 		}
-		return function(){
+		
+		return function() {
 			var theme = inject(Theme);
-			for(var name in props){
-				if( theme.props[name] ){
+			
+			for (var name in props) {
+				if (theme.props[name]) {
 					theme.props[name].push(props[name]);
-				}else{
+				} else {
 					theme.props[name] = [props[name]];
 				}
 			}
 		};
 	}
+	
 	this.props = {};
 }
-
-module.exports = Theme;

@@ -1,4 +1,4 @@
-function createEmitter(base) {
+export default function createEmitter(base) {
 	function cloneEmitter() {
 		return createEmitter(base);
 	}
@@ -29,5 +29,3 @@ function createEmitter(base) {
 	e.when = cloneEmitter;
 	return e;
 }
-
-module.exports = createEmitter;

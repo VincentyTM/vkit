@@ -1,21 +1,21 @@
-var escapeHTML = require("./escapeHTML.js");
+import escapeHTML from "./escapeHTML.js";
 
-function tagReplacer(text){
+function tagReplacer(text) {
 	return "<\\/" + text.substring(2);
 }
 
-function createTextNode(value){
+export default function createTextNode(value) {
 	value = String(value);
 	
-	function toHTML(res){
+	function toHTML(res) {
 		res.write(escapeHTML(value));
 	}
 	
-	function toScriptContent(res){
+	function toScriptContent(res) {
 		res.write(value.replace(/<\/script\b/ig, tagReplacer));
 	}
 	
-	function toStyleContent(res){
+	function toStyleContent(res) {
 		res.write(value.replace(/<\/style\b/ig, tagReplacer));
 	}
 	
@@ -26,5 +26,3 @@ function createTextNode(value){
 		toStyleContent: toStyleContent
 	};
 }
-
-module.exports = createTextNode;

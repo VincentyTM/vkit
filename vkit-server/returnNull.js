@@ -1,5 +1,3 @@
-function returnNull() {
+export default function returnNull() {
 	return null;
 }
-
-module.exports = returnNull;

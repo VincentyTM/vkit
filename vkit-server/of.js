@@ -6,12 +6,10 @@ var handler = {
 	get: getValue
 };
 
-function of(object) {
+export default function of(object) {
 	if (!object || !(typeof object === "object" || typeof object === "function")) {
 		return object;
 	}
 	
 	return new Proxy(object, handler);
 }
-
-module.exports = of;

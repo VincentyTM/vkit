@@ -1,9 +1,9 @@
-var scope = require("./scope");
+import {getScope} from "./scope.js";
 
 var leadingAndTrailingWhitespaces = /(^\s+)|(\s+$)/g;
 
-function cookies() {
-	var currentScope = scope.get();
+export default function cookies() {
+	var currentScope = getScope();
 	var req = currentScope.req;
 	var resCookies = currentScope.cookies;
 	
@@ -100,5 +100,3 @@ function cookies() {
 		setCookie: setCookie
 	};
 }
-
-module.exports = cookies;

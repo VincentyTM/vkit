@@ -1,5 +1,3 @@
-function getWindow(){
+export default function getWindow() {
 	return null;
 }
-
-module.exports = getWindow;

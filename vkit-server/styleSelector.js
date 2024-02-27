@@ -1,9 +1,9 @@
-var attributes = require("./attributes");
-var isSignal = require("./isSignal");
+import attributes from "./attributes.js";
+import isSignal from "./isSignal.js";
 
 var count = 0;
 
-function styleSelector(attr, attrValue) {
+export default function styleSelector(attr, attrValue) {
 	if (!attr) {
 		attr = "vkit-selector" + (++count);
 	}
@@ -44,5 +44,3 @@ function styleSelector(attr, attrValue) {
 	
 	return directive;
 }
-
-module.exports = styleSelector;

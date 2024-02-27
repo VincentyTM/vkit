@@ -1,7 +1,5 @@
-var scope = require("./scope.js");
+import {getScope} from "./scope.js";
 
-function setMeta(name, content){
-	scope.get().addWindowData("meta:" + name, content);
+export default function setMeta(name, content) {
+	getScope().addWindowData("meta:" + name, content);
 }
-
-module.exports = setMeta;

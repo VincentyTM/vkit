@@ -1,15 +1,13 @@
-var htmlTag = require("./htmlTag.js");
-var createStyle = require("./style.js");
+import htmlTag from "./htmlTag.js";
+import createStyle from "./style.js";
 
-function styledHtmlTag(tagName, css, attr, baseProps){
+export default function styledHtmlTag(tagName, css, attr, baseProps) {
 	var tag = htmlTag(tagName);
 	var style = createStyle(css, attr);
 	
-	function Component(){
+	function Component() {
 		return tag(style, baseProps, arguments);
 	}
 	
 	return Component;
 }
-
-module.exports = styledHtmlTag;

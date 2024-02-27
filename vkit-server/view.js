@@ -1,5 +1,3 @@
-function view(getView) {
+export default function view(getView) {
 	return getView();
 }
-
-module.exports = view;

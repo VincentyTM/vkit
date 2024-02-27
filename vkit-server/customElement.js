@@ -1,6 +1,6 @@
-var registry = require("./customElementRegistry");
+import registry from "./customElementRegistry.js";
 
-function customElement(name, getView, options) {
+export default function customElement(name, getView, options) {
 	if (name in registry) {
 		throw new Error("'" + name + "' has already been defined as a custom element");
 	}
@@ -16,5 +16,3 @@ function customElement(name, getView, options) {
 	
 	return getView;
 }
-
-module.exports = customElement;

@@ -1,9 +1,7 @@
-var classNames = require("./classNames");
+import classNames from "./classNames.js";
 
-function classes(c){
+export default function classes(c) {
 	return {
 		className: classNames(c)
 	};
 }
-
-module.exports = classes;

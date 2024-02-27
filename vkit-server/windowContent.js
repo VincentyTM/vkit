@@ -1,7 +1,5 @@
-var noop = require("./noop");
+import noop from "./noop.js";
 
-function windowContent(component){
+export default function windowContent(component) {
 	return noop;
 }
-
-module.exports = windowContent;

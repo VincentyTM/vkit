@@ -1,11 +1,11 @@
-var append = require("./append.js");
-var bind = require("./bind.js");
-var createElement = require("./createElement.js");
-var customElementRegistry = require("./customElementRegistry.js");
-var provide = require("./provide");
-var signal = require("./signal");
+import append from "./append.js";
+import bind from "./bind.js";
+import createElement from "./createElement.js";
+import customElementRegistry from "./customElementRegistry.js";
+import provide from "./provide.js";
+import signal from "./signal.js";
 
-function htmlTag(tagName) {
+export default function htmlTag(tagName) {
 	return function() {
 		var el = createElement(tagName);
 		append(el, arguments, el, bind);
@@ -31,5 +31,3 @@ function htmlTag(tagName) {
 		return el;
 	};
 }
-
-module.exports = htmlTag;

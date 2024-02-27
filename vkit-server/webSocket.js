@@ -1,14 +1,15 @@
-var createEmitter = require("./emitter");
-var signal = require("./signal");
+import createEmitter from "./emitter.js";
+import signal from "./signal.js";
 
 function returnThis() {
 	return this;
 }
 
-function webSocket(url, options) {
+export default function webSocket(url, options) {
 	var ws = null;
 	var queue = [];
 	var isOpen = signal(false);
+	
 	var emitter = createEmitter({
 		socket: ws,
 		queue: queue,
@@ -18,7 +19,6 @@ function webSocket(url, options) {
 		close: returnThis,
 		send: returnThis
 	});
+	
 	return emitter;
 }
-
-module.exports = webSocket;

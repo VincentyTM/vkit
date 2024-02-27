@@ -1,20 +1,20 @@
-var createHistoryHandler = require("./history.js");
-var createQueryParams = require("./queryParams.js");
-var url = require("./url.js");
-var scope = require("./scope.js");
+import createQueryParams from "./queryParams.js";
+import history from "./history.js";
+import parseURL from "./parseURL.js";
+import {getScope} from "./scope.js";
 
-function createQueryParamsState(){
-	var currentScope = scope.get();
-	var historyHandler = createHistoryHandler();
-	var queryParamsState = url(historyHandler.url()).queryParams;
+export default function createQueryParamsState() {
+	var currentScope = getScope();
+	var historyHandler = history();
+	var queryParamsState = parseURL(historyHandler.url()).queryParams;
 	
-	return function(name, allowObject){
+	return function(name, allowObject) {
 		var state = queryParamsState.map(allowObject
-			? function(queryParams){ return queryParams.get(name); }
-			: function(queryParams){ return queryParams.getAsString(name); }
+			? function(queryParams) { return queryParams.get(name); }
+			: function(queryParams) { return queryParams.getAsString(name); }
 		);
 		
-		function getQuery(value){
+		function getQuery(value) {
 			var url = currentScope.req.url;
 			var pos = url.indexOf("?");
 			var search = pos === -1 ? url : url.substring(0, pos);
@@ -26,6 +26,4 @@ function createQueryParamsState(){
 		
 		return state;
 	};
-};
-
-module.exports = createQueryParamsState;
+}

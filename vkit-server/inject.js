@@ -1,7 +1,6 @@
-var contextGuard = require("./contextGuard");
-var getInjector = contextGuard.getInjector;
+import {getInjector} from "./contextGuard.js";
 
-function inject(token, injector) {
+export default function inject(token, injector) {
 	if (!injector) {
 		injector = getInjector();
 	}
@@ -24,5 +23,3 @@ function inject(token, injector) {
 	
 	return provider.getInstance();
 }
-
-module.exports = inject;

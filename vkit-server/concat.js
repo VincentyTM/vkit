@@ -1,7 +1,7 @@
-var map = require("./map");
+import map from "./map.js";
 
-function concat(){
+function concat() {
 	return Array.prototype.join.call(arguments, "");
 }
 
-module.exports = map(concat);
+export default map(concat);

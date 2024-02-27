@@ -1,10 +1,10 @@
-function toArray(arrayLike){
+export default function toArray(arrayLike) {
 	var n = arrayLike.length;
 	var a = new Array(n);
-	for(var i=0; i<n; ++i){
+	
+	for (var i = 0; i < n; ++i) {
 		a[i] = arrayLike[i];
 	}
+	
 	return a;
 }
-
-module.exports = toArray;

@@ -1,5 +1,6 @@
-var createTextNode = require("./createTextNode");
-var noop = require("./noop");
+import createTextNode from "./createTextNode.js";
+import noop from "./noop.js";
+
 var none = {};
 
 function map() {
@@ -14,7 +15,7 @@ function map() {
 		return value;
 	}
 	
-	return createComputedSignal(n === 1 ? args[0] : transform, [this]);
+	return computed(n === 1 ? args[0] : transform, [this]);
 }
 
 function pipe(output, transform) {
@@ -60,7 +61,7 @@ function views(getView) {
 	return array;
 }
 
-function createComputedSignal(getValue, inputs) {
+export function computed(getValue, inputs) {
 	var value = none;
 	
 	function get() {
@@ -103,7 +104,7 @@ function createComputedSignal(getValue, inputs) {
 	return get;
 }
 
-function createWritableSignal(value) {
+export function signal(value) {
 	function add(v) {
 		value += v;
 	}
@@ -142,8 +143,3 @@ function createWritableSignal(value) {
 	
 	return get;
 }
-
-module.exports = {
-	computed: createComputedSignal,
-	signal: createWritableSignal
-};

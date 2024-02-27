@@ -21,12 +21,10 @@ var Container = typeof WeakMap === "function" ? WeakMap : function() {
 	};
 };
 
-function createInjector(parent, handleMissingProvider) {
+export default function createInjector(parent, handleMissingProvider) {
 	return {
 		container: new Container(),
 		handleMissingProvider: handleMissingProvider,
 		parent: parent
 	};
 }
-
-module.exports = createInjector;

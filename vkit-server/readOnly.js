@@ -1,11 +1,9 @@
-var computed = require("./computed");
+import computed from "./computed.js";
 
 function getSelf(value) {
 	return value;
 }
 
-function readOnly(signalOrValue) {
+export default function readOnly(signalOrValue) {
 	return computed(getSelf, [signalOrValue]);
 }
-
-module.exports = readOnly;

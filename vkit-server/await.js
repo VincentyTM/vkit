@@ -1,6 +1,6 @@
-var readOnly = require("./readOnly");
+import readOnly from "./readOnly.js";
 
-function awaitPromise(promiseOrSignal) {
+export default function awaitPromise(promiseOrSignal) {
 	var output = readOnly({pending: true});
 	
 	output.then = function(fulfilled, rejected, pending) {
@@ -13,5 +13,3 @@ function awaitPromise(promiseOrSignal) {
 	
 	return output;
 }
-
-module.exports = awaitPromise;

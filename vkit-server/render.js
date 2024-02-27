@@ -1,30 +1,31 @@
-var append = require("./append.js");
-var bind = require("./bind.js");
-var provide = require("./provide.js");
-var scope = require("./scope.js");
+import append from "./append.js";
+import bind from "./bind.js";
+import provide from "./provide.js";
+import {createScope, setScope} from "./scope.js";
 
-function render(req, res, component){
-	try{
-		provide(null, function(){
-			var currentScope = scope.create(req, res);
-			scope.set(currentScope);
+export default function render(req, res, component) {
+	try {
+		provide(null, function() {
+			var currentScope = createScope(req, res);
+			setScope(currentScope);
+			
 			var parent = {
-				appendChild: function(child){
+				appendChild: function(child) {
 					child.toHTML(res);
 				}
 			};
+			
 			var view = component(currentScope);
-			if( currentScope.render ){
+			
+			if (currentScope.render) {
 				currentScope.render(view);
-			}else{
+			} else {
 				res.setHeader("content-type", "text/html; charset=utf-8");
 				append(parent, view, parent, bind);
 				res.end();
 			}
 		});
-	}finally{
-		scope.set(null);
+	} finally {
+		setScope(null);
 	}
 }
-
-module.exports = render;

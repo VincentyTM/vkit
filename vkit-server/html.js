@@ -1,6 +1,6 @@
-var deepPush = require("./deepPush.js");
-var escapeHTML = require("./escapeHTML.js");
-var isArray = require("./isArray.js");
+import deepPush from "./deepPush.js";
+import escapeHTML from "./escapeHTML.js";
+import isArray from "./isArray.js";
 
 function createHTML(html) {
 	return {
@@ -10,7 +10,7 @@ function createHTML(html) {
 	};
 }
 
-function html(strings) {
+export default function html(strings) {
 	if (isArray(strings) && isArray(strings.raw)) {
 		var n = strings.length;
 		var a = new Array(2*n - 1);
@@ -66,5 +66,3 @@ function html(strings) {
 	
 	return parts;
 }
-
-module.exports = html;

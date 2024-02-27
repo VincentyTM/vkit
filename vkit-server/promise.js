@@ -1,5 +1,5 @@
-var noop = require("./noop");
+import noop from "./noop.js";
 
-module.exports = function() {
+export default function promise() {
 	return {then: noop};
 };

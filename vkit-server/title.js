@@ -1,16 +1,14 @@
-var createComputedSignal = require("./computed.js");
-var scope = require("./scope.js");
+import createComputedSignal from "./computed.js";
+import {getScope} from "./scope.js";
 
-function setTitle(title) {
+export default function setTitle(title) {
 	if (title === undefined) {
-		var currentScope = scope.get();
+		var currentScope = getScope();
 		
 		return createComputedSignal(function() {
 			return currentScope.getWindowData("title");
 		});
 	}
 	
-	scope.get().addWindowData("title", title);
+	getScope().addWindowData("title", title);
 }
-
-module.exports = setTitle;

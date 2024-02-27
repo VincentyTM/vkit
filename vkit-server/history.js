@@ -1,9 +1,9 @@
-var computed = require("./computed.js");
-var scope = require("./scope.js");
+import computed from "./computed.js";
+import {getScope} from "./scope.js";
 
-function history() {
+export default function history() {
 	function selectURL() {
-		var currentScope = scope.get();
+		var currentScope = getScope();
 		var url = currentScope.req.url;
 		
 		return computed(function() {
@@ -15,5 +15,3 @@ function history() {
 		url: selectURL
 	};
 }
-
-module.exports = history;

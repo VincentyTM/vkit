@@ -1,6 +1,6 @@
-var computed = require("./computed");
+import computed from "./computed.js";
 
-function map(transform) {
+export default function map(transform) {
 	function getComputed() {
 		return computed(transform, arguments);
 	}
@@ -9,5 +9,3 @@ function map(transform) {
 	
 	return getComputed;
 }
-
-module.exports = map;

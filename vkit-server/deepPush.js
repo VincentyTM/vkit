@@ -1,7 +1,7 @@
-var createTextNode = require("./createTextNode.js");
-var toArray = require("./toArray.js");
+import createTextNode from "./createTextNode.js";
+import toArray from "./toArray.js";
 
-function deepPush(array, item, context, bind) {
+export default function deepPush(array, item, context, bind) {
 	if (item === null || item === undefined || item === true || item === false) {
 		return array;
 	}
@@ -55,5 +55,3 @@ function deepPush(array, item, context, bind) {
 	
 	return array;
 }
-
-module.exports = deepPush;

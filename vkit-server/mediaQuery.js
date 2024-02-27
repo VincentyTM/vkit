@@ -1,9 +1,7 @@
-var computed = require("./computed");
+import computed from "./computed.js";
 
-function mediaQuery() {
+export default function mediaQuery() {
 	return computed(function() {
 		return false;
 	});
 }
-
-module.exports = mediaQuery;

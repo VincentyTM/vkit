@@ -1,27 +1,29 @@
-function bind(el, props){
-	for(var prop in props){
+export default function bind(el, props) {
+	for (var prop in props) {
 		var value = props[prop];
-		switch(typeof value){
+		
+		switch (typeof value) {
 			case "object":
-				if(!value){
+				if (!value) {
 					el.setProperty(prop, value);
-				}else if( value.prop ){
+				} else if (value.prop) {
 					value.prop(prop)(el);
-				}else{
+				} else {
 					var obj = el.getProperty(prop);
-					if( obj ){
+					
+					if (obj) {
 						throw new Error("Property '" + prop + "' already exists on element");
-					}else if( prop === "style" ){
-						for(var styleProp in value){
+					} else if (prop === "style") {
+						for (var styleProp in value) {
 							el.setStyleProperty(styleProp, value[styleProp]);
 						}
-					}else{
+					} else {
 						el.setProperty(prop, value);
 					}
 				}
 				break;
 			case "function":
-				if( prop.indexOf("on") !== 0 ){
+				if (prop.indexOf("on") !== 0) {
 					el.setProperty(prop, value());
 				}
 				break;
@@ -32,5 +34,3 @@ function bind(el, props){
 		}
 	}
 }
-
-module.exports = bind;

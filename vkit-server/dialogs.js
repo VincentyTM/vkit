@@ -1,7 +1,7 @@
-var inject = require("./inject");
-var signal = require("./signal");
+import inject from "./inject.js";
+import signal from "./signal.js";
 
-function Dialogs() {
+export default function Dialogs() {
 	if (!(this instanceof Dialogs)) {
 		return inject(Dialogs);
 	}
@@ -58,5 +58,3 @@ function Dialogs() {
 Dialogs.opener = function(component, only) {
 	return inject(Dialogs).opener(component, only);
 };
-
-module.exports = Dialogs;

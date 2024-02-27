@@ -1,8 +1,9 @@
-var useKey = require("./useKey");
+import useKey from "./useKey.js";
+
 var concat = Array.prototype.concat;
 var slice = Array.prototype.slice;
 
-function useArray(signal) {
+export default function useArray(signal) {
 	return {
 		add: function(value) {
 			var array = signal.get();
@@ -90,5 +91,3 @@ function useArray(signal) {
 		}
 	};
 }
-
-module.exports = useArray;

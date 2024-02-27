@@ -1,5 +1,3 @@
-function text(getText){
+export default function text(getText) {
 	return String(getText());
 }
-
-module.exports = text;

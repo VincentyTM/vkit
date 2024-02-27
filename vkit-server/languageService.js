@@ -1,6 +1,7 @@
-var computed = require("./computed");
-var signal = require("./signal");
-var inject = require("./inject");
+import computed from "./computed.js";
+import signal from "./signal.js";
+import inject from "./inject.js";
+
 var slice = Array.prototype.slice;
 
 var assign = Object.assign || function(a, b) {
@@ -13,7 +14,7 @@ function selectWordsOfLang(dictionary, code) {
 	return code ? dictionary[code] : null;
 }
 
-function LanguageService() {
+export function LanguageService() {
 	if (!(this instanceof LanguageService)) {
 		return inject(LanguageService);
 	}
@@ -108,21 +109,14 @@ function LanguageService() {
 	this.word = createWord;
 }
 
-function define(dictionary) {
+export function define(dictionary) {
 	return inject(LanguageService).define(dictionary);
 }
 
-function createWord() {
+export function word() {
 	return inject(LanguageService).word.apply(null, arguments);
 }
 
-function langCode() {
+export function lang() {
 	return inject(LanguageService).lang;
 }
-
-module.exports = {
-	define: define,
-	lang: langCode,
-	languageService: LanguageService,
-	word: createWord
-};

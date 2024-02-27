@@ -1,5 +1,5 @@
-var get = require("./get");
-var signal = require("./signal");
+import get from "./get.js";
+import signal from "./signal.js";
 
 function getDefaultValue(defaultValue, prop) {
 	var type = typeof defaultValue;
@@ -15,10 +15,8 @@ function getDefaultValue(defaultValue, prop) {
 	throw new Error("Property '" + prop + "' does not exist and there is no default value provided");
 }
 
-function objectProperty(object, property, defaultValue) {
+export default function objectProperty(object, property, defaultValue) {
 	var obj = get(object);
 	var prop = get(property);
 	return signal(obj ? obj[prop] : getDefaultValue(defaultValue, prop));
 }
-
-module.exports = objectProperty;

@@ -1,19 +1,20 @@
-var scope = require("./scope.js");
+import {getScope} from "./scope.js";
+
 var globalStyleCount = 0;
 
 function prepareCSS(css, selector){
 	return css.replace(/::?this\b/ig, selector);
 }
 
-function style(css, attr){
+export default function style(css, attr){
 	if(!attr){
-		var currentScope = scope.get(true);
+		var currentScope = getScope(true);
 		attr = "vkit-" + (currentScope ? "s-" + currentScope.nextStyleCount() : ++globalStyleCount);
 	}
 	var selector = "[" + attr + "]";
 	
 	function bind(el){
-		scope.get().addStyle(
+		getScope().addStyle(
 			attr,
 			prepareCSS(
 				css && typeof css.get === "function" ? css.get() : css,
@@ -32,5 +33,3 @@ function style(css, attr){
 	
 	return bind;
 }
-
-module.exports = style;

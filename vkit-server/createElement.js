@@ -1,5 +1,5 @@
-var createTextNode = require("./createTextNode.js");
-var escapeHTML = require("./escapeHTML.js");
+import createTextNode from "./createTextNode.js";
+import escapeHTML from "./escapeHTML.js";
 
 var selfClosingTags = {
 	area: 1,
@@ -31,7 +31,7 @@ function replaceUpperCase(letter) {
 	return "-" + letter.toLowerCase();
 }
 
-function createElement(tagName) {
+export default function createElement(tagName) {
 	var attributes = {};
 	var styleProps = {};
 	var children = selfClosingTags[tagName] ? null : [];
@@ -160,5 +160,3 @@ function createElement(tagName) {
 		toHTML: toHTML
 	};
 }
-
-module.exports = createElement;

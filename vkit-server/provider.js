@@ -1,4 +1,4 @@
-function createProvider(createInstance, config) {
+export default function createProvider(createInstance, config) {
 	var instance;
 	var instanceCreated = false;
 	
@@ -6,6 +6,7 @@ function createProvider(createInstance, config) {
 		if (instanceCreated) {
 			return instance;
 		}
+		
 		instance = createInstance(config);
 		instanceCreated = true;
 		return instance;
@@ -15,5 +16,3 @@ function createProvider(createInstance, config) {
 		getInstance: getInstance
 	};
 }
-
-module.exports = createProvider;

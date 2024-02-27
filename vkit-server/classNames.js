@@ -1,6 +1,6 @@
-var readOnly = require("./readOnly");
+import readOnly from "./readOnly.js";
 
-function classNames(classes) {
+export default function classNames(classes) {
 	var array = [];
 	
 	for (var cname in classes) {
@@ -21,5 +21,3 @@ function classNames(classes) {
 	
 	return readOnly(array.join(" "));
 }
-
-module.exports = classNames;

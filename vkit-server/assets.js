@@ -1,15 +1,16 @@
-var createObservable = require("./observable");
+import observable from "./observable.js";
+
 var PENDING = 0;
 var FULFILLED = 1;
 var REJECTED = 2;
 
 function createAsset(name) {
 	var refCount = 1;
-	var unload = createObservable();
-	var errorHandler = createObservable();
-	var loadHandler = createObservable();
-	var progressHandler = createObservable();
-	var resetHandler = createObservable();
+	var unload = observable();
+	var errorHandler = observable();
+	var loadHandler = observable();
+	var progressHandler = observable();
+	var resetHandler = observable();
 	var status = PENDING;
 	var data;
 	
@@ -76,7 +77,7 @@ function createAsset(name) {
 	}
 	
 	function then(resolveHandler, rejectHandler) {
-		var unsub = createObservable();
+		var unsub = observable();
 		
 		if (typeof resolveHandler === "function") {
 			if (status === FULFILLED) {
@@ -129,7 +130,7 @@ function createAsset(name) {
 	};
 }
 
-function createAssetContainer(assetNeeded) {
+export default function createAssetContainer(assetNeeded) {
 	var assets = {};
 	
 	function addAsset(name) {
@@ -268,5 +269,3 @@ function createAssetContainer(assetNeeded) {
 		select: select
 	};
 }
-
-module.exports = createAssetContainer;

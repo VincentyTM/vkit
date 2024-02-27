@@ -6,12 +6,10 @@ var map = {
 	"'": "&#039;"
 };
 
-function replacer(c){
+function replacer(c) {
 	return map[c];
 }
 
-function escapeHTML(html){
+export default function escapeHTML(html) {
 	return String(html).replace(/[&<>"']/g, replacer);
 }
-
-module.exports = escapeHTML;
