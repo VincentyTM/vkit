@@ -1,15 +1,15 @@
-const fs = require("fs");
-const isJS = require("./isJS");
-const Library = require("./Library");
+import fs from "fs";
+import {isJS} from "./is.js";
+import Library from "./Library.js";
 
-class LibraryContainer {
+export default class LibraryContainer {
 	constructor(output){
 		this.libraries = {};
 		this.definitions = {};
 		this.output = output;
 	}
 	
-	async addDirectory(directory){
+	async addDirectory(directory) {
 		const libraries = (
 			await new Promise((resolve, reject) => fs.readdir(directory, (err, files) =>
 				err
@@ -23,12 +23,12 @@ class LibraryContainer {
 				path: directory + "/" + file
 			}));
 		
-		for(const {name, path} of libraries){
+		for (const {name, path} of libraries) {
 			this.addLibrary(name, path);
 		}
 	}
 	
-	async load(){
+	async load() {
 		await Promise.all(
 			Object.keys(this.libraries).map(async name => {
 				return await this.libraries[name].load();
@@ -38,30 +38,30 @@ class LibraryContainer {
 		this.findParents();
 	}
 	
-	clear(){
+	clear() {
 		this.libraries = {};
 		this.definitions = {};
 	}
 	
-	findParents(){
+	findParents() {
 		const libraries = this.libraries;
 		
-		for(const name in libraries){
+		for (const name in libraries) {
 			const lib = libraries[name];
 			const parents = {};
 			
-			if( name !== "core" ){
+			if (name !== "core") {
 				parents.core = libraries.core;
 			}
 			
-			for(const dep in lib.dependencies){
+			for (const dep in lib.dependencies) {
 				const parent = this.definitions[dep];
 				
-				if( parent ){
+				if (parent) {
 					parents[parent.name] = parent;
-				}else if( dep.startsWith("$.fn.") ){
+				} else if (dep.startsWith("$.fn.")) {
 					delete lib.dependencies[dep];
-				}else{
+				} else {
 					this.output.dependencyNotFound(name, dep);
 				}
 			}
@@ -70,12 +70,12 @@ class LibraryContainer {
 		}
 	}
 	
-	addLibrary(name, path){
-		if(!/^[a-zA-Z][a-zA-Z0-9]*$/.test(name)){
+	addLibrary(name, path) {
+		if (!/^[a-zA-Z][a-zA-Z0-9]*$/.test(name)) {
 			throw new Error("Library names must match ^[a-zA-Z][a-zA-Z0-9]*$");
 		}
 		
-		if( name in this.libraries ){
+		if (name in this.libraries) {
 			throw new Error("Library '" + name + "' already exists");
 		}
 		
@@ -84,23 +84,23 @@ class LibraryContainer {
 		return library;
 	}
 	
-	addDefinition(def, library){
-		if( def in this.definitions ){
+	addDefinition(def, library) {
+		if (def in this.definitions) {
 			throw new Error("Redefinion of '" + def + "' in " + library.name + ": already defined in " + this.definitions[def].name);
 		}
 		
 		this.definitions[def] = library;
 	}
 	
-	getLibraries(input){
-		if(!this.libraries.core){
+	getLibraries(input) {
+		if (!this.libraries.core) {
 			throw new Error("The 'core' library is missing");
 		}
 		
 		const definitions = {};
 		const regexDef = /\$(\.fn)?\.[a-zA-Z_][a-zA-Z0-9_]*\b\s*=/g;
 		
-		for(let match; match = regexDef.exec(input);){
+		for (let match; match = regexDef.exec(input);) {
 			const def = match[0].replace(/\s*=/, "");
 			definitions[def] = true;
 		}
@@ -108,56 +108,57 @@ class LibraryContainer {
 		const dependencies = {};
 		const regexDep = /\$?\.[a-zA-Z_][a-zA-Z0-9_]*\b/g;
 		
-		for(let match; match = regexDep.exec(input);){
+		for (let match; match = regexDep.exec(input);) {
 			let dep = match[0];
 			
-			if(/^\$\.(apply|call|bind)$/.test(dep)){
+			if (/^\$\.(apply|call|bind)$/.test(dep)) {
 				continue;
 			}
 			
-			if(!dep.startsWith("$.") ){
+			if (!dep.startsWith("$.")) {
 				dep = "$.fn" + dep;
 			}
 			
-			if(!(dep in definitions)){
+			if (!(dep in definitions)) {
 				dependencies[dep] = true;
 			}
 		}
 		
 		const libraries = {};
 		
-		for(const dep in dependencies){
+		for (const dep in dependencies) {
 			const lib = this.definitions[dep];
-			if( lib ){
+			
+			if (lib) {
 				libraries[lib.name] = lib;
-			}else if(!dep.startsWith("$.fn.")){
+			} else if (!dep.startsWith("$.fn.")) {
 				this.output.dependencyNotDefined(dep);
 			}
 		}
 		
 		const resolved = new Set();
 		
-		for(const name in libraries){
+		for (const name in libraries) {
 			this.resolveDependencies(libraries[name], resolved);
 		}
 		
 		const result = Array.from(resolved.values());
 		
-		if(!result.length && input.includes("$")){
+		if (!result.length && input.includes("$")) {
 			result.push(this.libraries.core);
 		}
 		
 		return result;
 	}
 	
-	resolveDependencies(library, resolved = new Set(), unresolved = new Set()){
+	resolveDependencies(library, resolved = new Set(), unresolved = new Set()) {
 		unresolved.add(library);
 		
-		for(const name in library.parents){
+		for (const name in library.parents) {
 			const parent = library.parents[name];
 			
-			if(!resolved.has(parent)){
-				if( unresolved.has(parent) ){
+			if (!resolved.has(parent)) {
+				if (unresolved.has(parent)) {
 					throw new Error("Circular dependency: '" + library.name + "' -> '" + name + "'");
 				}
 				
@@ -169,5 +170,3 @@ class LibraryContainer {
 		unresolved.delete(library);
 	}
 }
-
-module.exports = LibraryContainer;

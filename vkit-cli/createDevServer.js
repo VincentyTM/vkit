@@ -1,4 +1,11 @@
-const {cache, createServer, file, getMimeType, noCache, sanitizePath} = require("../server-libraries");
+import {
+	cache,
+	createServer,
+	file,
+	getMimeType,
+	noCache,
+	sanitizePath,
+} from "../server-libraries/index.js";
 
 const text = (res, status, text) => {
 	res.writeHead(status, {
@@ -7,7 +14,7 @@ const text = (res, status, text) => {
 	}).end(text);
 };
 
-module.exports = ({
+const createDevServer = ({
 	apiCommands = {},
 	cert,
 	config: {
@@ -17,22 +24,22 @@ module.exports = ({
 		srcDir,
 		srcPath,
 		wwwDir,
-		wwwPath
+		wwwPath,
 	},
 	fileCache,
 	https,
 	indexContent,
 	key,
-	output
+	output,
 }) => {
 	const requestListener = async (req, res) => {
-		try{
+		try {
 			const url = req.url;
 			const pos = url.indexOf("?");
 			const path = pos === -1 ? url : url.substring(0, pos);
 			const search = pos === -1 ? "" : url.substring(pos);
 			
-			if( path === indexPath ){
+			if (path === indexPath) {
 				const string = await indexContent();
 				noCache(res);
 				res.setHeader("content-type", "text/html; charset=utf-8");
@@ -41,24 +48,26 @@ module.exports = ({
 				return;
 			}
 			
-			if( path.startsWith(apiPath) ){
+			if (path.startsWith(apiPath)) {
 				const command = await apiCommands[path.substring(apiPath.length)];
-				if(!command){
+				
+				if (!command) {
 					throw {status: 404};
 				}
+				
 				command(req, res);
 				return;
 			}
 			
-			if( path.startsWith(srcPath) ){
+			if (path.startsWith(srcPath)) {
 				const filePath = path.replace(srcPath, srcDir + "/");
 				const string = fileCache.get(filePath);
 				
-				if( string === null ){
+				if (string === null) {
 					throw {status: 404};
 				}
 				
-				if( cache(req, res, fileCache.getVersion(filePath), 1800000) ){
+				if (cache(req, res, fileCache.getVersion(filePath), 1800000)) {
 					return;
 				}
 				
@@ -69,14 +78,14 @@ module.exports = ({
 				return;
 			}
 			
-			if( path.startsWith(wwwPath) ){
+			if (path.startsWith(wwwPath)) {
 				await file(req, res, wwwDir + "/" + sanitizePath(path.replace(wwwPath, "")));
 				return;
 			}
 			
 			throw {status: 404};
-		}catch(ex){
-			switch(ex.status){
+		} catch (ex) {
+			switch (ex.status) {
 				case 404:
 					text(res, 404, "404 Not Found");
 					break;
@@ -90,19 +99,19 @@ module.exports = ({
 	};
 	
 	const errorHandler = (err) => {
-		if( err.code === "EADDRINUSE" ){
+		if (err.code === "EADDRINUSE") {
 			output.portInUse(server.port);
 			server.start({
 				port: (server.port + 1) % 65536 | 0
 			});
-		}else{
+		} else {
 			output.devServerError(err);
 		}
 	};
 	
 	let server;
 	
-	const ready = new Promise(resolve => {
+	const ready = new Promise((resolve) => {
 		server = createServer(requestListener, errorHandler, resolve);
 	});
 	
@@ -117,3 +126,5 @@ module.exports = ({
 	
 	return server;
 };
+
+export default createDevServer;

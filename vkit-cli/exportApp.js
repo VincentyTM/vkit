@@ -1,13 +1,20 @@
-const fs = require("fs");
-const buildReleaseIndexHTML = require("./buildReleaseIndexHTML");
-const buildReleaseIndexJS = require("./buildReleaseIndexJS");
-const isHTML = require("./isHTML");
-const isJS = require("./isJS");
+import fs from "fs";
+
+import {
+	buildReleaseIndexHtml,
+	buildReleaseIndexJS,
+} from "./build.js";
+
+import {
+	isHTML,
+	isJS,
+} from "./is.js";
+
 const {promises: fsp} = fs;
 
 const alwaysTrue = (path) => true;
 
-module.exports = async ({
+const exportApp = async ({
 	config: {
 		bundles,
 		htmlDebugToken,
@@ -15,61 +22,67 @@ module.exports = async ({
 		htmlScriptToken,
 		htmlStyleToken,
 		jsAppToken,
+		jsLibToken,
 		srcDir,
-		wwwDir
+		wwwDir,
 	},
 	fileCache,
 	libraryContainer,
-	output
-}) => {
-	return (
+	output,
+}) => (
+	(
 		await Promise.all(
 			bundles.map(async ({
 				includeLibraries = true,
 				srcSubdir = "",
 				targetFile,
-				templateFile
+				templateFile,
 			}) => {
 				const prefix = srcDir + "/" + srcSubdir + "/";
 				const filter = srcSubdir
 					? (path) => path.startsWith(prefix)
 					: alwaysTrue;
 				
-				if( isHTML(targetFile) ){
+				if (isHTML(targetFile)) {
 					await fsp.writeFile(targetFile, buildReleaseIndexHTML({
 						config: {
 							htmlDebugToken,
 							htmlHotReloadToken,
 							htmlScriptToken,
 							htmlStyleToken,
-							srcDir
+							srcDir,
 						},
 						fileCache,
 						filter,
 						libraryContainer,
-						templateFile
+						templateFile,
 					}));
+					
 					return targetFile;
 				}
 				
-				if( isJS(targetFile) ){
+				if (isJS(targetFile)) {
 					await fsp.writeFile(targetFile, buildReleaseIndexJS({
 						config: {
 							jsAppToken,
-							srcDir
+							jsLibToken,
+							srcDir,
 						},
 						fileCache,
 						filter,
 						includeLibraries,
 						libraryContainer,
 						output,
-						templateFile
+						templateFile,
 					}));
+					
 					return targetFile;
 				}
 				
 				return null;
 			})
 		)
-	).filter(Boolean);
-};
+	).filter(Boolean)
+);
+
+export default exportApp;

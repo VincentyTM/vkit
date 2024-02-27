@@ -1,13 +1,13 @@
-const ConfigManager = require("./ConfigManager");
-const ConsoleOutput = require("./ConsoleOutput");
-const createReloader = require("./createReloader");
-const DevServerManager = require("./DevServerManager");
-const ExportManager = require("./ExportManager");
-const FileCacheManager = require("./FileCacheManager");
-const LibraryManager = require("./LibraryManager");
-const listenToCommands = require("./listenToCommands");
+import ConfigManager from "./ConfigManager.js";
+import ConsoleOutput from "./ConsoleOutput.js";
+import createReloader from "./createReloader.js";
+import DevServerManager from "./DevServerManager.js";
+import ExportManager from "./ExportManager.js";
+import FileCacheManager from "./FileCacheManager.js";
+import LibraryManager from "./LibraryManager.js";
+import listenToCommands from "./listenToCommands.js";
 
-class CLI {
+export default class CLI {
 	output = new ConsoleOutput();
 	
 	configManager = new ConfigManager(
@@ -43,20 +43,20 @@ class CLI {
 		reloader: this.reloader
 	});
 	
-	async handleConfigReload(){
+	async handleConfigReload() {
 		await Promise.all([
 			this.fileCacheManager.updateDirectories(),
 			this.devServerManager.restartDevServer()
 		]);
 		
-		if( this.configManager.config.startBrowser ){
+		if (this.configManager.config.startBrowser) {
 			this.devServerManager.startBrowser();
 		}
 		
 		this.output.configReloaded();
 	}
 	
-	handleFileCacheChanges(changes, fileCache){
+	handleFileCacheChanges(changes, fileCache) {
 		this.reloader.reload({
 			config: this.configManager.config,
 			changes,
@@ -65,12 +65,12 @@ class CLI {
 		
 		this.output.logFileChanges(changes);
 		
-		if( this.configManager.config.autoExport ){
+		if (this.configManager.config.autoExport) {
 			this.exportManager.exportApp();
 		}
 	}
 	
-	async start(){
+	async start() {
 		this.output.startLoading();
 		
 		await Promise.all([
@@ -101,10 +101,8 @@ class CLI {
 		this.fileCacheManager.ready();
 		this.output.finishLoading();
 		
-		if( this.configManager.config.startBrowser ){
+		if (this.configManager.config.startBrowser) {
 			this.devServerManager.startBrowser();
 		}
 	}
 }
-
-module.exports = CLI;

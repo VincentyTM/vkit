@@ -1,7 +1,7 @@
-const fs = require("fs");
+import fs from "fs";
 
-class Library {
-	constructor(container, name, path){
+export default class Library {
+	constructor(container, name, path) {
 		this.container = container;
 		this.name = name;
 		this.path = path;
@@ -11,7 +11,7 @@ class Library {
 		this.parents = null;
 	}
 	
-	async load(){
+	async load() {
 		this.source = this.transformCode(
 			await new Promise((resolve, reject) => (
 				fs.readFile(this.path, (err, content) => (
@@ -24,43 +24,41 @@ class Library {
 		this.findDependencies();
 	}
 	
-	transformCode(code){
+	transformCode(code) {
 		return code;
 	}
 	
-	addDefinition(def){
-		if(!(def in this.definitions)){
+	addDefinition(def) {
+		if (!(def in this.definitions)) {
 			this.definitions[def] = true;
 			this.container.addDefinition(def, this);
 		}
 	}
 	
-	addDependency(dep){
+	addDependency(dep) {
 		this.dependencies[dep] = true;
 	}
 	
-	findDefinitions(){
+	findDefinitions() {
 		const input = this.source;
 		const regex = /\$(\.fn)?\.[a-zA-Z_][a-zA-Z0-9_]*\b\s*=/g;
 		
-		for(let match; match = regex.exec(input);){
+		for (let match; match = regex.exec(input);) {
 			const def = match[0].replace(/\s*=/, "");
 			this.addDefinition(def);
 		}
 	}
 	
-	findDependencies(){
+	findDependencies() {
 		const input = this.source;
 		const regex = /\$(\.fn)?\.[a-zA-Z_][a-zA-Z0-9_]*\b/g;
 		
-		for(let match; match = regex.exec(input);){
+		for (let match; match = regex.exec(input);) {
 			const dep = match[0];
 			
-			if(!(dep in this.definitions)){
+			if (!(dep in this.definitions)) {
 				this.addDependency(dep);
 			}
 		}
 	}
 }
-
-module.exports = Library;

@@ -1,15 +1,19 @@
-const {promises: fsp} = require("fs");
-const {copyDirectory} = require("../server-libraries");
+import fs from "fs";
+import {copyDirectory} from "../server-libraries/index.js";
 
-module.exports = async (srcDir, templateSrcDir = null) => {
-	if( templateSrcDir ){
-		try{
+const {promises: fsp} = fs;
+
+const createDirectory = async (srcDir, templateSrcDir = null) => {
+	if (templateSrcDir) {
+		try {
 			await copyDirectory(templateSrcDir, srcDir);
-		}catch(ex){
+		} catch (ex) {
 		}
-	}else{
+	} else {
 		await fsp.mkdir(srcDir, {
 			recursive: true
 		});
 	}
 };
+
+export default createDirectory;

@@ -1,11 +1,11 @@
-const {watchDirectory} = require("../server-libraries");
-const addDirectoryToCache = require("./addDirectoryToCache");
-const createDirectory = require("./createDirectory");
-const isTextFile = require("./isTextFile");
+import {watchDirectory} from "../server-libraries/index.js";
+import addDirectoryToCache from "./addDirectoryToCache.js";
+import createDirectory from "./createDirectory.js";
+import {isTextFile} from "./is.js";
 
-module.exports = async (fileCache, srcDir, templateSrcDir, handleError) => {
+export default async function initSrcDirectory(fileCache, srcDir, templateSrcDir, handleError) {
 	const updateCache = async (path, eventType) => {
-		if( isTextFile(path) ){
+		if (isTextFile(path)) {
 			await fileCache.update(path, eventType);
 		}
 	};

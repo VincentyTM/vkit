@@ -1,44 +1,51 @@
-const isCSS = require("./isCSS");
+import {isCSS} from "./is.js";
 
-module.exports = () => {
+const createReloader = () => {
 	const watchers = [];
 	
 	return {
 		reload({
 			config: {
 				srcDir,
-				srcPath
+				srcPath,
 			},
 			changes,
-			fileCache
+			fileCache,
 		}){
 			const n = watchers.length;
 			
-			if( n === 0 ){
+			if (n === 0) {
 				return;
 			}
 			
 			const paths = Object.keys(changes);
-			const message = paths.every(isCSS)
-				? paths
-					.map(path => path
-						.replace(srcDir + "/", srcPath)
-						+ "\n"
-						+ (changes[path] === null ? "" : fileCache.getVersion(path))
-					)
-					.join("\n")
-				: "";
+			
+			const message = (
+				paths.every(isCSS)
+					? paths
+						.map(path => path
+							.replace(srcDir + "/", srcPath)
+							+ "\n"
+							+ (changes[path] === null ? "" : fileCache.getVersion(path))
+						)
+						.join("\n")
+					: ""
+			);
+			
 			const length = Buffer.byteLength(message);
 			
-			for(const res of watchers.splice(0, n)){
+			for (const res of watchers.splice(0, n)) {
 				res.writeHead(200, {
 					"content-type": "text/plain; charset=utf-8",
 					"content-length": length
 				}).end(message);
 			}
 		},
-		watch(res){
+		
+		watch(res) {
 			watchers.push(res);
 		}
 	};
 };
+
+export default createReloader;

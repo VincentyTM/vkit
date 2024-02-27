@@ -1,46 +1,60 @@
-module.exports = {
-	addDirectoryToCache: require("./addDirectoryToCache"),
-	buildDevDebugScriptElement: require("./buildDevDebugScriptElement"),
-	buildDevHotReloadScriptElement: require("./buildDevHotReloadScriptElement"),
-	buildDevIndexHTML: require("./buildDevIndexHTML"),
-	buildDevLinkElements: require("./buildDevLinkElements"),
-	buildDevScriptElements: require("./buildDevScriptElements"),
-	buildDevScriptLibraries: require("./buildDevScriptLibraries"),
-	buildReleaseIndexHTML: require("./buildReleaseIndexHTML"),
-	buildReleaseIndexJS: require("./buildReleaseIndexJS"),
-	buildReleaseScript: require("./buildReleaseScript"),
-	buildReleaseScriptElement: require("./buildReleaseScriptElement"),
-	buildReleaseScriptLibraries: require("./buildReleaseScriptLibraries"),
-	buildReleaseScriptWithoutLibraries: require("./buildReleaseScriptWithoutLibraries"),
-	buildScriptDataFiles: require("./buildScriptDataFiles"),
-	buildTemplateIndexHTML: require("./buildTemplateIndexHTML"),
-	buildTemplateIndexJS: require("./buildTemplateIndexJS"),
-	comparePaths: require("./comparePaths"),
-	createConfig: require("./createConfig"),
-	createDevServer: require("./createDevServer"),
-	createDirectory: require("./createDirectory"),
-	createFileCache: require("./createFileCache"),
-	createLibraryContainer: require("./createLibraryContainer"),
-	createReloader: require("./createReloader"),
-	escapeScript: require("./escapeScript"),
-	escapeString: require("./escapeString"),
-	escapeStyle: require("./escapeStyle"),
-	exportApp: require("./exportApp"),
-	initSrcDirectory: require("./initSrcDirectory"),
-	initWwwDirectory: require("./initWwwDirectory"),
-	isCSS: require("./isCSS"),
-	isHTML: require("./isHTML"),
-	isJS: require("./isJS"),
-	isJSON: require("./isJSON"),
-	isLibJS: require("./isLibJS"),
-	isReleaseJS: require("./isReleaseJS"),
-	isTemplateJS: require("./isTemplateJS"),
-	isTestJS: require("./isTestJS"),
-	isTextFile: require("./isTextFile"),
-	isTXT: require("./isTXT"),
-	listenToCommands: require("./listenToCommands"),
-	minifyCSS: require("./minifyCSS"),
-	minifyLibrary: require("./minifyLibrary"),
-	readCommandLineArguments: require("./readCommandLineArguments"),
-	startCLI: require("./startCLI")
-};
+export {default as addDirectoryToCache} from "./addDirectoryToCache.js";
+
+export {
+	buildDevDebugScriptElement,
+	buildDevHotReloadScriptElement,
+	buildDevIndexHtml,
+	buildDevLinkElements,
+	buildDevScriptElements,
+	buildDevScriptLibraries,
+	buildReleaseIndexHtml,
+	buildReleaseIndexJS,
+	buildReleaseScript,
+	buildReleaseScriptElement,
+	buildReleaseScriptLibraries,
+	buildReleaseScriptWithoutLibraries,
+	buildScriptDataFiles,
+	buildTemplateIndexHtml,
+	buildTemplateIndexJS,
+} from "./build.js";
+
+export {default as CLI} from "./CLI.js";
+export {default as comparePaths} from "./comparePaths.js";
+export {default as Config} from "./Config.js";
+export {default as createDevServer} from "./createDevServer.js";
+export {default as createDirectory} from "./createDirectory.js";
+export {default as createFileCache} from "./createFileCache.js";
+export {default as createReloader} from "./createReloader.js";
+
+export {
+	escapeScript,
+	escapeString,
+	escapeStyle,
+} from "./escape.js";
+
+export {default as exportApp} from "./exportApp.js";
+export {default as initSrcDirectory} from "./initSrcDirectory.js";
+export {default as initWwwDirectory} from "./initWwwDirectory.js";
+
+export {
+	isCSS,
+	isHTML,
+	isJS,
+	isJSON,
+	isLibJS,
+	isReleaseJS,
+	isTemplateJS,
+	isTestJS,
+	isTextFile,
+	isTXT,
+} from "./is.js";
+
+export {default as LibraryContainer} from "./LibraryContainer.js";
+export {default as listenToCommands} from "./listenToCommands.js";
+
+export {
+	minifyCSS,
+	minifyLibrary,
+} from "./minify.js";
+
+export {default as readCommandLineArguments} from "./readCommandLineArguments.js";

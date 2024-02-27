@@ -1,17 +1,20 @@
-const createLibraryContainer = require("./createLibraryContainer");
+import path from "path";
+import url from "url";
+import LibraryContainer from "./LibraryContainer.js";
 
-class LibraryManager {
-	constructor(output){
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default class LibraryManager {
+	constructor(output) {
 		this.output = output;
-		this.libraryContainer = createLibraryContainer(output);
+		this.libraryContainer = new LibraryContainer(output);
 	}
 	
-	async loadLibraries(){
+	async loadLibraries() {
 		this.output.loadingLibraries();
 		await this.libraryContainer.addDirectory(__dirname + "/../vkit");
 		await this.libraryContainer.load();
 		this.output.loadedLibraries();
 	}
 }
-
-module.exports = LibraryManager;

@@ -1,7 +1,8 @@
-const fs = require("fs");
+import fs from "fs";
+
 const {promises: fsp} = fs;
 
-class Config {
+export default class Config {
 	apiPath = "/api/";
 	autoExport = false;
 	bundles = [
@@ -21,6 +22,7 @@ class Config {
 	indexHtmlFile = "index.html";
 	indexPath = "/";
 	jsAppToken = "/*{APP}*/";
+	jsLibToken = "/*{LIB}*/";
 	port = 3000;
 	privateKeyFile = "";
 	srcDir = "./src";
@@ -29,13 +31,13 @@ class Config {
 	wwwDir = "./www";
 	wwwPath = "/";
 	
-	set(key, value){
-		if( value === null || value === undefined ){
+	set(key, value) {
+		if (value === null || value === undefined) {
 			return false;
 		}
 		
-		if( key === "bundles" ){
-			if(!Array.isArray(value)){
+		if (key === "bundles") {
+			if (!Array.isArray(value)) {
 				return false;
 			}
 			
@@ -51,7 +53,7 @@ class Config {
 		
 		const oldValue = this[key];
 		
-		switch(typeof oldValue){
+		switch (typeof oldValue) {
 			case "string":
 				value = String(value || "");
 				break;
@@ -61,11 +63,11 @@ class Config {
 				break;
 			
 			case "boolean":
-				if( value === true || value === "true" || value === "1" || value === 1 ){
+				if (value === true || value === "true" || value === "1" || value === 1) {
 					value = true;
-				}else if( value === false || value === "false" || value === "0" || value === 0 ){
+				} else if (value === false || value === "false" || value === "0" || value === 0) {
 					value = false;
-				}else{
+				} else {
 					value = oldValue;
 				}
 				break;
@@ -74,7 +76,7 @@ class Config {
 				return false;
 		}
 		
-		if( oldValue !== value ){
+		if (oldValue !== value) {
 			this[key] = value;
 			return true;
 		}
@@ -82,15 +84,15 @@ class Config {
 		return false;
 	}
 	
-	fromJSON(json){
-		if(!json){
+	fromJSON(json) {
+		if (!json) {
 			json = {};
 		}
 		
 		let needsRestart = false;
 		
-		for(const key in json){
-			if( this.set(key, json[key]) ){
+		for (const key in json) {
+			if (this.set(key, json[key])) {
 				needsRestart = true;
 			}
 		}
@@ -98,21 +100,19 @@ class Config {
 		return needsRestart;
 	}
 	
-	async load(path){
+	async load(path) {
 		const data = await fsp.readFile(path);
 		const json = JSON.parse(data.toString());
 		return this.fromJSON(json);
 	}
 	
-	async save(path){
+	async save(path) {
 		await fsp.writeFile(path, JSON.stringify(this, null, 4));
 	}
 	
-	watch(path, callback){
+	watch(path, callback) {
 		return fs.watch(path, (eventType, filename) => {
 			callback(path, eventType);
 		});
 	}
 }
-
-module.exports = Config;

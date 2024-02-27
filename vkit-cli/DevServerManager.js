@@ -1,9 +1,11 @@
-const {promises: fsp} = require("fs");
-const {startBrowser} = require("../server-libraries");
-const buildDevIndexHTML = require("./buildDevIndexHTML");
-const createDevServer = require("./createDevServer");
+import fs from "fs";
+import {startBrowser} from "../server-libraries/index.js";
+import {buildDevIndexHtml} from "./build.js";
+import createDevServer from "./createDevServer.js";
 
-class DevServerManager {
+const {promises: fsp} = fs;
+
+export default class DevServerManager {
 	server = null;
 	
 	constructor({
@@ -11,8 +13,8 @@ class DevServerManager {
 		fileCache,
 		libraryContainer,
 		output,
-		reloader
-	}){
+		reloader,
+	}) {
 		this.config = config;
 		this.fileCache = fileCache;
 		this.libraryContainer = libraryContainer;
@@ -21,22 +23,31 @@ class DevServerManager {
 		this.reloader = reloader;
 	}
 	
-	async startDevServer(){
-		const {config, fileCache, libraryContainer, output, reloader} = this;
+	async startDevServer() {
+		const {
+			config,
+			fileCache,
+			libraryContainer,
+			output,
+			reloader,
+		} = this;
+		
 		let key = null;
 		let cert = null;
 		
-		if( config.https ){
+		if (config.https) {
 			output.pkcStartLoading();
-			try{
+			
+			try {
 				const [k, c] = await Promise.all([
 					fsp.readFile(config.privateKeyFile),
 					fsp.readFile(config.certificateFile)
 				]);
+				
 				key = k;
 				cert = c;
 				output.pkcLoaded();
-			}catch(ex){
+			} catch (ex) {
 				output.pkcError(ex);
 			}
 		}
@@ -51,37 +62,37 @@ class DevServerManager {
 			config,
 			fileCache,
 			https: config.https,
-			indexContent: () => buildDevIndexHTML({
+			indexContent: () => buildDevIndexHtml({
 				config,
 				fileCache,
 				libraryContainer,
 				output
 			}),
 			key,
-			output
+			output,
 		});
 		
 		this.server = server;
 		this.port = await server.ready;
 		this.output.serverStarted(this.port);
-		
 		return this.port;
 	}
 	
-	async restartDevServer(){
+	async restartDevServer() {
 		this.stopDevServer();
 		await this.startDevServer();
 	}
 	
-	stopDevServer(){
-		if( this.server ){
+	stopDevServer() {
+		if (this.server) {
 			this.server.stop();
 			this.server = null;
 		}
+		
 		this.output.serverStopped();
 	}
 	
-	startBrowser(){
+	startBrowser() {
 		const {config} = this;
 		
 		startBrowser(
@@ -92,5 +103,3 @@ class DevServerManager {
 		);
 	}
 }
-
-module.exports = DevServerManager;

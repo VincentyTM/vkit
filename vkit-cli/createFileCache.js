@@ -1,6 +1,6 @@
-const fs = require("fs");
+import fs from "fs";
 
-module.exports = (callback) => {
+export default function createFileCache(callback) {
 	let changes = null;
 	const cache = {};
 	

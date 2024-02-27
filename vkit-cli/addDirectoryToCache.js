@@ -1,9 +1,9 @@
-const {readDirectory} = require("../server-libraries");
-const isTextFile = require("./isTextFile");
+import {readDirectory} from "../server-libraries/index.js";
+import {isTextFile} from "./is.js";
 
-module.exports = async (srcDir, fileCache) => {
+export default async function addDirectoryToCache(srcDir, fileCache) {
 	await readDirectory(srcDir, async (path) => {
-		if( isTextFile(path) ){
+		if (isTextFile(path)) {
 			await fileCache.update(path);
 		}
 	});

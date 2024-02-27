@@ -1,6 +1,6 @@
-const process = require("process");
+import process from "process";
 
-module.exports = ({
+const listenToCommands = ({
 	exportApp,
 	loadConfig,
 	output,
@@ -15,7 +15,7 @@ module.exports = ({
 			.replace(/\r|\n/g, "")
 			.split(" ");
 		
-		switch( cmd[0] ){
+		switch (cmd[0]) {
 			case "build": rebuild(); break;
 			case "config": loadConfig(); break;
 			case "exit": process.exit(); break;
@@ -33,3 +33,5 @@ module.exports = ({
 		output.reset();
 	});
 };
+
+export default listenToCommands;

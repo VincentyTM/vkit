@@ -1,13 +1,15 @@
-const {promises: fsp} = require("fs");
-const {copyDirectory} = require("../server-libraries");
+import fs from "fs";
+import {copyDirectory} from "../server-libraries/index.js";
 
-module.exports = async (wwwDir, templateWwwDir, handleError) => {
-	if( templateWwwDir ){
-		try{
+const {promises: fsp} = fs;
+
+export default async function initWwwDirectory(wwwDir, templateWwwDir, handleError) {
+	if (templateWwwDir) {
+		try {
 			await copyDirectory(templateWwwDir, wwwDir);
-		}catch(ex){
+		} catch (ex) {
 		}
-	}else{
+	} else {
 		await fsp.mkdir(wwwDir, {
 			recursive: true
 		});

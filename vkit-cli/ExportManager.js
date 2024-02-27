@@ -1,19 +1,19 @@
-const exportApp = require("./exportApp");
+import exportApp from "./exportApp.js";
 
-class ExportManager {
+export default class ExportManager {
 	constructor({
 		config,
 		fileCache,
 		libraryContainer,
 		output
-	}){
+	}) {
 		this.config = config;
 		this.fileCache = fileCache;
 		this.libraryContainer = libraryContainer;
 		this.output = output;
 	}
 	
-	async exportApp(){
+	async exportApp() {
 		const {config, fileCache, libraryContainer, output} = this;
 		
 		this.output.exportedFiles(
@@ -26,5 +26,3 @@ class ExportManager {
 		);
 	}
 }
-
-module.exports = ExportManager;
