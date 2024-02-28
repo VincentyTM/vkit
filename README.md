@@ -92,7 +92,7 @@ You can install the vKit module with this command:
 An example server app:
 ```javascript
 import http from "http";
-import $ from "vkit-js";
+import * as $ from "vkit-js/server";
 
 const {A, Li, Main, Nav, Ul} = $.htmlTags;
 
