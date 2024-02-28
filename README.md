@@ -64,7 +64,7 @@ Before using vKit, you need to have [NodeJS](https://nodejs.org/) installed with
 
 You can add vKit to your existing TypeScript web project:
 1. Install vKit with `npm i vkit-js`
-2. Import the required dependencies
+2. Import the methods you wish to use
 
 You can import the dependencies by name:
 `import {htmlTags, render, signal} from "vkit-js";`
@@ -91,8 +91,8 @@ You can install the vKit module with this command:
 
 An example server app:
 ```javascript
-const http = require("http");
-const $ = require("vkit-js");
+import http from "http";
+import $ from "vkit-js";
 
 const {A, Li, Main, Nav, Ul} = $.htmlTags;
 
@@ -498,17 +498,17 @@ Sometimes, modifying existing DOM nodes is not enough. You may want to insert ne
 $.view(() => show() && Div("This text is shown now!"));
 ```
 
-Note that there might be unwanted DOM updates which you should avoid.
+Note that unwanted DOM updates may occur if you use a non-boolean signal as a condition.
 
 ```javascript
 $.view(() => count() > 3 && Div("This text is shown now!"));
 ```
 
-If you create a boolean computed signal for every condition in `if` statements, unwanted DOM updates will probably not happen.
+If you wrap condition expressions in `$.is(() => ...)`, many unwanted DOM updates can be avoided.
 
 ```javascript
 $.view(() => {
-    if ($.computed(() => count() > 3)()) {
+    if ($.is(() => count() > 3)) {
         return Div("This text is shown now!");
     }
 });
