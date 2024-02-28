@@ -1,13 +1,11 @@
-function ifElseSlice(args, offset, argsCount) {
-	if (argsCount < 2) {
-		return argsCount === 1 ? args[offset]() : null;
+export default function ifElse() {
+	var n = arguments.length - 1;
+	
+	for (var i = 0; i < n; i += 2) {
+		if (arguments[i]()) {
+			return arguments[i + 1]();
+		}
 	}
 	
-	return args[offset].map(Boolean).view(function(value) {
-		return value ? args[offset + 1]() : ifElseSlice(args, offset + 2, argsCount - 2);
-	});
-}
-
-export default function ifElse() {
-	return ifElseSlice(arguments, 0, arguments.length);
+	return n & 1 ? null : arguments[n]();
 }
