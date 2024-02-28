@@ -13,7 +13,7 @@
 	"description": "vKit is a web application framework with a command line interface.",
 	"exports": {
 		".": {
-			"import": "./vkit-typescript/dist",
+			"import": "./vkit-typescript/dist/index.js",
 			"require": "./vkit-server/index.js"
 		},
 		"./server": "./vkit-server/index.js"
