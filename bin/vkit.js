@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-"use strict";
+import {CLI} from "../vkit-cli/index.js";
 
-require("../vkit-cli/main.js");
+new CLI().start().catch(console.error);
