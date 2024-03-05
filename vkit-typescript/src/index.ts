@@ -11,6 +11,7 @@ export {default as history} from "./history";
 export {default as html} from "./html";
 export {default as htmlTag} from "./htmlTag";
 export {default as htmlTags} from "./htmlTags";
+export {default as http} from "./http";
 export {default as inject} from "./inject";
 export {default as interval} from "./interval";
 export {default as is} from "./is";
