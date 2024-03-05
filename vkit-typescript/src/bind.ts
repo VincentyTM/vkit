@@ -67,9 +67,9 @@ export default function bind<Target>(
 					var obj = target[name];
 					
 					if (obj) {
-						bind(obj, value as any, persistent);
+						bind(obj, value as never, persistent);
 					} else {
-						setValue(target, name, value, !!persistent);
+						setValue(target, name, value as never, !!persistent);
 					}
 				}
 				break;

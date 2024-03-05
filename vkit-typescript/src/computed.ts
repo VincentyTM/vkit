@@ -11,7 +11,9 @@ import views from "./views";
 
 var none = {};
 
-export type ArrayOfMaybeSignals<ArrayType> = {[K in keyof ArrayType]: ArrayType[K] | Signal<ArrayType[K]>};
+export type ArrayOfMaybeSignals<ArrayType extends ArrayLike<unknown>> = {
+	[K in keyof ArrayType]: ArrayType[K] | Signal<ArrayType[K]>;
+};
 
 export type ComputedSignal<ValueType> = Signal<ValueType> & {
 	invalidate(): void;
@@ -61,7 +63,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 	var invalidate = signalComponent.render;
 	
 	if (dependencies) {
-		var n = dependencies.length;
+		var n = dependencies.length as number;
 		
 		for (var i = 0; i < n; ++i) {
 			var input = dependencies[i] as unknown as Signal<Parameters<FuncType>[number]>;
@@ -76,7 +78,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 		var newValue: ValueType;
 		
 		if (dependencies) {
-			var n = dependencies.length;
+			var n = dependencies.length as number;
 			var args = new Array<unknown>(n);
 			
 			for (var i = 0; i < n; ++i) {
