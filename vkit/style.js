@@ -7,8 +7,28 @@ var tick = $.tick;
 var map = typeof WeakMap === "function" ? new WeakMap() : null;
 var styleCount = 0;
 
+function prependHyphen(text) {
+	return "-" + text;
+}
+
 function prepareCSS(css, selector) {
-	return css.replace(/::?this\b/ig, selector);
+	if (typeof css === "string") {
+		return css.replace(/::?this\b/ig, selector);
+	}
+	
+	var a = [selector, "{"];
+	
+	for (var prop in css) {
+		var val = css[prop];
+		
+		if (val) {
+			prop = prop.replace(/[A-Z]/g, prependHyphen).toLowerCase();
+			a.push(prop, ":", val, ";");
+		}
+	}
+	
+	a.push("}");
+	return a.join("");
 }
 
 function getRootNode(el) {

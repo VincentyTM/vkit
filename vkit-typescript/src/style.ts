@@ -7,11 +7,33 @@ type WithStyleContainer = {
 	__styleContainer?: StyleContainer
 };
 
+type CSSTextOrDeclaration = string | Partial<CSSStyleDeclaration>;
+
 var map = typeof WeakMap === "function" ? new WeakMap() : null;
 var styleCount = 0;
 
-function prepareCSS(css: string, selector: string): string {
-	return css.replace(/::?this\b/ig, selector);
+function prependHyphen(text: string): string {
+	return "-" + text;
+}
+
+function prepareCSS(css: CSSTextOrDeclaration, selector: string): string {
+	if (typeof css === "string") {
+		return css.replace(/::?this\b/ig, selector);
+	}
+	
+	var a: string[] = [selector, "{"];
+	
+	for (var prop in css) {
+		var val = css[prop];
+		
+		if (val) {
+			prop = prop.replace(/[A-Z]/g, prependHyphen).toLowerCase();
+			a.push(prop, ":", val, ";");
+		}
+	}
+	
+	a.push("}");
+	return a.join("");
 }
 
 function getRootNode(el: Node): Node {
@@ -78,13 +100,14 @@ function getStyleContainer(el: Node): StyleContainer {
  * 	return H1("Hello world", MyStyle);
  * };
  * 
- * @param cssText A string containing the CSS. The special `::this` selector in it refers to all DOM elements that use the stylesheet.
+ * @param css A string containing the CSS. The special `::this` selector in it refers to all DOM elements that use the stylesheet.
  * A signal containing a string is also accepted, which is useful for creating a dynamic stylesheet.
+ * Instead of a string, an object containing CSS properties is also allowed but in that case the selector cannot be specified.
  * @param attribute The attribute used as a CSS selector. If not specified, a unique attribute is generated for the stylesheet.
  * @returns A function which can be used as a directive on a DOM element to apply the stylesheet.
  */
 export default function style(
-	cssText: string | Signal<string>,
+	css: CSSTextOrDeclaration | Signal<CSSTextOrDeclaration>,
 	attribute?: string
 ): (element: Node) => void {
 	if (!attribute) {
@@ -113,14 +136,14 @@ export default function style(
 			controller = container.add(selector);
 			controller.setValue(
 				prepareCSS(
-					cssText && typeof (cssText as Signal<string>).get === "function" ? (cssText as Signal<string>).get() : (cssText as string),
+					css && typeof (css as Signal<string>).get === "function" ? (css as Signal<string>).get() : (css as string),
 					selector
 				)
 			);
 		});
 		
-		if (cssText && typeof (cssText as Signal<string>).subscribe === "function") {
-			(cssText as Signal<string>).subscribe(function(value) {
+		if (css && typeof (css as Signal<string>).subscribe === "function") {
+			(css as Signal<string>).subscribe(function(value) {
 				if (controller) {
 					controller.setValue(prepareCSS(value, selector));
 				}
