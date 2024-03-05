@@ -59,6 +59,7 @@ export {default as html} from "./html.js";
 export {default as http} from "./http.js";
 export {default as ifElse} from "./ifElse.js";
 export {default as inject} from "./inject.js";
+export {default as is} from "./is.js";
 export {default as isArray} from "./isArray.js";
 export {default as isSignal} from "./isSignal.js";
 export {default as lazy} from "./lazy.js";
