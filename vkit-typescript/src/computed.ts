@@ -6,7 +6,6 @@ import signalEffect from "./signalEffect";
 import signalPipe from "./signalPipe";
 import signalProp from "./signalProp";
 import signalText from "./signalText";
-import throwError from "./throwError";
 import view from "./view";
 import views from "./views";
 
@@ -119,10 +118,7 @@ export default function computed<FuncType extends (...args: never[]) => unknown>
 		
 		if (component) {
 			if (component === parent) {
-				throwError(
-					new Error("A signal cannot be used in the reactive block it was created in"),
-					parent.parent
-				);
+				throw new Error("A signal cannot be used in the reactive block it was created in");
 			}
 			
 			subscribe(component.render);

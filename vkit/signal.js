@@ -8,7 +8,6 @@ var signalMap = $.signalMap;
 var signalPipe = $.signalPipe;
 var signalProp = $.signalProp;
 var signalText = $.signalText;
-var throwError = $.throwError;
 var view = $.view;
 var views = $.views;
 
@@ -22,10 +21,7 @@ function createWritableSignal(value) {
 		
 		if (component) {
 			if (component === parent) {
-				throwError(
-					new Error("A signal cannot be used in the reactive block it was created in"),
-					parent.parent
-				);
+				throw new Error("A signal cannot be used in the reactive block it was created in");
 			}
 			
 			subscribe(component.render);
