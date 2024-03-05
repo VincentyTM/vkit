@@ -15,6 +15,7 @@ export {
 	htmlTags,
 	returnNull as document,
 	noop as effect,
+	returnNull as frameContent,
 	returnComputedNull as installPrompt,
 	noop as interval,
 	lang,
