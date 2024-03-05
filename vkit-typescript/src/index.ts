@@ -24,6 +24,7 @@ export {default as of} from "./of";
 export {default as onEvent} from "./onEvent";
 export {default as onUnmount} from "./onUnmount";
 export {default as provide} from "./provide";
+export {default as readOnly} from "./readOnly";
 export {default as ref} from "./ref";
 export {default as render} from "./render";
 export {default as repeat} from "./repeat";
