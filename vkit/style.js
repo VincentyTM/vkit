@@ -71,7 +71,7 @@ function createStyle(css, attr) {
 			throw new Error("Style can only be added to a DOM node");
 		}
 		
-		tick(function (){
+		tick(function() {
 			container = getStyleContainer(el);
 			controller = container.add(selector);
 			controller.setValue(prepareCSS(css && typeof css.get === "function" ? css.get() : css, selector));

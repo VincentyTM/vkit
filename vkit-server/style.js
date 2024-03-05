@@ -6,14 +6,15 @@ function prepareCSS(css, selector){
 	return css.replace(/::?this\b/ig, selector);
 }
 
-export default function style(css, attr){
-	if(!attr){
+export default function style(css, attr) {
+	if (!attr) {
 		var currentScope = getScope(true);
 		attr = "vkit-" + (currentScope ? "s-" + currentScope.nextStyleCount() : ++globalStyleCount);
 	}
+	
 	var selector = "[" + attr + "]";
 	
-	function bind(el){
+	function bind(el) {
 		getScope().addStyle(
 			attr,
 			prepareCSS(
@@ -22,12 +23,12 @@ export default function style(css, attr){
 			)
 		);
 		
-		if( el.setAttribute ){
+		if (el.setAttribute) {
 			el.setAttribute(attr, "");
 		}
 	}
 	
-	bind.toString = function(){
+	bind.toString = function() {
 		return selector;
 	};
 	

@@ -6,8 +6,8 @@ function getSelf(value) {
 	return value;
 }
 
-function readOnly(signalOrValue){
-	return computed(getSelf, [signalOrValue]);
+function readOnly(input) {
+	return computed(getSelf, [input]);
 }
 
 $.readOnly = readOnly;

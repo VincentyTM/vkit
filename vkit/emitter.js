@@ -1,19 +1,23 @@
 (function($) {
 
 var getComponent = $.getComponent;
-var createObservable = $.observable;
-var createState = $.state;
+var observable = $.observable;
 var onUnmount = $.onUnmount;
 var update = $.update;
 
 function createEmitter(base) {
 	var component = getComponent(true);
-	var dataChannel = createObservable();
-	var errorChannel = createObservable();
+	var dataChannel = observable();
+	var errorChannel = observable();
 	
 	function subscribe(child, onData, onError) {
-		function forwardData(data) { child.emit(data); }
-		function forwardError(error) { child.throwError(error); }
+		function forwardData(data) {
+			child.emit(data);
+		}
+		
+		function forwardError(error) {
+			child.throwError(error);
+		}
 		
 		var unsubscribeData = dataChannel.subscribe(onData || forwardData);
 		var unsubscribeError = errorChannel.subscribe(onError || forwardError);
