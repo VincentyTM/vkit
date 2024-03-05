@@ -44,7 +44,7 @@ const exportApp = async ({
 					: alwaysTrue;
 				
 				if (isHTML(targetFile)) {
-					await fsp.writeFile(targetFile, buildReleaseIndexHTML({
+					await fsp.writeFile(targetFile, buildReleaseIndexHtml({
 						config: {
 							htmlDebugToken,
 							htmlHotReloadToken,
