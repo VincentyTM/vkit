@@ -1,5 +1,5 @@
-import {Bindings} from "./bind";
-import deepPush from "./deepPush";
+import type {Bindings} from "./bind.js";
+import deepPush from "./deepPush.js";
 
 export default function append<ItemType, ContextType>(
 	parent: {
