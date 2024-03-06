@@ -1,9 +1,9 @@
-import computed, {ComputedSignal} from "./computed";
-import isSignal from "./isSignal";
-import onUnmount from "./onUnmount";
-import readOnly from "./readOnly";
-import signal, {Signal} from "./signal";
-import update from "./update";
+import computed, {type ComputedSignal} from "./computed.js";
+import isSignal from "./isSignal.js";
+import onUnmount from "./onUnmount.js";
+import readOnly from "./readOnly.js";
+import signal, {type Signal} from "./signal.js";
+import update from "./update.js";
 
 type HttpRequestHeaders = {
 	[name: string]: string;
@@ -62,6 +62,41 @@ var INIITIAL_PROGRESS: HttpProgress = {
 
 /**
  * Sends an HTTP request initially and when its input changes.
+ * When the current component is unmounted, the HTTP is request is aborted.
+ * This method can only be used in component context.
+ * @example
+ * function HttpExample() {
+ * 	const response = http({
+ * 		url: "/api/",
+ * 		method: "POST",
+ * 		headers: {
+ * 			"content-type": "application/json",
+ * 			"x-requested-with": "XMLHttpRequest"
+ * 		},
+ * 		body: JSON.stringify({
+ * 			someExampleData: 42
+ * 		}),
+ * 		responseType: "json"
+ * 	});
+ * 	
+ * 	return response.view((res) => {
+ * 		if (res.unsent) {
+ * 			return "The request is null!";
+ * 		}
+ * 		
+ * 		if (res.progress) {
+ * 			return res.progress.map((progress) => (
+ * 				`Loading: ${progress.loaded} / ${progress.total}`
+ * 			));
+ * 		}
+ * 		
+ * 		if (!res.ok) {
+ * 			return `Request failed! Status: ${res.status}`;
+ * 		}
+ * 		
+ * 		return `Successful! Response: ${JSON.stringify(res.body)}`;
+ * 	});
+ * }
  * @param request The HTTP request as a string URL or object. It can optionally be wrapped in a signal or a function.
  * @returns A computed signal containing the HTTP response object.
  */
