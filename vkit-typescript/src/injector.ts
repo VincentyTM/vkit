@@ -1,4 +1,4 @@
-import {Provider} from "./provider";
+import type {Provider} from "./provider.js";
 
 export type TokenClass = new () => unknown;
 export type TokenFactory = () => unknown;

@@ -1,4 +1,4 @@
-import onUnmount from "./onUnmount";
+import onUnmount from "./onUnmount.js";
 
 type Ref<ValueType> = {
 	(value: ValueType): void;

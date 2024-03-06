@@ -1,6 +1,6 @@
-import insert from "./insert";
-import removeNode from "./remove";
-import {View} from "./view";
+import insert from "./insert.js";
+import removeNode from "./remove.js";
+import type {View} from "./view.js";
 
 export type NodeRange = {
 	append(...children: View[]): void;

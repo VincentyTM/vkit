@@ -1,7 +1,7 @@
-import insert from "./insert";
-import isArray from "./isArray";
-import toArray from "./toArray";
-import {View} from "./view";
+import insert from "./insert.js";
+import isArray from "./isArray.js";
+import toArray from "./toArray.js";
+import type {View} from "./view.js";
 
 function findNodes(
 	result: Node[],

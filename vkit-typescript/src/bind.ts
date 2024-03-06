@@ -1,7 +1,7 @@
-import onEvent from "./onEvent";
-import onUnmount from "./onUnmount";
-import prop from "./prop";
-import {Signal} from "./signal";
+import onEvent from "./onEvent.js";
+import onUnmount from "./onUnmount.js";
+import prop from "./prop.js";
+import type {Signal} from "./signal.js";
 
 export type Bindings<T> = {
 	[K in keyof T]?: (T[K] extends ((this: GlobalEventHandlers, ev: never) => any) | null

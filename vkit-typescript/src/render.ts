@@ -1,9 +1,9 @@
-import append from "./append";
-import bind from "./bind";
-import {rootComponent, rootInjector} from "./root";
-import {setComponent, setInjector} from "./contextGuard";
-import update from "./update";
-import {View} from "./view";
+import append from "./append.js";
+import bind from "./bind.js";
+import {rootComponent, rootInjector} from "./root.js";
+import {setComponent, setInjector} from "./contextGuard.js";
+import update from "./update.js";
+import type {View} from "./view.js";
 
 export default function render(getView: () => View, container: Node) {
 	try {

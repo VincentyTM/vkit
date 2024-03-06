@@ -1,7 +1,7 @@
-import component from "./component";
-import {Config, ConfigClass} from "./provide";
-import createInjector from "./injector";
-import createProvider from "./provider";
+import component from "./component.js";
+import type {Config, ConfigClass} from "./provide.js";
+import createInjector from "./injector.js";
+import createProvider from "./provider.js";
 
 function mount(): void {
 	throw new Error("The root component cannot be rerendered");

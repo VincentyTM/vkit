@@ -1,6 +1,6 @@
-import getContext from "./context";
-import inject from "./inject";
-import {View} from "./view";
+import getContext from "./context.js";
+import inject from "./inject.js";
+import type {View} from "./view.js";
 
 type WindowService = {
 	new(): WindowService;

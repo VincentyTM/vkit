@@ -1,4 +1,4 @@
-import type {Signal, WritableSignal} from "./signal";
+import type {Signal, WritableSignal} from "./signal.js";
 
 export default function signalPipe<InputType, OutputType>(
 	this: Signal<InputType>,

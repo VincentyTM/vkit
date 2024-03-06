@@ -1,6 +1,6 @@
-import {Bindings} from "./bind";
-import directive from "./directive";
-import toArray from "./toArray";
+import type {Bindings} from "./bind.js";
+import directive from "./directive.js";
+import toArray from "./toArray.js";
 
 type Pushable<ItemType> = {
 	push(value: ItemType | Text): number | void;

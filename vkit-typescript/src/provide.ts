@@ -1,8 +1,8 @@
-import createInjector, {TokenLike} from "./injector";
-import createProvider, {Provider} from "./provider";
-import {getComponent, getInjector, setInjector} from "./contextGuard";
-import inject from "./inject";
-import {View} from "./view";
+import createInjector, {type TokenLike} from "./injector.js";
+import createProvider, {type Provider} from "./provider.js";
+import {getComponent, getInjector, setInjector} from "./contextGuard.js";
+import inject from "./inject.js";
+import type {View} from "./view.js";
 
 export type ConfigClass = new () => unknown;
 export type ConfigProvide = {provide: TokenLike & (new () => unknown)};

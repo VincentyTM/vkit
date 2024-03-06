@@ -1,9 +1,9 @@
-import {Bindings} from "./bind";
-import createComponent from "./component";
-import createNodeRange from "./nodeRange";
-import {enqueueUpdate} from "./update";
-import isSignal from "./isSignal";
-import {Signal} from "./signal";
+import type {Bindings} from "./bind.js";
+import createComponent from "./component.js";
+import createNodeRange from "./nodeRange.js";
+import {enqueueUpdate} from "./update.js";
+import isSignal from "./isSignal.js";
+import type {Signal} from "./signal.js";
 
 export type View<ContextType = unknown> = (
 	Node |

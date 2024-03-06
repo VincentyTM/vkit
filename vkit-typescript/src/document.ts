@@ -1,5 +1,5 @@
-import bind, {Bindings} from "./bind";
-import getWindow from "./getWindow";
+import bind, {type Bindings} from "./bind.js";
+import getWindow from "./getWindow.js";
 
 export default function getDocument(..._bindings: Bindings<Document>[]): Document;
 

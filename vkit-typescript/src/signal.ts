@@ -1,14 +1,14 @@
-import {enqueueUpdate} from "./update";
-import {Component} from "./component";
-import {ComputedSignal, signalMap} from "./computed";
-import {getComponent} from "./contextGuard";
-import onUnmount from "./onUnmount";
-import signalEffect from "./signalEffect";
-import signalPipe from "./signalPipe";
-import signalProp from "./signalProp";
-import signalText from "./signalText";
-import view, {View} from "./view";
-import views from "./views";
+import {enqueueUpdate} from "./update.js";
+import type {Component} from "./component.js";
+import {type ComputedSignal, signalMap} from "./computed.js";
+import {getComponent} from "./contextGuard.js";
+import onUnmount from "./onUnmount.js";
+import signalEffect from "./signalEffect.js";
+import signalPipe from "./signalPipe.js";
+import signalProp from "./signalProp.js";
+import signalText from "./signalText.js";
+import view, {type View} from "./view.js";
+import views from "./views.js";
 
 export type ItemType<ValueType> = ValueType extends (infer ItemType)[] ? ItemType : never;
 

@@ -1,6 +1,6 @@
-import {getComponent, getInjector, setComponent, setInjector} from "./contextGuard";
-import throwError from "./throwError";
-import {View} from "./view";
+import {getComponent, getInjector, setComponent, setInjector} from "./contextGuard.js";
+import throwError from "./throwError.js";
+import type {View} from "./view.js";
 
 export default function context(): (getView: () => View) => View {
 	var component = getComponent();

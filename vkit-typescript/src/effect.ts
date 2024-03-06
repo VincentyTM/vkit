@@ -1,4 +1,4 @@
-import component from "./component";
+import component from "./component.js";
 
 /**
  * Creates a side effect and runs it every time its dependencies change.

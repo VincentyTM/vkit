@@ -1,4 +1,4 @@
-import effect from "./effect";
+import effect from "./effect.js";
 
 export default function directive<ElementType>(
 	element: ElementType,

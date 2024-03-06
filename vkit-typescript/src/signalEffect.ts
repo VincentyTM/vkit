@@ -1,7 +1,7 @@
-import createComponent, {Component} from "./component";
-import {getComponent} from "./contextGuard";
-import onUnmount from "./onUnmount";
-import {Signal} from "./signal";
+import createComponent, {type Component} from "./component.js";
+import {getComponent} from "./contextGuard.js";
+import onUnmount from "./onUnmount.js";
+import type {Signal} from "./signal.js";
 
 export default function signalEffect<ValueType>(
 	this: Signal<ValueType>,

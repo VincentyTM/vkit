@@ -1,8 +1,8 @@
-import emitUnmount from "./emitUnmount";
-import {getComponent, getInjector, setComponent, setInjector} from "./contextGuard";
-import {Injector} from "./injector";
-import {Observable} from "./observable";
-import throwError from "./throwError";
+import emitUnmount from "./emitUnmount.js";
+import {getComponent, getInjector, setComponent, setInjector} from "./contextGuard.js";
+import type {Injector} from "./injector.js";
+import type {Observable} from "./observable.js";
+import throwError from "./throwError.js";
 
 export type Component = {
 	children: Component[] | null;

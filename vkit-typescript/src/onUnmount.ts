@@ -1,8 +1,8 @@
-import {Component} from "./component";
-import {getComponent} from "./contextGuard";
-import noop from "./noop";
-import observable from "./observable";
-import {rootComponent} from "./root";
+import type {Component} from "./component.js";
+import {getComponent} from "./contextGuard.js";
+import noop from "./noop.js";
+import observable from "./observable.js";
+import {rootComponent} from "./root.js";
 
 export default function onUnmount(
 	callback: () => void,

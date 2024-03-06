@@ -1,6 +1,6 @@
-import bind from "./bind";
-import append from "./append";
-import {View} from "./view";
+import bind from "./bind.js";
+import append from "./append.js";
+import type {View} from "./view.js";
 
 export default function shadow(...args: View[]): (element: HTMLElement) => void;
 

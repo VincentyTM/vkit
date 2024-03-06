@@ -1,4 +1,4 @@
-import {Component} from "./component";
+import type {Component} from "./component.js";
 
 export default function throwError(error: any, component: Component | null): void {
 	while (component) {

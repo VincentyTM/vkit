@@ -1,8 +1,8 @@
-import computed, {ComputedSignal} from "./computed";
-import getWindow from "./getWindow";
-import observable from "./observable";
-import onEvent from "./onEvent";
-import onUnmount from "./onUnmount";
+import computed, {type ComputedSignal} from "./computed.js";
+import getWindow from "./getWindow.js";
+import observable from "./observable.js";
+import onEvent from "./onEvent.js";
+import onUnmount from "./onUnmount.js";
 
 type HistoryState = unknown;
 

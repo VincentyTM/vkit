@@ -1,4 +1,4 @@
-import {Signal} from "./signal";
+import type {Signal} from "./signal.js";
 
 export default function signalText<ValueType>(
 	this: Signal<ValueType>

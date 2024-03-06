@@ -1,6 +1,6 @@
-import getWindow from "./getWindow";
-import onUnmount from "./onUnmount";
-import update from "./update";
+import getWindow from "./getWindow.js";
+import onUnmount from "./onUnmount.js";
+import update from "./update.js";
 
 /**
  * Sets an interval in the current window and clears it when the current component is unmounted.

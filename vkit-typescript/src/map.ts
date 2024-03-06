@@ -1,4 +1,4 @@
-import computed, {ArrayOfMaybeSignals, ComputedSignal} from "./computed";
+import computed, {type ArrayOfMaybeSignals, type ComputedSignal} from "./computed.js";
 
 type MapType<TransformType extends (...args: never[]) => unknown> = (
 	(

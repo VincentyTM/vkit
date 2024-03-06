@@ -1,7 +1,7 @@
-import {enqueueUpdate} from "./update";
-import {getComponent} from "./contextGuard";
-import observe from "./observe";
-import onUnmount from "./onUnmount";
+import {enqueueUpdate} from "./update.js";
+import {getComponent} from "./contextGuard.js";
+import observe from "./observe.js";
+import onUnmount from "./onUnmount.js";
 
 function getValue<ObjectType>(
 	object: ObjectType,

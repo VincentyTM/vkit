@@ -1,6 +1,6 @@
-import append from "./append";
-import bind from "./bind";
-import {View} from "./view";
+import append from "./append.js";
+import bind from "./bind.js";
+import type {View} from "./view.js";
 
 /**
  * Creates and returns an HTML tag (element factory).

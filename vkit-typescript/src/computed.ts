@@ -1,13 +1,13 @@
-import createComponent from "./component";
-import {getComponent, getInjector} from "./contextGuard";
-import onUnmount from "./onUnmount";
-import {Signal} from "./signal";
-import signalEffect from "./signalEffect";
-import signalPipe from "./signalPipe";
-import signalProp from "./signalProp";
-import signalText from "./signalText";
-import view from "./view";
-import views from "./views";
+import createComponent from "./component.js";
+import {getComponent, getInjector} from "./contextGuard.js";
+import onUnmount from "./onUnmount.js";
+import type {Signal} from "./signal.js";
+import signalEffect from "./signalEffect.js";
+import signalPipe from "./signalPipe.js";
+import signalProp from "./signalProp.js";
+import signalText from "./signalText.js";
+import view from "./view.js";
+import views from "./views.js";
 
 var none = {};
 

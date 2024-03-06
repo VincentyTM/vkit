@@ -1,5 +1,5 @@
-import bind from "./bind";
-import deepPush from "./deepPush";
+import bind from "./bind.js";
+import deepPush from "./deepPush.js";
 
 function insert<ItemType, ContextType>(
 	children: ItemType,

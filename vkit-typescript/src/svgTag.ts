@@ -1,10 +1,10 @@
-import append from "./append";
-import bind from "./bind";
-import effect from "./effect";
-import onEvent, {EventTargetType} from "./onEvent";
-import onUnmount from "./onUnmount";
-import {Signal} from "./signal";
-import {View} from "./view";
+import append from "./append.js";
+import bind from "./bind.js";
+import effect from "./effect.js";
+import onEvent, {type EventTargetType} from "./onEvent.js";
+import onUnmount from "./onUnmount.js";
+import type {Signal} from "./signal.js";
+import type {View} from "./view.js";
 
 type AttributeValue = string | null;
 type ReactiveAttributeValue = AttributeValue | Signal<AttributeValue> | (() => AttributeValue);

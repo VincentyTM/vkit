@@ -1,4 +1,4 @@
-import {callTicks} from "./tick";
+import {callTicks} from "./tick.js";
 
 var queue: (() => void)[] = [];
 

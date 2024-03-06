@@ -1,5 +1,5 @@
-import effect from "./effect";
-import {getComponent} from "./contextGuard";
+import effect from "./effect.js";
+import {getComponent} from "./contextGuard.js";
 
 export default function is(condition: () => boolean): boolean {
 	var parent = getComponent();

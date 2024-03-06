@@ -1,4 +1,4 @@
-import {Signal} from "./signal";
+import type {Signal} from "./signal.js";
 
 type ElementType = {
 	[key: string]: any;

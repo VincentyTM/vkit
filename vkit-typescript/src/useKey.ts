@@ -1,6 +1,6 @@
-import computed, {ComputedSignal} from "./computed";
-import {Signal} from "./signal";
-import {View} from "./view";
+import computed, {type ComputedSignal} from "./computed.js";
+import type {Signal} from "./signal.js";
+import type {View} from "./view.js";
 
 type KeyedSignal<ValueType> = ComputedSignal<ValueType> & {
 	key: string | Signal<string>

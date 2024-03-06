@@ -1,4 +1,4 @@
-import update from "./update";
+import update from "./update.js";
 
 export type EventListenerType = (this: unknown, event: EventType) => unknown;
 

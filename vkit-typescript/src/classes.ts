@@ -1,7 +1,7 @@
-import effect from "./effect";
-import isArray from "./isArray";
-import onUnmount from "./onUnmount";
-import {Signal} from "./signal";
+import effect from "./effect.js";
+import isArray from "./isArray.js";
+import onUnmount from "./onUnmount.js";
+import type {Signal} from "./signal.js";
 
 type BooleanValue = boolean | Signal<boolean> | (() => boolean);
 type ClassArgument = (

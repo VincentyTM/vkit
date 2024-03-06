@@ -1,9 +1,9 @@
-import effect from "./effect";
-import get from "./get";
-import isSignal from "./isSignal";
-import observe from "./observe";
-import onUnmount from "./onUnmount";
-import signal, {Signal, WritableSignal} from "./signal";
+import effect from "./effect.js";
+import get from "./get.js";
+import isSignal from "./isSignal.js";
+import observe from "./observe.js";
+import onUnmount from "./onUnmount.js";
+import signal, {type Signal, type WritableSignal} from "./signal.js";
 
 export default function objectProperty<ObjectType>(
 	object: ObjectType | Signal<ObjectType>,
