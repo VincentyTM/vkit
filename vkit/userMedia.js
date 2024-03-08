@@ -3,6 +3,7 @@
 var effect = $.effect;
 var getWindow = $.getWindow;
 var onUnmount = $.onUnmount;
+var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
 
@@ -66,9 +67,9 @@ function getUserMedia(constraints, displayMedia) {
 		setConstraints(null);
 	});
 	
-	var userMedia = result.map();
+	var userMedia = readOnly(result);
 	userMedia.onError = error.subscribe;
-	userMedia.pending = pending.map();
+	userMedia.pending = readOnly(pending);
 	return userMedia;
 }
 
