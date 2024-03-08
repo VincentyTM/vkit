@@ -24,17 +24,17 @@ export default function repeat<ItemType>(
 	getView: (index: number) => ItemType
 ): ItemType[];
 
-export default function repeat<ContextType>(
+export default function repeat<ViewType extends View<ContextType>, ContextType>(
 	count: Signal<number>,
-	getView: (index: number) => View<ContextType>
-): View<ContextType>[];
+	getView: (index: number) => ViewType
+): View<ContextType>;
 
 export default function repeat(
 	count: Signal<number> | number,
 	getView: (index: number) => unknown
-): unknown[] {
+): unknown {
 	if (isSignal(count)) {
-		var arrayState = (count as Signal<number>).map(createRangeArray);
+		var arrayState = count.map(createRangeArray);
 		return arrayState.views(getView as (index: number) => View<unknown>);
 	}
 	

@@ -74,10 +74,10 @@ function createBlock<ValueType>(
 	};
 }
 
-export default function views<ValueType, ContextType>(
+export default function views<ViewType extends View<ContextType>, ValueType, ContextType>(
 	this: Signal<ArrayLike<ValueType>>,
-	getItemView: (value: ValueType) => View<ContextType>
-): View<ContextType>[] {
+	getItemView: (value: ValueType) => ViewType
+): View<ContextType> {
 	var signal = this;
 	var container = getComponent();
 	var injector = getInjector();

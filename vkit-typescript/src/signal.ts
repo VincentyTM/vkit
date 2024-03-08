@@ -220,7 +220,7 @@ export type Signal<ValueType> = {
 	 * @param getItemView The function that returns a subview for an array item.
 	 * @returns The initial view containing the subviews for all items in the array.
 	 */
-	views<ContextType>(getItemView: (value: ItemType<ValueType>) => View<ContextType>): View<ContextType>[];
+	views<ViewType extends View<ContextType>, ContextType>(getItemView: (value: ItemType<ValueType>) => ViewType): View<ContextType>;
 };
 
 export type WritableSignal<ValueType> = Signal<ValueType> & {
