@@ -7,6 +7,10 @@ var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
 
+function stopTrack(track) {
+	track.stop();
+}
+
 function getUserMedia(constraints, displayMedia) {
 	var nav = getWindow().navigator;
 	var error = signal(null);
@@ -17,9 +21,7 @@ function getUserMedia(constraints, displayMedia) {
 		var stream = result.get();
 		
 		if (stream) {
-			stream.getTracks().forEach(function(track) {
-				track.stop();
-			});
+			stream.getTracks().forEach(stopTrack);
 			result.set(null);
 		}
 		
