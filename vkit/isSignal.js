@@ -1,6 +1,6 @@
-(function($){
+(function($) {
 
-function isSignal(value){
+function isSignal(value) {
 	return !!(value && value.isSignal === true);
 }
 

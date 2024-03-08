@@ -1,6 +1,6 @@
-(function($){
+(function($) {
 
-function noop(){}
+function noop() {}
 
 $.noop = noop;
 

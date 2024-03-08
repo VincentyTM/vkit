@@ -1,18 +1,18 @@
-(function($){
+(function($) {
 
-var createNodeRange = $.nodeRange;
 var htmlTag = $.htmlTag;
+var nodeRange = $.nodeRange;
 var view = $.view;
 
-function wrap(getWrapper, contents){
-	var range = createNodeRange();
+function wrap(getWrapper, contents) {
+	var range = nodeRange();
 	
-	function getView(wrapper){
-		if( typeof wrapper === "function" ){
+	function getView(wrapper) {
+		if (typeof wrapper === "function") {
 			return wrapper(range);
 		}
 		
-		if( typeof wrapper === "string" ){
+		if (typeof wrapper === "string") {
 			return htmlTag(wrapper)(range);
 		}
 		
@@ -22,13 +22,13 @@ function wrap(getWrapper, contents){
 	return getWrapper.view ? getWrapper.view(getView) : view(getWrapper, getView);
 }
 
-function createWrapper(getWrapper){
-	return function(){
+function wrapper(getWrapper) {
+	return function() {
 		return wrap(getWrapper, arguments);
 	};
 }
 
 $.wrap = wrap;
-$.wrapper = createWrapper;
+$.wrapper = wrapper;
 
 })($);

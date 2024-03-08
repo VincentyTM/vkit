@@ -5,7 +5,7 @@ var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
 var signal = $.signal;
 
-function createFullScreenState() {
+function fullScreen() {
 	var doc = getWindow().document;
 	var state = signal();
 	
@@ -54,6 +54,6 @@ function createFullScreenState() {
 	return state;
 }
 
-$.fullScreen = createFullScreenState;
+$.fullScreen = fullScreen;
 
 })($);

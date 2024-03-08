@@ -1,15 +1,17 @@
-(function($, document, navigator, global){
+(function($, document, navigator, global) {
 
 var URL = global.URL || global.webkitURL || global.mozURL;
 
-function save(blob, name){
-	if( navigator.msSaveOrOpenBlob ){
+function save(blob, name) {
+	if (navigator.msSaveOrOpenBlob) {
 		navigator.msSaveOrOpenBlob(blob, name);
 		return;
 	}
-	if(!URL){
+	
+	if (!URL) {
 		throw new ReferenceError("URL is not supported");
 	}
+	
 	var url = URL.createObjectURL(blob);
 	var a = document.createElement("a");
 	a.href = url;
