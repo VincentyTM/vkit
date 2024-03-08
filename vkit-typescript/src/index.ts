@@ -16,6 +16,7 @@ export {default as inject} from "./inject.js";
 export {default as interval} from "./interval.js";
 export {default as is} from "./is.js";
 export {default as isSignal} from "./isSignal.js";
+export {default as isWritableSignal} from "./isWritableSignal.js";
 export {default as map} from "./map.js";
 export {default as noop} from "./noop.js";
 export {default as objectProperty} from "./objectProperty.js";
