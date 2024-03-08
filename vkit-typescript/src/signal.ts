@@ -195,7 +195,7 @@ export type Signal<ValueType> = {
 	 * @param getCurrentView A function that returns the current view.
 	 * @returns The initial view.
 	 */
-	view<ContextType>(getCurrentView: (value: ValueType) => View<ContextType>): View<ContextType>;
+	view<ViewType extends View<ContextType>, ContextType>(getCurrentView: (value: ValueType) => ViewType): View<ContextType>;
 
 	/**
 	 * Creates a dynamic view with a subview for each element in the array contained in the signal.
