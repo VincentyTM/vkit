@@ -1,16 +1,16 @@
-(function($){
+(function($) {
 
 var useKey = $.useKey;
 var concat = Array.prototype.concat;
 var slice = Array.prototype.slice;
 
-function useArray(signal){
+function useArray(signal) {
 	return {
-		add: function(value){
+		add: function(value) {
 			var array = signal.get();
 			
-			for(var i=array.length; i--;){
-				if( array[i] === value ){
+			for (var i = array.length; i--;) {
+				if (array[i] === value) {
 					return;
 				}
 			}
@@ -22,53 +22,47 @@ function useArray(signal){
 		
 		get: signal.get,
 		
-		pop: function(){
+		pop: function() {
 			var array = signal.get();
 			var n = array.length - 1;
-			
 			signal.set(array.slice(0, n));
-			
 			return array[n];
 		},
 		
-		push: function(){
+		push: function() {
 			var newArray = signal.get().concat(slice.call(arguments));
-			
 			signal.set(newArray);
-			
 			return newArray.length;
 		},
 		
-		remove: function(value){
+		remove: function(value) {
 			var array = signal.get();
 			
-			for(var i=array.length; i--;){
-				if( array[i] === value ){
+			for (var i = array.length; i--;) {
+				if (array[i] === value) {
 					signal.set(array.slice(0, i).concat(array.slice(i + 1)));
 					return;
 				}
 			}
 		},
 		
-		reverse: function(){
+		reverse: function() {
 			signal.set(signal.get().slice().reverse());
 		},
 		
 		set: signal.set,
 		
-		shift: function(){
+		shift: function() {
 			var array = signal.get();
-			
 			signal.set(array.slice(1));
-			
 			return array[0];
 		},
 		
-		sort: function(compare){
+		sort: function(compare) {
 			signal.set(signal.get().slice().sort(compare));
 		},
 		
-		splice: function(start, length){
+		splice: function(start, length) {
 			var array = signal.get();
 			
 			signal.set(
@@ -83,19 +77,17 @@ function useArray(signal){
 		
 		subscribe: signal.subscribe,
 		
-		unshift: function(){
+		unshift: function() {
 			var newArray = concat.call(slice.call(arguments), signal.get());
-			
 			signal.set(newArray);
-			
 			return newArray.length;
 		},
 		
-		useKey: function(getKey, transformValue){
+		useKey: function(getKey, transformValue) {
 			return useKey(signal, getKey, transformValue);
 		},
 		
-		views: function(getView){
+		views: function(getView) {
 			return signal.views(getView);
 		}
 	};

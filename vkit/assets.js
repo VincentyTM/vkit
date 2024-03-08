@@ -1,89 +1,92 @@
-(function($, undefined){
+(function($, undefined) {
 
-var createObservable = $.observable;
+var observable = $.observable;
+
 var PENDING = 0;
 var FULFILLED = 1;
 var REJECTED = 2;
 
-function createAsset(name){
+function createAsset(name) {
 	var refCount = 1;
-	var unload = createObservable();
-	var errorHandler = createObservable();
-	var loadHandler = createObservable();
-	var progressHandler = createObservable();
-	var resetHandler = createObservable();
+	var unload = observable();
+	var errorHandler = observable();
+	var loadHandler = observable();
+	var progressHandler = observable();
+	var resetHandler = observable();
 	var status = PENDING;
 	var data;
 	
-	function addRef(){
+	function addRef() {
 		++refCount;
 	}
 	
-	function removeRef(){
+	function removeRef() {
 		var doUnload = --refCount <= 0;
-		if( doUnload ){
+		
+		if (doUnload) {
 			reset();
 			unload();
 			unload.clear();
 		}
+		
 		return doUnload;
 	}
 	
-	function load(value){
-		if( status === PENDING ){
+	function load(value) {
+		if (status === PENDING) {
 			status = FULFILLED;
 			data = value;
 			loadHandler(value);
 		}
 	}
 	
-	function error(reason){
-		if( status === PENDING ){
+	function error(reason) {
+		if (status === PENDING) {
 			status = REJECTED;
 			data = reason;
 			errorHandler(reason);
 		}
 	}
 	
-	function progress(state){
-		if( status === PENDING ){
+	function progress(state) {
+		if (status === PENDING) {
 			progressHandler(state);
 		}
 	}
 	
-	function reset(){
-		if( status !== PENDING ){
+	function reset() {
+		if (status !== PENDING) {
 			status = PENDING;
 			data = undefined;
 			resetHandler();
 		}
 	}
 	
-	function getValue(){
+	function getValue() {
 		return status === FULFILLED ? data : undefined;
 	}
 	
-	function isFulfilled(){
+	function isFulfilled() {
 		return status === FULFILLED;
 	}
 	
-	function isPending(){
+	function isPending() {
 		return status === PENDING;
 	}
 	
-	function isRejected(){
+	function isRejected() {
 		return status === REJECTED;
 	}
 	
-	function then(resolveHandler, rejectHandler){
-		var unsub = createObservable();
+	function then(resolveHandler, rejectHandler) {
+		var unsub = observable();
 		
-		if( typeof resolveHandler === "function" ){
-			if( status === FULFILLED ){
+		if (typeof resolveHandler === "function") {
+			if (status === FULFILLED) {
 				resolveHandler(data);
-			}else if( status === PENDING ){
+			} else if (status === PENDING) {
 				unsub.subscribe(
-					loadHandler.subscribe(function(value){
+					loadHandler.subscribe(function(value) {
 						unsub();
 						resolveHandler(value);
 					})
@@ -91,12 +94,12 @@ function createAsset(name){
 			}
 		}
 		
-		if( typeof rejectHandler === "function" ){
-			if( status === REJECTED ){
+		if (typeof rejectHandler === "function") {
+			if (status === REJECTED) {
 				rejectHandler(data);
-			}else if( status === PENDING ){
+			} else if (status === PENDING) {
 				unsub.subscribe(
-					errorHandler.subscribe(function(reason){
+					errorHandler.subscribe(function(reason) {
 						unsub();
 						rejectHandler(reason);
 					})
@@ -129,74 +132,80 @@ function createAsset(name){
 	};
 }
 
-function createAssetContainer(assetNeeded){
+function createAssetContainer(assetNeeded) {
 	var assets = {};
 	
-	function addAsset(name){
+	function addAsset(name) {
 		var asset = assets[name];
-		if( asset ){
+		
+		if (asset) {
 			asset.addRef();
-		}else{
+		} else {
 			asset = assets[name] = createAsset(name);
-			if( typeof assetNeeded === "function" ){
-				try{
+			
+			if (typeof assetNeeded === "function") {
+				try {
 					assetNeeded(asset.publicInterface);
-				}catch(ex){
+				} catch (ex) {
 					asset.error(ex);
 				}
 			}
 		}
+		
 		return asset;
 	}
 	
-	function removeAsset(name){
+	function removeAsset(name) {
 		var asset = assets[name];
-		if( asset && asset.removeRef() ){
+		
+		if (asset && asset.removeRef()) {
 			delete assets[name];
 		}
 	}
 	
-	function createRefs(){
+	function createRefs() {
 		var refs = {};
 		
-		function add(name){
+		function add(name) {
 			var asset = refs[name];
-			if( asset ){
+			
+			if (asset) {
 				return asset.publicInterface;
 			}
+			
 			refs[name] = asset = addAsset(name);
 			return asset.publicInterface;
 		}
 		
-		function forEach(callback){
-			for(var name in refs){
+		function forEach(callback) {
+			for (var name in refs) {
 				callback(refs[name].publicInterface);
 			}
 		}
 		
-		function get(name){
+		function get(name) {
 			var asset = refs[name];
 			return asset ? asset.publicInterface.get() : undefined;
 		}
 		
-		function has(name){
+		function has(name) {
 			return name in refs;
 		}
 		
-		function remove(name){
-			if( refs[name] ){
+		function remove(name) {
+			if (refs[name]) {
 				delete refs[name];
 				removeAsset(name);
 			}
 		}
 		
-		function removeAll(){
-			for(var name in refs){
+		function removeAll() {
+			for (var name in refs) {
 				remove(name);
 			}
 		}
 		
-		function set(name, value){
+		function set(name, value) {
 			var asset = add(name);
 			asset.reset();
 			asset.load(value);
@@ -213,7 +222,7 @@ function createAssetContainer(assetNeeded){
 		};
 	}
 	
-	function bind(destination, loadHandler, unloadHandler){
+	function bind(destination, loadHandler, unloadHandler) {
 		var name = destination.name;
 		var asset = addAsset(name);
 		
@@ -229,28 +238,28 @@ function createAssetContainer(assetNeeded){
 			asset.publicInterface.onReset(destination.reset)
 		);
 		
-		if( asset.publicInterface.isFulfilled() ){
+		if (asset.publicInterface.isFulfilled()) {
 			loadHandler(asset.publicInterface.get());
 		}
 		
-		destination.onUnload(function(){
+		destination.onUnload(function() {
 			removeAsset(name);
 		});
 		
-		if( typeof unloadHandler === "function" ){
+		if (typeof unloadHandler === "function") {
 			destination.onUnload(
 				asset.publicInterface.onUnload(unloadHandler)
 			);
 		}
 	}
 	
-	function forEach(callback){
-		for(var name in assets){
+	function forEach(callback) {
+		for (var name in assets) {
 			callback(assets[name].publicInterface);
 		}
 	}
 	
-	function select(name){
+	function select(name) {
 		var asset = assets[name];
 		return asset ? asset.publicInterface : undefined;
 	}

@@ -1,30 +1,31 @@
-(function($){
+(function($) {
 
-var createSignal = $.signal;
+var readOnly = $.readOnly;
+var signal = $.signal;
 var update = $.update;
 
-function awaitPromise(promiseOrSignal){
-	var result = createSignal();
+function awaitPromise(promiseOrSignal) {
+	var result = signal();
 	var lastPromise = null;
 	
-	function setPromise(promise){
+	function setPromise(promise) {
 		result.set({
 			pending: true
 		});
 		
-		if( promise && typeof promise.then === "function" ){
+		if (promise && typeof promise.then === "function") {
 			lastPromise = promise;
 			
-			promise.then(function(value){
-				if( promise === lastPromise ){
+			promise.then(function(value) {
+				if (promise === lastPromise) {
 					result.set({
 						fulfilled: true,
 						value: value
 					});
 					update();
 				}
-			}, function(error){
-				if( promise === lastPromise ){
+			}, function(error) {
+				if (promise === lastPromise) {
 					result.set({
 						rejected: true,
 						error: error
@@ -32,35 +33,35 @@ function awaitPromise(promiseOrSignal){
 					update();
 				}
 			});
-		}else{
+		} else {
 			lastPromise = null;
 		}
 	}
 	
-	if( promiseOrSignal && typeof promiseOrSignal.then === "function" ){
+	if (promiseOrSignal && typeof promiseOrSignal.then === "function") {
 		setPromise(promiseOrSignal);
-	}else if( typeof promiseOrSignal.effect === "function" ){
+	} else if (typeof promiseOrSignal.effect === "function") {
 		promiseOrSignal.effect(setPromise);
-	}else{
+	} else {
 		result.set({
 			fulfilled: true,
 			value: promiseOrSignal
 		});
 	}
 	
-	var output = result.map();
+	var output = readOnly(result);
 	
-	output.then = function(fulfilled, rejected, pending){
-		return output.view(function(data){
-			if( data.fulfilled && typeof fulfilled === "function" ){
+	output.then = function(fulfilled, rejected, pending) {
+		return output.view(function(data) {
+			if (data.fulfilled && typeof fulfilled === "function") {
 				return fulfilled(data.value);
 			}
 			
-			if( data.rejected && typeof rejected === "function" ){
+			if (data.rejected && typeof rejected === "function") {
 				return rejected(data.error);
 			}
 			
-			if( data.pending && typeof pending === "function" ){
+			if (data.pending && typeof pending === "function") {
 				return pending();
 			}
 		});
