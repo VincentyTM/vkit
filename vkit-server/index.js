@@ -28,6 +28,7 @@ export {
 	styledHtmlTag,
 	htmlTag as svgTag,
 	htmlTags as svgTags,
+	noop as timeout,
 	noop as unmount,
 	returnComputedNull as updatePrompt,
 	userMedia,
