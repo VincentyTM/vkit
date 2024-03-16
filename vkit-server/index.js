@@ -3,6 +3,7 @@ import htmlTags from "./htmlTags.js";
 import {define, lang, LanguageService, word} from "./languageService.js";
 import noop from "./noop.js";
 import returnComputedNull from "./returnComputedNull.js";
+import returnComputedNullWithOnError from "./returnComputedNullWithOnError.js";
 import returnNull from "./returnNull.js";
 import signal from "./signal.js";
 import styledHtmlTag from "./styledHtmlTag.js";
@@ -22,7 +23,7 @@ export {
 	LanguageService,
 	noop,
 	noop as onUnmount,
-	returnComputedNull as serviceWorker,
+	returnComputedNullWithOnError as serviceWorker,
 	signal,
 	signal as state,
 	styledHtmlTag,
@@ -35,6 +36,7 @@ export {
 	htmlTag as virtualHtmlTag,
 	htmlTags as virtualHtmlTags,
 	styledHtmlTag as virtualStyledHtmlTag,
+	returnComputedNullWithOnError as webPush,
 	word,
 };
 
@@ -99,7 +101,6 @@ export {default as toArray} from "./toArray.js";
 export {default as untracked} from "./untracked.js";
 export {default as useKey} from "./useKey.js";
 export {default as view} from "./view.js";
-export {default as webPush} from "./webPush.js";
 export {default as webSocket} from "./webSocket.js";
 export {default as window} from "./getWindow.js";
 export {default as windowContent} from "./windowContent.js";
