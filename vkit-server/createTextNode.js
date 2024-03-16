@@ -21,6 +21,7 @@ export default function createTextNode(value) {
 	
 	return {
 		nodeType: 3,
+		nodeValue: value,
 		toHTML: toHTML,
 		toScriptContent: toScriptContent,
 		toStyleContent: toStyleContent

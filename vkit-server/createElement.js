@@ -45,6 +45,23 @@ export default function createElement(tagName) {
 		return name in attributes ? attributes[name] : null;
 	}
 	
+	function getInnerText() {
+		var parts = [];
+		var n = children.length;
+		
+		for (var i = 0; i < n; ++i) {
+			var child = children[i];
+			
+			if (child.getInnerText) {
+				parts.push(child.getInnerText());
+			} else if (child.nodeType === 3) {
+				parts.push(child.nodeValue);
+			}
+		}
+		
+		return parts.join("");
+	}
+	
 	function getProperty(name) {
 		return getAttribute(propToAttr(name));
 	}
@@ -151,6 +168,7 @@ export default function createElement(tagName) {
 	return {
 		appendChild: appendChild,
 		getAttribute: getAttribute,
+		getInnerText: getInnerText,
 		getProperty: getProperty,
 		hasAttribute: hasAttribute,
 		nodeType: 1,
