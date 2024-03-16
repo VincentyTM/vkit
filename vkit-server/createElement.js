@@ -108,6 +108,10 @@ export default function createElement(tagName) {
 		res.write(tagName);
 		
 		for (var name in attributes) {
+			if (name === "value" && tagNameLower === "select") {
+				continue;
+			}
+			
 			res.write(' ');
 			res.write(escapeHTML(name));
 			
@@ -154,6 +158,17 @@ export default function createElement(tagName) {
 						children[i].toHTML(res);
 					}
 					break;
+				case "select":
+					for (var i = 0; i < n; ++i) {
+						var child = children[i];
+						
+						if ("value" in attributes && child.tagNameLower === "option" && (child.getProperty("value") || child.getProperty("label") || child.getInnerText() || "") === attributes.value) {
+							child.setProperty("selected", true);
+						}
+						
+						child.toHTML(res);
+					}
+					break;
 				default:
 					for (var i = 0; i < n; ++i) {
 						children[i].toHTML(res);
@@ -176,6 +191,8 @@ export default function createElement(tagName) {
 		setAttribute: setAttribute,
 		setProperty: setProperty,
 		setStyleProperty: setStyleProperty,
+		tagName: tagName,
+		tagNameLower: tagNameLower,
 		toHTML: toHTML
 	};
 }
