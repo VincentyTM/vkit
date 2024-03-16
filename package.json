@@ -11,10 +11,13 @@
 	"bundleDependencies": false,
 	"deprecated": false,
 	"description": "vKit is a web application framework with a command line interface.",
+	"engines": {
+		"node": ">=12"
+	},
 	"exports": {
 		".": {
-			"import": "./vkit-typescript/dist/index.js",
-			"require": "./vkit-server/index.js"
+			"default": "./vkit-typescript/dist/index.js",
+			"types": "./vkit-typescript/dist/index.d.ts"
 		},
 		"./server": "./vkit-server/index.js"
 	},
@@ -31,11 +34,12 @@
 		"type": "git",
 		"url": "git+https://github.com/VincentyTM/vkit.git"
 	},
+	"sideEffects": false,
 	"scripts": {
 		"start": "node ./vkit-cli/index.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"type": "module",
-	"types": "vkit-typescript/dist/index.d.ts",
+	"types": "./vkit-typescript/dist/index.d.ts",
 	"version": "0.0.2"
 }
