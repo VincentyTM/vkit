@@ -19,7 +19,7 @@ function getURL(win: Window & typeof globalThis): string {
 	return win.location.href.replace(win.location.origin, "");
 }
 
-function createHistoryHandler(win?: Window & typeof globalThis): HistoryHandle {
+function useHistory(win?: Window & typeof globalThis): HistoryHandle {
 	if (!win) {
 		win = getWindow();
 	}
@@ -80,4 +80,4 @@ function createHistoryHandler(win?: Window & typeof globalThis): HistoryHandle {
 	};
 }
 
-export default createHistoryHandler;
+export default useHistory;

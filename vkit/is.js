@@ -8,7 +8,7 @@ function is(condition) {
 		throw new TypeError("condition is not a function");
 	}
 	
-	var parent = getComponent();
+	var component = getComponent();
 	var value;
 	
 	effect(function() {
@@ -16,7 +16,7 @@ function is(condition) {
 		value = !!condition();
 		
 		if (oldValue !== value && oldValue !== undefined) {
-			parent.render();
+			component.render();
 		}
 	});
 	
