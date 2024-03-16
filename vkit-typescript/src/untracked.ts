@@ -1,9 +1,6 @@
-(function($) {
+import {getComponent, setComponent} from "./contextGuard.js";
 
-var getComponent = $.getComponent;
-var setComponent = $.setComponent;
-
-function untracked(callback) {
+export default function untracked<T>(callback: () => T): T {
 	var component = getComponent(true);
 	
 	if (!component) {
@@ -17,7 +14,3 @@ function untracked(callback) {
 		setComponent(component);
 	}
 }
-
-$.untracked = untracked;
-
-})($);
