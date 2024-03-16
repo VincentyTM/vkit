@@ -1,7 +1,8 @@
 import bind from "./bind.js";
 import deepPush from "./deepPush.js";
+import type {View} from "./view.js";
 
-function insert<ItemType, ContextType>(
+function insert<ItemType extends View<ContextType>, ContextType>(
 	children: ItemType,
 	nextSibling: Node,
 	context: ContextType,

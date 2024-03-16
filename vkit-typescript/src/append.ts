@@ -1,7 +1,8 @@
 import type {Bindings} from "./bind.js";
 import deepPush from "./deepPush.js";
+import type {View} from "./view.js";
 
-export default function append<ItemType, ContextType>(
+export default function append<ItemType extends View<ContextType>, ContextType>(
 	parent: {
 		appendChild(node: ItemType): ItemType | void;
 		append?(...nodes: ItemType[]): void;

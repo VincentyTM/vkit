@@ -5,7 +5,10 @@ import {setComponent, setInjector} from "./contextGuard.js";
 import update from "./update.js";
 import type {View} from "./view.js";
 
-export default function render(getView: () => View, container: Node) {
+export default function render<ContextType extends Node>(
+	getView: () => View<ContextType>,
+	container: ContextType
+) {
 	try {
 		setComponent(rootComponent);
 		setInjector(rootInjector);
