@@ -2,6 +2,7 @@
 
 var effect = $.effect;
 var onUnmount = $.onUnmount;
+var readOnly = $.readOnly;
 var signal = $.signal;
 
 function createAssetState(refs, assetName, defaultValue) {
@@ -43,7 +44,7 @@ function createAssetState(refs, assetName, defaultValue) {
 		setAssetName(assetName);
 	}
 	
-	return state.map();
+	return readOnly(state);
 }
 
 $.assetState = createAssetState;
