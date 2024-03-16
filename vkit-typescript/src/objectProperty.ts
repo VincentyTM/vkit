@@ -17,15 +17,15 @@ export default function objectProperty<ObjectType>(
 	});
 	
 	effect(function() {
-		var o = isSignal(object) ? (object as Signal<ObjectType>)() : object as ObjectType;
-		var p = isSignal(property) ? (property as Signal<keyof ObjectType>)() : property as keyof ObjectType;
+		var o = isSignal(object) ? object() : object;
+		var p = isSignal(property) ? property() : property;
 		var change = observe(o, p);
 		
 		if (!change) {
 			throw new Error("Property '" + String(p) + "' does not exist and there is no default value provided");
 		}
 		
-		onUnmount(change!.subscribe(setEagerly));
+		onUnmount(change.subscribe(setEagerly));
 		setEagerly(o[p]);
 	});
 	
