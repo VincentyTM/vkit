@@ -7,7 +7,7 @@ var signal = $.signal;
 function createAssetState(refs, assetName, defaultValue) {
 	var state = signal();
 	
-	function setAssetName(name, onCleanup) {
+	function setAssetName(name) {
 		if (!name && name !== "") {
 			state.set(defaultValue);
 			return;
@@ -24,7 +24,7 @@ function createAssetState(refs, assetName, defaultValue) {
 			state.set(defaultValue);
 		});
 		
-		onCleanup(function() {
+		onUnmount(function() {
 			removeLoadHandler();
 			removeResetHandler();
 			refs.remove(name);
@@ -36,11 +36,11 @@ function createAssetState(refs, assetName, defaultValue) {
 			assetName.effect(setAssetName);
 		} else {
 			effect(function() {
-				setAssetName(assetName(), onUnmount);
+				setAssetName(assetName());
 			});
 		}
 	} else {
-		setAssetName(assetName, onUnmount);
+		setAssetName(assetName);
 	}
 	
 	return state.map();
