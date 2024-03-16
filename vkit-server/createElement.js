@@ -34,7 +34,8 @@ function replaceUpperCase(letter) {
 export default function createElement(tagName) {
 	var attributes = {};
 	var styleProps = {};
-	var children = selfClosingTags[tagName] ? null : [];
+	var tagNameLower = tagName.toLowerCase();
+	var children = selfClosingTags[tagNameLower] ? null : [];
 	
 	function appendChild(child) {
 		children.push(child);
@@ -67,7 +68,7 @@ export default function createElement(tagName) {
 			} else {
 				removeAttribute(propToAttr(name));
 			}
-		} else if (name === "value" && tagName === "textarea") {
+		} else if (name === "value" && tagNameLower === "textarea") {
 			appendChild(createTextNode(value));
 		} else {
 			setAttribute(propToAttr(name), value);
@@ -111,7 +112,7 @@ export default function createElement(tagName) {
 		if (children) {
 			var n = children.length;
 			
-			switch (tagName) {
+			switch (tagNameLower) {
 				case "script":
 					for (var i = 0; i < n; ++i) {
 						if (!children[i].toScriptContent) {
