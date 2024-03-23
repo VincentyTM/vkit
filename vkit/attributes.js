@@ -1,52 +1,67 @@
-(function($){
+(function($) {
 
 var effect = $.effect;
+var isSignal = $.isSignal;
 
-function setAttribute(el, name, value){
-	if( typeof value === "number" ){
+function setAttribute(el, name, value) {
+	if (typeof value === "number") {
 		value = value.toString();
 	}
 	
-	if( typeof value === "string" ){
+	if (typeof value === "string") {
 		el.setAttribute(name, value);
-	}else if( value ){
-		el.setAttribute(name, "");
-	}else{
-		el.removeAttribute(name);
+		return;
 	}
+	
+	if (value) {
+		el.setAttribute(name, "");
+		return;
+	}
+	
+	el.removeAttribute(name);
 }
 
-function addAttribute(el, name, value){
-	if( typeof value === "number" ){
+function addAttribute(el, name, value) {
+	if (typeof value === "number") {
 		value = value.toString();
 	}
 	
-	if( typeof value === "string" ){
+	if (typeof value === "string") {
 		el.setAttribute(name, value);
-	}else if( value && typeof value.effect === "function" ){
-		value.effect(function(val){
+		return;
+	}
+	
+	if (isSignal(value)) {
+		value.effect(function(val) {
 			setAttribute(el, name, val);
 		});
-	}else if( typeof value === "function" ){
-		effect(function(){
+		return;
+	}
+	
+	if (typeof value === "function") {
+		effect(function() {
 			setAttribute(el, name, value());
 		});
-	}else if( value ){
-		el.setAttribute(name, "");
-	}else{
-		el.removeAttribute(name);
+		return;
 	}
+	
+	if (value) {
+		el.setAttribute(name, "");
+		return;
+	}
+	
+	el.removeAttribute(name);
 }
 
-function bindAttribute(name, value){
-	return function(el){
+function bindAttribute(name, value) {
+	return function(el) {
 		addAttribute(el, name, value);
 	};
 }
 
-function bindAttributes(attrs){
-	return function(el){
-		for(var name in attrs){
+function bindAttributes(attrs) {
+	return function(el) {
+		for (var name in attrs) {
 			addAttribute(el, name, attrs[name]);
 		}
 	};
