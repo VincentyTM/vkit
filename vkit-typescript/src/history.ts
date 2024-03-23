@@ -21,7 +21,7 @@ function getURL(win: Window & typeof globalThis): string {
 
 function useHistory(win?: Window & typeof globalThis): HistoryHandle {
 	if (!win) {
-		win = getWindow();
+		win = getWindow()!;
 	}
 	
 	var history = win.history;

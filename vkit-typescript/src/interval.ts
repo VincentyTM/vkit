@@ -12,7 +12,7 @@ import update from "./update.js";
  * @param delay The time delay in milliseconds between two function calls.
  */
 export default function createInterval(callback: () => void, delay: number): void {
-	var win = getWindow();
+	var win = getWindow()!;
 	var interval = win.setInterval(tick, delay);
 	
 	onUnmount(clear);

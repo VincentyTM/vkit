@@ -11,7 +11,7 @@ import update from "./update.js";
  * The @param callback function runs once after @param delay milliseconds.
  */
 export default function createTimeout(callback: () => void, delay: number): void {
-	var win = getWindow();
+	var win = getWindow()!;
 	var timeout = win.setTimeout(tick, delay);
 	
 	onUnmount(clear);
