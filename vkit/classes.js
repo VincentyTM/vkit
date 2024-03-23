@@ -2,6 +2,7 @@
 
 var effect = $.effect;
 var isArray = $.isArray;
+var isSignal = $.isSignal;
 var onUnmount = $.onUnmount;
 
 function addClass(el, name) {
@@ -21,51 +22,73 @@ function removeClass(el, name) {
 }
 
 function bindClass(el, name, value) {
-	if (value && typeof value.effect === "function") {
+	if (isSignal(value)) {
 		value.effect(function(v) {
 			v ? addClass(el, name) : removeClass(el, name);
 		});
-	} else if (value === true) {
+		return;
+	}
+	
+	if (value === true) {
 		addClass(el, name);
-	} else if (value === false) {
+		return;
+	}
+	
+	if (value === false) {
 		removeClass(el, name);
-	} else if (typeof value === "function") {
+		return;
+	}
+	
+	if (typeof value === "function") {
 		effect(function() {
 			bindClass(el, name, value());
 		});
+		return;
 	}
 }
 
 function bindClasses(el, arg, onCleanup) {
-	var type = typeof arg;
-	
 	if (!arg) {
-	} else if (isArray(arg)) {
+		return;
+	}
+	
+	if (isArray(arg)) {
 		var n = arg.length;
-		
 		for (var i = 0; i < n; ++i) {
 			bindClasses(el, arg[i], onCleanup);
 		}
-	} else if (type === "string") {
+		return;
+	}
+	
+	if (typeof arg === "string") {
 		addClass(el, arg);
-		
 		if (onCleanup) {
 			onCleanup(function() {
 				removeClass(el, arg);
 			});
 		}
-	} else if (typeof arg.effect === "function") {
+		return;
+	}
+	
+	if (isSignal(arg)) {
 		arg.effect(function(value, onCleanup) {
 			bindClasses(el, value, onCleanup);
 		});
-	} else if (type === "object") {
+		return;
+	}
+	
+	if (typeof arg === "object") {
 		for (var name in arg) {
 			bindClass(el, name, arg[name]);
 		}
-	} else if (type === "function") {
+		return;
+	}
+	
+	if (typeof arg === "function") {
 		effect(function() {
 			bindClasses(el, arg(), onUnmount);
 		});
+		return;
 	}
 }
 
