@@ -7,13 +7,13 @@ var queueMt = queueMicrotask || (typeof Promise === "function" && typeof Promise
 	: function(callback: () => void) { setTimeout(callback, 0); }
 );
 
-export function enqueueUpdate(callback: () => void) {
+export function enqueueUpdate(callback: () => void): void {
 	if (queue.push(callback) === 1) {
 		queueMt(update);
 	}
 }
 
-export function dequeueUpdate(callback: () => void) {
+export function dequeueUpdate(callback: () => void): void {
 	for (var i = queue.length; i--;) {
 		if (queue[i] === callback) {
 			queue.splice(i, 1);

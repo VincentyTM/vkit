@@ -31,6 +31,6 @@ export function getInjector(allowNull?: boolean): Injector | null {
 	return currentInjector;
 }
 
-export function setInjector(injector: Injector | null) {
+export function setInjector(injector: Injector | null): void {
 	currentInjector = injector;
 }

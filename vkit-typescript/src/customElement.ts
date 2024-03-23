@@ -3,11 +3,11 @@ import bind from "./bind.js";
 import createComponent, {type Component} from "./createComponent.js";
 import createInjector from "./createInjector.js";
 import createProvider from "./provider.js";
-import createSignal, {type WritableSignal} from "./signal.js";
 import emitUnmount from "./emitUnmount.js";
 import empty from "./empty.js";
 import {getValueFromClass} from "./root.js";
 import inject from "./inject.js";
+import signal, {type WritableSignal} from "./signal.js";
 import tick from "./tick.js";
 import update from "./update.js";
 import type {View} from "./view.js";
@@ -20,11 +20,11 @@ tick(function() {
 	rendered = true;
 });
 
-function replaceHyphens(value: string) {
+function replaceHyphens(value: string): string {
 	return value.charAt(1).toUpperCase();
 }
 
-function attrToPropName(attrName: string) {
+function attrToPropName(attrName: string): string {
 	return attrName.toLowerCase().replace(/\-[a-z]/g, replaceHyphens);
 }
 
@@ -48,13 +48,13 @@ export default function createCustomElement(
 			CustomElement
 		);
 
-		var injector = createInjector(null, function(token) {
+		var injector = createInjector(null, function(token): unknown {
 			var provider = createProvider(getValueFromClass, token, component);
 			injector.container.set(token, provider);
 			return provider.getInstance();
 		});
 		
-		var component = createComponent(function() {
+		var component = createComponent(function(): void {
 			var doc = el.ownerDocument;
 			
 			inject(WindowService).window = doc.defaultView || doc.parentWindow;
@@ -78,7 +78,7 @@ export default function createCustomElement(
 		
 		if (CustomElement.observedAttributes) {
 			CustomElement.observedAttributes.forEach(function(attrName) {
-				el.observedAttributes[attrToPropName(attrName)] = createSignal(el.getAttribute(attrName));
+				el.observedAttributes[attrToPropName(attrName)] = signal(el.getAttribute(attrName));
 			});
 		}
 		
@@ -88,7 +88,7 @@ export default function createCustomElement(
 	var proto = CustomElement.prototype;
 	var win = window;
 	
-	proto.connectedCallback = function() {
+	proto.connectedCallback = function(): void {
 		if (!rendered) {
 			return;
 		}
@@ -108,7 +108,7 @@ export default function createCustomElement(
 		update();
 	};
 	
-	proto.disconnectedCallback = function() {
+	proto.disconnectedCallback = function(): void {
 		if (!rendered) {
 			return;
 		}
@@ -138,7 +138,7 @@ export default function createCustomElement(
 				attrName: string,
 				_oldValue: string | null,
 				newValue: string | null
-			) {
+			): void {
 				if (!rendered) {
 					return;
 				}

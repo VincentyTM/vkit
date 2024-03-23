@@ -12,11 +12,11 @@ export type ConfigUseFactory = {provide: TokenLike, useFactory: () => unknown};
 export type ConfigUseValue = {provide: TokenLike, useValue: unknown};
 
 type ConfigProvidable = (
-	ConfigProvide |
-	ConfigUseClass |
-	ConfigUseExisting |
-	ConfigUseFactory |
-	ConfigUseValue
+	| ConfigProvide
+	| ConfigUseClass
+	| ConfigUseExisting
+	| ConfigUseFactory
+	| ConfigUseValue
 );
 
 export type Config = ConfigClass | ConfigProvidable;

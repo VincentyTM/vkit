@@ -28,14 +28,14 @@ import type {Provider} from "./provider.js";
  */
 function inject<TokenType extends TokenLike>(token: TokenType, injector?: Injector): InstanceOf<TokenType> {
 	if (!injector) {
-		injector = getInjector()!;
+		injector = getInjector();
 	}
 	
 	var provider: Provider<InstanceOf<TokenType>> | undefined;
 	
-	while (!(provider = injector!.container.get(token) as Provider<InstanceOf<TokenType>>)) {
-		var handleMissingProvider = injector!.handleMissingProvider;
-		var parent: Injector | null = injector!.parent;
+	while (!(provider = injector.container.get(token) as Provider<InstanceOf<TokenType>>)) {
+		var handleMissingProvider = injector.handleMissingProvider;
+		var parent: Injector | null = injector.parent;
 		
 		if (!parent) {
 			if (typeof handleMissingProvider === "function") {
