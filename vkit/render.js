@@ -19,8 +19,6 @@ function render(getView, container) {
 	}
 	
 	update();
-	
-	return rootComponent;
 }
 
 $.render = render;

@@ -8,7 +8,7 @@ import type {View} from "./view.js";
 export default function render<ContextType extends Node>(
 	getView: () => View<ContextType>,
 	container: ContextType
-) {
+): void {
 	try {
 		setComponent(rootComponent);
 		setInjector(rootInjector);
@@ -22,5 +22,4 @@ export default function render<ContextType extends Node>(
 	}
 	
 	update();
-	return rootComponent;
 }
