@@ -13,6 +13,27 @@ import update from "./update.js";
 import type {View} from "./view.js";
 import {WindowService} from "./getWindow.js";
 
+type CustomElementGetView = (
+	this: HTMLElement,
+	observedAttributes: {
+		[key: string]: WritableSignal<string | null>;
+	},
+	element: HTMLElement
+) => View;
+
+type CustomElementOptions = {
+	adoptedCallback?: () => void;
+	observedAttributes?: string[];
+	window?: Window & typeof globalThis;
+};
+
+type ExtendedHTMLElement = HTMLElement & {
+	observedAttributes: {
+		[propName: string]: WritableSignal<string | null>;
+	};
+	component: Component;
+};
+
 var setPrototypeOf = Object.setPrototypeOf;
 var rendered = false;
 
@@ -30,19 +51,11 @@ function attrToPropName(attrName: string): string {
 
 export default function createCustomElement(
 	name: string,
-	getView: (
-		this: HTMLElement,
-		observedAttributes: {[key: string]: WritableSignal<string | null>},
-		element: HTMLElement
-	) => View,
-	options?: {
-		adoptedCallback?: () => void,
-		observedAttributes?: string[],
-		window?: Window & typeof globalThis
-	}
+	getView: CustomElementGetView,
+	options?: CustomElementOptions
 ) {
-	function CustomElement(): typeof win.HTMLElement {
-		var el = Reflect.construct(
+	function CustomElement(): ExtendedHTMLElement {
+		var el: ExtendedHTMLElement = Reflect.construct(
 			win.HTMLElement,
 			[],
 			CustomElement
@@ -56,21 +69,9 @@ export default function createCustomElement(
 		
 		var component = createComponent(function(): void {
 			var doc = el.ownerDocument;
-			
-			inject(WindowService).window = doc.defaultView || doc.parentWindow;
-			
-			var view = getView.call(
-				el,
-				el.observedAttributes,
-				el
-			);
-			
-			append(
-				el,
-				view,
-				el,
-				bind
-			);
+			inject(WindowService).window = doc.defaultView || (doc as any).parentWindow;
+			var view = getView.call(el, el.observedAttributes, el);
+			append(el, view, el, bind);
 		}, null, injector);
 		
 		el.component = component;
