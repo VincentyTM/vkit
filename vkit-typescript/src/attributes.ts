@@ -75,6 +75,7 @@ function addAttribute(el: HTMLElement, name: string, value: ReactiveAttributeVal
  * The attributes values can be given as strings, functions returning strings or signals containing strings.
  * In order to remove an attribute, you can specify null instead of a string.
  * You can also use boolean or numeric values which are converted to string or null values.
+ * True is converted to an empty string, while false means the attribute should be removed (similarly to null).
  * @returns A function directive which can be added to an HTML element.
  */
 export default function bindAttributes(attributes: Attributes): (element: HTMLElement) => void {
