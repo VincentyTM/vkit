@@ -79,6 +79,31 @@ function bindAttributes(
 	}
 }
 
+/**
+ * Creates and returns an SVG tag (element factory).
+ * SVG element names and attributes are case sensitive.
+ * For a shorter syntax see `svgTags`.
+ * @example
+ * const Svg = svgTag("svg");
+ * const Circle = svgTag("circle");
+ * 
+ * function Component() {
+ * 	return Svg(
+ * 		{
+ * 			width: 100,
+ * 			height: 100,
+ * 			viewBox: "0 0 100 100"
+ * 		},
+ * 
+ * 		Circle({
+ * 			cx: 50,
+ * 			cy: 50,
+ * 			r: 50,
+ * 			fill: "#ff0000"
+ * 		})
+ * 	);
+ * }
+ */
 export default function svgTag<K extends keyof SVGElementTagNameMap>(tagName: K): (
 	...contents: View<SVGAttributes<SVGElementTagNameMap[K]>>[]
 ) => SVGElementTagNameMap[K] {
