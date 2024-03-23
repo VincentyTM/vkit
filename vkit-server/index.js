@@ -16,6 +16,7 @@ export {
 	htmlTags,
 	returnNull as document,
 	noop as effect,
+	returnNull as getDocument,
 	returnNull as getWindow,
 	returnNull as frameContent,
 	returnComputedNull as installPrompt,
