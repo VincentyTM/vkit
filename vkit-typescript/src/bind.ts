@@ -3,10 +3,43 @@ import onUnmount from "./onUnmount.js";
 import prop from "./prop.js";
 import type {Signal} from "./signal.js";
 
+type HTMLSelfClosingElement = (
+	| HTMLAreaElement
+	| HTMLBaseElement
+	| HTMLBRElement
+	| HTMLEmbedElement
+	| HTMLHRElement
+	| HTMLImageElement
+	| HTMLInputElement
+	| HTMLLinkElement
+	| HTMLMetaElement
+	| HTMLParamElement
+	| HTMLSourceElement
+	| HTMLTableColElement
+	| HTMLTrackElement
+);
+
+type HTMLLeafElement = (
+	| HTMLIFrameElement
+	| HTMLSelfClosingElement
+	| HTMLScriptElement
+	| HTMLStyleElement
+	| HTMLTemplateElement
+	| HTMLTextAreaElement
+);
+
+type ExtendedEvent<EventType, T> = EventType & {
+	readonly currentTarget: T;
+	readonly target: EventType extends Event ? (
+		T extends HTMLLeafElement ? T : EventType["target"]
+	) : EventTarget;
+};
+
 export type Bindings<T> = {
-	[K in keyof T]?: (T[K] extends ((this: GlobalEventHandlers, ev: never) => any) | null
-		? T[K]
-		: T[K] | (() => T[K]) | Signal<T[K]> | Bindings<T[K]>
+	[K in keyof T]?: (
+		T[K] extends ((this: GlobalEventHandlers, ev: infer EventType) => any) | null
+		? (this: T, ev: ExtendedEvent<EventType, T>) => void
+		: (T[K] | (() => T[K]) | Signal<T[K]> | Bindings<T[K]>)
 	)
 };
 
@@ -60,7 +93,7 @@ export default function bind<Target>(
 		switch (typeof value) {
 			case "object":
 				if (!value) {
-					setValue(target, name, value, !!persistent);
+					setValue(target, name, value as never, !!persistent);
 				} else if ((value as any).prop) {
 					(value as any).prop(name)(target);
 				} else {
@@ -87,7 +120,7 @@ export default function bind<Target>(
 			case "undefined":
 				break;
 			default:
-				setValue(target, name, value, !!persistent);
+				setValue(target, name, value as never, !!persistent);
 		}
 	}
 }
