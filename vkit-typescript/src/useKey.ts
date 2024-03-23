@@ -36,6 +36,34 @@ function getRecords<ValueType>(result: Store<ValueType>): Records<ValueType> {
 	return result.records;
 }
 
+/**
+ * Uses a key for equality check of array items.
+ * When array items are replaced (e.g. in HTTP requests or in an immutable store), so are their views.
+ * This is often undesirable behavior because of state loss and performance problems.
+ * 
+ * If there is a key in the array items (or a key can be calculated from the items),
+ * it can be used to tell if two items are equal. However, this means that the item of the
+ * same key can change, so it is wrapped in a signal.
+ * @example
+ * function Books() {
+ * 	const books = signal([
+ * 		{id: "1", title: "Book 1"},
+ * 		{id: "2", title: "Book 2"},
+ * 		{id: "3", title: "Book 3"},
+ * 	]);
+ * 	
+ * 	return Ul(
+ * 		useKey(books, "id").views((book) => {
+ * 			// book is a signal here
+ * 			return Li(() => book().title);
+ * 		})
+ * 	);
+ * }
+ * 
+ * @param arraySignal A signal containing the current input array.
+ * @param getKey A string key or a function that maps each array item to its string key.
+ * @returns An object that can be used to handle the array with the keys.
+ */
 export default function useKey<ValueType extends ObjectWithStringKeys>(
 	arraySignal: Signal<ValueType[]>,
 	getKey: string
