@@ -1,5 +1,20 @@
 var ticks: (() => void)[] = [];
 
+/**
+ * Schedules a function to run after the current render cycle ends (after DOM updates and side effects).
+ * It can be used for focusing, scrolling or measuring elements.
+ * It does not need to be called from component context, it can also be called from asynchronous functions and event listeners.
+ * @example
+ * function AutoFocus(el) {
+ * 	return tick(() => el.focus());
+ * }
+ * 
+ * function AutoFocusedInput() {
+ * 	return Input(AutoFocus);
+ * }
+ * 
+ * @param callback The function that will run when the current render cycle ends.
+ */
 export default function tick(callback: () => void): void {
 	ticks.push(callback);
 }
