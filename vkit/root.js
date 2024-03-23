@@ -1,10 +1,10 @@
-(function($){
+(function($) {
 
 var createComponent = $.createComponent;
-var createInjector = $.injector;
+var createInjector = $.createInjector;
 var createProvider = $.provider;
 
-function mount(){
+function mount() {
 	throw new Error("The root component cannot be rerendered");
 }
 

@@ -1,12 +1,12 @@
-import createComponent, {type Component} from "./createComponent.js";
-import createNodeRange from "./nodeRange.js";
-import emitUnmount from "./emitUnmount.js";
-import {enqueueUpdate} from "./update.js";
 import {getComponent, getInjector, setComponent, setInjector} from "./contextGuard.js";
+import createComponent, {type Component} from "./createComponent.js";
+import type {Injector} from "./createInjector.js";
+import emitUnmount from "./emitUnmount.js";
 import hashCode from "./hashCode.js";
-import type {Injector} from "./injector.js";
 import insert from "./insert.js";
 import isArray from "./isArray.js";
+import createNodeRange from "./nodeRange.js";
+import {enqueueUpdate} from "./update.js";
 import type {NodeRange} from "./nodeRange.js";
 import type {Signal} from "./signal.js";
 import throwError from "./throwError.js";

@@ -31,6 +31,7 @@ function createInjector(parent, handleMissingProvider) {
 	};
 }
 
+$.createInjector = createInjector;
 $.injector = createInjector;
 
 })($);

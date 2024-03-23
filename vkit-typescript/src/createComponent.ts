@@ -1,6 +1,6 @@
 import emitUnmount from "./emitUnmount.js";
 import {getComponent, getInjector, setComponent, setInjector} from "./contextGuard.js";
-import type {Injector} from "./injector.js";
+import type {Injector} from "./createInjector.js";
 import type {Observable} from "./observable.js";
 import throwError from "./throwError.js";
 

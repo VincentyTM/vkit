@@ -1,6 +1,6 @@
 import component from "./createComponent.js";
+import createInjector from "./createInjector.js";
 import type {Config, ConfigClass} from "./provide.js";
-import createInjector from "./injector.js";
 import createProvider from "./provider.js";
 
 function mount(): void {
