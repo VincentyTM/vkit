@@ -4,6 +4,12 @@ import noop from "./noop.js";
 import observable from "./observable.js";
 import {rootComponent} from "./root.js";
 
+/**
+ * Schedules a callback to be run when the current component is destroyed.
+ * @param callback The handler that listens to the component unmount event.
+ * @param component The component whose unmount event is handled. By default, it is the current component.
+ * @returns A function that unsubscribes the callback from the component unmount event.
+ */
 export default function onUnmount(
 	callback: () => void,
 	component?: Component | null
