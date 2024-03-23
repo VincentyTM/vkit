@@ -1,4 +1,4 @@
-import component from "./component.js";
+import component from "./createComponent.js";
 import type {Config, ConfigClass} from "./provide.js";
 import createInjector from "./injector.js";
 import createProvider from "./provider.js";

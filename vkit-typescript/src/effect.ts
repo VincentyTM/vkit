@@ -1,4 +1,4 @@
-import component from "./component.js";
+import createComponent from "./createComponent.js";
 
 /**
  * Creates a side effect and runs it every time its dependencies change.
@@ -20,5 +20,5 @@ import component from "./component.js";
  * In order to clean up side effects, call onUnmount within the callback.
  */
 export default function effect(callback: () => void): void {
-	component(callback).render();
+	createComponent(callback).render();
 }

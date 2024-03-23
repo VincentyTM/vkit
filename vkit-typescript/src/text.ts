@@ -1,4 +1,4 @@
-import createComponent from "./component.js";
+import createComponent from "./createComponent.js";
 
 export default function text(getText: () => string | number): Text {
 	var oldText = "";

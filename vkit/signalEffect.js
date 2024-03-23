@@ -1,6 +1,6 @@
 (function($) {
 
-var createComponent = $.component;
+var createComponent = $.createComponent;
 var getComponent = $.getComponent;
 var onUnmount = $.onUnmount;
 

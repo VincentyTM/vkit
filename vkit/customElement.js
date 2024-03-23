@@ -2,7 +2,7 @@
 
 var append = $.append;
 var bind = $.bind;
-var createComponent = $.component;
+var createComponent = $.createComponent;
 var emitUnmount = $.emitUnmount;
 var empty = $.empty;
 var inject = $.inject;

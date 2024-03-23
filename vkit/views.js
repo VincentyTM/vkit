@@ -1,6 +1,6 @@
 (function($) {
 
-var createComponent = $.component;
+var createComponent = $.createComponent;
 var createNodeRange = $.nodeRange;
 var emitUnmount = $.emitUnmount;
 var enqueueUpdate = $.enqueueUpdate;

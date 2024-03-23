@@ -1,6 +1,6 @@
 (function($, document){
 
-var createComponent = $.component;
+var createComponent = $.createComponent;
 
 function createDynamicText(getText){
 	var oldText = "";

@@ -43,5 +43,6 @@ function createComponent(mount, parent, injector) {
 }
 
 $.component = createComponent;
+$.createComponent = createComponent;
 
 })($);

@@ -1,9 +1,9 @@
-(function($){
+(function($) {
 
-var component = $.component;
+var createComponent = $.createComponent;
 
-function effect(callback){
-	component(callback).render();
+function effect(callback) {
+	createComponent(callback).render();
 }
 
 $.effect = effect;

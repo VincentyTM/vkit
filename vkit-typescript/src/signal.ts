@@ -1,7 +1,7 @@
 import {enqueueUpdate} from "./update.js";
-import type {Component} from "./component.js";
 import {type ComputedSignal, signalMap} from "./computed.js";
 import {getComponent} from "./contextGuard.js";
+import type {Component} from "./createComponent.js";
 import onUnmount from "./onUnmount.js";
 import signalEffect from "./signalEffect.js";
 import signalPipe from "./signalPipe.js";

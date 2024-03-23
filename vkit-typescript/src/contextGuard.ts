@@ -1,4 +1,4 @@
-import type {Component} from "./component.js";
+import type {Component} from "./createComponent.js";
 import type {Injector} from "./injector.js";
 
 var currentComponent: Component | null = null;

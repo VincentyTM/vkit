@@ -1,4 +1,4 @@
-import type {Component} from "./component";
+import type {Component} from "./createComponent.js";
 
 export default function emitUnmount(component: Component): void {
 	var children = component.children;

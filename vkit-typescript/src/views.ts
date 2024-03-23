@@ -1,4 +1,4 @@
-import createComponent, {type Component} from "./component.js";
+import createComponent, {type Component} from "./createComponent.js";
 import createNodeRange from "./nodeRange.js";
 import emitUnmount from "./emitUnmount.js";
 import {enqueueUpdate} from "./update.js";

@@ -1,6 +1,6 @@
 import append from "./append.js";
 import bind from "./bind.js";
-import createComponent from "./component.js";
+import createComponent, {type Component} from "./createComponent.js";
 import createInjector from "./injector.js";
 import createProvider from "./provider.js";
 import createSignal, {type WritableSignal} from "./signal.js";

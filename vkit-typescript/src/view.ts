@@ -1,5 +1,5 @@
 import type {Bindings} from "./bind.js";
-import createComponent from "./component.js";
+import createComponent from "./createComponent.js";
 import createNodeRange from "./nodeRange.js";
 import {enqueueUpdate} from "./update.js";
 import isSignal from "./isSignal.js";
