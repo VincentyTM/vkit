@@ -105,6 +105,31 @@ function bindClasses(el: HTMLElement, arg: ClassArgument, onCleanup?: CleanupFun
 
 export default function classes(...args: ClassArgument[]): (element: HTMLElement) => void;
 
+/**
+ * Creates a class collection that can be bound to one or more HTML elements.
+ * The classes can be static strings or dynamic signals or functions.
+ * Objects with class name keys and boolean values can also be used to add multiple classes.
+ * Functions can be used to dynamically switch between multiple classes.
+ * The classes can be arbitrarily grouped by arrays.
+ * @example
+ * Div(
+ * 	classes("class1", "class2"),
+ * 	
+ * 	classes({
+ * 		class3: false,
+ * 		class4: true,
+ * 		class5: () => shouldClass5BeAdded()
+ * 	}),
+ * 	
+ * 	classes(["class6", "class7"]),
+ * 	
+ * 	classes(() => shouldClass8BeUsed() ? "class8" : ["class9", "class10"]),
+ * 	
+ * 	classes(() => shouldClass11BeUsed() && "class11")
+ * )
+ * 
+ * @returns A directive that binds the classes to an HTML element.
+ */
 export default function classes(): (element: HTMLElement) => void {
 	var args = arguments;
 	var n = args.length;
