@@ -16,6 +16,7 @@ export {
 	htmlTags,
 	returnNull as document,
 	noop as effect,
+	returnNull as getWindow,
 	returnNull as frameContent,
 	returnComputedNull as installPrompt,
 	noop as interval,
@@ -37,6 +38,7 @@ export {
 	htmlTags as virtualHtmlTags,
 	styledHtmlTag as virtualStyledHtmlTag,
 	returnComputedNullWithOnError as webPush,
+	returnNull as window,
 	word,
 };
 
@@ -58,7 +60,6 @@ export {default as emitter} from "./emitter.js";
 export {default as errorBoundary} from "./errorBoundary.js";
 export {default as escapeHTML} from "./escapeHTML.js";
 export {default as get} from "./get.js";
-export {default as getWindow} from "./getWindow.js";
 export {default as history} from "./history.js";
 export {default as href} from "./href.js";
 export {default as html} from "./html.js";
@@ -103,6 +104,5 @@ export {default as untracked} from "./untracked.js";
 export {default as useKey} from "./useKey.js";
 export {default as view} from "./view.js";
 export {default as webSocket} from "./webSocket.js";
-export {default as window} from "./getWindow.js";
 export {default as windowContent} from "./windowContent.js";
 export {default as windowData} from "./windowData.js";
