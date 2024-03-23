@@ -1,5 +1,5 @@
 import type {Component} from "./createComponent.js";
-import type {Injector} from "./injector.js";
+import type {Injector} from "./createInjector.js";
 
 var currentComponent: Component | null = null;
 var currentInjector: Injector | null = null;
