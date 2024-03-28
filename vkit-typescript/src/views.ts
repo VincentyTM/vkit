@@ -56,7 +56,7 @@ function createBlock<ItemT>(
 			try {
 				setComponent(component);
 				setInjector(injector);
-				insert(render(), end, end.parentNode as Node, true);
+				insert(render(), end, end.parentNode, true);
 			} catch (error) {
 				throwError(error, component);
 			} finally {

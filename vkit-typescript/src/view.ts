@@ -58,7 +58,7 @@ export default function view<ViewT extends View<ContextT>, ValueT, ContextT>(
 	var signal: Signal<ValueT> | null | void = this;
 	
 	if (isSignal(signal)) {
-		(signal as Signal<ValueT>).subscribe(render);
+		signal.subscribe(render);
 	} else {
 		signal = null;
 	}

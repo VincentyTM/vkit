@@ -1,6 +1,7 @@
 import append from "./append.js";
 import bind from "./bind.js";
 import effect from "./effect.js";
+import isSignal from "./isSignal.js";
 import onEvent, {type EventTargetType} from "./onEvent.js";
 import onUnmount from "./onUnmount.js";
 import type {Signal} from "./signal.js";
@@ -47,12 +48,12 @@ function bindAttribute(
 	persistent: boolean
 ): void {
 	if (typeof value === "function") {
-		if ((value as Signal<AttributeValue>).effect) {
-			(value as Signal<AttributeValue>).effect(function(v) {
+		if (isSignal(value)) {
+			value.effect(function(v) {
 				setAttribute(el, name, v, persistent);
 			});
 		} else if (name.indexOf("on") === 0) {
-			var unsub = onEvent(el as unknown as EventTargetType, name.substring(2), value);
+			var unsub = onEvent(el, name.substring(2), value);
 
 			if (!persistent) {
 				onUnmount(unsub);

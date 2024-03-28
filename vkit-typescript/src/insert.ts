@@ -14,8 +14,8 @@ function insert<ItemT extends View<ContextT>, ContextT>(
 		return;
 	}
 	
-	function push(node: ItemT): void {
-		parent!.insertBefore(node as unknown as Node, nextSibling);
+	function push(node: ItemT & Node): void {
+		parent!.insertBefore(node, nextSibling);
 	}
 	
 	if ((nextSibling as any).before) {
