@@ -2,17 +2,17 @@ import computed, {type ArrayOfMaybeSignals, type ComputedSignal} from "./compute
 
 type MapType<M extends (...args: never[]) => unknown> = (
 	(
-		...params: ArrayOfMaybeSignals<Parameters<M>> & unknown[]
+		...params: ArrayOfMaybeSignals<Parameters<M>>
 	) => ComputedSignal<ReturnType<M>>
 ) & {
 	get: M;
 };
 
 function map<M extends (...args: any[]) => unknown>(transform: M): MapType<M> {
-	function getComputed(...params: ArrayOfMaybeSignals<Parameters<M>> & unknown[]): ComputedSignal<ReturnType<M>>;
+	function getComputed(...params: ArrayOfMaybeSignals<Parameters<M>>): ComputedSignal<ReturnType<M>>;
 
 	function getComputed() {
-		return computed(transform, arguments as unknown as ArrayOfMaybeSignals<Parameters<M>>);
+		return computed(transform, arguments as never);
 	}
 	
 	getComputed.get = transform;

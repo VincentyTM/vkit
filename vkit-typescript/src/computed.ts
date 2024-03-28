@@ -11,8 +11,8 @@ import views from "./views.js";
 
 var none = {};
 
-export type ArrayOfMaybeSignals<ArrayType extends ArrayLike<unknown>> = {
-	[K in keyof ArrayType]: ArrayType[K] | Signal<ArrayType[K]>;
+export type ArrayOfMaybeSignals<ArrayType extends unknown[]> = unknown[] & {
+	[I in keyof ArrayType]: ArrayType[I] | Signal<ArrayType[I]>;
 };
 
 export type ComputedSignal<ValueType> = Signal<ValueType> & {
