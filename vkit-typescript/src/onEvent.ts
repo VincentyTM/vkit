@@ -42,8 +42,8 @@ export default function onEvent(
 	target: EventTargetType,
 	type: string,
 	listener: EventListenerType
-) {
-	function eventListener(e: EventType) {
+): () => void {
+	function eventListener(e: EventType): ReturnType<EventListenerType> {
 		if (!e.preventDefault) {
 			e.preventDefault = preventDefault;
 		}
