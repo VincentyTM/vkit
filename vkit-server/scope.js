@@ -56,10 +56,6 @@ export function createScope(req, res) {
 		return value;
 	}
 	
-	function intercept(callback) {
-		interceptors.push(callback);
-	}
-	
 	function meta() {
 		return {
 			toHTML: function(res) {
@@ -106,31 +102,15 @@ export function createScope(req, res) {
 		};
 	}
 	
-	function transformRequest(request) {
-		var n = interceptors.length;
-		
-		for (var i = 0; i < n; ++i) {
-			var res = interceptors[i](request);
-			
-			if (res) {
-				return res;
-			}
-		}
-		
-		return {unsent: true};
-	}
-	
 	return {
 		addStyle: addStyle,
 		addWindowData: addWindowData,
 		cookies: {},
 		getStyles: getStyles,
 		getWindowData: getWindowData,
-		intercept: intercept,
 		meta: meta,
 		nextStyleCount: nextStyleCount,
 		render: null,
-		transformRequest: transformRequest,
 		req: req,
 		res: res,
 		style: style,
