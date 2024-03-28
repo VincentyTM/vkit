@@ -9,9 +9,9 @@ import type {View} from "./view.js";
 type AttributeValue = string | null;
 type ReactiveAttributeValue = AttributeValue | Signal<AttributeValue> | (() => AttributeValue);
 
-export type SVGAttributes<ElementType> = {
-	[K in keyof ElementType]: ElementType[K] extends CSSStyleDeclaration | ((this: GlobalEventHandlers, ev: never) => any) | null
-		? ElementType[K]
+export type SVGAttributes<ElementT> = {
+	[K in keyof ElementT]: ElementT[K] extends CSSStyleDeclaration | ((this: GlobalEventHandlers, ev: never) => any) | null
+		? ElementT[K]
 		: string | number;
 };
 

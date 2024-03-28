@@ -6,17 +6,17 @@ type Pushable<ItemType> = {
 	push(value: ItemType | Text): number | void;
 };
 
-export default function deepPush<ItemType, ContextType>(
-	array: Pushable<ItemType>,
-	item: ItemType,
-	context: ContextType,
+export default function deepPush<ItemT, ContextT>(
+	array: Pushable<ItemT>,
+	item: ItemT,
+	context: ContextT,
 	bind: (
-		target: ContextType,
-		modifier: ItemType & Bindings<ContextType>,
+		target: ContextT,
+		modifier: ItemT & Bindings<ContextT>,
 		isExternal?: boolean
 	) => void,
 	crossView: boolean
-): Pushable<ItemType> {
+): Pushable<ItemT> {
 	if (item === null || item === undefined || typeof item === "boolean") {
 		return array;
 	}
@@ -28,7 +28,7 @@ export default function deepPush<ItemType, ContextType>(
 
 	if (typeof item === "function") {
 		if (directive) {
-			var returnValue = directive(context, item as unknown as (element: ContextType) => string | void) as unknown as ItemType;
+			var returnValue = directive(context, item as unknown as (element: ContextT) => string | void) as unknown as ItemT;
 			deepPush(array, returnValue, context, bind, crossView);
 		} else {
 			item(context);

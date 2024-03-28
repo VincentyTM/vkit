@@ -25,12 +25,12 @@ type Ref<ValueType> = {
  * }
  * @returns A function directive which binds an element (or any other object) to the reference until the current component unmounts.
  */
-export default function createRef<ValueType extends object = HTMLElement>() {
+export default function createRef<T extends object = HTMLElement>() {
 	function reset(): void {
 		ref.current = null;
 	}
 	
-	var ref = <Ref<ValueType>>function (value: ValueType): void {
+	var ref = <Ref<T>>function (value: T): void {
 		if (ref.current) {
 			throw new Error("This reference has already been set.");
 		}

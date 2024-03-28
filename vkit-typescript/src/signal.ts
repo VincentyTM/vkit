@@ -10,10 +10,10 @@ import signalText from "./signalText.js";
 import view, {type View} from "./view.js";
 import views from "./views.js";
 
-export type ItemType<ValueType> = ValueType extends (infer ItemType)[] ? ItemType : never;
+export type ItemType<T> = T extends (infer ItemType)[] ? ItemType : never;
 
-export type Signal<ValueType> = {
-	(): ValueType;
+export type Signal<T> = {
+	(): T;
 
 	/**
 	 * The component in which the signal was created.
@@ -40,12 +40,12 @@ export type Signal<ValueType> = {
 	 * It is called everytime the signal's value changes.
 	 * Remember to call onUnmount in it to clean up the side effect.
 	 */
-	effect(callback: (value: ValueType) => void): void;
+	effect(callback: (value: T) => void): void;
 
 	/**
 	 * @returns The current value of the signal.
 	 */
-	get(): ValueType;
+	get(): T;
 
 	/**
 	 * A boolean which is always true. It is used internally to check if a value is a signal.
@@ -66,7 +66,7 @@ export type Signal<ValueType> = {
 	 * @param transform Takes the signal's value and returns a new value.
 	 * @returns The computed signal which contains the new value.
 	 */
-	map<OutputType>(transform: (value: ValueType) => OutputType): ComputedSignal<OutputType>;
+	map<U>(transform: (value: T) => U): ComputedSignal<U>;
 
 	/**
 	 * Sets a destination signal's value to the current signal's value immediately and also when the value changes.
@@ -88,9 +88,9 @@ export type Signal<ValueType> = {
 	 * @param transform An optional function that returns a new value.
 	 * The destination signal is set to this new value instead of the source state's value.
 	 */
-	pipe<OutputType>(
-		output: WritableSignal<OutputType>,
-		transform?: (value: ValueType) => OutputType
+	pipe<U>(
+		output: WritableSignal<U>,
+		transform?: (value: T) => U
 	): void;
 
 	/**
@@ -168,7 +168,7 @@ export type Signal<ValueType> = {
 	 * not be called anymore when its value changes.
 	 */
 	subscribe(
-		callback: (value: ValueType) => void,
+		callback: (value: T) => void,
 		persistent?: boolean
 	): () => void;
 
@@ -220,10 +220,10 @@ export type Signal<ValueType> = {
 	 * @param getItemView The function that returns a subview for an array item.
 	 * @returns The initial view containing the subviews for all items in the array.
 	 */
-	views<ViewType extends View<ContextType>, ContextType>(getItemView: (value: ItemType<ValueType>) => ViewType): View<ContextType>;
+	views<ViewT extends View<ContextT>, ContextT>(getItemView: (value: ItemType<T>) => ViewT): View<ContextT>;
 };
 
-export type WritableSignal<ValueType> = Signal<ValueType> & {
+export type WritableSignal<T> = Signal<T> & {
 	/**
 	 * Adds a value to the the signal's current value.
 	 * It behaves the same as `signal.set(signal.get() + value);`.
@@ -234,7 +234,7 @@ export type WritableSignal<ValueType> = Signal<ValueType> & {
 	 * 
 	 * @param value The new value of the signal.
 	 */
-	add(value: ValueType): void;
+	add(value: T): void;
 	
 	/**
 	 * Sets the signal's value and enqueues a notification of its subscribers.
@@ -248,7 +248,7 @@ export type WritableSignal<ValueType> = Signal<ValueType> & {
 	 * 
 	 * @param value The new value of the signal.
 	 */
-	set(value: ValueType): void;
+	set(value: T): void;
 	
 	/**
 	 * Sets the signal's value and immediately notifies its subscribers about the change.
@@ -260,7 +260,7 @@ export type WritableSignal<ValueType> = Signal<ValueType> & {
 	 * 
 	 * @param value The new value of the signal.
 	 */
-	setEagerly(value: ValueType): void;
+	setEagerly(value: T): void;
 
 	/**
 	 * Negates the signal's current value.
@@ -287,11 +287,11 @@ export type WritableSignal<ValueType> = Signal<ValueType> & {
 	 * @param argument An optional argument for `map`.
 	 */
 	update(
-		map: (value: ValueType) => ValueType
+		map: (value: T) => T
 	): void;
 	
 	update<ArgumentType>(
-		map: (value: ValueType, argument: ArgumentType) => ValueType,
+		map: (value: T, argument: ArgumentType) => T,
 		argument: ArgumentType
 	): void;
 };
@@ -318,14 +318,16 @@ export type WritableSignal<ValueType> = Signal<ValueType> & {
  * @param value The initial value of the signal.
  * @returns A writable signal.
  */
-export default function createWritableSignal<ValueType>(value: ValueType): WritableSignal<ValueType> {
-	type Subscription = {callback: ((value: ValueType) => void) | null};
+export default function createWritableSignal<T>(value: T): WritableSignal<T> {
+	type Subscription = {
+		callback: ((value: T) => void) | null;
+	};
 
 	var parent = getComponent(true);
 	var subscriptions: Subscription[] = [];
 	var enqueued = false;
 	
-	function use(): ValueType {
+	function use(): T {
 		var component = getComponent(true);
 		
 		if (component) {
@@ -339,12 +341,12 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 		return value;
 	}
 	
-	function get(): ValueType {
+	function get(): T {
 		return value;
 	}
 	
 	function subscribe(
-		callback: (value: ValueType) => void,
+		callback: (value: T) => void,
 		persistent?: boolean
 	): () => void {
 		var component = getComponent(true);
@@ -370,7 +372,7 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 		return unsubscribe;
 	}
 	
-	function set(newValue: ValueType): void {
+	function set(newValue: T): void {
 		if (value !== newValue) {
 			value = newValue;
 			
@@ -381,7 +383,7 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 		}
 	}
 	
-	function setEagerly(newValue: ValueType): void {
+	function setEagerly(newValue: T): void {
 		if (value !== newValue) {
 			value = newValue;
 			
@@ -410,9 +412,9 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 		}
 	}
 	
-	function update<ArgumentType>(
-		map: (value: ValueType, argument?: ArgumentType) => ValueType,
-		argument?: ArgumentType
+	function update<ArgumentT>(
+		map: (value: T, argument?: ArgumentT) => T,
+		argument?: ArgumentT
 	): void {
 		set(map(value, argument));
 	}
@@ -435,12 +437,12 @@ export default function createWritableSignal<ValueType>(value: ValueType): Writa
 	use.view = view;
 	use.views = views;
 	
-	return use as WritableSignal<ValueType>;
+	return use as WritableSignal<T>;
 }
 
-function add<ValueType>(
-	this: WritableSignal<ValueType>,
-	value: ValueType
+function add<T>(
+	this: WritableSignal<T>,
+	value: T
 ): void {
 	this.set((this.get() as any) + value);
 }

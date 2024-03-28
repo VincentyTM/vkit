@@ -5,14 +5,14 @@ import observe from "./observe.js";
 import onUnmount from "./onUnmount.js";
 import signal, {type Signal, type WritableSignal} from "./signal.js";
 
-export default function objectProperty<ObjectType>(
-	object: ObjectType | Signal<ObjectType>,
-	property: keyof ObjectType | Signal<keyof ObjectType>
-): WritableSignal<ObjectType[keyof ObjectType]> {
-	var value = signal<ObjectType[keyof ObjectType]>(get(object)[get(property)]);
+export default function objectProperty<T>(
+	object: T | Signal<T>,
+	property: keyof T | Signal<keyof T>
+): WritableSignal<T[keyof T]> {
+	var value = signal<T[keyof T]>(get(object)[get(property)]);
 	var setEagerly = value.setEagerly;
 	
-	value.subscribe(function(v: ObjectType[keyof ObjectType]) {
+	value.subscribe(function(v: T[keyof T]) {
 		get(object)[get(property)] = v;
 	});
 	

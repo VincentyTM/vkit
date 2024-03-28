@@ -20,9 +20,9 @@ import type {View} from "./view.js";
  * @param getView The top-level component. It must be a function.
  * @param container A container DOM node in which the application is rendered.
  */
-export default function render<ContextType extends Node>(
-	getView: () => View<ContextType>,
-	container: ContextType
+export default function render<ContextT extends Node>(
+	getView: () => View<ContextT>,
+	container: ContextT
 ): void {
 	try {
 		setComponent(rootComponent);

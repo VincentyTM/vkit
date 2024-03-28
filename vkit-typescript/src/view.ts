@@ -39,26 +39,26 @@ export type View<ContextType = unknown> = (
  * @param getCurrentView A function that returns the current view.
  * @returns The initial view.
  */
-export default function view<ViewType extends View<ContextType>, ValueType, ContextType>(
-	getCurrentView: (value: ValueType | null) => ViewType
-) : View<ContextType>;
+export default function view<ViewT extends View<ContextT>, ValueT, ContextT>(
+	getCurrentView: (value: ValueT | null) => ViewT
+) : View<ContextT>;
 
-export default function view<ViewType extends View<ContextType>, ValueType, ContextType>(
-	this: Signal<ValueType>,
-	getCurrentView: (value: ValueType | null) => ViewType
-) : View<ContextType>;
+export default function view<ViewT extends View<ContextT>, ValueT, ContextT>(
+	this: Signal<ValueT>,
+	getCurrentView: (value: ValueT | null) => ViewT
+) : View<ContextT>;
 
-export default function view<ViewType extends View<ContextType>, ValueType, ContextType>(
-	this: Signal<ValueType> | void,
-	getCurrentView: (value: ValueType | null) => ViewType
-) : View<ContextType> {
+export default function view<ViewT extends View<ContextT>, ValueT, ContextT>(
+	this: Signal<ValueT> | void,
+	getCurrentView: (value: ValueT | null) => ViewT
+) : View<ContextT> {
 	var component = createComponent(mount);
 	var range = createNodeRange(true);
 	var render = component.render;
-	var signal: Signal<ValueType> | null | void = this;
+	var signal: Signal<ValueT> | null | void = this;
 	
 	if (isSignal(signal)) {
-		(signal as Signal<ValueType>).subscribe(render);
+		(signal as Signal<ValueT>).subscribe(render);
 	} else {
 		signal = null;
 	}

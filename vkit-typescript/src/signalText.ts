@@ -1,13 +1,11 @@
 import type {Signal} from "./signal.js";
 
-export default function signalText<ValueType>(
-	this: Signal<ValueType>
-): Text {
+export default function signalText<T>(this: Signal<T>): Text {
 	var node = document.createTextNode(String(this.get()));
 	this.subscribe(updateValue);
 	return node;
 
-	function updateValue(value: ValueType): void {
+	function updateValue(value: T): void {
 		node.nodeValue = String(value);
 	}
 }

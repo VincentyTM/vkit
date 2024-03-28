@@ -2,28 +2,28 @@ import type {Bindings} from "./bind.js";
 import deepPush from "./deepPush.js";
 import type {View} from "./view.js";
 
-export default function append<ItemType extends View<ContextType>, ContextType>(
+export default function append<ItemT extends View<ContextT>, ContextT>(
 	parent: {
-		appendChild(node: ItemType): ItemType | void;
-		append?(...nodes: ItemType[]): void;
+		appendChild(node: ItemT): ItemT | void;
+		append?(...nodes: ItemT[]): void;
 	},
-	children: ItemType,
-	context: ContextType,
+	children: ItemT,
+	context: ContextT,
 	bind: (
-		target: ContextType,
-		modifier: ItemType & Bindings<ContextType>,
+		target: ContextT,
+		modifier: ItemT & Bindings<ContextT>,
 		isExternal?: boolean
 	) => void,
 	crossView?: boolean
 ): void {
-	function push(node: ItemType): void {
+	function push(node: ItemT): void {
 		parent.appendChild(node);
 	}
 	
 	if (parent.append) {
-		var array: ItemType[] = [];
+		var array: ItemT[] = [];
 		
-		deepPush<ItemType, ContextType>(
+		deepPush<ItemT, ContextT>(
 			array,
 			children,
 			context,
@@ -33,7 +33,7 @@ export default function append<ItemType extends View<ContextType>, ContextType>(
 		
 		parent.append.apply(parent, array);
 	} else {
-		deepPush<ItemType, ContextType>(
+		deepPush<ItemT, ContextT>(
 			{push: push},
 			children,
 			context,

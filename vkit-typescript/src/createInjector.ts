@@ -4,9 +4,9 @@ export type TokenClass = new () => unknown;
 export type TokenFactory = () => unknown;
 export type TokenLike = TokenClass | TokenFactory;
 
-export type InstanceOf<TokenType> = (
-	TokenType extends TokenClass ? InstanceType<TokenType> :
-	TokenType extends TokenFactory ? ReturnType<TokenType> :
+export type InstanceOf<TokenT> = (
+	TokenT extends TokenClass ? InstanceType<TokenT> :
+	TokenT extends TokenFactory ? ReturnType<TokenT> :
 	never
 );
 
@@ -16,24 +16,24 @@ export type Injector = {
 	parent: Injector | null
 };
 
-var Container = typeof WeakMap === "function" ? WeakMap : function<KeyType extends object, ValueType>(
+var Container = typeof WeakMap === "function" ? WeakMap : function<K extends object, V>(
 	this: {
-		get(key: KeyType): ValueType | undefined;
-		set(key: KeyType, value: ValueType): void;
+		get(key: K): V | undefined;
+		set(key: K, value: V): void;
 	}
 ) {
-	var array: (KeyType | ValueType)[] = [];
+	var array: (K | V)[] = [];
 
-	this.get = function(key: KeyType): ValueType | undefined {
+	this.get = function(key: K): V | undefined {
 		for (var i = array.length - 2; i >= 0; i -= 2) {
 			if (array[i] === key) {
-				return array[i + 1] as ValueType;
+				return array[i + 1] as V;
 			}
 		}
 		return undefined;
 	};
 
-	this.set = function(key: KeyType, value: ValueType): void {
+	this.set = function(key: K, value: V): void {
 		for (var i = array.length - 2; i >= 0; i -= 2) {
 			if (array[i] === key) {
 				array[i + 1] = value;

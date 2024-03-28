@@ -2,10 +2,10 @@ import bind from "./bind.js";
 import deepPush from "./deepPush.js";
 import type {View} from "./view.js";
 
-function insert<ItemType extends View<ContextType>, ContextType>(
-	children: ItemType,
+function insert<ItemT extends View<ContextT>, ContextT>(
+	children: ItemT,
 	nextSibling: Node,
-	context: ContextType,
+	context: ContextT,
 	crossView?: boolean
 ): void {
 	var parent = nextSibling.parentNode;
@@ -14,14 +14,14 @@ function insert<ItemType extends View<ContextType>, ContextType>(
 		return;
 	}
 	
-	function push(node: ItemType): void {
+	function push(node: ItemT): void {
 		parent!.insertBefore(node as unknown as Node, nextSibling);
 	}
 	
 	if ((nextSibling as any).before) {
-		var array: ItemType[] = [];
+		var array: ItemT[] = [];
 		
-		deepPush<ItemType, ContextType>(
+		deepPush<ItemT, ContextT>(
 			array,
 			children,
 			context,
@@ -31,7 +31,7 @@ function insert<ItemType extends View<ContextType>, ContextType>(
 		
 		(nextSibling as any).before.apply(nextSibling, array);
 	} else {
-		deepPush<ItemType, ContextType>(
+		deepPush<ItemT, ContextT>(
 			{push: push},
 			children,
 			context,

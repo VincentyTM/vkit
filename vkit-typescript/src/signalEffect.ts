@@ -3,10 +3,10 @@ import createComponent, {type Component} from "./createComponent.js";
 import onUnmount from "./onUnmount.js";
 import type {Signal} from "./signal.js";
 
-export default function signalEffect<ValueType>(
-	this: Signal<ValueType>,
+export default function signalEffect<T>(
+	this: Signal<T>,
 	callback: (
-		value: ValueType,
+		value: T,
 		onCleanup?: (
 			callback: () => void,
 			component?: Component | null
@@ -27,7 +27,7 @@ export default function signalEffect<ValueType>(
 
 	callback(signal.get());
 
-	return signal.subscribe(function(value: ValueType) {
+	return signal.subscribe(function(value: T) {
 		callback(value);
 	});
 }

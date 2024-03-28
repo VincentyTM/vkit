@@ -2,19 +2,19 @@ import {getComponent, setComponent} from "./contextGuard.js";
 import type {Component} from "./createComponent.js";
 import type {Config} from "./provide.js";
 
-export type Provider<InstanceType> = {
-	getInstance(): InstanceType;
+export type Provider<T> = {
+	getInstance(): T;
 };
 
-export default function createProvider<InstanceType>(
-	createInstance: (config: Config) => InstanceType,
+export default function createProvider<T>(
+	createInstance: (config: Config) => T,
 	config: Config,
 	component: Component | null
-): Provider<InstanceType> {
-	var instance: InstanceType | undefined;
+): Provider<T> {
+	var instance: T | undefined;
 	var instanceCreated = false;
 
-	function getInstance(): InstanceType {
+	function getInstance(): T {
 		if (instanceCreated) {
 			return instance!;
 		}

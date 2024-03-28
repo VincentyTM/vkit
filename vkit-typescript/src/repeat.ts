@@ -19,15 +19,15 @@ function createRangeArray(length: number): number[] {
 	return array; 
 }
 
-export default function repeat<ItemType>(
+export default function repeat<T>(
 	count: number,
-	getView: (index: number) => ItemType
-): ItemType[];
+	getView: (index: number) => T
+): T[];
 
-export default function repeat<ViewType extends View<ContextType>, ContextType>(
+export default function repeat<ViewT extends View<ContextT>, ContextT>(
 	count: Signal<number>,
-	getView: (index: number) => ViewType
-): View<ContextType>;
+	getView: (index: number) => ViewT
+): View<ContextT>;
 
 export default function repeat(
 	count: Signal<number> | number,

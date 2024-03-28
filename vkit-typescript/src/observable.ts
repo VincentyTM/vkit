@@ -1,22 +1,22 @@
-export type Observable<ValueType> = {
-	(value: ValueType): void;
+export type Observable<T> = {
+	(value: T): void;
 	clear(): void;
 	count(): number;
-	has(callback: (value: ValueType) => void): boolean;
-	subscribe(callback: (value: ValueType) => void): () => void;
+	has(callback: (value: T) => void): boolean;
+	subscribe(callback: (value: T) => void): () => void;
 };
 
-export default function createObservable<ValueType>(): Observable<ValueType> {
-	var callbacks: ((value: ValueType) => void)[] = [];
+export default function createObservable<T>(): Observable<T> {
+	var callbacks: ((value: T) => void)[] = [];
 	var n = 0;
 	
-	function observable(value: ValueType): void {
+	function observable(value: T): void {
 		for (var i = 0; i < n; i += 2) {
 			callbacks[i](value);
 		}
 	}
 	
-	function subscribe(callback: (value: ValueType) => void): () => void {
+	function subscribe(callback: (value: T) => void): () => void {
 		if (typeof callback !== "function") {
 			throw new Error("Callback is not a function");
 		}
@@ -46,7 +46,7 @@ export default function createObservable<ValueType>(): Observable<ValueType> {
 		}
 	}
 	
-	function has(callback: (value: ValueType) => void): boolean {
+	function has(callback: (value: T) => void): boolean {
 		for (var i = n - 2; i >= 0; i -= 2) {
 			if (callbacks[i] === callback) {
 				return true;
@@ -60,5 +60,5 @@ export default function createObservable<ValueType>(): Observable<ValueType> {
 	observable.clear = clear;
 	observable.has = has;
 	
-	return observable as Observable<ValueType>;
+	return observable as Observable<T>;
 }

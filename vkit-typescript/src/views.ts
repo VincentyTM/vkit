@@ -20,9 +20,9 @@ type Block = {
 	render(): View;
 };
 
-function createBlock<ValueType>(
-	model: ValueType,
-	getView: (value: ValueType) => View,
+function createBlock<ItemT>(
+	model: ItemT,
+	getView: (value: ItemT) => View,
 	container: Component | null,
 	injector: Injector | null
 ): Block {
@@ -74,10 +74,10 @@ function createBlock<ValueType>(
 	};
 }
 
-export default function views<ViewType extends View<ContextType>, ValueType, ContextType>(
-	this: Signal<ArrayLike<ValueType>>,
-	getItemView: (value: ValueType) => ViewType
-): View<ContextType> {
+export default function views<ViewT extends View<ContextT>, ItemT, ContextT>(
+	this: Signal<ArrayLike<ItemT>>,
+	getItemView: (item: ItemT) => ViewT
+): View<ContextT> {
 	var signal = this;
 	var container = getComponent();
 	var injector = getInjector();
@@ -85,7 +85,7 @@ export default function views<ViewType extends View<ContextType>, ValueType, Con
 	var oldBlocks: {[key: string]: Block} = {};
 	var array: Block[] = [];
 	
-	function render(models: ArrayLike<ValueType>) {
+	function render(models: ArrayLike<ItemT>) {
 		if (!isArray(models)) {
 			models = toArray(models);
 		}
@@ -102,7 +102,7 @@ export default function views<ViewType extends View<ContextType>, ValueType, Con
 				key = "_" + key;
 			}
 			
-			newArray[i] = newBlocks[key] = oldBlocks[key] || createBlock<ValueType>(
+			newArray[i] = newBlocks[key] = oldBlocks[key] || createBlock<ItemT>(
 				model,
 				getItemView,
 				container,

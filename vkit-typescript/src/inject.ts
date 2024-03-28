@@ -26,20 +26,20 @@ import type {Provider} from "./provider.js";
  * @param injector An optional injector to start the search of the provider. By default, it is the current injector.
  * @returns An instance of the injectable service.
  */
-function inject<TokenType extends TokenLike>(token: TokenType, injector?: Injector): InstanceOf<TokenType> {
+function inject<TokenT extends TokenLike>(token: TokenT, injector?: Injector): InstanceOf<TokenT> {
 	if (!injector) {
 		injector = getInjector();
 	}
 	
-	var provider: Provider<InstanceOf<TokenType>> | undefined;
+	var provider: Provider<InstanceOf<TokenT>> | undefined;
 	
-	while (!(provider = injector.container.get(token) as Provider<InstanceOf<TokenType>>)) {
+	while (!(provider = injector.container.get(token) as Provider<InstanceOf<TokenT>>)) {
 		var handleMissingProvider = injector.handleMissingProvider;
 		var parent: Injector | null = injector.parent;
 		
 		if (!parent) {
 			if (typeof handleMissingProvider === "function") {
-				return handleMissingProvider(token as TokenClass) as InstanceOf<TokenType>;
+				return handleMissingProvider(token as TokenClass) as InstanceOf<TokenT>;
 			}
 			throw new Error("There is no provider for this token");
 		}

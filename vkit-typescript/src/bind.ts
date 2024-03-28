@@ -28,10 +28,10 @@ type HTMLLeafElement = (
 	| HTMLTextAreaElement
 );
 
-type ExtendedEvent<EventType, T> = EventType & {
+type ExtendedEvent<E, T> = E & {
 	readonly currentTarget: T;
-	readonly target: EventType extends Event ? (
-		T extends HTMLLeafElement ? T : EventType["target"]
+	readonly target: E extends Event ? (
+		T extends HTMLLeafElement ? T : E["target"]
 	) : EventTarget;
 };
 
@@ -43,10 +43,10 @@ export type Bindings<T> = {
 	)
 };
 
-function setValue<Target>(
-	target: Target,
-	name: keyof Target,
-	value: Target[keyof Target],
+function setValue<T>(
+	target: T,
+	name: keyof T,
+	value: T[keyof T],
 	persistent: boolean
 ) {
 	if (!persistent) {
@@ -82,9 +82,9 @@ function setValue<Target>(
  * If the key starts with "on", the value is attached as an event listener instead.
  * @param persistent If true, the attached event listeners are not removed when the current component unmounts.
  */
-export default function bind<Target>(
-	target: Target,
-	bindings: Bindings<Target>,
+export default function bind<T>(
+	target: T,
+	bindings: Bindings<T>,
 	persistent?: boolean
 ): void {
 	for (var name in bindings) {
