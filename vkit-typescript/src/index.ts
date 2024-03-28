@@ -12,7 +12,7 @@ export {default as history} from "./history.js";
 export {default as html} from "./html.js";
 export {default as htmlTag} from "./htmlTag.js";
 export {default as htmlTags} from "./htmlTags.js";
-export {default as http} from "./http.js";
+export {default as http, type HttpProgress, type HttpRequest, type HttpResponse} from "./http.js";
 export {default as inject} from "./inject.js";
 export {default as interval} from "./interval.js";
 export {default as is} from "./is.js";
