@@ -35,15 +35,17 @@ export default function style(css, attr) {
 	var selector = "[" + attr + "]";
 	
 	function bind(el) {
+		var canSetAttribute = !!(el && el.setAttribute);
+		
 		getScope().addStyle(
 			attr,
 			prepareCSS(
 				css && typeof css.get === "function" ? css.get() : css,
-				selector
+				canSetAttribute ? selector : "body"
 			)
 		);
 		
-		if (el.setAttribute) {
+		if (canSetAttribute) {
 			el.setAttribute(attr, "");
 		}
 	}
