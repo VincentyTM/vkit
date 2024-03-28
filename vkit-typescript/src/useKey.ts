@@ -3,36 +3,32 @@ import isSignal from "./isSignal.js";
 import type {Signal} from "./signal.js";
 import type {View} from "./view.js";
 
-type KeyedSignal<ValueType> = ComputedSignal<ValueType> & {
+type KeyedSignal<T> = ComputedSignal<T> & {
 	key: string | Signal<string>;
 };
 
-type ObjectWithStringKeys = {
-	[key: string]: string;
+type Records<T> = {
+	[key: string]: T;
 };
 
-type Records<ValueType> = {
-	[key: string]: ValueType;
-};
-
-type Store<ValueType> = {
+type Store<T> = {
 	keys: string[];
-	records: Records<ValueType>;
+	records: Records<T>;
 };
 
-type UseKeyHandle<ValueType> = {
-	array: Signal<ValueType[]>;
-	getItem(key: string): ValueType;
-	records: ComputedSignal<Records<ValueType>>;
-	select(key: string | Signal<string>): KeyedSignal<ValueType>;
-	views(getView: (item: KeyedSignal<ValueType>) => View): View;
+type UseKeyHandle<T> = {
+	array: Signal<T[]>;
+	getItem(key: string): T;
+	records: ComputedSignal<Records<T>>;
+	select(key: string | Signal<string>): KeyedSignal<T>;
+	views<ContextT>(getView: (item: KeyedSignal<T>) => View<ContextT>): View<ContextT>;
 };
 
-function getKeys<ValueType>(result: Store<ValueType>): string[] {
+function getKeys<T>(result: Store<T>): string[] {
 	return result.keys;
 }
 
-function getRecords<ValueType>(result: Store<ValueType>): Records<ValueType> {
+function getRecords<T>(result: Store<T>): Records<T> {
 	return result.records;
 }
 
@@ -64,33 +60,31 @@ function getRecords<ValueType>(result: Store<ValueType>): Records<ValueType> {
  * @param getKey A string key or a function that maps each array item to its string key.
  * @returns An object that can be used to handle the array with the keys.
  */
-export default function useKey<ValueType extends ObjectWithStringKeys>(
-	arraySignal: Signal<ValueType[]>,
-	getKey: string
-): UseKeyHandle<ValueType>;
+export default function useKey<T>(
+	arraySignal: Signal<T[]>,
+	getKey: keyof T
+): UseKeyHandle<T>;
 
-export default function useKey<ValueType>(
-	arraySignal: Signal<ValueType[]>,
-	getKey: ((value: ValueType) => string)
-): UseKeyHandle<ValueType>;
+export default function useKey<T>(
+	arraySignal: Signal<T[]>,
+	getKey: ((value: T) => string)
+): UseKeyHandle<T>;
 
-export default function useKey<ValueType>(
-	arraySignal: Signal<ValueType[]>,
-	getKey: string | ((value: ValueType) => string)
-): UseKeyHandle<ValueType> {
-	var isFunction = typeof getKey === "function";
-	
-	var signal = computed(function(array: ValueType[]) {
-		var records: Records<ValueType> = {};
+export default function useKey<T>(
+	arraySignal: Signal<T[]>,
+	getKey: (keyof T) | ((value: T) => string)
+): UseKeyHandle<T> {
+	var signal = computed(function(array: T[]) {
+		var records: Records<T> = {};
 		var n = array.length;
 		var keys = new Array(n);
 		
 		for (var i = 0; i < n; ++i) {
-			var value: ValueType = array[i];
+			var value: T = array[i];
 			
-			var key: string = isFunction
-				? (getKey as (value: ValueType) => string)(value)
-				: (value as unknown as ObjectWithStringKeys)[getKey as string];
+			var key: string = typeof getKey === "function"
+				? getKey(value)
+				: String(value[getKey as keyof T]);
 			
 			if (key in records) {
 				throw new TypeError("Key '" + key + "' is not unique");
@@ -108,11 +102,11 @@ export default function useKey<ValueType>(
 	
 	var keysSignal = computed(getKeys, [signal]);
 	
-	function select(key: string | Signal<string>): KeyedSignal<ValueType> {
+	function select(key: string | Signal<string>): KeyedSignal<T> {
 		var selected = computed(function() {
 			var k = isSignal(key) ? key.get() : key;
 			return signal.get().records[k];
-		}) as KeyedSignal<ValueType>;
+		}) as KeyedSignal<T>;
 		
 		if (isSignal(key)) {
 			key.subscribe(selected.invalidate);
@@ -123,13 +117,13 @@ export default function useKey<ValueType>(
 		return selected;
 	}
 	
-	function views(getView: (item: KeyedSignal<ValueType>) => View): View {
-		return keysSignal.views(function(key) {
+	function views<ContextT>(getView: (item: KeyedSignal<T>) => View<ContextT>): View<ContextT> {
+		return keysSignal.views(function(key): View<ContextT> {
 			return getView(select(key));
 		});
 	}
 	
-	function getItem(key: string): ValueType {
+	function getItem(key: string): T {
 		return signal.get().records[key];
 	}
 	
