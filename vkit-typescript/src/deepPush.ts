@@ -46,7 +46,7 @@ export default function deepPush<ItemT, ContextT>(
 		return array;
 	}
 	
-	if( typeof (item as any).length === "number" ){
+	if (typeof (item as any).length === "number") {
 		var n = (item as any).length;
 		var a = toArray<any>(item as any);
 

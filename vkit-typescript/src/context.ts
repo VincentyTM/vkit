@@ -20,7 +20,5 @@ export default function context<ContextT>(): (getView: () => View<ContextT>) => 
 			setComponent(prevComponent);
 			setInjector(prevInjector);
 		}
-
-		return;
 	};
 }

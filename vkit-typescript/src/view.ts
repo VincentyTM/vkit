@@ -6,17 +6,17 @@ import isSignal from "./isSignal.js";
 import type {Signal} from "./signal.js";
 
 export type View<ContextType = unknown> = (
-	Node |
-	string |
-	number |
-	boolean |
-	null |
-	undefined |
-	ArrayLike<View<ContextType>> |
-	Bindings<ContextType> |
-	Generator<View<ContextType>, View<ContextType>> |
-	Signal<unknown> |
-	((element: ContextType) => void)
+	| Node
+	| string
+	| number
+	| boolean
+	| null
+	| undefined
+	| ArrayLike<View<ContextType>>
+	| Bindings<ContextType>
+	| Generator<View<ContextType>, View<ContextType>>
+	| Signal<unknown>
+	| ((element: ContextType) => void)
 );
 
 /**
