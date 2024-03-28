@@ -16,11 +16,11 @@ type EventType = {
 	stopPropagation?: () => void;
 };
 
-function preventDefault(this: EventType) {
+function preventDefault(this: EventType): void {
 	this.returnValue = false;
 }
 
-function stopPropagation(this: EventType) {
+function stopPropagation(this: EventType): void {
 	this.cancelBubble = true;
 }
 
@@ -65,14 +65,14 @@ export default function onEvent(
 	if (target.addEventListener) {
 		target.addEventListener(type, eventListener, false);
 		
-		return function() {
+		return function(): void {
 			target.removeEventListener!(type, eventListener, false);
 		};
 	} else if (target.attachEvent) {
 		type = "on" + type;
 		target.attachEvent(type, eventListener);
 		
-		return function() {
+		return function(): void {
 			target.detachEvent!(type, eventListener);
 		};
 	}

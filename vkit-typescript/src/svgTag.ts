@@ -22,7 +22,7 @@ function setAttribute(
 	name: string,
 	value: string | null,
 	persistent: boolean
-) {
+): void {
 	if (!persistent) {
 		var old = el.getAttributeNS(null, name);
 
@@ -45,7 +45,7 @@ function bindAttribute(
 	name: string,
 	value: ReactiveAttributeValue,
 	persistent: boolean
-) {
+): void {
 	if (typeof value === "function") {
 		if ((value as Signal<AttributeValue>).effect) {
 			(value as Signal<AttributeValue>).effect(function(v) {
@@ -73,7 +73,7 @@ function bindAttributes(
 	el: Element,
 	attributes: {[attributeName: string]: ReactiveAttributeValue},
 	persistent?: boolean
-) {
+): void {
 	for (var name in attributes) {
 		bindAttribute(el, name, attributes[name], !!persistent);
 	}

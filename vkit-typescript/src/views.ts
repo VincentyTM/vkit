@@ -28,7 +28,7 @@ function createBlock<ItemT>(
 ): Block {
 	var range = createNodeRange(true);
 	
-	var component = createComponent(function() {
+	var component = createComponent(function(): void {
 		var view = getView(model);
 		
 		if (range.start.nextSibling) {
@@ -37,7 +37,7 @@ function createBlock<ItemT>(
 		}
 	}, container, injector);
 	
-	function render() {
+	function render(): View {
 		enqueueUpdate(component.render);
 		
 		return [
@@ -46,7 +46,7 @@ function createBlock<ItemT>(
 		];
 	}
 	
-	function insertBefore(end: Node) {
+	function insertBefore(end: Node): void {
 		if (range.start.nextSibling) {
 			range.insertBefore(end);
 		} else {
@@ -85,7 +85,7 @@ export default function views<ViewT extends View<ContextT>, ItemT, ContextT>(
 	var oldBlocks: {[key: string]: Block} = {};
 	var array: Block[] = [];
 	
-	function render(models: ArrayLike<ItemT>) {
+	function render(models: ArrayLike<ItemT>): void {
 		if (!isArray(models)) {
 			models = toArray(models);
 		}
@@ -153,7 +153,7 @@ export default function views<ViewT extends View<ContextT>, ItemT, ContextT>(
 	
 	signal.subscribe(render);
 	
-	enqueueUpdate(function() {
+	enqueueUpdate(function(): void {
 		render(signal.get());
 	});
 	
