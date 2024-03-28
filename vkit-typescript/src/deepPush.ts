@@ -58,7 +58,7 @@ export default function deepPush<ItemT, ContextT>(
 	}
 	
 	if (typeof (item as any).next === "function") {
-		var x;
+		var x: any;
 
 		do {
 			x = (item as any).next();
