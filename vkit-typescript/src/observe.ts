@@ -27,7 +27,7 @@ export default function observe<ObjectType>(
 	
 	defineProperty(object, property, {
 		get: get,
-		set: function(v: any): void {
+		set: function(v: ObjectType[keyof ObjectType]): void {
 			if (value !== v) {
 				value = v;
 				emitChange(v);
