@@ -2,7 +2,7 @@ import bind from "./bind.js";
 import deepPush from "./deepPush.js";
 import type {View} from "./view.js";
 
-function insert<ItemT extends View<ContextT>, ContextT>(
+export default function insert<ItemT extends View<ContextT>, ContextT>(
 	children: ItemT,
 	nextSibling: Node,
 	context: ContextT,
@@ -40,5 +40,3 @@ function insert<ItemT extends View<ContextT>, ContextT>(
 		);
 	}
 }
-
-export default insert;
