@@ -22,7 +22,7 @@ export function dequeueUpdate(callback: () => void): void {
 	}
 }
 
-export default function update() {
+export default function update(): void {
 	var n: number;
 	
 	while (n = queue.length) {
