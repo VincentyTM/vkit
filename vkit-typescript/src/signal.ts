@@ -451,6 +451,6 @@ function toggle(this: WritableSignal<boolean>): void {
 	this.set(!this.get());
 }
 
-function toString(this: WritableSignal<any>): string {
+function toString(this: WritableSignal<unknown>): string {
 	return "[object WritableSignal(" + this.get() + ")]";
 }
