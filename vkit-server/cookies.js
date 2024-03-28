@@ -5,6 +5,7 @@ var leadingAndTrailingWhitespaces = /(^\s+)|(\s+$)/g;
 export default function cookies() {
 	var currentScope = getScope();
 	var req = currentScope.req;
+	var res = currentScope.res;
 	var resCookies = currentScope.cookies;
 	
 	function deleteCookie(name, options) {
