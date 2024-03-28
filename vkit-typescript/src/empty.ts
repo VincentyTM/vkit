@@ -1,11 +1,11 @@
-export default function empty(parent: HTMLElement): void {
-	if (parent.replaceChildren) {
-		parent.replaceChildren();
+export default function empty(container: Element): void {
+	if (container.replaceChildren) {
+		container.replaceChildren();
 	} else {
 		var child: Node | null = null;
 		
-		while (child = parent.lastChild) {
-			parent.removeChild(child);
+		while (child = container.lastChild) {
+			container.removeChild(child);
 		}
 	}
 }
