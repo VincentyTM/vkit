@@ -48,6 +48,7 @@ export {default as assets} from "./assets.js";
 export {default as attributes} from "./attributes.js";
 export {default as await} from "./await.js";
 export {default as battery} from "./battery.js";
+export {default as bindChecked} from "./bindChecked.js";
 export {default as bindSelect} from "./bindSelect.js";
 export {default as bindText} from "./bindText.js";
 export {default as classes} from "./classes.js";
