@@ -1,6 +1,7 @@
 export {default as attributes} from "./attributes.js";
 export {default as bind} from "./bind.js";
 export {default as bindSelect} from "./bindSelect.js";
+export {default as bindText} from "./bindText.js";
 export {default as classes} from "./classes.js";
 export {default as createRoot, type AppRoot} from "./createRoot.js";
 export {default as computed, type ComputedSignal} from "./computed.js";
