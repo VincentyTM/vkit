@@ -2,19 +2,53 @@ import append from "./append.js";
 import bind from "./bind.js";
 import effect from "./effect.js";
 import isSignal from "./isSignal.js";
-import onEvent, {type EventTargetType} from "./onEvent.js";
+import onEvent from "./onEvent.js";
 import onUnmount from "./onUnmount.js";
 import type {Signal} from "./signal.js";
 import type {View} from "./view.js";
 
 type AttributeValue = string | null;
-type ReactiveAttributeValue = AttributeValue | Signal<AttributeValue> | (() => AttributeValue);
+type Reactive<T> = T | Signal<T> | (() => T);
+type ReactiveAttributeValue = Reactive<AttributeValue>;
 
-export type SVGAttributes<ElementT> = {
-	[K in keyof ElementT]: ElementT[K] extends CSSStyleDeclaration | ((this: GlobalEventHandlers, ev: never) => any) | null
-		? ElementT[K]
-		: string | number;
+type ExtendedEvent<E, T> = E & {
+	readonly currentTarget: T;
+	readonly target: E extends Event ? E["target"] : EventTarget;
 };
+
+type SVGAttributes = {
+	[N: string]: any;
+};
+
+type SVGBindingsRecursive<T> = {
+	[K in keyof T]?: Reactive<T[K]> | SVGBindingsRecursive<T[K]>;
+};
+
+type SVGBindings<T> = {
+	[K in keyof T]?: (
+		T[K] extends ((this: GlobalEventHandlers, ev: infer EventType) => any) | null ?
+		(this: T, ev: ExtendedEvent<EventType, T>) => void :
+
+		T[K] extends SVGAnimatedLength ?
+		Reactive<string | number> :
+
+		SVGBindingsRecursive<T[K]>
+	);
+} & SVGAttributes;
+
+export type SVGView<ContextT = unknown> = (
+	| Node
+	| string
+	| number
+	| boolean
+	| null
+	| undefined
+	| ArrayLike<SVGView<ContextT>>
+	| SVGBindings<ContextT>
+	| Generator<SVGView<ContextT>, SVGView<ContextT>>
+	| Signal<unknown>
+	| ((element: ContextT) => void)
+);
 
 var xmlns = "http://www.w3.org/2000/svg";
 
@@ -106,11 +140,11 @@ function bindAttributes(
  * }
  */
 export default function svgTag<K extends keyof SVGElementTagNameMap>(tagName: K): (
-	...contents: View<SVGAttributes<SVGElementTagNameMap[K]>>[]
-) => SVGElementTagNameMap[K] {
-	return function(): SVGElementTagNameMap[K] {
+	...contents: SVGView<SVGElementTagNameMap[K]>[]
+) => View<Element> {
+	return function(): View<Element> {
 		var el = document.createElementNS(xmlns, tagName);
 		append<View<typeof el>, typeof el>(el, arguments, el, bindAttributes as never);
-		return el as SVGElementTagNameMap[K];
+		return el;
 	};
 }

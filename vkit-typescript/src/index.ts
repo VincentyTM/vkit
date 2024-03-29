@@ -35,7 +35,7 @@ export {default as repeat} from "./repeat.js";
 export {default as shadow} from "./shadow.js";
 export {default as signal, type Signal, type WritableSignal} from "./signal.js";
 export {default as style} from "./style.js";
-export {default as svgTag} from "./svgTag.js";
+export {default as svgTag, type SVGView} from "./svgTag.js";
 export {default as svgTags} from "./svgTags.js";
 export {default as text} from "./text.js";
 export {default as tick} from "./tick.js";

@@ -1,8 +1,7 @@
-import svgTag, {type SVGAttributes} from "./svgTag.js";
-import type {View} from "./view.js";
+import svgTag, {type SVGView} from "./svgTag.js";
 
 type SVGProxy = {
-	[K in keyof SVGElementTagNameMap]: (...contents: View<SVGAttributes<SVGElementTagNameMap[K]>>[]) => SVGElementTagNameMap[K];
+	[K in keyof SVGElementTagNameMap]: (...contents: SVGView<SVGElementTagNameMap[K]>[]) => SVGElementTagNameMap[K];
 };
 
 /**
