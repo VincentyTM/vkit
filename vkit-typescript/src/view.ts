@@ -5,18 +5,18 @@ import {enqueueUpdate} from "./update.js";
 import isSignal from "./isSignal.js";
 import type {Signal} from "./signal.js";
 
-export type View<ContextType = unknown> = (
+export type View<ContextT = unknown> = (
 	| Node
 	| string
 	| number
 	| boolean
 	| null
 	| undefined
-	| ArrayLike<View<ContextType>>
-	| Bindings<ContextType>
-	| Generator<View<ContextType>, View<ContextType>>
+	| ArrayLike<View<ContextT>>
+	| Bindings<ContextT>
+	| Generator<View<ContextT>, View<ContextT>>
 	| Signal<unknown>
-	| ((element: ContextType) => void)
+	| ((element: ContextT) => void)
 );
 
 /**
