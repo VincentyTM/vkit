@@ -2,7 +2,7 @@
 
 var isWritableSignal = $.isWritableSignal;
 
-function bindCheckbox(signal) {
+function bindChecked(signal) {
 	if (!isWritableSignal(signal)) {
 		throw new TypeError("Two-way data binding needs a writable signal");
 	}
@@ -15,6 +15,6 @@ function bindCheckbox(signal) {
 	};
 }
 
-$.bindCheckbox = bindCheckbox;
+$.bindChecked = bindChecked;
 
 })($);
