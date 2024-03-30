@@ -92,35 +92,35 @@ You can install the vKit module with this command:
 An example server app:
 ```javascript
 import http from "http";
-import * as $ from "vkit-js/server";
+import {href, html, htmlTags, meta, param, path, router, server, styledHtmlTag, title} from "vkit-js/server";
 
-const {A, Li, Main, Nav, Ul} = $.htmlTags;
+const {A, Li, Main, Nav, Ul} = htmlTags;
 
-const RedH1 = $.styledHtmlTag("h1", `::this{color: red;}`);
+const RedH1 = styledHtmlTag("h1", `::this{color: red;}`);
 
 const App = () => [
-    $.title("Example App"),
-    $.meta("description", "This is an example application."),
-    RedH1("Hello, you are on page ", $.path()),
+    title("Example App"),
+    meta("description", "This is an example application."),
+    RedH1("Hello, you are on page ", path()),
     Nav(
         Ul(
-            Li(A("Home", $.href("?"))),
-            Li(A("About", $.href("?page=about")))
+            Li(A("Home", href("?"))),
+            Li(A("About", href("?page=about")))
         )
     ),
     Main(
-        $.router($.param("page"), [
+        router(param("page"), [
             {
                 path: "",
                 component: () => [
-                    $.title((t) => `Home | ${t}`),
+                    title((t) => `Home | ${t}`),
                     "Home"
                 ]
             },
             {
                 path: "about",
                 component: () => [
-                    $.title((t) => `About | ${t}`),
+                    title((t) => `About | ${t}`),
                     "About"
                 ]
             }
@@ -128,7 +128,7 @@ const App = () => [
     )
 ];
 
-const requestListener = $.server.view((server) => $.html`<!DOCTYPE html>
+const requestListener = server.view((server) => html`<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
