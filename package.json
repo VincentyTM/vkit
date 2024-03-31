@@ -30,6 +30,7 @@
 	"main": "./vkit-typescript/dist/index.js",
 	"module": "./vkit-typescript/dist/index.js",
 	"name": "vkit-js",
+	"private": true,
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/VincentyTM/vkit.git"
