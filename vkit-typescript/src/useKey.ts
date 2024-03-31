@@ -21,7 +21,7 @@ type UseKeyHandle<T> = {
 	getItem(key: string): T;
 	records: ComputedSignal<Records<T>>;
 	select(key: string | Signal<string>): KeyedSignal<T>;
-	views<ContextT>(getView: (item: KeyedSignal<T>) => View<ContextT>): View<ContextT>;
+	views<ViewT extends View<ContextT>, ContextT>(getItemView: (item: KeyedSignal<T>) => ViewT): View<ContextT>;
 };
 
 function getKeys<T>(result: Store<T>): string[] {
@@ -117,9 +117,9 @@ export default function useKey<T>(
 		return selected;
 	}
 	
-	function views<ContextT>(getView: (item: KeyedSignal<T>) => View<ContextT>): View<ContextT> {
-		return keysSignal.views(function(key): View<ContextT> {
-			return getView(select(key));
+	function views<ViewT extends View<ContextT>, ContextT>(getItemView: (item: KeyedSignal<T>) => ViewT): View<ContextT> {
+		return keysSignal.views(function(key): ViewT {
+			return getItemView(select(key));
 		});
 	}
 	
@@ -133,5 +133,5 @@ export default function useKey<T>(
 		records: signal.map(getRecords),
 		select: select,
 		views: views
-	};
+	} as UseKeyHandle<T>;
 }
