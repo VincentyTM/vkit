@@ -3,14 +3,9 @@
 var computed = $.computed;
 var inject = $.inject;
 var isSignal = $.isSignal;
+var objectAssign = $.objectAssign;
 var signal = $.signal;
 var slice = Array.prototype.slice;
-
-var assign = Object.assign || function(a, b) {
-	for (var k in b) {
-		a[k] = b[k];
-	}
-};
 
 function selectWordsOfLang(dictionary, code) {
 	return code ? dictionary[code] : null;
@@ -29,14 +24,14 @@ function LanguageService() {
 		var newDict = {};
 		var dict = dictionary.get();
 		
-		assign(newDict, dict);
+		objectAssign(newDict, dict);
 		
 		for (var code in update) {
 			var words = newDict[code] = {};
 			if (dict[code]) {
-				assign(words, dict[code]);
+				objectAssign(words, dict[code]);
 			}
-			assign(words, update[code]);
+			objectAssign(words, update[code]);
 		}
 		
 		dictionary.set(newDict);
