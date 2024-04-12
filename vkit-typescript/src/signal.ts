@@ -286,14 +286,8 @@ export type WritableSignal<T> = Signal<T> & {
 	 * @param map A function which takes the old signal value and returns the new one.
 	 * @param argument An optional argument for `map`.
 	 */
-	update(
-		map: (value: T) => T
-	): void;
-	
-	update<ArgumentType>(
-		map: (value: T, argument: ArgumentType) => T,
-		argument: ArgumentType
-	): void;
+	update<A>(transform: (value: T, action: A) => T, action: A): void;
+	update(transform: (state: T) => T): void;
 };
 
 /**
@@ -412,13 +406,6 @@ export default function createWritableSignal<T>(value: T): WritableSignal<T> {
 		}
 	}
 	
-	function update<ArgumentT>(
-		map: (value: T, argument?: ArgumentT) => T,
-		argument?: ArgumentT
-	): void {
-		set(map(value, argument));
-	}
-	
 	use.add = add;
 	use.component = parent;
 	use.effect = signalEffect;
@@ -453,4 +440,12 @@ function toggle(this: WritableSignal<boolean>): void {
 
 function toString(this: WritableSignal<unknown>): string {
 	return "[object WritableSignal(" + this.get() + ")]";
+}
+
+function update<T, A>(
+	this: WritableSignal<T>,
+	transform: (state: T, action?: A) => T,
+	action?: A
+): void {
+	this.set(transform(this.get(), action));
 }
