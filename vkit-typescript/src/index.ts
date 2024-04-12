@@ -47,5 +47,5 @@ export {default as tick} from "./tick.js";
 export {default as timeout} from "./timeout.js";
 export {default as untracked} from "./untracked.js";
 export {default as update} from "./update.js";
-export {default as useKey} from "./useKey.js";
+export {default as useKey, type KeyedSignal} from "./useKey.js";
 export {default as view, type View} from "./view.js";
