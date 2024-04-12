@@ -80,6 +80,7 @@ export {default as mediaQuery} from "./mediaQuery.js";
 export {default as meta} from "./meta.js";
 export {default as navigate} from "./navigate.js";
 export {default as notification} from "./notification.js";
+export {default as objectAssign} from "./objectAssign.js";
 export {default as objectProperty} from "./objectProperty.js";
 export {default as observable} from "./observable.js";
 export {default as of} from "./of.js";
