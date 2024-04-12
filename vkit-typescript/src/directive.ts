@@ -1,5 +1,9 @@
 import effect from "./effect.js";
 
+export default function directive<E>(element: E, callback: (element: E) => void): null;
+
+export default function directive<E>(element: E, callback: (element: E) => string): Text;
+
 export default function directive<E>(
 	element: E,
 	callback: (element: E) => string | void
