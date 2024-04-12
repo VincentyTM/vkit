@@ -280,11 +280,13 @@ export type WritableSignal<T> = Signal<T> & {
 	 * const count = signal(10);
 	 * count.update((x) => x * 2);
 	 * // count.get() === 20
-	 * count.update((x, y) => x + y, 10);
+	 * const toIncrementedBy = (count: number, added: number) => count + added;
+	 * count.update(toIncrementedBy, 10);
 	 * // count.get() === 30
 	 * 
-	 * @param map A function which takes the old signal value and returns the new one.
-	 * @param argument An optional argument for `map`.
+	 * @param transform A pure function which takes the old signal value and returns the new one.
+	 * Optionally, it can have an extra parameter that has the value of `action`.
+	 * @param action An optional parameter that can be used to pass data to `transform`.
 	 */
 	update<A>(transform: (value: T, action: A) => T, action: A): void;
 	update(transform: (state: T) => T): void;
