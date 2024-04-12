@@ -429,22 +429,19 @@ export default function createWritableSignal<T>(value: T): WritableSignal<T> {
 	return use as WritableSignal<T>;
 }
 
-function add<T>(
-	this: WritableSignal<T>,
-	value: T
-): void {
+export function add<T>(this: WritableSignal<T>, value: T): void {
 	this.set((this.get() as any) + value);
 }
 
-function toggle(this: WritableSignal<boolean>): void {
+export function toggle(this: WritableSignal<boolean>): void {
 	this.set(!this.get());
 }
 
-function toString(this: WritableSignal<unknown>): string {
+export function toString(this: WritableSignal<unknown>): string {
 	return "[object WritableSignal(" + this.get() + ")]";
 }
 
-function update<T, A>(
+export function update<T, A>(
 	this: WritableSignal<T>,
 	transform: (state: T, action?: A) => T,
 	action?: A
