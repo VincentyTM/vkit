@@ -32,9 +32,7 @@ function renderDetached(getView, parent) {
 			inject(WindowService).window = win;
 		}
 		
-		var view = getView(function() {
-			emitUnmount(component);
-		}, component);
+		var view = getView(unmount, component);
 		
 		if (parent) {
 			append(parent, view, parent, bind);
@@ -44,7 +42,11 @@ function renderDetached(getView, parent) {
 	component.render();
 	update();
 	
-	return component;
+	function unmount() {
+		emitUnmount(component);
+	}
+	
+	return unmount;
 }
 
 $.renderDetached = renderDetached;
