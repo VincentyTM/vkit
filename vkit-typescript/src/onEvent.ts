@@ -12,6 +12,7 @@ export type EventTargetType = {
 type EventType = {
 	returnValue?: boolean;
 	cancelBubble?: boolean;
+	currentTarget?: EventTargetType;
 	preventDefault?: () => void;
 	stopPropagation?: () => void;
 };
@@ -50,6 +51,10 @@ export default function onEvent(
 		
 		if (!e.stopPropagation) {
 			e.stopPropagation = stopPropagation;
+		}
+
+		if (!e.currentTarget) {
+			e.currentTarget = target;
 		}
 		
 		var ret = listener.call(target, e);
