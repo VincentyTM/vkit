@@ -15,21 +15,26 @@ import type {View} from "./view.js";
 
 type Block = {
 	component: Component;
+	index: number;
 	insertBefore(anchor: Node): void;
 	range: NodeRange;
 	render(): View;
 };
 
+type BlockInfo = {
+	index: number;
+};
+
 function createBlock<ItemT>(
 	model: ItemT,
-	getView: (value: ItemT) => View,
+	getView: (value: ItemT, block?: BlockInfo) => View,
 	container: Component | null,
 	injector: Injector | null
 ): Block {
 	var range = createNodeRange(true);
 	
 	var component = createComponent(function(): void {
-		var view = getView(model);
+		var view = getView(model, block);
 		
 		if (range.start.nextSibling) {
 			range.clear();
@@ -66,17 +71,20 @@ function createBlock<ItemT>(
 		}
 	}
 	
-	return {
+	var block = {
 		component: component,
+		index: 0,
 		insertBefore: insertBefore,
 		range: range,
 		render: render
 	};
+
+	return block;
 }
 
 export default function views<ViewT extends View<ContextT>, ItemT, ContextT>(
 	this: Signal<ArrayLike<ItemT>>,
-	getItemView: (item: ItemT) => ViewT
+	getItemView: (item: ItemT, block?: BlockInfo) => ViewT
 ): View<ContextT> {
 	var signal = this;
 	var container = getComponent();
@@ -102,12 +110,14 @@ export default function views<ViewT extends View<ContextT>, ItemT, ContextT>(
 				key = "_" + key;
 			}
 			
-			newArray[i] = newBlocks[key] = oldBlocks[key] || createBlock<ItemT>(
+			var block = newArray[i] = newBlocks[key] = oldBlocks[key] || createBlock<ItemT>(
 				model,
 				getItemView,
 				container,
 				injector
 			);
+
+			block.index = i;
 		}
 		
 		for (var key in oldBlocks) {

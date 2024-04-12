@@ -55,7 +55,7 @@ function views(getView) {
 	var array = new Array(n);
 	
 	for (var i = 0; i < n; ++i) {
-		array[i] = getView(items[i]);
+		array[i] = getView(items[i], {index: i});
 	}
 	
 	return array;

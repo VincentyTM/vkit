@@ -17,7 +17,7 @@ var toArray = $.toArray;
 function createBlock(model, getView, container, injector) {
 	var range = createNodeRange(true);
 	var component = createComponent(function() {
-		var view = getView(model);
+		var view = getView(model, block);
 		
 		if (range.start.nextSibling) {
 			range.clear();
@@ -54,12 +54,15 @@ function createBlock(model, getView, container, injector) {
 		}
 	}
 	
-	return {
+	var block = {
 		component: component,
+		index: 0,
 		insertBefore: insertBefore,
 		range: range,
 		render: render
 	};
+	
+	return block;
 }
 
 function views(getView) {
@@ -87,12 +90,14 @@ function views(getView) {
 				key = "_" + key;
 			}
 			
-			newArray[i] = newBlocks[key] = oldBlocks[key] || createBlock(
+			var block = newArray[i] = newBlocks[key] = oldBlocks[key] || createBlock(
 				model,
 				getView,
 				container,
 				injector
 			);
+			
+			block.index = i;
 		}
 		
 		for (var key in oldBlocks) {
