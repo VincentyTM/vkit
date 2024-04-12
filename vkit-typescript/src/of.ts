@@ -3,11 +3,7 @@ import {getComponent} from "./contextGuard.js";
 import observe from "./observe.js";
 import onUnmount from "./onUnmount.js";
 
-function getValue<ObjectType>(
-	object: ObjectType,
-	property: keyof ObjectType,
-	_receiver: ObjectType
-): ObjectType[keyof ObjectType] {
+function getValue<T, K extends keyof T>(object: T, property: K, _receiver: T): T[K] {
 	var value = object[property];
 	var component = getComponent(true);
 	
@@ -18,13 +14,13 @@ function getValue<ObjectType>(
 	var observable = observe(object, property);
 	
 	if (!observable) {
-		throw new ReferenceError("Property '" + String(property) + "' does not exist!");
+		throw new ReferenceError("Property '" + String(property) + "' does not exist and there is no default value provided");
 	}
 	
 	var enqueued = false;
 	var render = component.render;
 
-	function set(newValue: ObjectType[keyof ObjectType]): void {
+	function set(newValue: T[K]): void {
 		if (value !== newValue) {
 			value = newValue;
 			
@@ -67,13 +63,20 @@ var handler = {
  * @param object The object whose properties need to be observed.
  * @returns The proxy of the object.
  */
-export default function of<
-	ObjectType extends Object,
-	ObjectParamType extends ObjectType | null | undefined
->(object: ObjectParamType): ObjectParamType {
-	if (!object) {
+export default function of<T extends object>(object: T): T;
+
+export default function of<T extends object, K extends keyof T>(object: T, property: K): T[K];
+
+export default function of<T extends object, K extends keyof T>(object: T, property?: K): T | T[K] {
+	if (property !== undefined) {
+		return getValue(object, property, object);
+	}
+
+	var component = getComponent(true);
+	
+	if (!component) {
 		return object;
 	}
 
-	return new Proxy<ObjectType>(object as ObjectType, handler) as never;
+	return new Proxy<T>(object, handler);
 }

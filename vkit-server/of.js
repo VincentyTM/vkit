@@ -1,15 +1,29 @@
-function getValue(object, property) {
-	return object[property];
+function getDefaultValue(defaultValue, prop) {
+	var type = typeof defaultValue;
+	
+	if (type === "function") {
+		return defaultValue();
+	}
+	
+	if (type === "string" || type === "number" || type === "boolean" || type === "bigint" || defaultValue === null) {
+		return defaultValue;
+	}
+	
+	throw new Error("Property '" + prop + "' does not exist and there is no default value provided");
 }
 
-var handler = {
-	get: getValue
-};
-
-export default function of(object) {
+export default function of(object, property, defaultValue) {
 	if (!object || !(typeof object === "object" || typeof object === "function")) {
 		return object;
 	}
 	
-	return new Proxy(object, handler);
+	if (typeof property === "string") {
+		if (!(property in object)) {
+			object[property] = getDefaultValue(defaultValue, property);
+		}
+		
+		return object[property];
+	}
+	
+	return object;
 }
