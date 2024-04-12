@@ -5,20 +5,20 @@ var noop = $.noop;
 var renderDetached = $.renderDetached;
 
 function createRoot(container) {
-    var unmount = noop;
+	var unmount = noop;
+	
+	return {
+		render: function(rootComponent) {
+			unmount();
+			empty(container);
+			unmount = renderDetached(rootComponent, container);
+		},
 
-    return {
-        render: function(rootComponent) {
-            unmount();
-            empty(container);
-            unmount = renderDetached(rootComponent, container);
-        },
-
-        unmount: function() {
-            unmount();
-            unmount = noop;
-        }
-    };
+		unmount: function() {
+			unmount();
+			unmount = noop;
+		}
+	};
 }
 
 $.createRoot = createRoot;
