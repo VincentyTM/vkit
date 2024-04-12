@@ -3,8 +3,8 @@ import isSignal from "./isSignal.js";
 import type {Signal} from "./signal.js";
 import type {View} from "./view.js";
 
-type KeyedSignal<T> = ComputedSignal<T> & {
-	key: string | Signal<string>;
+export type KeyedSignal<T, K> = ComputedSignal<T> & {
+	key: K;
 };
 
 type Records<T> = {
@@ -20,8 +20,9 @@ type UseKeyHandle<T> = {
 	array: Signal<T[]>;
 	getItem(key: string): T;
 	records: ComputedSignal<Records<T>>;
-	select(key: string | Signal<string>): KeyedSignal<T>;
-	views<ViewT extends View<ContextT>, ContextT>(getItemView: (item: KeyedSignal<T>) => ViewT): View<ContextT>;
+	select(key: string): KeyedSignal<T, string>;
+	select(key: Signal<string>): KeyedSignal<T, Signal<string>>;
+	views<ViewT extends View<ContextT>, ContextT>(getItemView: (item: KeyedSignal<T, string>) => ViewT): View<ContextT>;
 };
 
 function getKeys<T>(result: Store<T>): string[] {
@@ -72,7 +73,7 @@ export default function useKey<T>(
 
 export default function useKey<T>(
 	arraySignal: Signal<T[]>,
-	getKey: (keyof T) | ((value: T) => string)
+	getKey: keyof T | ((value: T) => string)
 ): UseKeyHandle<T> {
 	var signal = computed(function(array: T[]) {
 		var records: Records<T> = {};
@@ -84,7 +85,7 @@ export default function useKey<T>(
 			
 			var key: string = typeof getKey === "function"
 				? getKey(value)
-				: String(value[getKey as keyof T]);
+				: String(value[getKey]);
 			
 			if (key in records) {
 				throw new TypeError("Key '" + key + "' is not unique");
@@ -102,11 +103,11 @@ export default function useKey<T>(
 	
 	var keysSignal = computed(getKeys, [signal]);
 	
-	function select(key: string | Signal<string>): KeyedSignal<T> {
+	function select<K extends string | Signal<string>>(key: K): KeyedSignal<T, K> {
 		var selected = computed(function() {
-			var k = isSignal(key) ? key.get() : key;
+			var k = isSignal(key) ? key.get() : key as string;
 			return signal.get().records[k];
-		}) as KeyedSignal<T>;
+		}) as KeyedSignal<T, K>;
 		
 		if (isSignal(key)) {
 			key.subscribe(selected.invalidate);
@@ -117,7 +118,7 @@ export default function useKey<T>(
 		return selected;
 	}
 	
-	function views<ViewT extends View<ContextT>, ContextT>(getItemView: (item: KeyedSignal<T>) => ViewT): View<ContextT> {
+	function views<ViewT extends View<ContextT>, ContextT>(getItemView: (item: KeyedSignal<T, string>) => ViewT): View<ContextT> {
 		return keysSignal.views(function(key): ViewT {
 			return getItemView(select(key));
 		});
