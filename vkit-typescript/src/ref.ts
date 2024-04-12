@@ -26,7 +26,7 @@ type Ref<T> = {
  * }
  * @returns A function directive which binds an element (or any other object) to the reference until the current component unmounts.
  */
-export default function createRef<T extends object = HTMLElement>() {
+export default function createRef<T = HTMLElement>(): Ref<T> {
 	function reset(): void {
 		ref.current = null;
 	}
