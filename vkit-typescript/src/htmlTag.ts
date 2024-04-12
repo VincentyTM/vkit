@@ -2,6 +2,19 @@ import append from "./append.js";
 import bind from "./bind.js";
 import type {View} from "./view.js";
 
+export type VirtualHTMLElement<T> = {
+	readonly arguments: View<T>;
+	readonly isVirtual: true;
+	readonly nodeName: string;
+	render(): T;
+};
+
+function renderElement<T extends HTMLElement>(this: VirtualHTMLElement<T>): T {
+	var el = document.createElement(this.nodeName) as T;
+	append(el, this.arguments, el, bind);
+	return el;
+}
+
 /**
  * Creates and returns an HTML tag (element factory).
  * In order to create a custom HTML element, you may use underscores instead of dashes.
@@ -31,12 +44,15 @@ import type {View} from "./view.js";
  * 	);
  * }
  */
-export default function htmlTag<K extends keyof HTMLElementTagNameMap>(tagName: K): (
-	...contents: View<HTMLElementTagNameMap[K]>[]
-) => View<Element> {
-	return function(): View<Element> {
-		var el = document.createElement(tagName);
-		append<View<typeof el>, typeof el>(el, arguments, el, bind);
-		return el;
+export default function htmlTag<N extends keyof HTMLElementTagNameMap>(tagName: N): (
+	...contents: View<HTMLElementTagNameMap[N]>[]
+) => VirtualHTMLElement<HTMLElementTagNameMap[N]> {
+	return function(): VirtualHTMLElement<HTMLElementTagNameMap[N]> {
+		return {
+			arguments: arguments as View<HTMLElementTagNameMap[N]>,
+			isVirtual: true,
+			nodeName: tagName.toUpperCase(),
+			render: renderElement
+		};
 	};
 }
