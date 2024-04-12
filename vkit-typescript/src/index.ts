@@ -31,6 +31,7 @@ export {default as of} from "./of.js";
 export {default as onEvent} from "./onEvent.js";
 export {default as onUnmount} from "./onUnmount.js";
 export {default as provide} from "./provide.js";
+export {default as propertySignal} from "./propertySignal.js";
 export {default as readOnly} from "./readOnly.js";
 export {default as ref} from "./ref.js";
 export {default as render} from "./render.js";
