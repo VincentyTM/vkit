@@ -1,22 +1,25 @@
-(function($) {
+(function($, document) {
 
-var htmlTag = $.htmlTag;
+var append = $.append;
+var bind = $.bind;
 
-function renderThis() {
-	return htmlTag(this.nodeName)(this.arguments);
+function renderElement() {
+	var el = document.createElement(this.nodeName);
+	append(el, this.arguments, el, bind);
+	return el;
 }
 
-function virtualHtmlTag(nodeName) {
+function virtualHtmlTag(tagName) {
 	return function() {
 		return {
 			arguments: arguments,
 			isVirtual: true,
-			nodeName: nodeName.toUpperCase(),
-			render: renderThis
+			nodeName: tagName.toUpperCase(),
+			render: renderElement
 		};
 	};
 }
 
 $.virtualHtmlTag = virtualHtmlTag;
 
-})($);
+})($, document);
