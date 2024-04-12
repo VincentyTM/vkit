@@ -1,3 +1,4 @@
+export {default as arrayItemSignal} from "./arrayItemSignal.js";
 export {default as attributes} from "./attributes.js";
 export {default as bind} from "./bind.js";
 export {default as bindChecked} from "./bindChecked.js";
