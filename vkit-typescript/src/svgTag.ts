@@ -50,6 +50,13 @@ export type SVGView<ContextT = unknown> = (
 	| ((element: ContextT) => void)
 );
 
+export type VirtualSVGElement<T> = {
+	readonly arguments: View<T>;
+	readonly isVirtual: true;
+	readonly nodeName: string;
+	render(): T;
+};
+
 var xmlns = "http://www.w3.org/2000/svg";
 
 function setAttribute(
@@ -114,6 +121,12 @@ function bindAttributes(
 	}
 }
 
+function renderElement<T extends Element>(this: VirtualSVGElement<T>): T {
+	var el = document.createElementNS(xmlns, this.nodeName) as T;
+	append<View<typeof el>, typeof el>(el, arguments, el, bindAttributes as never);
+	return el;
+}
+
 /**
  * Creates and returns an SVG tag (element factory).
  * SVG element names and attributes are case sensitive.
@@ -139,12 +152,15 @@ function bindAttributes(
  * 	);
  * }
  */
-export default function svgTag<K extends keyof SVGElementTagNameMap>(tagName: K): (
-	...contents: SVGView<SVGElementTagNameMap[K]>[]
-) => View<Element> {
-	return function(): View<Element> {
-		var el = document.createElementNS(xmlns, tagName);
-		append<View<typeof el>, typeof el>(el, arguments, el, bindAttributes as never);
-		return el;
+export default function svgTag<N extends keyof SVGElementTagNameMap>(tagName: N): (
+	...contents: SVGView<SVGElementTagNameMap[N]>[]
+) => VirtualSVGElement<SVGElementTagNameMap[N]> {
+	return function(): VirtualSVGElement<SVGElementTagNameMap[N]> {
+		return {
+			arguments: arguments as SVGView<SVGElementTagNameMap[N]>,
+			isVirtual: true,
+			nodeName: tagName,
+			render: renderElement
+		};
 	};
 }

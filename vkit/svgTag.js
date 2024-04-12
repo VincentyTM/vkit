@@ -56,11 +56,20 @@ function bindAttributes(el, attributes, persistent) {
 	}
 }
 
+function renderElement() {
+	var el = document.createElementNS(xmlns, this.tagName);
+	append(el, this.arguments, el, bindAttributes);
+	return el;
+}
+
 function svgTag(tagName) {
 	return function() {
-		var el = document.createElementNS(xmlns, tagName);
-		append(el, arguments, el, bindAttributes);
-		return el;
+		return {
+			arguments: arguments,
+			isVirtual: true,
+			nodeName: tagName,
+			render: renderElement
+		};
 	};
 }
 
