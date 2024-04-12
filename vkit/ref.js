@@ -1,5 +1,6 @@
 (function($) {
 
+var getComponent = $.getComponent;
 var onUnmount = $.onUnmount;
 
 function createRef() {
@@ -13,9 +14,13 @@ function createRef() {
 		}
 		
 		ref.current = value;
-		onUnmount(reset);
+		
+		if (getComponent() !== component) {
+			onUnmount(reset);
+		}
 	}
 	
+	var component = getComponent(true);
 	ref.current = null;
 	return ref;
 }

@@ -1,8 +1,9 @@
+import {getComponent} from "./contextGuard.js";
 import onUnmount from "./onUnmount.js";
 
-type Ref<ValueType> = {
-	(value: ValueType): void;
-	current: ValueType | null;
+type Ref<T> = {
+	(value: T): void;
+	current: T | null;
 };
 
 /**
@@ -36,9 +37,13 @@ export default function createRef<T extends object = HTMLElement>() {
 		}
 		
 		ref.current = value;
-		onUnmount(reset);
+		
+		if (getComponent() !== component) {
+			onUnmount(reset);
+		}
 	};
 	
+	var component = getComponent(true);
 	ref.current = null;
 	return ref;
 }
