@@ -3,7 +3,7 @@ import noop from "./noop.js";
 
 var none = {};
 
-function add(value) {
+export function add(value) {
 	this.set(this.get() + value);
 }
 
@@ -41,11 +41,11 @@ function render() {
 	return createTextNode(this.get());
 }
 
-function toggle() {
+export function toggle() {
 	this.set(!this.get());
 }
 
-function toStringWritable() {
+export function toStringWritable() {
 	return "[object WritableSignal(" + this.get() + ")]";
 }
 
@@ -53,7 +53,7 @@ function toStringComputed() {
 	return "[object ComputedSignal(" + this.get() + ")]";
 }
 
-function update(transform, action) {
+export function update(transform, action) {
 	this.set(transform(this.get(), action));
 }
 

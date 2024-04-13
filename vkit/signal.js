@@ -137,6 +137,10 @@ function update(transform, action) {
 }
 
 $.signal = createWritableSignal;
+$.signalAdd = add;
+$.signalToggle = toggle;
+$.signalToString = toString;
+$.signalUpdate = update;
 $.state = createWritableSignal;
 
 })($);
