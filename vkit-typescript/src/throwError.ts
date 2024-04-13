@@ -2,7 +2,7 @@ import type {Component} from "./createComponent.js";
 
 export default function throwError(error: any, component: Component | null): void {
 	while (component) {
-		if (component.parent && component.stack && error && typeof error.stack === "string") {
+		if (component.parent && component.stack && error && typeof error.stack === "string" && error.stack.indexOf(component.stack) === -1) {
 			error.stack += "\n" + component.stack;
 		}
 		
