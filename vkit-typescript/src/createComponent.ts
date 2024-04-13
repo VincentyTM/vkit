@@ -18,6 +18,8 @@ export default function createComponent(
 	parent?: Component | null,
 	injector?: Injector | null
 ) : Component {
+	var isRendering = false;
+	
 	var component = {
 		children: null,
 		emitError: null,
@@ -32,10 +34,15 @@ export default function createComponent(
 	}
 	
 	function renderComponent(): void {
+		if (isRendering) {
+			throwError(new Error("Circular dependency detected"), parent);
+		}
+		
 		var prevComponent = getComponent(true);
 		var prevInjector = getInjector(true);
 		
 		try {
+			isRendering = true;
 			setComponent(null);
 			emitUnmount(component);
 			setComponent(component);
@@ -46,6 +53,7 @@ export default function createComponent(
 		} finally {
 			setComponent(prevComponent);
 			setInjector(prevInjector);
+			isRendering = false;
 		}
 	}
 	

@@ -8,6 +8,8 @@ var setInjector = $.setInjector;
 var throwError = $.throwError;
 
 function createComponent(mount, parent, injector) {
+	var isRendering = false;
+	
 	var component = {
 		children: null,
 		emitError: null,
@@ -22,10 +24,15 @@ function createComponent(mount, parent, injector) {
 	}
 	
 	function renderComponent() {
+		if (isRendering) {
+			throwError(new Error("Circular dependency detected"), parent);
+		}
+		
 		var prevComponent = getComponent(true);
 		var prevInjector = getInjector(true);
 		
 		try {
+			isRendering = true;
 			setComponent(null);
 			emitUnmount(component);
 			setComponent(component);
@@ -36,6 +43,7 @@ function createComponent(mount, parent, injector) {
 		} finally {
 			setComponent(prevComponent);
 			setInjector(prevInjector);
+			isRendering = false;
 		}
 	}
 	
