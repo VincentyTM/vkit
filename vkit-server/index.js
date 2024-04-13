@@ -88,6 +88,7 @@ export {default as persistentStorage} from "./persistentStorage.js";
 export {default as preferredLanguages} from "./preferredLanguages.js";
 export {default as preload} from "./preload.js";
 export {default as promise} from "./promise.js";
+export {default as propertySignal} from "./propertySignal.js";
 export {default as provide} from "./provide.js";
 export {default as queryParams} from "./queryParams.js";
 export {default as queryParamsState} from "./queryParamsState.js";
