@@ -3,6 +3,10 @@ import noop from "./noop.js";
 
 var none = {};
 
+function add(value) {
+	this.set(this.get() + value);
+}
+
 function map() {
 	var args = arguments;
 	var n = args.length;
@@ -37,12 +41,20 @@ function render() {
 	return createTextNode(this.get());
 }
 
+function toggle() {
+	this.set(!this.get());
+}
+
 function toStringWritable() {
 	return "[object WritableSignal(" + this.get() + ")]";
 }
 
 function toStringComputed() {
 	return "[object ComputedSignal(" + this.get() + ")]";
+}
+
+function update(transform, action) {
+	this.set(transform(this.get(), action));
 }
 
 function view(getView) {
@@ -100,29 +112,16 @@ export function computed(getValue, inputs) {
 	get.toString = toStringComputed;
 	get.view = view;
 	get.views = views;
-	
 	return get;
 }
 
 export function signal(value) {
-	function add(v) {
-		value += v;
-	}
-	
 	function get() {
 		return value;
 	}
 	
 	function set(v) {
 		value = v;
-	}
-	
-	function toggle() {
-		value = !value;
-	}
-	
-	function update(map, argument) {
-		value = map(value, argument);
 	}
 	
 	get.add = add;
@@ -140,6 +139,5 @@ export function signal(value) {
 	get.update = update;
 	get.view = view;
 	get.views = views;
-	
 	return get;
 }
