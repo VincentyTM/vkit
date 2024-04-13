@@ -99,10 +99,6 @@ function createWritableSignal(value) {
 		}
 	}
 	
-	function update(map, argument) {
-		set(map(value, argument));
-	}
-	
 	use.add = add;
 	use.component = parent;
 	use.effect = signalEffect;
@@ -134,6 +130,10 @@ function toggle() {
 
 function toString() {
 	return "[object WritableSignal(" + this.get() + ")]";
+}
+
+function update(transform, action) {
+	this.set(transform(this.get(), action));
 }
 
 $.signal = createWritableSignal;
