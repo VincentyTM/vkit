@@ -41,6 +41,7 @@ export {
 };
 
 export {default as array} from "./array.js";
+export {default as arrayItemSignal} from "./arrayItemSignal.js";
 export {default as assets} from "./assets.js";
 export {default as attributes} from "./attributes.js";
 export {default as await} from "./await.js";
