@@ -566,15 +566,9 @@ const BooksTable = (books) => $.html`
 
 const BookRow = (bookSignal) => $.html`
     <tr>
-       <td>${
-         $.text(() => bookSignal().title)
-       }</td>
-        <td>${
-         $.text(() => bookSignal().author)
-       }</td>
-        <td>${
-         $.text(() => bookSignal().year)
-       }</td>
+       <td>${() => bookSignal().title}</td>
+       <td>${() => bookSignal().author}</td>
+       <td>${() => bookSignal().year}</td>
     </tr>
 `;
 ```
