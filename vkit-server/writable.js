@@ -6,7 +6,7 @@ export default function writable(input, setValue) {
     output.set = setValue;
     output.setEagerly = setValue;
     output.toggle = toggle;
-    output.toString = toString;
+    output.toString = toStringWritable;
     output.update = update;
     return output;
 }
