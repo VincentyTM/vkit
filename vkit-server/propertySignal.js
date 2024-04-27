@@ -1,8 +1,9 @@
+import computed from "./computed.js";
 import objectAssign from "./objectAssign.js";
 import writable from "./writable.js";
 
 export default function propertySignal(parent, key, defaultValue) {
-    function selectValue(state) {
+    function selectValue(state, key) {
 		if (state === undefined || state === null) {
 			return state;
 		}
@@ -18,15 +19,16 @@ export default function propertySignal(parent, key, defaultValue) {
 	
     function set(value) {
         var oldState = parent.get();
+        var currentKey = get(key);
         var current = selectValue(oldState);
 		
         if (current !== value) {
             var newState = objectAssign({}, oldState);
-            newState[key] = value;
+            newState[currentKey] = value;
             parent.set(newState);
         }
     }
 	
-    var result = parent.map(selectValue);
+    var result = computed(selectValue, [parent, key]);
     return writable(result, set);
 }

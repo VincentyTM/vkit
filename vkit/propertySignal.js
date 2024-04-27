@@ -1,5 +1,8 @@
 (function($) {
 
+var computed = $.computed;
+var get = $.get;
+var isWritableSignal = $.isWritableSignal;
 var objectAssign = $.objectAssign;
 var writable = $.writable;
 
@@ -8,7 +11,7 @@ function propertySignal(parent, key, defaultValue) {
 		throw new TypeError("Parent of a property signal must be a writable signal");
 	}
 	
-    function selectValue(state) {
+	function selectValue(state, key) {
 		if (state === undefined) {
 			throw new TypeError("Object must not be undefined");
 		}
@@ -17,7 +20,7 @@ function propertySignal(parent, key, defaultValue) {
 			throw new TypeError("Object must not be null");
 		}
 		
-        var current = state[key];
+		var current = state[key];
 		
 		if (current !== undefined) {
 			return current;
@@ -27,22 +30,23 @@ function propertySignal(parent, key, defaultValue) {
 			throw new TypeError("Property '" + key + "' does not exist and there is no default value provided");
 		}
 		
-        return defaultValue;
-    }
+		return defaultValue;
+	}
 	
-    function set(value) {
-        var oldState = parent.get();
-        var current = selectValue(oldState);
+	function set(value) {
+		var oldState = parent.get();
+		var currentKey = get(key);
+		var current = selectValue(oldState, currentKey);
 		
-        if (current !== value) {
-            var newState = objectAssign({}, oldState);
-            newState[key] = value;
-            parent.set(newState);
-        }
-    }
+		if (current !== value) {
+			var newState = objectAssign({}, oldState);
+			newState[currentKey] = value;
+			parent.set(newState);
+		}
+	}
 	
-    var result = parent.map(selectValue);
-    return writable(result, set);
+	var result = computed(selectValue, [parent, key]);
+	return writable(result, set);
 }
 
 $.propertySignal = propertySignal;
