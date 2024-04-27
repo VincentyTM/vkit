@@ -56,6 +56,7 @@ export {default as computed} from "./computed.js";
 export {default as concat} from "./concat.js";
 export {default as cookies} from "./cookies.js";
 export {default as customElement} from "./customElement.js";
+export {default as deriveSignal} from "./deriveSignal.js";
 export {default as dialogs} from "./dialogs.js";
 export {default as dragZone} from "./dragZone.js";
 export {default as emitter} from "./emitter.js";

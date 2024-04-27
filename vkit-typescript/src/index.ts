@@ -9,6 +9,7 @@ export {default as classes} from "./classes.js";
 export {default as createRoot, type AppRoot} from "./createRoot.js";
 export {default as computed, type ComputedSignal} from "./computed.js";
 export {default as customElement} from "./customElement.js";
+export {default as deriveSignal} from "./deriveSignal.js";
 export {default as effect} from "./effect.js";
 export {default as get} from "./get.js";
 export {default as getDocument} from "./getDocument.js";
