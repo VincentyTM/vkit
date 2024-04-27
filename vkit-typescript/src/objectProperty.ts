@@ -5,6 +5,22 @@ import observe from "./observe.js";
 import onUnmount from "./onUnmount.js";
 import signal, {type Signal, type WritableSignal} from "./signal.js";
 
+/**
+ * Creates and returns a writable signal that reflects and updates a property of an object.
+ * In contrast to `propertySignal`, it actually modifies the object's property instead of replacing the whole object in a signal.
+ * @example
+ * const person = {
+ * 	firstName: "John",
+ * 	lastName: "Smith"
+ * };
+ * 
+ * const firstName = objectProperty(person, "firstName");
+ * const lastName = objectProperty(person, "lastName");
+ * 
+ * @param object The object or a signal containing the current object.
+ * @param property The key of the property or a signal containing the current key.
+ * @returns A writable signal containing the current object's current property value.
+ */
 export default function objectProperty<T, K extends keyof T>(
 	object: T | Signal<T>,
 	property: K | Signal<K>,
