@@ -25,7 +25,7 @@ function createComponent(mount, parent, injector) {
 	
 	function renderComponent() {
 		if (isRendering) {
-			throwError(new Error("Circular dependency detected"), parent);
+			throwError(new Error("Circular dependency detected"), component.parent);
 		}
 		
 		var prevComponent = getComponent(true);

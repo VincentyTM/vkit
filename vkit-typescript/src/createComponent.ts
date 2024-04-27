@@ -35,7 +35,7 @@ export default function createComponent(
 	
 	function renderComponent(): void {
 		if (isRendering) {
-			throwError(new Error("Circular dependency detected"), parent);
+			throwError(new Error("Circular dependency detected"), component.parent);
 		}
 		
 		var prevComponent = getComponent(true);
