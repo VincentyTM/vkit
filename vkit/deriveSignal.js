@@ -23,7 +23,7 @@ function deriveSignal(parent, selector, updater) {
 			return;
 		}
 		
-		parent.set(updater(parent.get(), value));
+		parent.setEagerly(updater(parent.get(), value));
 	});
 }
 
