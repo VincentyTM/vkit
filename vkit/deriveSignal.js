@@ -16,12 +16,15 @@ function deriveSignal(parent, selector, updater) {
 		throw new TypeError("Updater must be a function");
 	}
 	
-	return writable(
-		parent.map(selector),
-		function(value) {
-			parent.set(updater(parent.get(), value));
+	var selected = parent.map(selector);
+	
+	return writable(selected, function(value) {
+		if (selected.get() === value) {
+			return;
 		}
-	);
+		
+		parent.set(updater(parent.get(), value));
+	});
 }
 
 $.deriveSignal = deriveSignal;
