@@ -1,20 +1,20 @@
-(function($, document){
+(function($, document) {
 
-function createStyleSheet(){
+function createStyleSheet() {
 	var style = document.createElement("style");
 	var textNode = null;
 	
-	try{
+	try {
 		textNode = document.createTextNode("");
 		style.appendChild(textNode);
-	}catch(ex){
+	} catch (ex) {
 		textNode = null;
 	}
 	
-	function setCSS(value){
-		if( textNode ){
+	function setCSS(value) {
+		if (textNode) {
 			textNode.nodeValue = value;
-		}else{
+		} else {
 			style.innerText = value;
 		}
 	}
@@ -25,26 +25,26 @@ function createStyleSheet(){
 	};
 }
 
-function createStyleController(name, updateStyle){
+function createStyleController(name, updateStyle) {
 	var refCount = 1;
 	var value = "";
 	
-	function setValue(newValue){
-		if( value !== newValue ){
+	function setValue(newValue) {
+		if (value !== newValue) {
 			value = newValue;
 			updateStyle();
 		}
 	}
 	
-	function addRef(){
+	function addRef() {
 		++refCount;
 	}
 	
-	function removeRef(){
+	function removeRef() {
 		return --refCount === 0;
 	}
 	
-	function toString(){
+	function toString() {
 		return value;
 	}
 	
@@ -57,38 +57,36 @@ function createStyleController(name, updateStyle){
 	};
 }
 
-function createStyleContainer(){
+function createStyleContainer() {
 	var style = createStyleSheet();
 	var controllers = {};
 	var controllersArray = [];
 	
-	function updateStyle(){
+	function updateStyle() {
 		style.setCSS(controllersArray.join("\n"));
 	}
 	
-	function add(name){
+	function add(name) {
 		var controller = controllers[name];
 		
-		if( controller ){
+		if (controller) {
 			controller.addRef();
 			return controller;
 		}
 		
 		var controller = controllers[name] = createStyleController(name, updateStyle);
-		
 		controllersArray.push(controller);
-		
 		return controller;
 	}
 	
-	function remove(name){
+	function remove(name) {
 		var controller = controllers[name];
 		
-		if( controller && controller.removeRef() ){
+		if (controller && controller.removeRef()) {
 			delete controllers[name];
 			
-			for(var i=controllersArray.length; i--;){
-				if( controllersArray[i].name === name ){
+			for (var i = controllersArray.length; i--;) {
+				if (controllersArray[i].name === name) {
 					controllersArray.splice(i, 1);
 					updateStyle();
 					break;
@@ -96,7 +94,7 @@ function createStyleContainer(){
 			}
 		}
 		
-		for(var k in controllers){
+		for (var k in controllers) {
 			return false;
 		}
 		
