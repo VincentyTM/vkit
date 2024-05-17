@@ -3,9 +3,9 @@
 var writable = $.writable;
 
 function arrayItemSignal(parent, item) {
-    var current = item.get();
-	
     function set(value) {
+		var current = item.get();
+		
         if (current === value) {
             return;
         }
@@ -18,8 +18,6 @@ function arrayItemSignal(parent, item) {
                 break;
             }
         }
-		
-        current = value;
     }
 	
     return writable(item, set);
