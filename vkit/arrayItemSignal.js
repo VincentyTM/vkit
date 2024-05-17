@@ -14,7 +14,7 @@ function arrayItemSignal(parent, item) {
 		
         for (var i = array.length; i--;) {
             if (array[i] === current) {
-                parent.set(array.slice(0, i).concat([value], array.slice(i + 1)));
+                parent.setEagerly(array.slice(0, i).concat([value], array.slice(i + 1)));
                 break;
             }
         }
