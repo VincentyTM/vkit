@@ -41,7 +41,7 @@ function propertySignal(parent, key, defaultValue) {
 		if (current !== value) {
 			var newState = objectAssign({}, oldState);
 			newState[currentKey] = value;
-			parent.set(newState);
+			parent.setEagerly(newState);
 		}
 	}
 	
