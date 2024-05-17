@@ -1,13 +1,15 @@
-(function($){
+(function($) {
 
 var createEmitter = $.emitter;
-var createState = $.state;
+var signal = $.signal;
 var update = $.update;
 
-function createWebSocket(url, options){
+function createWebSocket(url, options) {
 	var ws = null;
 	var queue = [];
-	var isOpen = createState(false);
+	var isOpen = signal(false);
+	var binaryType = (options ? options.binaryType : null) || "blob";
+	
 	var emitter = createEmitter({
 		socket: ws,
 		queue: queue,
@@ -17,43 +19,46 @@ function createWebSocket(url, options){
 		close: close,
 		send: send
 	});
-	var binaryType = (options ? options.binaryType : null) || "blob";
-
-	function onMessage(e){
+	
+	function onMessage(e) {
 		emitter.emit(e.data);
 	}
 
-	function onError(err){
+	function onError(err) {
 		close();
 		emitter.throwError(err);
 		update();
 	}
 
-	function onClose(e){
+	function onClose(e) {
 		close();
 		isOpen.set(false);
 		isOpen.event = e;
 		update();
 	}
 
-	function onOpen(e){
+	function onOpen(e) {
 		isOpen.set(true);
 		isOpen.event = e;
 		var n = queue.length;
-		if( n ){
+		
+		if (n) {
 			var q = queue.splice(0, n);
-			for(var i=0; i<n; ++i){
+			
+			for (var i = 0; i < n; ++i) {
 				send(q[i]);
 			}
 		}
+		
 		update();
 	}
 
-	function open(){
-		if(!ws){
-			if( typeof WebSocket !== "function" ){
+	function open() {
+		if (!ws) {
+			if (typeof WebSocket !== "function") {
 				throw new ReferenceError("WebSocket is not supported");
 			}
+			
 			ws = new WebSocket(url);
 			ws.onopen = onOpen;
 			ws.onmessage = onMessage;
@@ -65,8 +70,8 @@ function createWebSocket(url, options){
 		return this;
 	}
 
-	function close(){
-		if( ws ){
+	function close() {
+		if (ws) {
 			ws.onmessage = null;
 			ws.onopen = null;
 			ws.onclose = null;
@@ -79,10 +84,10 @@ function createWebSocket(url, options){
 		return this;
 	}
 
-	function setURL(newURL){
-		if( url !== newURL ){
+	function setURL(newURL) {
+		if (url !== newURL) {
 			url = newURL;
-			if( ws ){
+			if (ws) {
 				close();
 				open();
 			}
@@ -90,10 +95,10 @@ function createWebSocket(url, options){
 		return this;
 	}
 
-	function send(message){
-		if( isOpen.get() && ws && ws.readyState === 1 ){
+	function send(message) {
+		if (isOpen.get() && ws && ws.readyState === 1) {
 			ws.send(message);
-		}else{
+		} else {
 			queue.push(message);
 		}
 		return this;
