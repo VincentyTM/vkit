@@ -62,6 +62,7 @@ export {default as dragZone} from "./dragZone.js";
 export {default as emitter} from "./emitter.js";
 export {default as errorBoundary} from "./errorBoundary.js";
 export {default as escapeHTML} from "./escapeHTML.js";
+export {default as fullScreen} from "./fullScreen.js";
 export {default as get} from "./get.js";
 export {default as history} from "./history.js";
 export {default as href} from "./href.js";
