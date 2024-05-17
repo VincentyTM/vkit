@@ -1,4 +1,5 @@
 import computed from "./computed.js";
+import get from "./get.js";
 import objectAssign from "./objectAssign.js";
 import writable from "./writable.js";
 

@@ -1,3 +1,5 @@
+import noop from "./noop.js";
+
 export default function createEmitter(base) {
 	function cloneEmitter() {
 		return createEmitter(base);
