@@ -19,6 +19,7 @@ export type HttpRequest = string | null | {
 	user?: string | null | undefined;
 	password?: string | null | undefined;
 	responseType?: XMLHttpRequestResponseType;
+	withCredentials?: boolean;
 };
 
 export type HttpResponse<T> = {
@@ -176,6 +177,10 @@ export default function http<T = unknown>(request: HttpRequest | Signal<HttpRequ
 			}
 
 			xhr.responseType = req.responseType || "";
+
+			if (req.withCredentials !== undefined) {
+				xhr.withCredentials = req.withCredentials;
+			}
 
 			var headers = req.headers;
 			

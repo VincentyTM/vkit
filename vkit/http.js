@@ -18,6 +18,7 @@ function createRequest(data) {
 		headers: {},
 		responseType: "text",
 		mimeType: undefined,
+		withCredentials: undefined,
 		user: null,
 		password: null,
 		body: null,
@@ -79,6 +80,10 @@ function sendRequest(request, pendingResponse, responseState, complete) {
 	}
 	
 	xhr.responseType = request.responseType;
+	
+	if (request.withCredentials !== undefined) {
+		xhr.withCredentials = request.withCredentials;
+	}
 	
 	var headers = request.headers;
 	
