@@ -17,6 +17,7 @@ function createRequest(data) {
 		async: true,
 		headers: {},
 		responseType: "text",
+		mimeType: undefined,
 		user: null,
 		password: null,
 		body: null,
@@ -72,6 +73,10 @@ function sendRequest(request, pendingResponse, responseState, complete) {
 		request.user,
 		request.password
 	);
+	
+	if (request.mimeType !== undefined && xhr.overrideMimeType) {
+		xhr.overrideMimeType(request.mimeType);
+	}
 	
 	xhr.responseType = request.responseType;
 	

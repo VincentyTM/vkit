@@ -14,6 +14,7 @@ export type HttpRequest = string | null | {
 	body?: Document | XMLHttpRequestBodyInit | null | undefined;
 	headers?: HttpRequestHeaders;
 	method?: string;
+	mimeType?: string;
 	url: string | URL;
 	user?: string | null | undefined;
 	password?: string | null | undefined;
@@ -170,6 +171,10 @@ export default function http<T = unknown>(request: HttpRequest | Signal<HttpRequ
 				req.password
 			);
 			
+			if (req.mimeType !== undefined && xhr.overrideMimeType) {
+				xhr.overrideMimeType(req.mimeType);
+			}
+
 			xhr.responseType = req.responseType || "";
 
 			var headers = req.headers;
