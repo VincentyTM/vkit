@@ -31,7 +31,7 @@ export default function bindSelect(signal: WritableSignal<string>): View<HTMLSel
 		{
 			value: signal,
 			onchange: function() {
-				signal.set((this as HTMLSelectElement).value);
+				signal.set(this.value);
 			}
 		}
 	];

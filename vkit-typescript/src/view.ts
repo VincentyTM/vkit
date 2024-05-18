@@ -13,7 +13,7 @@ export type View<ContextT = unknown> = (
 	| null
 	| undefined
 	| ArrayLike<View<ContextT>>
-	| Bindings<ContextT>
+	| Omit<Bindings<ContextT>, number>
 	| Generator<View<ContextT>, View<ContextT>>
 	| Signal<unknown>
 	| ((element: ContextT) => void)
