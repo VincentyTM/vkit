@@ -23,13 +23,16 @@ import type {View} from "./view.js";
 export default function bindSelect(signal: WritableSignal<string>): View<HTMLSelectElement> {
 	return [
 		function(el) {
-			tick(function() {
+			function updateValue(): void {
 				el.value = signal.get();
+			}
+			
+			signal.effect(function() {
+				tick(updateValue);
 			});
 		},
 		
 		{
-			value: signal,
 			onchange: function() {
 				signal.set(this.value);
 			}

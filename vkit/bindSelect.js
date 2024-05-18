@@ -10,13 +10,16 @@ function bindSelect(signal) {
 	
 	return [
 		function(el) {
-			tick(function() {
+			function updateValue() {
 				el.value = signal.get();
+			}
+			
+			signal.effect(function() {
+				tick(updateValue);
 			});
 		},
 		
 		{
-			value: signal,
 			onchange: function() {
 				signal.set(this.value);
 			}
