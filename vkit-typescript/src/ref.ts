@@ -1,9 +1,14 @@
 import {getComponent} from "./contextGuard.js";
 import onUnmount from "./onUnmount.js";
 
-type Ref<T> = {
+type MutableRef<T> = {
 	(value: T): void;
 	current: T | null;
+};
+
+type Ref<T> = {
+	(value: T): void;
+	readonly current: T | null;
 };
 
 /**
@@ -31,7 +36,7 @@ export default function createRef<T = HTMLElement>(): Ref<T> {
 		ref.current = null;
 	}
 	
-	var ref = <Ref<T>>function (value: T): void {
+	var ref = function(value: T): void {
 		if (ref.current) {
 			throw new Error("This reference has already been set.");
 		}
@@ -41,7 +46,7 @@ export default function createRef<T = HTMLElement>(): Ref<T> {
 		if (getComponent() !== component) {
 			onUnmount(reset);
 		}
-	};
+	} as MutableRef<T>;
 	
 	var component = getComponent(true);
 	ref.current = null;
