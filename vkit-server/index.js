@@ -53,6 +53,7 @@ export {default as bindSelect} from "./bindSelect.js";
 export {default as bindText} from "./bindText.js";
 export {default as classes} from "./classes.js";
 export {default as classNames} from "./classNames.js";
+export {default as createCSS} from "./createCSS.js";
 export {default as computed} from "./computed.js";
 export {default as concat} from "./concat.js";
 export {default as cookies} from "./cookies.js";
