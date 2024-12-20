@@ -1,35 +1,12 @@
 (function($) {
 
+var cssBlock = $.cssBlock;
 var onUnmount = $.onUnmount;
 var styleContainer = $.styleContainer;
 var tick = $.tick;
 
 var map = typeof WeakMap === "function" ? new WeakMap() : null;
 var styleCount = 0;
-
-function prependHyphen(text) {
-	return "-" + text;
-}
-
-function prepareCSS(css, selector) {
-	if (typeof css === "string") {
-		return css.replace(/::?this\b/ig, selector);
-	}
-	
-	var a = [selector, "{"];
-	
-	for (var prop in css) {
-		var val = css[prop];
-		
-		if (val) {
-			prop = prop.replace(/[A-Z]/g, prependHyphen).toLowerCase();
-			a.push(prop, ":", val, ";");
-		}
-	}
-	
-	a.push("}");
-	return a.join("");
-}
 
 function getRootNode(el) {
 	if (el.getRootNode) {
@@ -94,13 +71,18 @@ function createStyle(css, attr) {
 		tick(function() {
 			container = getStyleContainer(el);
 			controller = container.add(selector);
-			controller.setValue(prepareCSS(css && typeof css.get === "function" ? css.get() : css, selector));
+			controller.setValue(
+				cssBlock(
+					selector,
+					css && typeof css.get === "function" ? css.get() : css
+				)
+			);
 		});
 		
 		if (css && typeof css.subscribe === "function") {
 			css.subscribe(function(value) {
 				if (controller) {
-					controller.setValue(prepareCSS(value, selector));
+					controller.setValue(cssBlock(selector, value));
 				}
 			});
 		}
