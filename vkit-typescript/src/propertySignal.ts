@@ -1,6 +1,6 @@
 import computed from "./computed.js";
 import get from "./get.js";
-import objectAssign from "./objectAssign.js";
+import { objectAssign } from "./objectAssign.js";
 import type {Signal, WritableSignal} from "./signal.js";
 import writable from "./writable.js";
 
