@@ -82,6 +82,7 @@ export {default as isSignal} from "./isSignal.js";
 export {default as isWritableSignal} from "./isWritableSignal.js";
 export {default as lazy} from "./lazy.js";
 export {default as map} from "./map.js";
+export {default as mapObject} from "./mapObject.js";
 export {default as mediaQuery} from "./mediaQuery.js";
 export {default as meta} from "./meta.js";
 export {default as navigate} from "./navigate.js";
