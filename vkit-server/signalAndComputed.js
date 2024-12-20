@@ -104,6 +104,7 @@ export function computed(getValue, inputs) {
 	get.effect = noop;
 	get.get = get;
 	get.invalidate = invalidate;
+	get.isSignal = true;
 	get.map = map;
 	get.pipe = pipe;
 	get.prop = prop;
@@ -128,6 +129,7 @@ export function signal(value) {
 	get.component = null;
 	get.effect = noop;
 	get.get = get;
+	get.isSignal = true;
 	get.map = map;
 	get.pipe = pipe;
 	get.prop = prop;
