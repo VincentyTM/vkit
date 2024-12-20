@@ -2,7 +2,7 @@ import {getComponent, getInjector, setComponent, setInjector} from "./contextGua
 import throwError from "./throwError.js";
 import type {View} from "./view.js";
 
-export default function context<ContextT>(): (getView: () => View<ContextT>) => View<ContextT> {
+export default function getContext<ContextT>(): (getView: () => View<ContextT>) => View<ContextT> {
 	var component = getComponent();
 	var injector = getInjector();
 	

@@ -1,4 +1,4 @@
-import getContext from "./context.js";
+import getContext from "./getContext.js";
 import inject from "./inject.js";
 import type {View} from "./view.js";
 
