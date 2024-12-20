@@ -31,8 +31,10 @@ export {
 	styledHtmlTag,
 	htmlTag as svgTag,
 	htmlTags as svgTags,
+	noop as tick,
 	noop as timeout,
 	noop as unmount,
+	noop as update,
 	returnComputedNull as updatePrompt,
 	userMedia,
 	returnComputedNullWithOnError as webPush,
@@ -100,6 +102,7 @@ export {default as propertySignal} from "./propertySignal.js";
 export {default as provide} from "./provide.js";
 export {default as queryParams} from "./queryParams.js";
 export {default as queryParamsState} from "./queryParamsState.js";
+export {default as readOnly} from "./readOnly.js";
 export {default as ref} from "./ref.js";
 export {default as repeat} from "./repeat.js";
 export {default as router} from "./router.js";
