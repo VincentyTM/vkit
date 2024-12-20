@@ -1,19 +1,18 @@
-(function($){
+(function($) {
 
-var createComputedSignal = $.computed;
+var computed = $.computed;
 
-function map(transform){
-	function getComputed(){
-		return createComputedSignal(transform, arguments);
+function map(selector) {
+	function getComputed() {
+		return computed(selector, arguments);
 	}
 	
-	getComputed.get = transform;
-	
+	getComputed.get = selector;
 	return getComputed;
 }
 
-function mapThis(transform){
-	return createComputedSignal(transform, this);
+function mapThis(selector) {
+	return computed(selector, this);
 }
 
 $.map = map;
