@@ -8,7 +8,7 @@ type MapType<M extends (...args: never[]) => unknown> = (
 	get: M;
 };
 
-function map<M extends (...args: any[]) => unknown>(transform: M): MapType<M> {
+export default function map<M extends (...args: any[]) => unknown>(transform: M): MapType<M> {
 	function getComputed(...params: ArrayOfMaybeSignals<Parameters<M>>): ComputedSignal<ReturnType<M>>;
 
 	function getComputed() {
@@ -19,5 +19,3 @@ function map<M extends (...args: any[]) => unknown>(transform: M): MapType<M> {
 
 	return getComputed;
 }
-
-export default map;
