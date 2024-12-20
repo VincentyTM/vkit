@@ -408,7 +408,7 @@ export default function signal<T>(value: T): WritableSignal<T> {
 		}
 	}
 	
-	use.add = add;
+	use.add = addToSignal;
 	use.component = parent;
 	use.effect = signalEffect;
 	use.get = get;
@@ -420,28 +420,28 @@ export default function signal<T>(value: T): WritableSignal<T> {
 	use.set = set;
 	use.setEagerly = setEagerly;
 	use.subscribe = subscribe;
-	use.toggle = toggle;
-	use.toString = toString;
-	use.update = update;
+	use.toggle = toggleSignal;
+	use.toString = signalToString;
+	use.update = updateSignal;
 	use.view = view;
 	use.views = views;
 	
 	return use as WritableSignal<T>;
 }
 
-export function add<T>(this: WritableSignal<T>, value: T): void {
+export function addToSignal<T>(this: WritableSignal<T>, value: T): void {
 	this.set((this.get() as any) + value);
 }
 
-export function toggle(this: WritableSignal<boolean>): void {
+export function toggleSignal(this: WritableSignal<boolean>): void {
 	this.set(!this.get());
 }
 
-export function toString(this: WritableSignal<unknown>): string {
+export function signalToString(this: WritableSignal<unknown>): string {
 	return "[object WritableSignal(" + this.get() + ")]";
 }
 
-export function update<T, A>(
+export function updateSignal<T, A>(
 	this: WritableSignal<T>,
 	transform: (state: T, action?: A) => T,
 	action?: A
