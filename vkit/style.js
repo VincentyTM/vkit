@@ -1,8 +1,8 @@
 (function($) {
 
 var cssBlock = $.cssBlock;
+var createStyleContainer = $.createStyleContainer;
 var onUnmount = $.onUnmount;
-var styleContainer = $.styleContainer;
 var tick = $.tick;
 
 var map = typeof WeakMap === "function" ? new WeakMap() : null;
@@ -38,7 +38,7 @@ function getStyleContainer(el) {
 		return container;
 	}
 	
-	var container = styleContainer();
+	var container = createStyleContainer();
 	var styleEl = container.element;
 	
 	if (map) {

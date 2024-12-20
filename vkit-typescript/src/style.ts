@@ -1,4 +1,4 @@
-import createStyleContainer, {type StyleContainer, type StyleController} from "./styleContainer.js";
+import createStyleContainer, {type StyleContainer, type StyleController} from "./createStyleContainer.js";
 import onUnmount from "./onUnmount.js";
 import type {Signal} from "./signal.js";
 import tick from "./tick.js";

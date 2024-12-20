@@ -108,6 +108,6 @@ function createStyleContainer() {
 	};
 }
 
-$.styleContainer = createStyleContainer;
+$.createStyleContainer = createStyleContainer;
 
 })($, document);
