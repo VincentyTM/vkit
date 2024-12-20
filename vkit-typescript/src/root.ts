@@ -1,4 +1,4 @@
-import component from "./createComponent.js";
+import createComponent from "./createComponent.js";
 import createInjector from "./createInjector.js";
 import createProvider from "./createProvider.js";
 import type {Config, ConfigClass} from "./provide.js";
@@ -17,6 +17,6 @@ var rootInjector = createInjector(null, function(token): InstanceType<ConfigClas
 	return provider.getInstance();
 });
 
-var rootComponent = component(mount, null, rootInjector);
+var rootComponent = createComponent(mount, null, rootInjector);
 
 export {rootComponent, rootInjector};

@@ -4,11 +4,11 @@ import type {Injector} from "./createInjector.js";
 import emitUnmount from "./emitUnmount.js";
 import hashCode from "./hashCode.js";
 import insert from "./insert.js";
-import createNodeRange from "./nodeRange.js";
 import {enqueueUpdate} from "./update.js";
 import type {NodeRange} from "./nodeRange.js";
 import type {Signal} from "./signal.js";
 import { isArray } from "./isArray.js";
+import nodeRange from "./nodeRange.js";
 import throwError from "./throwError.js";
 import toArray from "./toArray.js";
 import type {View} from "./view.js";
@@ -31,7 +31,7 @@ function createBlock<ItemT>(
 	container: Component | null,
 	injector: Injector | null
 ): Block {
-	var range = createNodeRange(true);
+	var range = nodeRange(true);
 	
 	var component = createComponent(function(): void {
 		var view = getView(model, block);
@@ -89,7 +89,7 @@ export default function views<ViewT extends View<ContextT>, ItemT, ContextT>(
 	var signal = this;
 	var container = getComponent();
 	var injector = getInjector();
-	var range = createNodeRange();
+	var range = nodeRange();
 	var oldBlocks: {[key: string]: Block} = {};
 	var array: Block[] = [];
 	

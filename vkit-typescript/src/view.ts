@@ -1,6 +1,6 @@
 import type {Bindings} from "./bind.js";
 import createComponent from "./createComponent.js";
-import createNodeRange from "./nodeRange.js";
+import nodeRange from "./nodeRange.js";
 import {enqueueUpdate} from "./update.js";
 import isSignal from "./isSignal.js";
 import type {Signal} from "./signal.js";
@@ -53,7 +53,7 @@ export default function view<ViewT extends View<ContextT>, ValueT, ContextT>(
 	getCurrentView: (value: ValueT | null) => ViewT
 ) : View<ContextT> {
 	var component = createComponent(mount);
-	var range = createNodeRange(true);
+	var range = nodeRange(true);
 	var render = component.render;
 	var signal: Signal<ValueT> | null | void = this;
 	
