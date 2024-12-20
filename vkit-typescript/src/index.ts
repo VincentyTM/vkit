@@ -11,6 +11,7 @@ export {default as computed, type ComputedSignal} from "./computed.js";
 export {default as customElement} from "./customElement.js";
 export {default as deriveSignal} from "./deriveSignal.js";
 export {default as effect} from "./effect.js";
+export { frameContent } from "./frameContent.js";
 export {default as get} from "./get.js";
 export {default as getDocument} from "./getDocument.js";
 export {default as getWindow} from "./getWindow.js";
