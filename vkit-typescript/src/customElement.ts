@@ -2,7 +2,7 @@ import append from "./append.js";
 import bind from "./bind.js";
 import createComponent, {type Component} from "./createComponent.js";
 import createInjector from "./createInjector.js";
-import createProvider from "./provider.js";
+import createProvider from "./createProvider.js";
 import emitUnmount from "./emitUnmount.js";
 import empty from "./empty.js";
 import {getValueFromClass} from "./root.js";

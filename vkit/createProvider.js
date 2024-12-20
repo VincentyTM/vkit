@@ -30,6 +30,6 @@ function createProvider(createInstance, config, component) {
 	};
 }
 
-$.provider = createProvider;
+$.createProvider = createProvider;
 
 })($);

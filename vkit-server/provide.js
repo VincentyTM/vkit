@@ -1,6 +1,6 @@
 import {getInjector, setInjector} from "./contextGuard.js";
 import createInjector from "./createInjector.js";
-import createProvider from "./provider.js";
+import createProvider from "./createProvider.js";
 import inject from "./inject.js";
 
 function getValueFromClass(config) {

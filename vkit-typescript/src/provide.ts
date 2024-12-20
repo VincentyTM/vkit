@@ -1,5 +1,5 @@
 import createInjector, {type TokenLike} from "./createInjector.js";
-import createProvider, {type Provider} from "./provider.js";
+import createProvider, {type Provider} from "./createProvider.js";
 import {getComponent, getInjector, setInjector} from "./contextGuard.js";
 import inject from "./inject.js";
 

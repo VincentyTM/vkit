@@ -1,7 +1,7 @@
 (function($) {
 
 var createInjector = $.createInjector;
-var createProvider = $.provider;
+var createProvider = $.createProvider;
 var getComponent = $.getComponent;
 var getInjector = $.getInjector;
 var inject = $.inject;

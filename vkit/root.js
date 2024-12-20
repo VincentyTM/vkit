@@ -2,7 +2,7 @@
 
 var createComponent = $.createComponent;
 var createInjector = $.createInjector;
-var createProvider = $.provider;
+var createProvider = $.createProvider;
 
 function mount() {
 	throw new Error("The root component cannot be rerendered");
