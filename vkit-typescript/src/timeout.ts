@@ -10,7 +10,7 @@ import update from "./update.js";
  * }, 1000);
  * The @param callback function runs once after @param delay milliseconds.
  */
-export default function createTimeout(callback: () => void, delay: number): void {
+export default function timeout(callback: () => void, delay: number): void {
 	var win = getWindow()!;
 	var timeout = win.setTimeout(tick, delay);
 	

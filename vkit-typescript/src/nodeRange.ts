@@ -12,7 +12,7 @@ export type NodeRange = {
 	start: ChildNode;
 };
 
-export default function createNodeRange(crossView?: boolean) : NodeRange {
+export default function nodeRange(crossView?: boolean): NodeRange {
 	var start: ChildNode = document.createTextNode("");
 	var end: ChildNode = document.createTextNode("");
 	

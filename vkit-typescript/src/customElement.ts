@@ -49,7 +49,7 @@ function attrToPropName(attrName: string): string {
 	return attrName.toLowerCase().replace(/\-[a-z]/g, replaceHyphens);
 }
 
-export default function createCustomElement(
+export default function customElement(
 	name: string,
 	getView: CustomElementGetView,
 	options?: CustomElementOptions

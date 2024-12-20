@@ -79,7 +79,7 @@ function addAttribute(el: HTMLElement, name: string, value: ReactiveAttributeVal
  * True is converted to an empty string, while false means the attribute should be removed (similarly to null).
  * @returns A function directive which can be added to an HTML element.
  */
-export default function bindAttributes(attributes: Attributes): (element: HTMLElement) => void {
+export default function attributes(attributes: Attributes): (element: HTMLElement) => void {
 	return function(element: HTMLElement): void {
 		for (var name in attributes) {
 			addAttribute(element, name, attributes[name]);

@@ -11,7 +11,7 @@ import update from "./update.js";
  * @param callback A function which runs periodically.
  * @param delay The time delay in milliseconds between two function calls.
  */
-export default function createInterval(callback: () => void, delay: number): void {
+export default function interval(callback: () => void, delay: number): void {
 	var win = getWindow()!;
 	var interval = win.setInterval(tick, delay);
 	

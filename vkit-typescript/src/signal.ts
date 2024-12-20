@@ -314,7 +314,7 @@ export type WritableSignal<T> = Signal<T> & {
  * @param value The initial value of the signal.
  * @returns A writable signal.
  */
-export default function createWritableSignal<T>(value: T): WritableSignal<T> {
+export default function signal<T>(value: T): WritableSignal<T> {
 	type Subscription = {
 		callback: ((value: T) => void) | null;
 	};

@@ -6,11 +6,11 @@ export type Observable<T> = {
 	subscribe(callback: (value: T) => void): () => void;
 };
 
-export default function createObservable<T>(): Observable<T> {
+export default function observable<T>(): Observable<T> {
 	var callbacks: ((value: T) => void)[] = [];
 	var n = 0;
 	
-	function observable(value: T): void {
+	function call(value: T): void {
 		for (var i = 0; i < n; i += 2) {
 			callbacks[i](value);
 		}
@@ -55,10 +55,10 @@ export default function createObservable<T>(): Observable<T> {
 		return false;
 	}
 	
-	observable.subscribe = subscribe;
-	observable.count = getCount;
-	observable.clear = clear;
-	observable.has = has;
+	call.subscribe = subscribe;
+	call.count = getCount;
+	call.clear = clear;
+	call.has = has;
 	
-	return observable as Observable<T>;
+	return call as Observable<T>;
 }
