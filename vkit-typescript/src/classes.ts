@@ -1,5 +1,5 @@
 import effect from "./effect.js";
-import isArray from "./isArray.js";
+import { isArray } from "./isArray.js";
 import isSignal from "./isSignal.js";
 import onUnmount from "./onUnmount.js";
 import type {Signal} from "./signal.js";
