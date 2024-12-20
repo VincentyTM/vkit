@@ -116,6 +116,7 @@ export {default as theme} from "./theme.js";
 export {default as thenable} from "./thenable.js";
 export {default as title} from "./title.js";
 export {default as toArray} from "./toArray.js";
+export {default as unipack} from "./unipack.js";
 export {default as untracked} from "./untracked.js";
 export {default as useKey} from "./useKey.js";
 export {default as view} from "./view.js";
