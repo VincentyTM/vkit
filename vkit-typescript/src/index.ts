@@ -24,6 +24,7 @@ export {default as inject} from "./inject.js";
 export {default as interval} from "./interval.js";
 export {default as is} from "./is.js";
 export {default as isSignal} from "./isSignal.js";
+export { isWindowFocused } from "./isWindowFocused.js";
 export {default as isWritableSignal} from "./isWritableSignal.js";
 export { lazyArray } from "./lazyArray.js";
 export {default as map} from "./map.js";
