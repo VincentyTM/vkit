@@ -61,6 +61,7 @@ export {default as customElement} from "./customElement.js";
 export {default as deriveSignal} from "./deriveSignal.js";
 export {default as dialogs} from "./dialogs.js";
 export {default as dragZone} from "./dragZone.js";
+export {default as dynamicStyle} from "./dynamicStyle.js";
 export {default as emitter} from "./emitter.js";
 export {default as errorBoundary} from "./errorBoundary.js";
 export {default as escapeHTML} from "./escapeHTML.js";
