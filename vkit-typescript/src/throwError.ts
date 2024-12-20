@@ -5,15 +5,23 @@ export default function throwError(error: any, component: Component | null): voi
 		if (component.parent && component.stack && error && typeof error.stack === "string" && error.stack.indexOf(component.stack) === -1) {
 			error.stack += "\n" + component.stack;
 		}
+
+		var errorHandlers = component.errorHandlers;
 		
-		if (component.emitError) {
+		if (errorHandlers) {
 			try {
-				component.emitError(error);
+				var n = errorHandlers.length;
+
+				for (var i = 0; i < n; ++i) {
+					errorHandlers[i](error);
+				}
+
 				return;
 			} catch (ex) {
 				error = ex;
 			}
 		}
+		
 		component = component.parent;
 	}
 

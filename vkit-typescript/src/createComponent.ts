@@ -6,7 +6,7 @@ import throwError from "./throwError.js";
 
 export type Component = {
 	children: Component[] | null;
-	emitError: ((error: any) => void) | null;
+	errorHandlers: ((error: unknown) => void)[] | null;
 	parent: Component | null;
 	render: () => void;
 	stack: string | undefined;
@@ -22,7 +22,7 @@ export default function createComponent(
 	
 	var component = {
 		children: null,
-		emitError: null,
+		errorHandlers: null,
 		parent: parent === undefined ? getComponent() : parent,
 		render: renderComponent,
 		stack: new Error().stack,
