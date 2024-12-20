@@ -49,6 +49,31 @@ function attrToPropName(attrName: string): string {
 	return attrName.toLowerCase().replace(/\-[a-z]/g, replaceHyphens);
 }
 
+/**
+ * Registers a custom element with the specified name.
+ * The custom element is like a component but independent from the main tree.
+ * The component is created when the element is added to the DOM.
+ * The `onUnmount` callbacks are called when the element is removed from the DOM.
+ * @example
+ * customElement("my-element", ({name}, element) => {
+ * 	return [
+ * 		H1("Hello ", () => name() || "Guest"),
+ * 		Div(
+ * 			element.childNodes
+ * 		)
+ * 	];
+ * }, {
+ * 	observedAttributes: ["name"]
+ * });
+ * 
+ * @param name The name of the custom element. It must contain a hyphen like `my-element`.
+ * @param getView A component that returns a view. It is displayed when the custom element is present in the DOM.
+ * @param options An optional configuration object with the following options:
+ *  - adoptedCallback: A function that is called when the element is adopted.
+ *  - observedAttributes: An array of reactive attribute names that appear in the first parameter as string-signal pairs.
+ *  - window: The window in which the custom element is registered.
+ * @returns The `getView` function so that it can be used as a regular component too.
+ */
 export default function customElement(
 	name: string,
 	getView: CustomElementGetView,
