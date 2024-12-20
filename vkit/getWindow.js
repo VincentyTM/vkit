@@ -1,7 +1,7 @@
 (function($, window){
 
 var bind = $.bind;
-var getContext = $.context;
+var getContext = $.getContext;
 var inject = $.inject;
 
 function WindowService(){

@@ -14,20 +14,20 @@ function getContext() {
 		var prevComponent = getComponent(true);
 		var prevInjector = getInjector(true);
 		
-		try{
+		try {
 			setComponent(component);
 			setInjector(injector);
 			
 			return getView.apply(this, arguments);
-		}catch(error){
+		} catch (error) {
 			throwError(error, component);
-		}finally{
+		} finally {
 			setComponent(prevComponent);
 			setInjector(prevInjector);
 		}
 	};
 }
 
-$.context = getContext;
+$.getContext = getContext;
 
 })($);
