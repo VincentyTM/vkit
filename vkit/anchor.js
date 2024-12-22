@@ -3,7 +3,7 @@
 var nodeRange = $.nodeRange;
 var signal = $.signal;
 
-function useAnchor(view){
+function anchor(view) {
 	var currentAnchor = signal(document.createTextNode(""));
 	var range = nodeRange();
 	
@@ -32,6 +32,6 @@ function useAnchor(view){
 	return currentAnchor;
 }
 
-$.anchor = useAnchor;
+$.anchor = anchor;
 
 })($, document);
