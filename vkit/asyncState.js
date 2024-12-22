@@ -1,13 +1,13 @@
 (function($){
 
-var createState = $.state;
 var readOnly = $.readOnly;
+var signal = $.signal;
 var update = $.update;
 
 function createAsyncState(input, callAsync, onError, getInitialValue){
 	var isFunction = typeof getInitialValue === "function";
-	var pending = createState(false);
-	var result = createState(isFunction ? getInitialValue() : getInitialValue);
+	var pending = signal(false);
+	var result = signal(isFunction ? getInitialValue() : getInitialValue);
 	var queued = false;
 	
 	function stop(){

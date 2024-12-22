@@ -1,7 +1,7 @@
 (function($){
 
 var readOnly = $.readOnly;
-var createState = $.state;
+var signal = $.signal;
 
 function computeValues(states){
 	var n = states.length;
@@ -16,7 +16,7 @@ function computeValues(states){
 }
 
 function valuesOf(stateOfStates){
-	var output = createState();
+	var output = signal();
 	
 	function update(){
 		output.set(computeValues(stateOfStates.get()));

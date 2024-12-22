@@ -1,7 +1,7 @@
 (function($){
 
 var createScript = $.script;
-var createState = $.state;
+var signal = $.signal;
 var update = $.update;
 
 function call(data){
@@ -46,7 +46,7 @@ function preloadComponent(promise, pendingComponent, errorComponent){
 		}
 		
 		var args = arguments;
-		var state = createState([pendingComponent, []]);
+		var state = signal([pendingComponent, []]);
 		
 		function onLoad(component){
 			state.set([component, args]);

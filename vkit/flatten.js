@@ -1,10 +1,10 @@
 (function($){
 
-var createState = $.state;
 var readOnly = $.readOnly;
+var signal = $.signal;
 
 function flatten(input){
-	var output = createState();
+	var output = signal();
 	
 	input.effect(function(inner, cleanup){
 		if( inner && typeof inner.get === "function" ){

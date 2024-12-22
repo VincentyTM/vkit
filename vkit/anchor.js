@@ -1,10 +1,10 @@
 (function($, document){
 
-var createState = $.state;
 var createNodeRange = $.nodeRange;
+var signal = $.signal;
 
 function useAnchor(view){
-	var currentAnchor = createState(document.createTextNode(""));
+	var currentAnchor = signal(document.createTextNode(""));
 	var range = createNodeRange();
 	
 	currentAnchor.subscribe(function(anchor){

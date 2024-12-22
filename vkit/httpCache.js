@@ -1,7 +1,7 @@
 (function($){
 
 var readOnly = $.readOnly;
-var createState = $.state;
+var signal = $.signal;
 
 function noop(value){
 	return value;
@@ -13,7 +13,7 @@ function httpCache(params){
 	var defaultValue = params.defaultValue;
 	var parse = typeof params.parse === "function" ? params.parse : noop;
 	var onError = typeof params.onError === "function" ? params.onError : noop;
-	var state = createState(defaultValue);
+	var state = signal(defaultValue);
 	
 	function setValue(value){
 		if( value === null || value === undefined ){

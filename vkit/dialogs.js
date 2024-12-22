@@ -1,13 +1,13 @@
 (function($){
 
 var inject = $.inject;
-var createState = $.state;
+var signal = $.signal;
 
 function Dialogs(){
 	if(!(this instanceof Dialogs)){
 		return inject(Dialogs);
 	}
-	var openDialogs = createState([]);
+	var openDialogs = signal([]);
 	
 	function opener(component, only){
 		return function(){
