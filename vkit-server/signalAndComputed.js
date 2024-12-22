@@ -7,19 +7,8 @@ export function add(value) {
 	this.set(this.get() + value);
 }
 
-function map() {
-	var args = arguments;
-	var n = args.length;
-	
-	function transform(value) {
-		for (var i = 0; i < n; ++i) {
-			value = args[i](value);
-		}
-		
-		return value;
-	}
-	
-	return computed(n === 1 ? args[0] : transform, [this]);
+function map(transform) {
+	return computed(transform, [this]);
 }
 
 function pipe(output, transform) {
