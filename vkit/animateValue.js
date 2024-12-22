@@ -1,17 +1,17 @@
-(function($){
+(function($) {
 
 var animate = $.animate;
 var update = $.update;
 
-function animateValue(signal, duration, options){
+function animateValue(signal, duration, options) {
 	var easing = options ? options.easing : null;
 	var blocking = options ? options.blocking : false;
 	var animation = null;
 	var lastT = 0;
 	
-	function set(value){
-		if( animation ){
-			if( blocking ){
+	function set(value) {
+		if (animation) {
+			if (blocking) {
 				return;
 			}
 			
@@ -22,16 +22,16 @@ function animateValue(signal, duration, options){
 		var oldValue = signal.get();
 		var currT = lastT;
 		
-		animation = animate(function(t){
-			if( t < 1 ){
+		animation = animate(function(t) {
+			if (t < 1) {
 				lastT = t;
 				
-				if( easing ){
+				if (easing) {
 					t = easing(t);
 				}
 				
 				signal.set(oldValue * (1 - t) + value * t);
-			}else{
+			} else {
 				lastT = 0;
 				signal.set(value);
 				animation = null;
@@ -41,11 +41,11 @@ function animateValue(signal, duration, options){
 		}, duration * (1 - currT));
 	}
 	
-	function add(value){
+	function add(value) {
 		set(signal.get() + value);
 	}
 	
-	function apply(func){
+	function apply(func) {
 		set(func(signal.get()));
 	}
 	

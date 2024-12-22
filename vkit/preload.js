@@ -1,27 +1,27 @@
-(function($){
+(function($) {
 
 var createScript = $.script;
 var signal = $.signal;
 var update = $.update;
 
-function call(data){
+function call(data) {
 	return data[0].apply(null, data[1]);
 }
 
-function emptyComponent(){
+function emptyComponent() {
 	return null;
 }
 
-function preloadComponent(promise, pendingComponent, errorComponent){
-	if(!pendingComponent){
+function preloadComponent(promise, pendingComponent, errorComponent) {
+	if (!pendingComponent) {
 		pendingComponent = emptyComponent;
 	}
 	
-	if(!errorComponent){
+	if (!errorComponent) {
 		errorComponent = emptyComponent;
 	}
 	
-	if(!promise || typeof promise.then !== "function"){
+	if (!promise || typeof promise.then !== "function") {
 		promise = createScript(promise);
 	}
 	
@@ -29,31 +29,31 @@ function preloadComponent(promise, pendingComponent, errorComponent){
 	var failed = false;
 	var exception;
 	
-	promise.then(function(component){
+	promise.then(function(component) {
 		successComponent = component;
-	}, function(ex){
+	}, function(ex) {
 		failed = true;
 		exception = ex;
 	});
 	
-	return function(){
-		if( successComponent ){
+	return function() {
+		if (successComponent) {
 			return successComponent.apply(null, arguments);
 		}
 		
-		if( failed ){
+		if (failed) {
 			return errorComponent(exception);
 		}
 		
 		var args = arguments;
 		var state = signal([pendingComponent, []]);
 		
-		function onLoad(component){
+		function onLoad(component) {
 			state.set([component, args]);
 			update();
 		}
 		
-		function onError(ex){
+		function onError(ex) {
 			state.set([errorComponent, [ex]]);
 			update();
 		}

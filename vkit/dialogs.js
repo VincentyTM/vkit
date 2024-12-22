@@ -1,4 +1,4 @@
-(function($){
+(function($) {
 
 var inject = $.inject;
 var signal = $.signal;
@@ -15,35 +15,38 @@ function Dialogs(){
 		};
 	}
 	
-	function open(component, args, only){
+	function open(component, args, only) {
 		var dialog = {
-			render: function(){
+			render: function() {
 				return component.apply(dialog, args);
 			},
-			close: function(){
+			close: function() {
 				close(dialog);
 			}
 		};
+		
 		openDialogs.set(only ? [dialog] : openDialogs.get().concat([dialog]));
+		
 		return dialog;
 	}
 	
-	function close(dialog){
+	function close(dialog) {
 		var dialogs = openDialogs.get();
-		for(var i=dialogs.length; i--;){
-			if( dialogs[i] === dialog ){
+		
+		for (var i = dialogs.length; i--;) {
+			if (dialogs[i] === dialog) {
 				openDialogs.set(dialogs.slice(0, i).concat(dialogs.slice(i + 1)));
 				break;
 			}
 		}
 	}
 	
-	function closeAll(){
+	function closeAll() {
 		openDialogs.set([]);
 	}
 	
-	function render(){
-		return openDialogs.views(function(dialog){
+	function render() {
+		return openDialogs.views(function(dialog) {
 			return dialog;
 		});
 	}
@@ -55,7 +58,7 @@ function Dialogs(){
 	this.render = render;
 }
 
-Dialogs.opener = function(component, only){
+Dialogs.opener = function(component, only) {
 	return inject(Dialogs).opener(component, only);
 };
 

@@ -3,11 +3,11 @@
 var readOnly = $.readOnly;
 var signal = $.signal;
 
-function noop(value){
+function noop(value) {
 	return value;
 }
 
-function httpCache(params){
+function httpCache(params) {
 	var httpState = params.http;
 	var storageState = params.storage;
 	var defaultValue = params.defaultValue;
@@ -15,41 +15,43 @@ function httpCache(params){
 	var onError = typeof params.onError === "function" ? params.onError : noop;
 	var state = signal(defaultValue);
 	
-	function setValue(value){
-		if( value === null || value === undefined ){
+	function setValue(value) {
+		if (value === null || value === undefined) {
 			state.set(defaultValue);
-		}else{
-			try{
+		} else {
+			try {
 				state.set(parse(value));
-			}catch(ex){
+			} catch (ex) {
 				onError(ex);
 			}
 		}
 	}
 	
-	if( storageState ){
-		if( typeof storageState.effect === "function" ){
+	if (storageState) {
+		if (typeof storageState.effect === "function") {
 			storageState.effect(setValue);
-		}else if( typeof storageState.get === "function" ){
+		} else if (typeof storageState.get === "function") {
 			setValue(storageState.get());
 		}
 	}
 	
-	if( httpState && typeof httpState.effect === "function" ){
-		httpState.effect(function(res){
-			if( res.unsent || res.progress ){
+	if (httpState && typeof httpState.effect === "function") {
+		httpState.effect(function(res) {
+			if (res.unsent || res.progress) {
 				return;
 			}
-			if( res.status === 200 ){
-				try{
+			
+			if (res.status === 200) {
+				try {
 					state.set(parse(res.body));
-					if( storageState && typeof storageState.set === "function" ){
+					
+					if (storageState && typeof storageState.set === "function") {
 						storageState.set(res.body);
 					}
-				}catch(ex){
+				} catch (ex) {
 					onError(ex);
 				}
-			}else{
+			} else {
 				onError(new Error("HTTP status is " + res.status));
 			}
 		});

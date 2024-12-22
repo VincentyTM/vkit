@@ -1,25 +1,26 @@
-(function($){
+(function($) {
 
 var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
 
-function createAsyncState(input, callAsync, onError, getInitialValue){
+function createAsyncState(input, callAsync, onError, getInitialValue) {
 	var isFunction = typeof getInitialValue === "function";
 	var pending = signal(false);
 	var result = signal(isFunction ? getInitialValue() : getInitialValue);
 	var queued = false;
 	
-	function stop(){
+	function stop() {
 		pending.set(false);
-		if( queued ){
+		
+		if (queued) {
 			queued = false;
 			start(input && typeof input.get === "function" ? input.get() : input);
 		}
 	}
 	
-	function start(inputValue){
-		if( pending.get() ){
+	function start(inputValue) {
+		if (pending.get()) {
 			queued = true;
 			return;
 		}
@@ -27,36 +28,37 @@ function createAsyncState(input, callAsync, onError, getInitialValue){
 		pending.set(true);
 		result.set(isFunction ? getInitialValue() : getInitialValue);
 		
-		try{
+		try {
 			var returnValue = callAsync(inputValue);
-			if( returnValue && typeof returnValue.then === "function" ){
-				returnValue.then(function(outputValue){
+			
+			if (returnValue && typeof returnValue.then === "function") {
+				returnValue.then(function(outputValue) {
 					result.set(outputValue);
 					stop();
 					update();
-				}, function(error){
-					if( typeof onError === "function" ){
+				}, function(error) {
+					if (typeof onError === "function") {
 						onError(error);
 					}
 					
 					stop();
 					update();
 				});
-			}else{
+			} else {
 				result.set(returnValue);
 				stop();
 			}
-		}catch(error){
-			if( typeof onError === "function" ){
+		} catch (error) {
+			if (typeof onError === "function") {
 				onError(error);
 			}
 			stop();
 		}
 	}
 	
-	if( input && typeof input.effect === "function" ){
+	if (input && typeof input.effect === "function") {
 		input.effect(start);
-	}else{
+	} else {
 		start(input);
 	}
 	

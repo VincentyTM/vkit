@@ -1,13 +1,13 @@
-(function($){
+(function($) {
 
 var readOnly = $.readOnly;
 var signal = $.signal;
 
-function computeValues(states){
+function computeValues(states) {
 	var n = states.length;
 	var args = new Array(n);
 	
-	for(var i=0; i<n; ++i){
+	for (var i = 0; i < n; ++i) {
 		var state = states[i];
 		args[i] = state && typeof state.get === "function" ? state.get() : state;
 	}
@@ -18,16 +18,17 @@ function computeValues(states){
 function valuesOf(stateOfStates){
 	var output = signal();
 	
-	function update(){
+	function update() {
 		output.set(computeValues(stateOfStates.get()));
 	}
 	
-	stateOfStates.effect(function(states){
+	stateOfStates.effect(function(states) {
 		var n = states.length;
 		
-		for(var i=0; i<n; ++i){
+		for (var i = 0; i < n; ++i) {
 			var state = states[i];
-			if( state && typeof state.subscribe === "function" ){
+			
+			if (state && typeof state.subscribe === "function") {
 				state.subscribe(update);
 			}
 		}

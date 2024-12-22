@@ -1,4 +1,4 @@
-(function($){
+(function($) {
 
 var readOnly = $.readOnly;
 var signal = $.signal;
@@ -6,16 +6,16 @@ var signal = $.signal;
 function flatten(input){
 	var output = signal();
 	
-	input.effect(function(inner, cleanup){
-		if( inner && typeof inner.get === "function" ){
+	input.effect(function(inner, cleanup) {
+		if (inner && typeof inner.get === "function") {
 			output.set(inner.get());
 			
-			if( typeof inner.subscribe === "function" ){
-				inner.subscribe(function(value){
+			if (typeof inner.subscribe === "function") {
+				inner.subscribe(function(value) {
 					output.set(value);
 				});
 			}
-		}else{
+		} else {
 			output.set(inner);
 		}
 	});

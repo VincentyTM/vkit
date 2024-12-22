@@ -1,4 +1,4 @@
-(function($, document){
+(function($, document) {
 
 var nodeRange = $.nodeRange;
 var signal = $.signal;
@@ -7,21 +7,21 @@ function anchor(view) {
 	var currentAnchor = signal(document.createTextNode(""));
 	var range = nodeRange();
 	
-	currentAnchor.subscribe(function(anchor){
+	currentAnchor.subscribe(function(anchor) {
 		range.insertBefore(anchor);
 	});
 	
-	function bind(el){
+	function bind(el) {
 		currentAnchor.set(el);
 	}
 	
-	function create(){
+	function create() {
 		var anchor = document.createTextNode("");
 		currentAnchor.set(anchor);
 		return anchor;
 	}
 	
-	function render(){
+	function render() {
 		return [range.start, view, range.end, currentAnchor.get()];
 	}
 	

@@ -1,17 +1,17 @@
-import {getComponent, getInjector, setComponent, setInjector} from "./contextGuard.js";
-import createComponent, {type Component} from "./createComponent.js";
-import type {Injector} from "./createInjector.js";
+import { getComponent, getInjector, setComponent, setInjector } from "./contextGuard.js";
+import createComponent, { type Component } from "./createComponent.js";
+import type { Injector } from "./createInjector.js";
 import emitUnmount from "./emitUnmount.js";
 import hashCode from "./hashCode.js";
 import insert from "./insert.js";
-import {enqueueUpdate} from "./update.js";
-import type {NodeRange} from "./nodeRange.js";
-import type {Signal} from "./signal.js";
 import { isArray } from "./isArray.js";
 import nodeRange from "./nodeRange.js";
+import { enqueueUpdate } from "./update.js";
+import type { NodeRange } from "./nodeRange.js";
+import type { Signal } from "./signal.js";
 import throwError from "./throwError.js";
 import toArray from "./toArray.js";
-import type {View} from "./view.js";
+import type { View } from "./view.js";
 
 type Block = {
 	component: Component;
