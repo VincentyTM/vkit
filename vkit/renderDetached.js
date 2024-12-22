@@ -9,7 +9,7 @@ var emitUnmount = $.emitUnmount;
 var getValueFromClass = $.getValueFromClass;
 var inject = $.inject;
 var update = $.update;
-var WindowService = $.windowService;
+var WindowService = $.WindowService;
 
 function renderDetached(getView, parent) {
 	var injector = createInjector(null, function(token) {

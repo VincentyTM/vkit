@@ -4,7 +4,7 @@ var createSignal = $.signal;
 var inject = $.inject;
 var noop = $.noop;
 var onUnmount = $.onUnmount;
-var WindowService = $.windowService;
+var WindowService = $.WindowService;
 
 function getValue(parts, value) {
 	var n = parts.length;

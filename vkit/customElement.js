@@ -10,7 +10,7 @@ var provide = $.provide;
 var signal = $.signal;
 var tick = $.tick;
 var update = $.update;
-var WindowService = $.windowService;
+var WindowService = $.WindowService;
 
 var setPrototypeOf = Object.setPrototypeOf;
 var rendered = false;

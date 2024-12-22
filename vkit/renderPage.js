@@ -6,7 +6,7 @@ var inject = $.inject;
 var renderDetached = $.renderDetached;
 var update = $.update;
 var useHistory = $.history;
-var WindowService = $.windowService;
+var WindowService = $.WindowService;
 
 function renderPage(root, url, callback, tagName, win) {
 	if (!win) {
