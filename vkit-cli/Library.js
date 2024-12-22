@@ -1,4 +1,5 @@
 import fs from "fs";
+import { transformCode } from "./transformCode.js";
 
 export default class Library {
 	constructor(container, name, path) {
@@ -25,7 +26,7 @@ export default class Library {
 	}
 	
 	transformCode(code) {
-		return code;
+		return transformCode(this.name, code);
 	}
 	
 	addDefinition(def) {
