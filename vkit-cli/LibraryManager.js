@@ -14,6 +14,7 @@ export default class LibraryManager {
 	async loadLibraries() {
 		this.output.loadingLibraries();
 		await this.libraryContainer.addDirectory(__dirname + "/../vkit");
+		await this.libraryContainer.addDirectory(__dirname + "/../vkit-typescript/dist");
 		await this.libraryContainer.load();
 		this.output.loadedLibraries();
 	}
