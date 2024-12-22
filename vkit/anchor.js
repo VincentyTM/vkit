@@ -1,11 +1,11 @@
 (function($, document){
 
-var createNodeRange = $.nodeRange;
+var nodeRange = $.nodeRange;
 var signal = $.signal;
 
 function useAnchor(view){
 	var currentAnchor = signal(document.createTextNode(""));
-	var range = createNodeRange();
+	var range = nodeRange();
 	
 	currentAnchor.subscribe(function(anchor){
 		range.insertBefore(anchor);
