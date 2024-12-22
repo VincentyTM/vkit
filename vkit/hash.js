@@ -1,9 +1,9 @@
 (function($) {
 
+var computed = $.computed;
 var getWindow = $.getWindow;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
-var signal = $.signal;
 var useHistory = $.history;
 
 function getHash(url) {
@@ -14,13 +14,14 @@ function getHash(url) {
 function createHashSignal() {
 	var win = getWindow();
 	var location = win.location;
-	var hash = signal(decodeURIComponent(location.hash.substring(1)));
 	var history = useHistory(win);
 	
-	history.url().map(getHash).pipe(hash);
+	var hash = computed(function() {
+		return decodeURIComponent(location.hash.substring(1));
+	});
 	
-	hash.subscribe(function(value) {
-		location.replace("#" + encodeURIComponent(value));
+	history.url().effect(function() {
+		hash.invalidate();
 	});
 	
 	onUnmount(
