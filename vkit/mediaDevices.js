@@ -3,6 +3,7 @@
 var getWindow = $.getWindow;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
+var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
 
@@ -30,7 +31,7 @@ function mediaDevices() {
 		error.set(new Error("MediaDevices API is not supported"));
 	}
 	
-	var result = devices.map();
+	var result = readOnly(devices);
 	result.onError = error.subscribe;
 	return result;
 }

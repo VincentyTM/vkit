@@ -1,5 +1,6 @@
 (function($){
 
+var readOnly = $.readOnly;
 var createState = $.state;
 
 function noop(value){
@@ -54,7 +55,7 @@ function httpCache(params){
 		});
 	}
 	
-	return state.map();
+	return readOnly(state);
 }
 
 $.httpCache = httpCache;

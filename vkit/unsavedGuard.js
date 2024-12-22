@@ -4,6 +4,7 @@ var getWindow = $.getWindow;
 var observable = $.observable;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
+var readOnly = $.readOnly;
 var signal = $.signal;
 
 var count = 0;
@@ -63,7 +64,7 @@ function allSaved() {
 		})
 	);
 	
-	return saved.map();
+	return readOnly(saved);
 }
 
 allSaved.get = function() {

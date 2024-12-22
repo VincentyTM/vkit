@@ -3,6 +3,7 @@
 var getWindow = $.getWindow;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
+var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
 
@@ -48,8 +49,8 @@ function createInstallPrompt() {
 	onUnmount(onEvent(win, "beforeinstallprompt", beforeInstall));
 	onUnmount(onEvent(win, "appinstalled", appInstalled));
 	
-	var installPromptState = installPrompt.map();
-	installPromptState.result = result.map();
+	var installPromptState = readOnly(installPrompt);
+	installPromptState.result = readOnly(result);
 	return installPromptState;
 }
 

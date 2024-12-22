@@ -1,5 +1,6 @@
 (function($){
 
+var readOnly = $.readOnly;
 var createState = $.state;
 
 function computeValues(states){
@@ -34,7 +35,7 @@ function valuesOf(stateOfStates){
 		update();
 	});
 
-	return output.map();
+	return readOnly(output);
 }
 
 $.valuesOf = valuesOf;

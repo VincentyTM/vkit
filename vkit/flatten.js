@@ -1,6 +1,7 @@
 (function($){
 
 var createState = $.state;
+var readOnly = $.readOnly;
 
 function flatten(input){
 	var output = createState();
@@ -19,7 +20,7 @@ function flatten(input){
 		}
 	});
 	
-	return output.map();
+	return readOnly(output);
 }
 
 $.flatten = flatten;

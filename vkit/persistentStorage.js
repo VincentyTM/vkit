@@ -3,6 +3,7 @@
 var getWindow = $.getWindow;
 var noop = $.noop;
 var permission = $.permission;
+var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
 
@@ -34,7 +35,7 @@ function persistentStorage() {
 	
 	return {
 		permission: permission("persistent-storage", requestPermission),
-		persisted: persisted.map()
+		persisted: readOnly(persisted)
 	};
 }
 

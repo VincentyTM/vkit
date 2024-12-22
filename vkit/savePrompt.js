@@ -6,6 +6,7 @@ var navigate = $.navigate;
 var observable = $.observable;
 var onNavigate = $.onNavigate;
 var onUnmount = $.onUnmount;
+var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
 
@@ -101,7 +102,7 @@ function SavePromptService() {
 		})
 	);
 	
-	this.prompt = prompt.map();
+	this.prompt = readOnly(prompt);
 	this.configure = configure;
 }
 

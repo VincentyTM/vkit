@@ -4,6 +4,7 @@ var effect = $.effect;
 var getComponent = $.getComponent;
 var getWindow = $.getWindow;
 var onUnmount = $.onUnmount;
+var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
 
@@ -76,7 +77,7 @@ function createFont(name, url, doc) {
 		onUnmount(remove);
 	}
 	
-	var result = fontFaceState.map();
+	var result = readOnly(fontFaceState);
 	result.onError = error.subscribe;
 	result.remove = remove;
 	result.render = renderFont;

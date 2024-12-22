@@ -3,6 +3,7 @@
 var getWindow = $.getWindow;
 var map = $.map;
 var notification = $.notification;
+var readOnly = $.readOnly;
 var signal = $.signal;
 var tick = $.tick;
 var update = $.update;
@@ -120,7 +121,7 @@ function createWebPushManager(serviceWorker, serverKey) {
 	
 	getSubscription(serviceWorker, serverKey, permission);
 	
-	var result = subscription.map();
+	var result = readOnly(subscription);
 	result.onError = error.subscribe;
 	return result;
 }

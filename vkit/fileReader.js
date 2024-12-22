@@ -2,6 +2,7 @@
 
 var effect = $.effect;
 var onUnmount = $.onUnmount;
+var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
 
@@ -86,7 +87,7 @@ function createFileReader(input, options) {
 		? options.aborter(abort)
 		: onUnmount(abort);
 	
-	return output.map();
+	return readOnly(output);
 }
 
 $.fileReader = createFileReader;

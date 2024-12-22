@@ -1,6 +1,7 @@
 (function($) {
 
 var getWindow = $.getWindow;
+var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
 
@@ -21,7 +22,7 @@ function serviceWorker(src, options) {
 		error.set(new Error("ServiceWorker API is not supported"));
 	}
 	
-	var result = registration.map();
+	var result = readOnly(registration);
 	result.onError = error.subscribe;
 	return result;
 }

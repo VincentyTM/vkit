@@ -4,6 +4,7 @@ var computed = $.computed;
 var getWindow = $.getWindow;
 var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
+var readOnly = $.readOnly;
 var signal = $.signal;
 
 function getInstalling(reg) {
@@ -90,7 +91,7 @@ function createUpdatePrompt(serviceWorker, message, win) {
 		}
 	});
 	
-	return updatePrompt.map();
+	return readOnly(updatePrompt);
 }
 
 $.updatePrompt = createUpdatePrompt;

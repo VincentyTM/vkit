@@ -3,6 +3,7 @@
 var computed = $.computed;
 var getWindow = $.getWindow;
 var onUnmount = $.onUnmount;
+var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
 
@@ -37,7 +38,7 @@ function mediaQuery(query) {
 		});
 	}
 	
-	return matches.map();
+	return readOnly(matches);
 }
 
 $.mediaQuery = mediaQuery;

@@ -1,5 +1,6 @@
 (function($) {
 
+var readOnly = $.readOnly;
 var createSignal = $.signal;
 var update = $.update;
 
@@ -108,7 +109,7 @@ function then(onResolve, onReject) {
 	
 	var unsubscribe = this.subscribe(updateValue, true);
 	updateValue(this.get());
-	return thenable(newSignal.map());
+	return thenable(readOnly(newSignal));
 }
 
 $.thenable = thenable;

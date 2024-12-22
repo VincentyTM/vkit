@@ -2,6 +2,7 @@
 
 var getWindow = $.getWindow;
 var onUnmount = $.onUnmount;
+var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
 
@@ -30,7 +31,7 @@ function useGeoLocation(options) {
 		error.set(new ReferenceError("GeoLocation API is not supported"));
 	}
 	
-	var result = pos.map();
+	var result = readOnly(pos);
 	result.onError = error.subscribe;
 	return result;
 }

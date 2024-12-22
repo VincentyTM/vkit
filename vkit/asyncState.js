@@ -1,6 +1,7 @@
 (function($){
 
 var createState = $.state;
+var readOnly = $.readOnly;
 var update = $.update;
 
 function createAsyncState(input, callAsync, onError, getInitialValue){
@@ -59,8 +60,8 @@ function createAsyncState(input, callAsync, onError, getInitialValue){
 		start(input);
 	}
 	
-	var output = result.map();
-	output.pending = pending.map();
+	var output = readOnly(result);
+	output.pending = readOnly(pending);
 	return output;
 }
 

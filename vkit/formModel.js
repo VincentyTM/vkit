@@ -3,6 +3,7 @@
 var getComponent = $.getComponent;
 var observable = $.observable;
 var onUnmount = $.onUnmount;
+var readOnly = $.readOnly;
 var signal = $.signal;
 
 function not(value) {
@@ -62,7 +63,7 @@ function formModel(data) {
 		onError: submitError.subscribe,
 		onSubmit: submitSuccess.subscribe,
 		update: dataChange,
-		valid: isFormValid.map(),
+		valid: readOnly(isFormValid),
 		validate: validate,
 		
 		validator: function(rule, options) {
@@ -90,7 +91,7 @@ function formModel(data) {
 			
 			return {
 				invalid: isValid.map(not),
-				valid: isValid.map()
+				valid: readOnly(isValid)
 			};
 		}
 	};

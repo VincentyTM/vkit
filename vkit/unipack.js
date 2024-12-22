@@ -2,6 +2,7 @@
 
 var effect = $.effect;
 var onUnmount = $.onUnmount;
+var readOnly = $.readOnly;
 var signal = $.signal;
 var thenable = $.thenable;
 var update = $.update;
@@ -36,7 +37,7 @@ function pack(files) {
 function unpack(currentFile, options) {
 	var result = signal({});
 	var progress = signal();
-	var progressReadonly = progress.map();
+	var progressReadonly = readOnly(progress);
 	var reader = new FileReader();
 	var file;
 	var s;
@@ -157,7 +158,7 @@ function unpack(currentFile, options) {
 		onUnmount(abort);
 	}
 	
-	return thenable(result.map());
+	return thenable(readOnly(result));
 }
 
 $.unipack = {

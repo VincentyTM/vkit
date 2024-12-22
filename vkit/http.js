@@ -3,6 +3,7 @@
 var effect = $.effect;
 var observable = $.observable;
 var onUnmount = $.onUnmount;
+var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
 
@@ -199,7 +200,7 @@ function createResponseState(requestData, options, onAbort) {
 		setRequest(requestData);
 	}
 	
-	var result = responseState.map();
+	var result = readOnly(responseState);
 	result.then = onResponse.subscribe;
 	return result;
 }

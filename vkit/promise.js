@@ -1,5 +1,6 @@
 (function($) {
 
+var readOnly = $.readOnly;
 var signal = $.signal;
 var thenable = $.thenable;
 
@@ -20,7 +21,7 @@ function createPromise(callback) {
 	
 	callback(resolve, reject);
 	
-	return thenable(state.map());
+	return thenable(readOnly(state));
 }
 
 $.promise = createPromise;
