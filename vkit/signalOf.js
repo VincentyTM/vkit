@@ -45,6 +45,5 @@ function signalOf(obj, prop) {
 }
 
 $.signalOf = signalOf;
-$.stateOf = signalOf;
 
 })($);

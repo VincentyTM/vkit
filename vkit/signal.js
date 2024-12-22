@@ -141,6 +141,5 @@ $.signalAdd = add;
 $.signalToggle = toggle;
 $.signalToString = toString;
 $.signalUpdate = update;
-$.state = createWritableSignal;
 
 })($);
