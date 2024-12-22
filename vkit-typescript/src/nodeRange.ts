@@ -1,5 +1,5 @@
 import insert from "./insert.js";
-import removeNode from "./remove.js";
+import remove from "./remove.js";
 import type {View} from "./view.js";
 
 export type NodeRange = {
@@ -30,10 +30,10 @@ export default function nodeRange(crossView?: boolean): NodeRange {
 		}
 	}
 	
-	function remove(): void {
+	function removeRange(): void {
 		clear();
-		removeNode(start);
-		removeNode(end);
+		remove(start);
+		remove(end);
 	}
 	
 	function append(): void {
@@ -82,7 +82,7 @@ export default function nodeRange(crossView?: boolean): NodeRange {
 		clear: clear,
 		end: end,
 		insertBefore: insertBefore,
-		remove: remove,
+		remove: removeRange,
 		render: render,
 		start: start
 	};
