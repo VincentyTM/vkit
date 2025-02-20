@@ -19,6 +19,16 @@ function createRangeArray(length: number): number[] {
 	return array; 
 }
 
+/**
+ * Returns repeated views.
+ * @example
+ * const repeated1 = repeat(100, (i) => P(`Line ${i + 1}!`));
+ * const repeated2 = repeat(signal(100), (i) => P(`Line ${i + 1}!`));
+ * 
+ * @param count The number of repetitions. It can be wrapped in a signal to make it dynamic.
+ * @param getView The function that returns the view for a specific index. The index starts from 0.
+ * @returns A dynamic view list.
+ */
 export default function repeat<T>(
 	count: number,
 	getView: (index: number) => T
