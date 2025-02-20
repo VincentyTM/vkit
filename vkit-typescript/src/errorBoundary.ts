@@ -4,6 +4,36 @@ import signal from "./signal.js";
 import update from "./update.js";
 import type { View } from "./view.js";
 
+/**
+ * Creates and returns an error boundary.
+ * It can be used to catch errors that occur during rendering and display a placeholder.
+ * @example
+ * function MyErrorBoundary() {
+ * 	return errorBoundary(MyComponent, PlaceholderComponent);
+ * }
+ * 
+ * function MyComponent() {
+ * 	// Throw an error with 50% chance
+ * 	if (Math.random() < 0.5) {
+ * 		throw new Error("This is some error");
+ * 	}
+ * 	return "Successfully rendered.";
+ * }
+ * 
+ * function PlaceholderComponent(error: unknown, retry: () => void) {
+ * 	console.error("Error caught by error boundary", error);
+ * 
+ * 	return [
+ * 		P("Some error occurred."),
+ * 		Button("Retry", {
+ * 			onclick: retry
+ * 		})
+ * 	];
+ * }
+ * @param getView A function that returns a view.
+ * @param getFallbackView A function that returns a placeholder view.
+ * @returns The error boundary.
+ */
 export function errorBoundary<T, U>(
 	getView: () => View<T>,
 	getFallbackView: (error: unknown, retry: () => void) => View<U>
