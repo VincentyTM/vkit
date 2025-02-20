@@ -1,6 +1,6 @@
 import bind from "./bind.js";
 import append from "./append.js";
-import type {View} from "./view.js";
+import type { View } from "./view.js";
 
 /**
  * Creates a directive that attaches a shadow root to an element.

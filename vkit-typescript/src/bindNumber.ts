@@ -1,5 +1,5 @@
-import type {WritableSignal} from "./signal.js";
-import type {View} from "./view.js";
+import type { WritableSignal } from "./signal.js";
+import type { View } from "./view.js";
 
 /**
  * Sets up a two-way data binding with number conversion between a writable signal and an input element.

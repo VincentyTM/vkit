@@ -1,5 +1,5 @@
-import {enqueueUpdate} from "./update.js";
-import {getComponent} from "./contextGuard.js";
+import { enqueueUpdate } from "./update.js";
+import { getComponent } from "./contextGuard.js";
 import observe from "./observe.js";
 import onUnmount from "./onUnmount.js";
 

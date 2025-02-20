@@ -1,6 +1,6 @@
-import {getInjector} from "./contextGuard.js";
-import type {Injector, InstanceOf, TokenClass, TokenLike} from "./createInjector.js";
-import type {Provider} from "./createProvider.js";
+import { getInjector } from "./contextGuard.js";
+import type { Injector, InstanceOf, TokenClass, TokenLike } from "./createInjector.js";
+import type { Provider } from "./createProvider.js";
 
 /**
  * This method can be used to inject a service instance instead of passing it as a parameter.

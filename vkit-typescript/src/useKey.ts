@@ -1,7 +1,7 @@
-import computed, {type ComputedSignal} from "./computed.js";
+import computed, { type ComputedSignal } from "./computed.js";
 import isSignal from "./isSignal.js";
-import type {Signal} from "./signal.js";
-import type {View} from "./view.js";
+import type { Signal } from "./signal.js";
+import type { View } from "./view.js";
 
 export type KeyedSignal<T, K> = ComputedSignal<T> & {
 	key: K;

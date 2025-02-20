@@ -1,6 +1,6 @@
-import type {Bindings} from "./bind.js";
+import type { Bindings } from "./bind.js";
 import deepPush from "./deepPush.js";
-import type {View} from "./view.js";
+import type { View } from "./view.js";
 
 export default function append<ItemT extends View<ContextT>, ContextT>(
 	parent: {

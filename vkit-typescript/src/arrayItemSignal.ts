@@ -1,5 +1,5 @@
-import type {ComputedSignal} from "./computed.js";
-import type {WritableSignal} from "./signal.js";
+import type { ComputedSignal } from "./computed.js";
+import type { WritableSignal } from "./signal.js";
 import writable from "./writable.js";
 
 /**

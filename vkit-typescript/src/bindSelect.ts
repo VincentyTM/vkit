@@ -1,6 +1,6 @@
 import tick from "./tick.js";
-import type {WritableSignal} from "./signal.js";
-import type {View} from "./view.js";
+import type { WritableSignal } from "./signal.js";
+import type { View } from "./view.js";
 
 /**
  * Sets up a two-way data binding between a writable signal and a <select> HTML element.

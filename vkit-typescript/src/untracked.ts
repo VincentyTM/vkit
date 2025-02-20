@@ -1,4 +1,4 @@
-import {getComponent, setComponent} from "./contextGuard.js";
+import { getComponent, setComponent } from "./contextGuard.js";
 
 /**
  * Executes a function outside component context.

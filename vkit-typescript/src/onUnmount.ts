@@ -1,8 +1,8 @@
-import {getComponent} from "./contextGuard.js";
-import type {Component} from "./createComponent.js";
+import { getComponent } from "./contextGuard.js";
+import type { Component } from "./createComponent.js";
 import noop from "./noop.js";
 import observable from "./observable.js";
-import {rootComponent} from "./root.js";
+import { rootComponent } from "./root.js";
 
 /**
  * Schedules a callback to be run when the current component is destroyed.

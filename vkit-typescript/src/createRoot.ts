@@ -1,7 +1,7 @@
 import empty from "./empty.js";
 import noop from "./noop.js";
 import renderDetached from "./renderDetached.js";
-import type {View} from "./view.js";
+import type { View } from "./view.js";
 
 export type AppRoot<C> = {
     /**

@@ -1,9 +1,9 @@
 import append from "./append.js";
 import bind from "./bind.js";
-import {rootComponent, rootInjector} from "./root.js";
-import {setComponent, setInjector} from "./contextGuard.js";
+import { rootComponent, rootInjector } from "./root.js";
+import { setComponent, setInjector } from "./contextGuard.js";
 import update from "./update.js";
-import type {View} from "./view.js";
+import type { View } from "./view.js";
 
 /**
  * Renders the root component of the application in the DOM.

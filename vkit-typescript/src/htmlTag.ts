@@ -1,6 +1,6 @@
 import append from "./append.js";
 import bind from "./bind.js";
-import type {View} from "./view.js";
+import type { View } from "./view.js";
 
 export type VirtualHTMLElement<T> = {
 	readonly arguments: View<T>;

@@ -1,6 +1,6 @@
 import effect from "./effect.js";
 import isSignal from "./isSignal.js";
-import type {Signal} from "./signal.js";
+import type { Signal } from "./signal.js";
 
 type Attributes = {
 	[attributeName: string]: ReactiveAttributeValue

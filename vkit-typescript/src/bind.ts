@@ -1,7 +1,7 @@
 import onEvent from "./onEvent.js";
 import onUnmount from "./onUnmount.js";
 import prop from "./prop.js";
-import type {Signal} from "./signal.js";
+import type { Signal } from "./signal.js";
 
 type HTMLSelfClosingElement = (
 	| HTMLAreaElement

@@ -1,5 +1,5 @@
-import {getComponent} from "./contextGuard.js";
-import type {Signal} from "./signal.js";
+import { getComponent } from "./contextGuard.js";
+import type { Signal } from "./signal.js";
 
 type ElementType = {
 	[key: string]: any;

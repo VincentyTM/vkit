@@ -1,7 +1,7 @@
-import {getComponent, getInjector} from "./contextGuard.js";
+import { getComponent, getInjector } from "./contextGuard.js";
 import createComponent from "./createComponent.js";
 import onUnmount from "./onUnmount.js";
-import type {Signal} from "./signal.js";
+import type { Signal } from "./signal.js";
 import signalEffect from "./signalEffect.js";
 import signalPipe from "./signalPipe.js";
 import signalProp from "./signalProp.js";

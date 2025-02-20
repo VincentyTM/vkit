@@ -4,8 +4,8 @@ import effect from "./effect.js";
 import isSignal from "./isSignal.js";
 import onEvent from "./onEvent.js";
 import onUnmount from "./onUnmount.js";
-import type {Signal} from "./signal.js";
-import type {View} from "./view.js";
+import type { Signal } from "./signal.js";
+import type { View } from "./view.js";
 
 type AttributeValue = string | null;
 type Reactive<T> = T | Signal<T> | (() => T);

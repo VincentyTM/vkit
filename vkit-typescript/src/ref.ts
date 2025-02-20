@@ -1,4 +1,4 @@
-import {getComponent} from "./contextGuard.js";
+import { getComponent } from "./contextGuard.js";
 import onUnmount from "./onUnmount.js";
 
 type MutableRef<T> = {

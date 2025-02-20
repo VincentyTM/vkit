@@ -1,4 +1,4 @@
-import computed, {type ComputedSignal} from "./computed.js";
+import computed, { type ComputedSignal } from "./computed.js";
 import getWindow from "./getWindow.js";
 import observable from "./observable.js";
 import onEvent from "./onEvent.js";

@@ -1,5 +1,5 @@
 import htmlTag from "./htmlTag.js";
-import type {View} from "./view.js";
+import type { View } from "./view.js";
 
 type HTMLProxy = {
 	[K in Capitalize<keyof HTMLElementTagNameMap>]: (...contents: View<HTMLElementTagNameMap[Lowercase<K>]>[]) => HTMLElementTagNameMap[Lowercase<K>];
