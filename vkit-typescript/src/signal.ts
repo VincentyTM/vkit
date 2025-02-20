@@ -238,7 +238,6 @@ export type WritableSignal<T> = Signal<T> & {
 	
 	/**
 	 * Sets the signal's value and enqueues a notification of its subscribers.
-	 * It behaves the same as `signal.set(!signal.get());`.
 	 * @example
 	 * const count = signal(10);
 	 * count.subscribe((value) => console.log("The value has changed to: " + value));
@@ -265,6 +264,7 @@ export type WritableSignal<T> = Signal<T> & {
 	/**
 	 * Negates the signal's current value.
 	 * If it is true, it turns into false and vice versa.
+	 * It behaves the same as `signal.set(!signal.get());`.
 	 * @example
 	 * const isVisible = signal(false);
 	 * count.toggle();
