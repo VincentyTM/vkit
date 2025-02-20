@@ -22,6 +22,15 @@ export function dequeueUpdate(callback: () => void): void {
 	}
 }
 
+/**
+ * Synchronizes signal changes immediately with
+ * side effects and views and clears the update queue.
+ * @example
+ * const count = signal(0);
+ * effect(() => console.log("Count:", count())); // Prints 0
+ * count.set(1);
+ * update(); // Prints 1
+ */
 export default function update(): void {
 	var n: number;
 	
