@@ -2,12 +2,12 @@
 
 var signal = $.signal;
 
-function sync(state1, encode, decode, state2){
+function sync(state1, encode, decode, state2) {
 	var value = encode(state1.get());
 	
-	if( state2 ){
+	if (state2) {
 		state2.set(value);
-	}else{
+	} else {
 		state2 = signal(value);
 	}
 	

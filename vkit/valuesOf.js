@@ -15,7 +15,7 @@ function computeValues(states) {
 	return args;
 }
 
-function valuesOf(stateOfStates){
+function valuesOf(stateOfStates) {
 	var output = signal();
 	
 	function update() {

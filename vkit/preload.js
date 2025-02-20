@@ -1,6 +1,6 @@
 (function($) {
 
-var createScript = $.script;
+var script = $.script;
 var signal = $.signal;
 var update = $.update;
 
@@ -22,7 +22,7 @@ function preloadComponent(promise, pendingComponent, errorComponent) {
 	}
 	
 	if (!promise || typeof promise.then !== "function") {
-		promise = createScript(promise);
+		promise = script(promise);
 	}
 	
 	var successComponent = null;

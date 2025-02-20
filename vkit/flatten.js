@@ -3,7 +3,7 @@
 var readOnly = $.readOnly;
 var signal = $.signal;
 
-function flatten(input){
+function flatten(input) {
 	var output = signal();
 	
 	input.effect(function(inner, cleanup) {

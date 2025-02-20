@@ -3,14 +3,15 @@
 var inject = $.inject;
 var signal = $.signal;
 
-function Dialogs(){
-	if(!(this instanceof Dialogs)){
+function Dialogs() {
+	if (!(this instanceof Dialogs)) {
 		return inject(Dialogs);
 	}
+	
 	var openDialogs = signal([]);
 	
-	function opener(component, only){
-		return function(){
+	function opener(component, only) {
+		return function() {
 			return open(component, arguments, only);
 		};
 	}
