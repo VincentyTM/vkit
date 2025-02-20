@@ -1,13 +1,13 @@
 import { getComponent, getInjector } from "./contextGuard.js";
-import createComponent from "./createComponent.js";
-import onUnmount from "./onUnmount.js";
+import { createComponent } from "./createComponent.js";
+import { onUnmount } from "./onUnmount.js";
 import type { Signal } from "./signal.js";
-import signalEffect from "./signalEffect.js";
-import signalPipe from "./signalPipe.js";
-import signalProp from "./signalProp.js";
-import signalText from "./signalText.js";
-import view from "./view.js";
-import views from "./views.js";
+import { signalEffect } from "./signalEffect.js";
+import { signalPipe } from "./signalPipe.js";
+import { signalProp } from "./signalProp.js";
+import { signalText } from "./signalText.js";
+import { view } from "./view.js";
+import { views } from "./views.js";
 
 var none = {};
 
@@ -39,17 +39,17 @@ export type ComputedSignal<ValueType> = Signal<ValueType> & {
  * the computed signal subscribes to them, waiting for changes.
  * @returns A computed signal.
  */
-export default function computed<F extends () => unknown>(
+export function computed<F extends () => unknown>(
 	getValue: F,
 	dependencies?: undefined
 ): ComputedSignal<ReturnType<F>>;
 
-export default function computed<F extends (...args: any[]) => unknown>(
+export function computed<F extends (...args: any[]) => unknown>(
 	getValue: F,
 	dependencies: ArrayOfMaybeSignals<Parameters<F>>
 ): ComputedSignal<ReturnType<F>>;
 
-export default function computed<F extends (...args: never[]) => unknown>(
+export function computed<F extends (...args: never[]) => unknown>(
 	getValue: F,
 	dependencies?: ArrayOfMaybeSignals<Parameters<F>>
 ): ComputedSignal<ReturnType<F>> {

@@ -21,7 +21,7 @@ import type { View } from "./view.js";
  * @param signal The writable signal containing a boolean value which is always true if the checkbox is checked and false otherwise.
  * @returns A directive which can be used on a checkbox input element (or even multiple elements) to create the binding(s).
  */
-export default function bindChecked(signal: WritableSignal<boolean>): View<HTMLInputElement> {
+export function bindChecked(signal: WritableSignal<boolean>): View<HTMLInputElement> {
 	return {
 		checked: signal,
 		onchange: function() {

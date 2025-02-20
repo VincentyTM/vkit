@@ -1,4 +1,4 @@
-import update from "./update.js";
+import { update } from "./update.js";
 
 export type EventListenerType = (this: unknown, event: EventType) => unknown;
 
@@ -39,7 +39,7 @@ function stopPropagation(this: EventType): void {
  * @param listener The event listener function.
  * @returns A function that removes the event listener from the event target.
  */
-export default function onEvent(
+export function onEvent(
 	target: EventTargetType,
 	type: string,
 	listener: EventListenerType

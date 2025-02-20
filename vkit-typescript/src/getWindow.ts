@@ -1,5 +1,5 @@
-import getContext from "./getContext.js";
-import inject from "./inject.js";
+import { getContext } from "./getContext.js";
+import { inject } from "./inject.js";
 import type { View } from "./view.js";
 
 type WindowService = {
@@ -32,6 +32,6 @@ export var WindowService = function(this: WindowService) {
  * 
  * @returns The current window.
  */
-export default function getWindow(): Window & typeof globalThis | null {
+export function getWindow(): Window & typeof globalThis | null {
 	return inject(WindowService).window;
 }

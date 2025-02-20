@@ -1,5 +1,5 @@
-import computed, { type ComputedSignal } from "./computed.js";
-import isSignal from "./isSignal.js";
+import { computed, type ComputedSignal } from "./computed.js";
+import { isSignal } from "./isSignal.js";
 import type { Signal } from "./signal.js";
 import type { View } from "./view.js";
 
@@ -61,17 +61,17 @@ function getRecords<T>(result: Store<T>): Records<T> {
  * @param getKey A string key or a function that maps each array item to its string key.
  * @returns An object that can be used to handle the array with the keys.
  */
-export default function useKey<T>(
+export function useKey<T>(
 	arraySignal: Signal<T[]>,
 	getKey: keyof T
 ): UseKeyHandle<T>;
 
-export default function useKey<T>(
+export function useKey<T>(
 	arraySignal: Signal<T[]>,
 	getKey: ((value: T) => string)
 ): UseKeyHandle<T>;
 
-export default function useKey<T>(
+export function useKey<T>(
 	arraySignal: Signal<T[]>,
 	getKey: keyof T | ((value: T) => string)
 ): UseKeyHandle<T> {

@@ -26,7 +26,7 @@ import type { Provider } from "./createProvider.js";
  * @param injector An optional injector to start the search of the provider. By default, it is the current injector.
  * @returns An instance of the injectable service.
  */
-export default function inject<TokenT extends TokenLike>(token: TokenT, injector?: Injector): InstanceOf<TokenT> {
+export function inject<TokenT extends TokenLike>(token: TokenT, injector?: Injector): InstanceOf<TokenT> {
 	if (!injector) {
 		injector = getInjector();
 	}

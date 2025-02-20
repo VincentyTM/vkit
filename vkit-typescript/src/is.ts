@@ -1,4 +1,4 @@
-import effect from "./effect.js";
+import { effect } from "./effect.js";
 import { getComponent } from "./contextGuard.js";
 
 /**
@@ -21,7 +21,7 @@ import { getComponent } from "./contextGuard.js";
  * @param condition The function that returns a boolean. It can have reactive inputs in it.
  * @returns The return value of the `condition` function.
  */
-export default function is(condition: () => boolean): boolean {
+export function is(condition: () => boolean): boolean {
 	var parent = getComponent();
 	var value: boolean | undefined;
 	

@@ -1,5 +1,5 @@
 import { getComponent } from "./contextGuard.js";
-import onUnmount from "./onUnmount.js";
+import { onUnmount } from "./onUnmount.js";
 
 type MutableRef<T> = {
 	(value: T): void;
@@ -31,7 +31,7 @@ type Ref<T> = {
  * }
  * @returns A function directive which binds an element (or any other object) to the reference until the current component unmounts.
  */
-export default function ref<T = HTMLElement>(): Ref<T> {
+export function ref<T = HTMLElement>(): Ref<T> {
 	function reset(): void {
 		reference.current = null;
 	}

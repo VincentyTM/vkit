@@ -1,4 +1,4 @@
-export default function toArray<T>(arrayLike: ArrayLike<T>): T[] {
+export function toArray<T>(arrayLike: ArrayLike<T>): T[] {
 	var n = arrayLike.length;
 	var a = new Array<T>(n);
 	

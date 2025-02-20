@@ -1,8 +1,8 @@
-import computed from "./computed.js";
-import get from "./get.js";
+import { computed } from "./computed.js";
+import { get } from "./get.js";
 import { objectAssign } from "./objectAssign.js";
 import type { Signal, WritableSignal } from "./signal.js";
-import writable from "./writable.js";
+import { writable } from "./writable.js";
 
 /**
  * Creates and returns a writable signal that reflects and updates a property of the current value of another writable signal.
@@ -29,18 +29,18 @@ import writable from "./writable.js";
  * @param defaultValue An optional default value to replace undefined.
  * @returns A writable signal that contains the property's current value.
  */
-export default function propertySignal<P, K extends keyof P>(
+export function propertySignal<P, K extends keyof P>(
 	parent: WritableSignal<P>,
 	key: K | Signal<K>,
 	defaultValue: Exclude<P[K], undefined>
 ): WritableSignal<Exclude<P[K], undefined>>;
 
-export default function propertySignal<P, K extends keyof P>(
+export function propertySignal<P, K extends keyof P>(
 	parent: WritableSignal<P>,
 	key: K | Signal<K>,
 ): WritableSignal<P[K]>;
 
-export default function propertySignal<P, K extends keyof P>(
+export function propertySignal<P, K extends keyof P>(
 	parent: WritableSignal<P>,
 	key: K | Signal<K>,
 	defaultValue?: P[K]

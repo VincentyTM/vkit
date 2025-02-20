@@ -1,6 +1,6 @@
-import insert from "./insert.js";
+import { insert } from "./insert.js";
 import { isArray } from "./isArray.js";
-import toArray from "./toArray.js";
+import { toArray } from "./toArray.js";
 import type { View } from "./view.js";
 
 function findNodes(
@@ -37,14 +37,14 @@ function findNodes(
  * `
  * @returns An array of DOM nodes.
  */
-export default function html(
+export function html(
 	strings: ArrayLike<string> & {
 		raw: ArrayLike<string>
 	},
 	...expressions: View[]
 ): View[];
 
-export default function html(
+export function html(
 	strings: ArrayLike<string> & {
 		raw: ArrayLike<string>
 	}

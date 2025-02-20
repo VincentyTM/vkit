@@ -1,4 +1,4 @@
-import computed, { type ArrayOfMaybeSignals, type ComputedSignal } from "./computed.js";
+import { computed, type ArrayOfMaybeSignals, type ComputedSignal } from "./computed.js";
 
 type MapType<M extends (...args: never[]) => unknown> = (
 	(
@@ -8,7 +8,7 @@ type MapType<M extends (...args: never[]) => unknown> = (
 	get: M;
 };
 
-export default function map<M extends (...args: any[]) => unknown>(transform: M): MapType<M> {
+export function map<M extends (...args: any[]) => unknown>(transform: M): MapType<M> {
 	function getComputed(...params: ArrayOfMaybeSignals<Parameters<M>>): ComputedSignal<ReturnType<M>>;
 
 	function getComputed() {

@@ -1,7 +1,7 @@
-import effect from "./effect.js";
+import { effect } from "./effect.js";
 import { isArray } from "./isArray.js";
-import isSignal from "./isSignal.js";
-import onUnmount from "./onUnmount.js";
+import { isSignal } from "./isSignal.js";
+import { onUnmount } from "./onUnmount.js";
 import type { Signal } from "./signal.js";
 
 type BooleanValue = boolean | Signal<boolean> | (() => boolean);
@@ -103,7 +103,7 @@ function bindClasses(el: HTMLElement, arg: ClassArgument, onCleanup?: CleanupFun
 	}
 }
 
-export default function classes(...args: ClassArgument[]): (element: HTMLElement) => void;
+export function classes(...args: ClassArgument[]): (element: HTMLElement) => void;
 
 /**
  * Creates a class collection that can be bound to one or more HTML elements.
@@ -130,7 +130,7 @@ export default function classes(...args: ClassArgument[]): (element: HTMLElement
  * 
  * @returns A directive that binds the classes to an HTML element.
  */
-export default function classes(): (element: HTMLElement) => void {
+export function classes(): (element: HTMLElement) => void {
 	var args = arguments;
 	var n = args.length;
 	

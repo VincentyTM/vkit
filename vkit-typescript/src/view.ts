@@ -1,8 +1,8 @@
 import type { Bindings } from "./bind.js";
-import createComponent from "./createComponent.js";
-import nodeRange from "./nodeRange.js";
+import { createComponent } from "./createComponent.js";
+import { nodeRange } from "./nodeRange.js";
 import { enqueueUpdate } from "./update.js";
-import isSignal from "./isSignal.js";
+import { isSignal } from "./isSignal.js";
 import type { Signal } from "./signal.js";
 
 export type View<ContextT = unknown> = (
@@ -39,16 +39,16 @@ export type View<ContextT = unknown> = (
  * @param getCurrentView A function that returns the current view.
  * @returns The initial view.
  */
-export default function view<ViewT extends View<ContextT>, ValueT, ContextT>(
+export function view<ViewT extends View<ContextT>, ValueT, ContextT>(
 	getCurrentView: (value: ValueT | null) => ViewT
 ) : View<ContextT>;
 
-export default function view<ViewT extends View<ContextT>, ValueT, ContextT>(
+export function view<ViewT extends View<ContextT>, ValueT, ContextT>(
 	this: Signal<ValueT>,
 	getCurrentView: (value: ValueT | null) => ViewT
 ) : View<ContextT>;
 
-export default function view<ViewT extends View<ContextT>, ValueT, ContextT>(
+export function view<ViewT extends View<ContextT>, ValueT, ContextT>(
 	this: Signal<ValueT> | void,
 	getCurrentView: (value: ValueT | null) => ViewT
 ) : View<ContextT> {

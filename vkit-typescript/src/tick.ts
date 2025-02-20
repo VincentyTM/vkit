@@ -15,7 +15,7 @@ var ticks: (() => void)[] = [];
  * 
  * @param callback The function that will run when the current render cycle ends.
  */
-export default function tick(callback: () => void): void {
+export function tick(callback: () => void): void {
 	ticks.push(callback);
 }
 

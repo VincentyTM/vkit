@@ -1,5 +1,5 @@
-import insert from "./insert.js";
-import remove from "./remove.js";
+import { insert } from "./insert.js";
+import { remove } from "./remove.js";
 import type { View } from "./view.js";
 
 export type NodeRange = {
@@ -12,7 +12,7 @@ export type NodeRange = {
 	start: ChildNode;
 };
 
-export default function nodeRange(crossView?: boolean) : NodeRange {
+export function nodeRange(crossView?: boolean) : NodeRange {
 	var start: ChildNode = document.createTextNode("");
 	var end: ChildNode = document.createTextNode("");
 	

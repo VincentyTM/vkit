@@ -1,5 +1,5 @@
-import effect from "./effect.js";
-import isSignal from "./isSignal.js";
+import { effect } from "./effect.js";
+import { isSignal } from "./isSignal.js";
 import type { Signal } from "./signal.js";
 
 type Attributes = {
@@ -79,7 +79,7 @@ function addAttribute(el: HTMLElement, name: string, value: ReactiveAttributeVal
  * True is converted to an empty string, while false means the attribute should be removed (similarly to null).
  * @returns A function directive which can be added to an HTML element.
  */
-export default function attributes(attributes: Attributes): (element: HTMLElement) => void {
+export function attributes(attributes: Attributes): (element: HTMLElement) => void {
 	return function(element: HTMLElement): void {
 		for (var name in attributes) {
 			addAttribute(element, name, attributes[name]);

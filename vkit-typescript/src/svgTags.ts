@@ -1,4 +1,4 @@
-import svgTag, { type SVGView } from "./svgTag.js";
+import { svgTag, type SVGView } from "./svgTag.js";
 
 type SVGProxy = {
 	[K in keyof SVGElementTagNameMap]: (...contents: SVGView<SVGElementTagNameMap[K]>[]) => SVGElementTagNameMap[K];
@@ -28,10 +28,8 @@ type SVGProxy = {
  * 	);
  * }
  */
-var svgTags = new Proxy<SVGProxy>({} as never, {
+export var svgTags = new Proxy<SVGProxy>({} as never, {
 	get: function(_target: SVGProxy, tagName: string, _receiver: SVGProxy) {
 		return svgTag(tagName.toLowerCase().replace(/_/g, "-") as keyof SVGElementTagNameMap);
 	}
 });
-
-export default svgTags;

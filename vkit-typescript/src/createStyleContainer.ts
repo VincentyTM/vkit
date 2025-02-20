@@ -75,7 +75,7 @@ function createStyleController(name: string, updateStyle: () => void): StyleCont
 	};
 }
 
-export default function createStyleContainer(): StyleContainer {
+export function createStyleContainer(): StyleContainer {
 	var style = createStyleSheet();
 	var controllers: {[key: string]: StyleController} = {};
 	var controllersArray: StyleController[] = [];

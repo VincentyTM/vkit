@@ -1,7 +1,7 @@
-import get from "./get.js";
-import isSignal from "./isSignal.js";
-import onEvent from "./onEvent.js";
-import renderDetached from "./renderDetached.js";
+import { get } from "./get.js";
+import { isSignal } from "./isSignal.js";
+import { onEvent } from "./onEvent.js";
+import { renderDetached } from "./renderDetached.js";
 import type { Signal } from "./signal.js";
 import type { View } from "./view.js";
 

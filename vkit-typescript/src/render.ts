@@ -1,8 +1,8 @@
-import append from "./append.js";
-import bind from "./bind.js";
+import { append } from "./append.js";
+import { bind } from "./bind.js";
 import { rootComponent, rootInjector } from "./root.js";
 import { setComponent, setInjector } from "./contextGuard.js";
-import update from "./update.js";
+import { update } from "./update.js";
 import type { View } from "./view.js";
 
 /**
@@ -20,7 +20,7 @@ import type { View } from "./view.js";
  * @param getView The top-level component. It must be a function.
  * @param container A container DOM node in which the application is rendered.
  */
-export default function render<ContextT extends Node>(
+export function render<ContextT extends Node>(
 	getView: () => View<ContextT>,
 	container: ContextT
 ): void {

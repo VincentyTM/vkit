@@ -31,7 +31,7 @@ export function dequeueUpdate(callback: () => void): void {
  * count.set(1);
  * update(); // Prints 1
  */
-export default function update(): void {
+export function update(): void {
 	var n: number;
 	
 	while (n = queue.length) {

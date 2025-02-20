@@ -6,7 +6,7 @@ export type Provider<T> = {
 	getInstance(): T;
 };
 
-export default function createProvider<T>(
+export function createProvider<T>(
 	createInstance: (config: Config) => T,
 	config: Config,
 	component: Component | null

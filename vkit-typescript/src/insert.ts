@@ -1,8 +1,8 @@
-import bind from "./bind.js";
-import deepPush from "./deepPush.js";
+import { bind } from "./bind.js";
+import { deepPush } from "./deepPush.js";
 import type { View } from "./view.js";
 
-export default function insert<ItemT extends View<ContextT>, ContextT>(
+export function insert<ItemT extends View<ContextT>, ContextT>(
 	children: ItemT,
 	nextSibling: Node,
 	context: ContextT,

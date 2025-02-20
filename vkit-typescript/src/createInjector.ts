@@ -44,7 +44,7 @@ var Container = typeof WeakMap === "function" ? WeakMap : function<K extends obj
 	};
 } as unknown as WeakMapConstructor;
 
-export default function createInjector(
+export function createInjector(
 	parent: Injector | null,
 	handleMissingProvider: ((token: TokenClass) => InstanceOf<TokenClass>) | null
 ): Injector {

@@ -1,5 +1,5 @@
 import type { WritableSignal } from "./signal.js";
-import writable from "./writable.js";
+import { writable } from "./writable.js";
 
 /**
  * Creates and returns a writable signal derived from another writable signal.
@@ -17,7 +17,7 @@ import writable from "./writable.js";
  * @param updater A pure function that describes how the parent signal's value is updated.
  * @returns A writable signal that contains the transformed value and delegates updates to its parent.
  */
-export default function deriveSignal<T, U>(
+export function deriveSignal<T, U>(
 	parent: WritableSignal<T>,
 	selector: (parentValue: T) => U,
 	updater: (parentValue: T, value: U) => T

@@ -1,6 +1,6 @@
-import getWindow from "./getWindow.js";
-import onUnmount from "./onUnmount.js";
-import update from "./update.js";
+import { getWindow } from "./getWindow.js";
+import { onUnmount } from "./onUnmount.js";
+import { update } from "./update.js";
 
 /**
  * Sets a timeout in the current window and clears it when the current component is unmounted.
@@ -10,7 +10,7 @@ import update from "./update.js";
  * }, 1000);
  * The @param callback function runs once after @param delay milliseconds.
  */
-export default function timeout(callback: () => void, delay: number): void {
+export function timeout(callback: () => void, delay: number): void {
 	var win = getWindow()!;
 	var timeout = win.setTimeout(tick, delay);
 	

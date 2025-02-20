@@ -1,4 +1,4 @@
-import getWindow from "./getWindow.js";
+import { getWindow } from "./getWindow.js";
 
 /**
  * Returns the document of the current component.
@@ -17,6 +17,6 @@ import getWindow from "./getWindow.js";
  * 
  * @returns The current document.
  */
-export default function getDocument(): Document | null {
+export function getDocument(): Document | null {
 	return getWindow()!.document;
 }

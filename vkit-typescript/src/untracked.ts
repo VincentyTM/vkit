@@ -19,7 +19,7 @@ import { getComponent, setComponent } from "./contextGuard.js";
  * @param callback The function that is called once and does not update the current reactive context (computed signal, effect, view, etc.).
  * @returns The return value of the function.
  */
-export default function untracked<T>(callback: () => T): T {
+export function untracked<T>(callback: () => T): T {
 	var component = getComponent(true);
 	
 	if (!component) {

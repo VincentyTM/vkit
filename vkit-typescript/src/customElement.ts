@@ -1,15 +1,15 @@
-import append from "./append.js";
-import bind from "./bind.js";
-import createComponent, { type Component } from "./createComponent.js";
-import createInjector from "./createInjector.js";
-import createProvider from "./createProvider.js";
-import emitUnmount from "./emitUnmount.js";
-import empty from "./empty.js";
+import { append } from "./append.js";
+import { bind } from "./bind.js";
+import { createComponent, type Component } from "./createComponent.js";
+import { createInjector } from "./createInjector.js";
+import { createProvider } from "./createProvider.js";
+import { emitUnmount } from "./emitUnmount.js";
+import { empty } from "./empty.js";
 import { getValueFromClass } from "./root.js";
-import inject from "./inject.js";
-import signal, { type WritableSignal } from "./signal.js";
-import tick from "./tick.js";
-import update from "./update.js";
+import { inject } from "./inject.js";
+import { signal, type WritableSignal } from "./signal.js";
+import { tick } from "./tick.js";
+import { update } from "./update.js";
 import type { View } from "./view.js";
 import { WindowService } from "./getWindow.js";
 
@@ -74,7 +74,7 @@ function attrToPropName(attrName: string): string {
  *  - window: The window in which the custom element is registered.
  * @returns The `getView` function so that it can be used as a regular component too.
  */
-export default function customElement(
+export function customElement(
 	name: string,
 	getView: CustomElementGetView,
 	options?: CustomElementOptions

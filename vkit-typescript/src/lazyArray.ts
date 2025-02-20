@@ -1,6 +1,6 @@
-import signal, { type Signal } from "./signal.js";
-import onUnmount from "./onUnmount.js";
-import update from "./update.js";
+import { signal, type Signal } from "./signal.js";
+import { onUnmount } from "./onUnmount.js";
+import { update } from "./update.js";
 
 export function lazyArray<T>(arraySignal: Signal<T[]>, backwards: boolean): Signal<T[]> {
 	var optimized = signal<T[]>([]);

@@ -1,4 +1,4 @@
-export default function remove(node: Node): void {
+export function remove(node: Node): void {
 	var parent = node.parentNode;
 	if (parent) {
 		parent.removeChild(node);

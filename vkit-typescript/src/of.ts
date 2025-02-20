@@ -1,7 +1,7 @@
 import { enqueueUpdate } from "./update.js";
 import { getComponent } from "./contextGuard.js";
-import observe from "./observe.js";
-import onUnmount from "./onUnmount.js";
+import { observe } from "./observe.js";
+import { onUnmount } from "./onUnmount.js";
 
 function getValue<T, K extends keyof T>(object: T, property: K, _receiver: T): T[K] {
 	var value = object[property];
@@ -63,11 +63,11 @@ var handler = {
  * @param object The object whose properties need to be observed.
  * @returns The proxy of the object.
  */
-export default function of<T extends object>(object: T): T;
+export function of<T extends object>(object: T): T;
 
-export default function of<T extends object, K extends keyof T>(object: T, property: K): T[K];
+export function of<T extends object, K extends keyof T>(object: T, property: K): T[K];
 
-export default function of<T extends object, K extends keyof T>(object: T, property?: K): T | T[K] {
+export function of<T extends object, K extends keyof T>(object: T, property?: K): T | T[K] {
 	if (property !== undefined) {
 		return getValue(object, property, object);
 	}

@@ -1,7 +1,7 @@
 import { getComponent } from "./contextGuard.js";
-import onUnmount from "./onUnmount.js";
-import signal from "./signal.js";
-import update from "./update.js";
+import { onUnmount } from "./onUnmount.js";
+import { signal } from "./signal.js";
+import { update } from "./update.js";
 import type { View } from "./view.js";
 
 /**

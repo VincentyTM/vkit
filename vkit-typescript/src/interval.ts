@@ -1,6 +1,6 @@
-import getWindow from "./getWindow.js";
-import onUnmount from "./onUnmount.js";
-import update from "./update.js";
+import { getWindow } from "./getWindow.js";
+import { onUnmount } from "./onUnmount.js";
+import { update } from "./update.js";
 
 /**
  * Sets an interval in the current window and clears it when the current component is unmounted.
@@ -11,7 +11,7 @@ import update from "./update.js";
  * @param callback A function which runs periodically.
  * @param delay The time delay in milliseconds between two function calls.
  */
-export default function interval(callback: () => void, delay: number): void {
+export function interval(callback: () => void, delay: number): void {
 	var win = getWindow()!;
 	var interval = win.setInterval(tick, delay);
 	

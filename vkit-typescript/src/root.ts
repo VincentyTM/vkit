@@ -1,6 +1,6 @@
-import createComponent from "./createComponent.js";
-import createInjector from "./createInjector.js";
-import createProvider from "./createProvider.js";
+import { createComponent } from "./createComponent.js";
+import { createInjector } from "./createInjector.js";
+import { createProvider } from "./createProvider.js";
 import type { Config, ConfigClass } from "./provide.js";
 
 function mount(): void {

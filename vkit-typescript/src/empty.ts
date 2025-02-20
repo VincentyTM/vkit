@@ -1,4 +1,4 @@
-export default function empty(container: Element): void {
+export function empty(container: Element): void {
 	if (container.replaceChildren) {
 		container.replaceChildren();
 	} else {

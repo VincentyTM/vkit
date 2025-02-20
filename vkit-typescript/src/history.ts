@@ -1,8 +1,8 @@
-import computed, { type ComputedSignal } from "./computed.js";
-import getWindow from "./getWindow.js";
-import observable from "./observable.js";
-import onEvent from "./onEvent.js";
-import onUnmount from "./onUnmount.js";
+import { computed, type ComputedSignal } from "./computed.js";
+import { getWindow } from "./getWindow.js";
+import { observable } from "./observable.js";
+import { onEvent } from "./onEvent.js";
+import { onUnmount } from "./onUnmount.js";
 
 type HistoryState = unknown;
 
@@ -19,7 +19,7 @@ function getURL(win: Window & typeof globalThis): string {
 	return win.location.href.replace(win.location.origin, "");
 }
 
-export default function history(win?: Window & typeof globalThis): HistoryHandle {
+export function history(win?: Window & typeof globalThis): HistoryHandle {
 	if (!win) {
 		win = getWindow()!;
 	}

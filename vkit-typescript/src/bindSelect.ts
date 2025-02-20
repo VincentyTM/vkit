@@ -1,4 +1,4 @@
-import tick from "./tick.js";
+import { tick } from "./tick.js";
 import type { WritableSignal } from "./signal.js";
 import type { View } from "./view.js";
 
@@ -20,7 +20,7 @@ import type { View } from "./view.js";
  * @param signal A signal that can be read from and written to.
  * @returns A directive that can be applied on a <select> element.
  */
-export default function bindSelect(signal: WritableSignal<string>): View<HTMLSelectElement> {
+export function bindSelect(signal: WritableSignal<string>): View<HTMLSelectElement> {
 	return [
 		function(el) {
 			function updateValue(): void {

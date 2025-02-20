@@ -1,9 +1,9 @@
-import computed, { type ComputedSignal } from "./computed.js";
-import isSignal from "./isSignal.js";
-import onUnmount from "./onUnmount.js";
-import readOnly from "./readOnly.js";
-import signal, { type Signal } from "./signal.js";
-import update from "./update.js";
+import { computed, type ComputedSignal } from "./computed.js";
+import { isSignal } from "./isSignal.js";
+import { onUnmount } from "./onUnmount.js";
+import { readOnly } from "./readOnly.js";
+import { signal, type Signal } from "./signal.js";
+import { update } from "./update.js";
 
 type HttpRequestHeaders = {
 	[name: string]: string;
@@ -102,7 +102,7 @@ var INIITIAL_PROGRESS: HttpProgress = {
  * @param request The HTTP request as a string URL or object. It can optionally be wrapped in a signal or a function.
  * @returns A computed signal containing the HTTP response object.
  */
-export default function http<T = unknown>(request: HttpRequest | Signal<HttpRequest> | (() => HttpRequest)) {
+export function http<T = unknown>(request: HttpRequest | Signal<HttpRequest> | (() => HttpRequest)) {
 	var response = signal<HttpResponse<T>>(UNSENT);
 
 	function setRequest(req: HttpRequest): void {

@@ -1,4 +1,4 @@
-import htmlTag from "./htmlTag.js";
+import { htmlTag } from "./htmlTag.js";
 import type { View } from "./view.js";
 
 type HTMLProxy = {
@@ -33,10 +33,8 @@ type HTMLProxy = {
  * 	);
  * }
  */
-var htmlTags = new Proxy<HTMLProxy>({} as never, {
+export var htmlTags = new Proxy<HTMLProxy>({} as never, {
 	get: function(_target: HTMLProxy, tagName: string, _receiver: HTMLProxy) {
 		return htmlTag(tagName.toLowerCase().replace(/_/g, "-") as keyof HTMLElementTagNameMap);
 	}
 });
-
-export default htmlTags;

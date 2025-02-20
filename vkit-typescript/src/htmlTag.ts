@@ -1,5 +1,5 @@
-import append from "./append.js";
-import bind from "./bind.js";
+import { append } from "./append.js";
+import { bind } from "./bind.js";
 import type { View } from "./view.js";
 
 export type VirtualHTMLElement<T> = {
@@ -44,7 +44,7 @@ function renderElement<T extends HTMLElement>(this: VirtualHTMLElement<T>): T {
  * 	);
  * }
  */
-export default function htmlTag<N extends keyof HTMLElementTagNameMap>(tagName: N): (
+export function htmlTag<N extends keyof HTMLElementTagNameMap>(tagName: N): (
 	...contents: View<HTMLElementTagNameMap[N]>[]
 ) => VirtualHTMLElement<HTMLElementTagNameMap[N]> {
 	return function(): VirtualHTMLElement<HTMLElementTagNameMap[N]> {

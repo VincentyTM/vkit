@@ -23,7 +23,7 @@ function next<T>(value: T): any {
 	return key;
 }
 
-export default function hashCode<T>(value: T): string {
+export function hashCode<T>(value: T): string {
 	switch (typeof value) {
 		case "object":
 			return value === null ? String(value) : "o" + next<T>(value);

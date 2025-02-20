@@ -1,4 +1,4 @@
-import observable, { type Observable } from "./observable.js";
+import { observable, type Observable } from "./observable.js";
 
 var defineProperty = Object.defineProperty;
 var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
@@ -21,7 +21,7 @@ var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
  * @param property The key of a property of the object.
  * @returns An observable that fires with the new value when the property changes or `null` if the subscription is unsuccessful.
  */
-export default function observe<T, K extends keyof T>(object: T, property: K): Observable<T[K]> | null {
+export function observe<T, K extends keyof T>(object: T, property: K): Observable<T[K]> | null {
 	var desc = getOwnPropertyDescriptor(object, property);
 	
 	if (!desc) {

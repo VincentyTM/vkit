@@ -1,7 +1,7 @@
-import createStyleContainer, { type StyleContainer, type StyleController } from "./createStyleContainer.js";
-import onUnmount from "./onUnmount.js";
+import { createStyleContainer, type StyleContainer, type StyleController } from "./createStyleContainer.js";
+import { onUnmount } from "./onUnmount.js";
 import type { Signal } from "./signal.js";
-import tick from "./tick.js";
+import { tick } from "./tick.js";
 
 type WithStyleContainer = {
 	__styleContainer?: StyleContainer
@@ -106,7 +106,7 @@ function getStyleContainer(el: Node): StyleContainer {
  * @param attribute The attribute used as a CSS selector. If not specified, a unique attribute is generated for the stylesheet.
  * @returns A function which can be used as a directive on a DOM element to apply the stylesheet.
  */
-export default function style(
+export function style(
 	css: CSSTextOrDeclaration | Signal<CSSTextOrDeclaration>,
 	attribute?: string
 ): (element: Node) => void {

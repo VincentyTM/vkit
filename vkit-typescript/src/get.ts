@@ -1,4 +1,4 @@
-import isSignal from "./isSignal.js";
+import { isSignal } from "./isSignal.js";
 import type { Signal } from "./signal.js";
 
 /**
@@ -12,6 +12,6 @@ import type { Signal } from "./signal.js";
  * Otherwise, the method returns it without any change.
  * @returns The content of the input signal or the raw input value.
  */
-export default function get<T>(signalOrValue: T | Signal<T>): T {
+export function get<T>(signalOrValue: T | Signal<T>): T {
 	return isSignal(signalOrValue) ? signalOrValue.get() : signalOrValue;
 }

@@ -1,9 +1,9 @@
-import effect from "./effect.js";
-import get from "./get.js";
-import isSignal from "./isSignal.js";
-import observe from "./observe.js";
-import onUnmount from "./onUnmount.js";
-import signal, { type Signal, type WritableSignal } from "./signal.js";
+import { effect } from "./effect.js";
+import { get } from "./get.js";
+import { isSignal } from "./isSignal.js";
+import { observe } from "./observe.js";
+import { onUnmount } from "./onUnmount.js";
+import { signal, type Signal, type WritableSignal } from "./signal.js";
 
 /**
  * Creates and returns a writable signal that reflects and updates a property of an object.
@@ -21,7 +21,7 @@ import signal, { type Signal, type WritableSignal } from "./signal.js";
  * @param property The key of the property or a signal containing the current key.
  * @returns A writable signal containing the current object's current property value.
  */
-export default function objectProperty<T, K extends keyof T>(
+export function objectProperty<T, K extends keyof T>(
 	object: T | Signal<T>,
 	property: K | Signal<K>,
 	getDefaultValue?: () => T[K]

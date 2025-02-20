@@ -1,6 +1,6 @@
 import type { Signal, WritableSignal } from "./signal.js";
 
-export default function signalPipe<I, O>(
+export function signalPipe<I, O>(
 	this: Signal<I>,
 	output: WritableSignal<O>,
 	transform?: (input: I, output: O) => O

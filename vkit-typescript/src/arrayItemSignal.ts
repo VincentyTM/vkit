@@ -1,6 +1,6 @@
 import type { ComputedSignal } from "./computed.js";
 import type { WritableSignal } from "./signal.js";
-import writable from "./writable.js";
+import { writable } from "./writable.js";
 
 /**
  * Creates and returns a writable signal that reflects and updates an item of an array contained in another writable signal.
@@ -39,7 +39,7 @@ import writable from "./writable.js";
  * @param item A computed signal that contains the current array item. It is provided by `useKey`.
  * @returns A writable signal that contains the array item.
  */
-export default function arrayItemSignal<T>(
+export function arrayItemSignal<T>(
 	parent: WritableSignal<T[]>,
 	item: ComputedSignal<T>
 ): WritableSignal<T> {

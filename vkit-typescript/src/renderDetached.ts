@@ -1,16 +1,16 @@
-import append from "./append.js";
-import bind from "./bind.js";
-import createComponent from "./createComponent.js";
-import createInjector from "./createInjector.js";
-import createProvider from "./createProvider.js";
-import emitUnmount from "./emitUnmount.js";
+import { append } from "./append.js";
+import { bind } from "./bind.js";
+import { createComponent } from "./createComponent.js";
+import { createInjector } from "./createInjector.js";
+import { createProvider } from "./createProvider.js";
+import { emitUnmount } from "./emitUnmount.js";
 import { getValueFromClass } from "./root.js";
-import inject from "./inject.js";
-import update from "./update.js";
+import { inject } from "./inject.js";
+import { update } from "./update.js";
 import type { View } from "./view.js";
 import { WindowService } from "./getWindow.js";
 
-export default function renderDetached<C extends Node>(
+export function renderDetached<C extends Node>(
     getView: (unmount: () => void) => View<C>,
     container: C
 ): () => void {

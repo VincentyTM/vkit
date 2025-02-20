@@ -1,9 +1,9 @@
-import append from "./append.js";
-import bind from "./bind.js";
-import effect from "./effect.js";
-import isSignal from "./isSignal.js";
-import onEvent from "./onEvent.js";
-import onUnmount from "./onUnmount.js";
+import { append } from "./append.js";
+import { bind } from "./bind.js";
+import { effect } from "./effect.js";
+import { isSignal } from "./isSignal.js";
+import { onEvent } from "./onEvent.js";
+import { onUnmount } from "./onUnmount.js";
 import type { Signal } from "./signal.js";
 import type { View } from "./view.js";
 
@@ -152,7 +152,7 @@ function renderElement<T extends Element>(this: VirtualSVGElement<T>): T {
  * 	);
  * }
  */
-export default function svgTag<N extends keyof SVGElementTagNameMap>(tagName: N): (
+export function svgTag<N extends keyof SVGElementTagNameMap>(tagName: N): (
 	...contents: SVGView<SVGElementTagNameMap[N]>[]
 ) => VirtualSVGElement<SVGElementTagNameMap[N]> {
 	return function(): VirtualSVGElement<SVGElementTagNameMap[N]> {

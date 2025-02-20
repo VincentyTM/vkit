@@ -1,6 +1,6 @@
-import empty from "./empty.js";
-import noop from "./noop.js";
-import renderDetached from "./renderDetached.js";
+import { empty } from "./empty.js";
+import { noop } from "./noop.js";
+import { renderDetached } from "./renderDetached.js";
 import type { View } from "./view.js";
 
 export type AppRoot<C> = {
@@ -30,7 +30,7 @@ export type AppRoot<C> = {
  * @param container A DOM element that contains the application.
  * @returns An object that can be used for rendering and unmounting the component tree.
  */
-export default function createRoot<C extends Element>(container: C): AppRoot<C> {
+export function createRoot<C extends Element>(container: C): AppRoot<C> {
     var unmount: () => void = noop;
 
     return {

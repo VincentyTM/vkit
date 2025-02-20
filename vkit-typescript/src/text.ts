@@ -1,4 +1,4 @@
-import createComponent from "./createComponent.js";
+import { createComponent } from "./createComponent.js";
 
 /**
  * Creates and returns a dynamic text node.
@@ -12,7 +12,7 @@ import createComponent from "./createComponent.js";
  * It may contain signal calls.
  * @returns A DOM text node that has the current text as its value.
  */
-export default function text(getText: () => string | number): Text {
+export function text(getText: () => string | number): Text {
 	var oldText = "";
 	var node = document.createTextNode(oldText);
 	var component = createComponent(setText);

@@ -5,7 +5,7 @@ type ElementType = {
 	[key: string]: any;
 };
 
-export default function signalProp<T>(
+export function signalProp<T>(
 	this: Signal<T>,
 	name: string
 ): (element: ElementType) => void {

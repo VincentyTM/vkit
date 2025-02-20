@@ -1,8 +1,8 @@
-import emitUnmount from "./emitUnmount.js";
+import { emitUnmount } from "./emitUnmount.js";
 import { getComponent, getInjector, setComponent, setInjector } from "./contextGuard.js";
 import type { Injector } from "./createInjector.js";
 import type { Observable } from "./observable.js";
-import throwError from "./throwError.js";
+import { throwError } from "./throwError.js";
 
 export type Component = {
 	children: Component[] | null;
@@ -13,7 +13,7 @@ export type Component = {
 	unmount: Observable<void> | null;
 };
 
-export default function createComponent(
+export function createComponent(
 	mount: () => void,
 	parent?: Component | null,
 	injector?: Injector | null

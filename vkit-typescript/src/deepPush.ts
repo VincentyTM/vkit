@@ -1,12 +1,12 @@
 import type { Bindings } from "./bind.js";
-import directive from "./directive.js";
-import toArray from "./toArray.js";
+import { directive } from "./directive.js";
+import { toArray } from "./toArray.js";
 
 type Pushable<ItemType> = {
 	push(value: ItemType | Text): number | void;
 };
 
-export default function deepPush<ItemT, ContextT>(
+export function deepPush<ItemT, ContextT>(
 	array: Pushable<ItemT>,
 	item: ItemT,
 	context: ContextT,

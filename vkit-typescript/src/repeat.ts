@@ -1,4 +1,4 @@
-import isSignal from "./isSignal.js";
+import { isSignal } from "./isSignal.js";
 import type { Signal } from "./signal.js";
 import type { View } from "./view.js";
 
@@ -29,17 +29,17 @@ function createRangeArray(length: number): number[] {
  * @param getView The function that returns the view for a specific index. The index starts from 0.
  * @returns A dynamic view list.
  */
-export default function repeat<T>(
+export function repeat<T>(
 	count: number,
 	getView: (index: number) => T
 ): T[];
 
-export default function repeat<ViewT extends View<ContextT>, ContextT>(
+export function repeat<ViewT extends View<ContextT>, ContextT>(
 	count: Signal<number>,
 	getView: (index: number) => ViewT
 ): View<ContextT>;
 
-export default function repeat(
+export function repeat(
 	count: Signal<number> | number,
 	getView: (index: number) => unknown
 ): unknown {

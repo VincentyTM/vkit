@@ -26,7 +26,7 @@ import type { View } from "./view.js";
  * @returns A directive which can be used on an input element (or even multiple elements) to create the binding(s).
  */
 
-export default function bindNumber(signal: WritableSignal<number>, defaultValue?: number): View<HTMLInputElement> {
+export function bindNumber(signal: WritableSignal<number>, defaultValue?: number): View<HTMLInputElement> {
 	function set(this: HTMLInputElement): void {
 		if (this.value === "" && defaultValue !== undefined) {
 			signal.set(defaultValue);
