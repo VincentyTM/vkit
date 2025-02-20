@@ -1,7 +1,7 @@
 import { computed, type ComputedSignal } from "./computed.js";
 import { isSignal } from "./isSignal.js";
 import type { Signal } from "./signal.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 export type KeyedSignal<T, K> = ComputedSignal<T> & {
 	key: K;
@@ -22,7 +22,7 @@ type UseKeyHandle<T> = {
 	records: ComputedSignal<Records<T>>;
 	select(key: string): KeyedSignal<T, string>;
 	select(key: Signal<string>): KeyedSignal<T, Signal<string>>;
-	views<ViewT extends View<ContextT>, ContextT>(getItemView: (item: KeyedSignal<T, string>) => ViewT): View<ContextT>;
+	views<ViewT extends Template<ContextT>, ContextT>(getItemView: (item: KeyedSignal<T, string>) => ViewT): Template<ContextT>;
 };
 
 function getKeys<T>(result: Store<T>): string[] {
@@ -118,7 +118,7 @@ export function useKey<T>(
 		return selected;
 	}
 	
-	function views<ViewT extends View<ContextT>, ContextT>(getItemView: (item: KeyedSignal<T, string>) => ViewT): View<ContextT> {
+	function views<ViewT extends Template<ContextT>, ContextT>(getItemView: (item: KeyedSignal<T, string>) => ViewT): Template<ContextT> {
 		return keysSignal.views(function(key): ViewT {
 			return getItemView(select(key));
 		});

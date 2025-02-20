@@ -1,5 +1,5 @@
 import type { WritableSignal } from "./signal.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 /**
  * Sets up a two-way data binding with number conversion between a writable signal and an input element.
@@ -26,7 +26,7 @@ import type { View } from "./view.js";
  * @returns A directive which can be used on an input element (or even multiple elements) to create the binding(s).
  */
 
-export function bindNumber(signal: WritableSignal<number>, defaultValue?: number): View<HTMLInputElement> {
+export function bindNumber(signal: WritableSignal<number>, defaultValue?: number): Template<HTMLInputElement> {
 	function set(this: HTMLInputElement): void {
 		if (this.value === "" && defaultValue !== undefined) {
 			signal.set(defaultValue);

@@ -10,7 +10,7 @@ import { inject } from "./inject.js";
 import { signal, type WritableSignal } from "./signal.js";
 import { tick } from "./tick.js";
 import { update } from "./update.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 import { WindowService } from "./getWindow.js";
 
 type CustomElementGetView = (
@@ -19,7 +19,7 @@ type CustomElementGetView = (
 		[key: string]: WritableSignal<string | null>;
 	},
 	element: HTMLElement
-) => View;
+) => Template;
 
 type CustomElementOptions = {
 	adoptedCallback?: () => void;

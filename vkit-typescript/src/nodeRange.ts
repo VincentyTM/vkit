@@ -1,14 +1,14 @@
 import { insert } from "./insert.js";
 import { remove } from "./remove.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 export type NodeRange = {
-	append(...children: View[]): void;
+	append(...children: Template[]): void;
 	clear(): void;
 	end: ChildNode;
 	insertBefore(anchor: Node): void;
 	remove(): void;
-	render(): View;
+	render(): Template;
 	start: ChildNode;
 };
 

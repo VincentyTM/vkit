@@ -1,5 +1,5 @@
 import type { WritableSignal } from "./signal.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 /**
  * Sets up a two-way data binding between a writable signal and an input or textarea element.
@@ -20,7 +20,7 @@ import type { View } from "./view.js";
  * @param signal The writable signal containing a string that is always synchronized with the element's value.
  * @returns A directive which can be used on an input or textarea element (or even multiple elements) to create the binding(s).
  */
-export function bindText(signal: WritableSignal<string>): View<HTMLInputElement> & View<HTMLTextAreaElement> {
+export function bindText(signal: WritableSignal<string>): Template<HTMLInputElement> & Template<HTMLTextAreaElement> {
 	function update(this: HTMLInputElement | HTMLTextAreaElement): void {
 		signal.set(this.value);
 	}

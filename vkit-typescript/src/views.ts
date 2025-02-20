@@ -11,14 +11,14 @@ import type { NodeRange } from "./nodeRange.js";
 import type { Signal } from "./signal.js";
 import { throwError } from "./throwError.js";
 import { toArray } from "./toArray.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 type Block = {
 	component: Component;
 	index: number;
 	insertBefore(anchor: Node): void;
 	range: NodeRange;
-	render(): View;
+	render(): Template;
 };
 
 type BlockInfo = {
@@ -27,7 +27,7 @@ type BlockInfo = {
 
 function createBlock<ItemT>(
 	model: ItemT,
-	getView: (value: ItemT, block?: BlockInfo) => View,
+	getView: (value: ItemT, block?: BlockInfo) => Template,
 	container: Component | null,
 	injector: Injector | null
 ): Block {
@@ -42,7 +42,7 @@ function createBlock<ItemT>(
 		}
 	}, container, injector);
 	
-	function render(): View {
+	function render(): Template {
 		enqueueUpdate(component.render);
 		
 		return [
@@ -82,10 +82,10 @@ function createBlock<ItemT>(
 	return block;
 }
 
-export function views<ViewT extends View<ContextT>, ItemT, ContextT>(
+export function views<ViewT extends Template<ContextT>, ItemT, ContextT>(
 	this: Signal<ArrayLike<ItemT>>,
 	getItemView: (item: ItemT, block?: BlockInfo) => ViewT
-): View<ContextT> {
+): Template<ContextT> {
 	var signal = this;
 	var container = getComponent();
 	var injector = getInjector();

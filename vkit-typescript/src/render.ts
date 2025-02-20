@@ -3,7 +3,7 @@ import { bind } from "./bind.js";
 import { rootComponent, rootInjector } from "./root.js";
 import { setComponent, setInjector } from "./contextGuard.js";
 import { update } from "./update.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 /**
  * Renders the root component of the application in the DOM.
@@ -21,7 +21,7 @@ import type { View } from "./view.js";
  * @param container A container DOM node in which the application is rendered.
  */
 export function render<ContextT extends Node>(
-	getView: () => View<ContextT>,
+	getView: () => Template<ContextT>,
 	container: ContextT
 ): void {
 	try {

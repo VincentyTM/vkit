@@ -5,7 +5,7 @@ import { isSignal } from "./isSignal.js";
 import { onEvent } from "./onEvent.js";
 import { onUnmount } from "./onUnmount.js";
 import type { Signal } from "./signal.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 type AttributeValue = string | null;
 type Reactive<T> = T | Signal<T> | (() => T);
@@ -51,7 +51,7 @@ export type SVGView<ContextT = unknown> = (
 );
 
 export type VirtualSVGElement<T> = {
-	readonly arguments: View<T>;
+	readonly arguments: Template<T>;
 	readonly isVirtual: true;
 	readonly nodeName: string;
 	render(): T;
@@ -123,7 +123,7 @@ function bindAttributes(
 
 function renderElement<T extends Element>(this: VirtualSVGElement<T>): T {
 	var el = document.createElementNS(xmlns, this.nodeName) as T;
-	append<View<typeof el>, typeof el>(el, arguments, el, bindAttributes as never);
+	append<Template<typeof el>, typeof el>(el, arguments, el, bindAttributes as never);
 	return el;
 }
 

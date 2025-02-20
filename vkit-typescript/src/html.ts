@@ -1,7 +1,7 @@
 import { insert } from "./insert.js";
 import { isArray } from "./isArray.js";
 import { toArray } from "./toArray.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 function findNodes(
 	result: Node[],
@@ -41,14 +41,14 @@ export function html(
 	strings: ArrayLike<string> & {
 		raw: ArrayLike<string>
 	},
-	...expressions: View[]
-): View[];
+	...expressions: Template[]
+): Template[];
 
 export function html(
 	strings: ArrayLike<string> & {
 		raw: ArrayLike<string>
 	}
-): View[] {
+): Template[] {
 	if (isArray(strings) && isArray((strings as any).raw)) {
 		var n = strings.length;
 		var a = new Array(2*n - 1);

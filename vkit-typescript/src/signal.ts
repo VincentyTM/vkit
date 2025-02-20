@@ -7,7 +7,8 @@ import { signalEffect } from "./signalEffect.js";
 import { signalPipe } from "./signalPipe.js";
 import { signalProp } from "./signalProp.js";
 import { signalText } from "./signalText.js";
-import { view, type View } from "./view.js";
+import type { Template } from "./Template.js";
+import { view } from "./view.js";
 import { views } from "./views.js";
 
 export type ItemType<T> = T extends (infer ItemType)[] ? ItemType : never;
@@ -195,7 +196,7 @@ export type Signal<T> = {
 	 * @param getCurrentView A function that returns the current view.
 	 * @returns The initial view.
 	 */
-	view<ViewT extends View<ContextT>, ContextT>(getCurrentView: (value: T) => ViewT): View<ContextT>;
+	view<ViewT extends Template<ContextT>, ContextT>(getCurrentView: (value: T) => ViewT): Template<ContextT>;
 
 	/**
 	 * Creates a dynamic view with a subview for each element in the array contained in the signal.
@@ -220,7 +221,7 @@ export type Signal<T> = {
 	 * @param getItemView The function that returns a subview for an array item.
 	 * @returns The initial view containing the subviews for all items in the array.
 	 */
-	views<ViewT extends View<ContextT>, ContextT>(getItemView: (value: ItemType<T>) => ViewT): View<ContextT>;
+	views<ViewT extends Template<ContextT>, ContextT>(getItemView: (value: ItemType<T>) => ViewT): Template<ContextT>;
 };
 
 export type WritableSignal<T> = Signal<T> & {

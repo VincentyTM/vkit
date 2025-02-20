@@ -1,5 +1,5 @@
 import type { WritableSignal } from "./signal.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 /**
  * Sets up a two-way data binding between a boolean writable signal and a checkbox input element.
@@ -21,7 +21,7 @@ import type { View } from "./view.js";
  * @param signal The writable signal containing a boolean value which is always true if the checkbox is checked and false otherwise.
  * @returns A directive which can be used on a checkbox input element (or even multiple elements) to create the binding(s).
  */
-export function bindChecked(signal: WritableSignal<boolean>): View<HTMLInputElement> {
+export function bindChecked(signal: WritableSignal<boolean>): Template<HTMLInputElement> {
 	return {
 		checked: signal,
 		onchange: function() {

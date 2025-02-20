@@ -1,6 +1,6 @@
 import { bind } from "./bind.js";
 import { append } from "./append.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 /**
  * Creates a directive that attaches a shadow root to an element.
@@ -14,10 +14,10 @@ import type { View } from "./view.js";
  * )
  * @returns A directive that attaches a shadow root to an element and inserts nodes into it.
  */
-export function shadow(...contents: View<ShadowRoot>[]): View<HTMLElement>;
+export function shadow(...contents: Template<ShadowRoot>[]): Template<HTMLElement>;
 
-export function shadow(): View<HTMLElement> {
-	var contents: View<ShadowRoot> = arguments;
+export function shadow(): Template<HTMLElement> {
+	var contents: Template<ShadowRoot> = arguments;
 	
 	return function(element: HTMLElement): void {
 		var shadowRoot = element.shadowRoot || element.attachShadow({mode: "open"});

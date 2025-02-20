@@ -1,6 +1,6 @@
 import { tick } from "./tick.js";
 import type { WritableSignal } from "./signal.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 /**
  * Sets up a two-way data binding between a writable signal and a <select> HTML element.
@@ -20,7 +20,7 @@ import type { View } from "./view.js";
  * @param signal A signal that can be read from and written to.
  * @returns A directive that can be applied on a <select> element.
  */
-export function bindSelect(signal: WritableSignal<string>): View<HTMLSelectElement> {
+export function bindSelect(signal: WritableSignal<string>): Template<HTMLSelectElement> {
 	return [
 		function(el) {
 			function updateValue(): void {

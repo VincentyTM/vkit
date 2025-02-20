@@ -1,10 +1,10 @@
 import { getContext } from "./getContext.js";
 import { inject } from "./inject.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 type WindowService = {
 	new(): WindowService;
-	context: (getView: () => View) => any;
+	context: (getView: () => Template) => any;
 	data: {[key: string]: any} | null;
 	window: Window & typeof globalThis;
 };

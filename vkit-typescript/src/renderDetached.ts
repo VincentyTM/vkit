@@ -7,11 +7,11 @@ import { emitUnmount } from "./emitUnmount.js";
 import { getValueFromClass } from "./root.js";
 import { inject } from "./inject.js";
 import { update } from "./update.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 import { WindowService } from "./getWindow.js";
 
 export function renderDetached<C extends Node>(
-    getView: (unmount: () => void) => View<C>,
+    getView: (unmount: () => void) => Template<C>,
     container: C
 ): () => void {
     var injector = createInjector(null, function(token) {

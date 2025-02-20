@@ -1,6 +1,6 @@
 import { isSignal } from "./isSignal.js";
 import type { Signal } from "./signal.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 var MAX_COUNT = 9007199254740991;
 
@@ -34,10 +34,10 @@ export function repeat<T>(
 	getView: (index: number) => T
 ): T[];
 
-export function repeat<ViewT extends View<ContextT>, ContextT>(
+export function repeat<ViewT extends Template<ContextT>, ContextT>(
 	count: Signal<number>,
 	getView: (index: number) => ViewT
-): View<ContextT>;
+): Template<ContextT>;
 
 export function repeat(
 	count: Signal<number> | number,
@@ -45,7 +45,7 @@ export function repeat(
 ): unknown {
 	if (isSignal(count)) {
 		var arrayState = count.map(createRangeArray);
-		return arrayState.views(getView as (index: number) => View<unknown>);
+		return arrayState.views(getView as (index: number) => Template<unknown>);
 	}
 	
 	count = getNumber(count as number);

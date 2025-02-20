@@ -1,7 +1,7 @@
 import { empty } from "./empty.js";
 import { noop } from "./noop.js";
 import { renderDetached } from "./renderDetached.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 export type AppRoot<C> = {
     /**
@@ -9,7 +9,7 @@ export type AppRoot<C> = {
      * Before that, it unmounts the previous root component and clears the container.
      * @param rootComponent 
      */
-    render(rootComponent: () => View<C>): void;
+    render(rootComponent: () => Template<C>): void;
 
     /**
      * Unmounts the previous root component.
@@ -34,7 +34,7 @@ export function createRoot<C extends Element>(container: C): AppRoot<C> {
     var unmount: () => void = noop;
 
     return {
-        render: function(rootComponent: () => View<C>): void {
+        render: function(rootComponent: () => Template<C>): void {
             unmount();
             empty(container);
             unmount = renderDetached(rootComponent, container);

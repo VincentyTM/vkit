@@ -1,9 +1,9 @@
 import { append } from "./append.js";
 import { bind } from "./bind.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 export type VirtualHTMLElement<T> = {
-	readonly arguments: View<T>;
+	readonly arguments: Template<T>;
 	readonly isVirtual: true;
 	readonly nodeName: string;
 	render(): T;
@@ -45,11 +45,11 @@ function renderElement<T extends HTMLElement>(this: VirtualHTMLElement<T>): T {
  * }
  */
 export function htmlTag<N extends keyof HTMLElementTagNameMap>(tagName: N): (
-	...contents: View<HTMLElementTagNameMap[N]>[]
+	...contents: Template<HTMLElementTagNameMap[N]>[]
 ) => VirtualHTMLElement<HTMLElementTagNameMap[N]> {
 	return function(): VirtualHTMLElement<HTMLElementTagNameMap[N]> {
 		return {
-			arguments: arguments as View<HTMLElementTagNameMap[N]>,
+			arguments: arguments as Template<HTMLElementTagNameMap[N]>,
 			isVirtual: true,
 			nodeName: tagName.toUpperCase(),
 			render: renderElement

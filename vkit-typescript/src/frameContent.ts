@@ -3,9 +3,9 @@ import { isSignal } from "./isSignal.js";
 import { onEvent } from "./onEvent.js";
 import { renderDetached } from "./renderDetached.js";
 import type { Signal } from "./signal.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
-export function frameContent(getView: (() => View<HTMLBodyElement>) | Signal<() => View<HTMLBodyElement>>): View<HTMLIFrameElement> {
+export function frameContent(getView: (() => Template<HTMLBodyElement>) | Signal<() => Template<HTMLBodyElement>>): Template<HTMLIFrameElement> {
 	var props = {
 		onload: function(this: HTMLIFrameElement): void {
 			var win = this.contentWindow;
@@ -14,7 +14,7 @@ export function frameContent(getView: (() => View<HTMLBodyElement>) | Signal<() 
                 throw new Error("Content window is null");
             }
 			
-			renderDetached(function(unmount: () => void): View<HTMLBodyElement> {
+			renderDetached(function(unmount: () => void): Template<HTMLBodyElement> {
                 if (!win) {
                     throw new Error("Content window is null");
                 }

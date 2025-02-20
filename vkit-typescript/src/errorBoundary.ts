@@ -2,7 +2,7 @@ import { getComponent } from "./contextGuard.js";
 import { onUnmount } from "./onUnmount.js";
 import { signal } from "./signal.js";
 import { update } from "./update.js";
-import type { View } from "./view.js";
+import type { Template } from "./Template.js";
 
 /**
  * Creates and returns an error boundary.
@@ -35,8 +35,8 @@ import type { View } from "./view.js";
  * @returns The error boundary.
  */
 export function errorBoundary<T, U>(
-	getView: () => View<T>,
-	getFallbackView: (error: unknown, retry: () => void) => View<U>
+	getView: () => Template<T>,
+	getFallbackView: (error: unknown, retry: () => void) => Template<U>
 ) {
 	var error: unknown;
 	var failed = signal(false);
@@ -52,7 +52,7 @@ export function errorBoundary<T, U>(
 		update();
 	}
 	
-	return failed.view(function(hasFailed: boolean): View<T> | View<U> {
+	return failed.view(function(hasFailed: boolean): Template<T> | Template<U> {
 		if (hasFailed) {
 			return getFallbackView(error, retry);
 		}
