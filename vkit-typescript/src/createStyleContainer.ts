@@ -1,22 +1,22 @@
-export type StyleContainer = {
-	add(name: string): StyleController;
-	element: HTMLStyleElement;
+export interface StyleContainer {
+	readonly element: HTMLStyleElement;
 	parent?: Node;
+	add(name: string): StyleController;
 	remove(name: string): boolean;
-};
+}
 
-export type StyleController = {
+export interface StyleController {
+	readonly name: string;
 	addRef(): void;
 	removeRef(): boolean;
 	setValue(newValue: string): void;
-	name: string;
 	toString(): string;
-};
+}
 
-type StyleSheetWrapper = {
-	element: HTMLStyleElement,
+interface StyleSheetWrapper {
+	readonly element: HTMLStyleElement;
 	setCSS(value: string): void;
-};
+}
 
 function createStyleSheet(): StyleSheetWrapper {
 	var style = document.createElement("style");
@@ -67,10 +67,10 @@ function createStyleController(name: string, updateStyle: () => void): StyleCont
 	}
 	
 	return {
+		name: name,
 		addRef: addRef,
 		removeRef: removeRef,
 		setValue: setValue,
-		name: name,
 		toString: toString
 	};
 }
@@ -120,8 +120,8 @@ export default function createStyleContainer(): StyleContainer {
 	}
 	
 	return {
-		add: add,
 		element: style.element,
+		add: add,
 		remove: remove
 	};
 }
