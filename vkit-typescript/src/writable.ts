@@ -1,12 +1,11 @@
 import type { ComputedSignal } from "./computed.js";
-import { addToSignal, toggleSignal, signalToString, updateSignal, type Signal, type WritableSignal } from "./signal.js";
+import { toggleSignal, signalToString, updateSignal, type Signal, type WritableSignal } from "./signal.js";
 
 export function writable<T, U extends T>(
     input: ComputedSignal<T>,
     setValue: (value: U) => void
 ): WritableSignal<T> {
     var output = input as Signal<T> as WritableSignal<T>;
-    output.add = addToSignal;
     output.set = setValue;
     output.setEagerly = setValue;
     output.toggle = toggleSignal;

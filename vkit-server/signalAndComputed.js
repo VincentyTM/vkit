@@ -3,10 +3,6 @@ import noop from "./noop.js";
 
 var none = {};
 
-export function add(value) {
-	this.set(this.get() + value);
-}
-
 function map(transform) {
 	return computed(transform, [this]);
 }
@@ -114,7 +110,6 @@ export function signal(value) {
 		value = v;
 	}
 	
-	get.add = add;
 	get.component = null;
 	get.effect = noop;
 	get.get = get;

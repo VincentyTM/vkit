@@ -226,18 +226,6 @@ export type Signal<T> = {
 
 export type WritableSignal<T> = Signal<T> & {
 	/**
-	 * Adds a value to the the signal's current value.
-	 * It behaves the same as `signal.set(signal.get() + value);`.
-	 * @example
-	 * const count = signal(10);
-	 * count.add(20);
-	 * // count.get() === 30
-	 * 
-	 * @param value The new value of the signal.
-	 */
-	add(value: T): void;
-	
-	/**
 	 * Sets the signal's value and enqueues a notification of its subscribers.
 	 * @example
 	 * const count = signal(10);
@@ -409,7 +397,6 @@ export function signal<T>(value: T): WritableSignal<T> {
 		}
 	}
 	
-	use.add = addToSignal;
 	use.component = parent;
 	use.effect = signalEffect;
 	use.get = get;
@@ -428,10 +415,6 @@ export function signal<T>(value: T): WritableSignal<T> {
 	use.views = views;
 	
 	return use as WritableSignal<T>;
-}
-
-export function addToSignal<T>(this: WritableSignal<T>, value: T): void {
-	this.set((this.get() as any) + value);
 }
 
 export function toggleSignal(this: WritableSignal<boolean>): void {
