@@ -26,10 +26,6 @@ function render() {
 	return createTextNode(this.get());
 }
 
-export function toggle() {
-	this.set(!this.get());
-}
-
 export function toStringWritable() {
 	return "[object WritableSignal(" + this.get() + ")]";
 }
@@ -120,7 +116,6 @@ export function signal(value) {
 	get.render = render;
 	get.set = set;
 	get.subscribe = noop;
-	get.toggle = toggle;
 	get.toString = toStringWritable;
 	get.update = update;
 	get.view = view;
