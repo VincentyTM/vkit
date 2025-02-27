@@ -3,7 +3,7 @@ import { createProvider, type Provider } from "./createProvider.js";
 import { getComponent, getInjector, setInjector } from "./contextGuard.js";
 import { inject } from "./inject.js";
 
-export type ConfigClass = new () => unknown;
+export type ConfigClass = (new () => unknown) | {create: () => unknown};
 export type ConfigProvide = {provide: TokenLike & (new () => unknown)};
 export type ConfigUseClass = {provide: TokenLike, useClass: new () => unknown};
 export type ConfigUseExisting = {provide: TokenLike, useExisting: TokenLike};
@@ -20,8 +20,11 @@ type ConfigProvidable = (
 
 export type Config = ConfigClass | ConfigProvidable;
 
-function getValueFromClass(config: Config) {
-	return new (config as ConfigClass)();
+function getValueFromClass(config: Config): unknown {
+	if ("create" in config) {
+		return config.create();
+	}
+	return new (config as any)();
 }
 
 function getValueFromProvide(config: Config) {
@@ -111,7 +114,7 @@ export function provide<R>(
 				injector.container.set((config as ConfigProvidable).provide, provider);
 			} else {
 				provider = createProvider(getValueFromClass, config, component);
-				injector.container.set(config as ConfigClass, provider);
+				injector.container.set(config as never, provider);
 			}
 		}
 	}

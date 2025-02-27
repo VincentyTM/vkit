@@ -4,6 +4,9 @@ import createProvider from "./createProvider.js";
 import inject from "./inject.js";
 
 function getValueFromClass(config) {
+	if ("create" in config) {
+		return config.create();
+	}
 	return new config();
 }
 
