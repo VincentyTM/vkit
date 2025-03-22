@@ -7,13 +7,6 @@ function map(transform) {
 	return computed(transform, [this]);
 }
 
-function pipe(output, transform) {
-	var input = this;
-	var hasTransform = typeof transform === "function";
-	var value = input.get();
-	output.set(hasTransform ? transform(value, output.get()) : value);
-}
-
 function prop(key) {
 	var value = this.get();
 	
@@ -87,7 +80,6 @@ export function computed(getValue, inputs) {
 	get.invalidate = invalidate;
 	get.isSignal = true;
 	get.map = map;
-	get.pipe = pipe;
 	get.prop = prop;
 	get.render = render;
 	get.subscribe = noop;
@@ -111,7 +103,6 @@ export function signal(value) {
 	get.get = get;
 	get.isSignal = true;
 	get.map = map;
-	get.pipe = pipe;
 	get.prop = prop;
 	get.render = render;
 	get.set = set;

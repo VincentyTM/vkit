@@ -4,7 +4,6 @@ import { getComponent } from "./contextGuard.js";
 import { Component } from "./createComponent.js";
 import { onDestroy } from "./onDestroy.js";
 import { signalEffect } from "./signalEffect.js";
-import { signalPipe } from "./signalPipe.js";
 import { signalProp } from "./signalProp.js";
 import { signalText } from "./signalText.js";
 import { Template } from "./Template.js";
@@ -68,31 +67,6 @@ export type Signal<T> = {
 	 * @returns The computed signal which contains the new value.
 	 */
 	map<U>(transform: (value: T) => U): ComputedSignal<U>;
-
-	/**
-	 * Sets a destination signal's value to the current signal's value immediately and also when the value changes.
-	 * 
-	 * @example
-	 * const firstSignal = signal(1);
-	 * const secondSignal = signal(2);
-	 * 
-	 * firstSignal.pipe(secondSignal, (x: number) => x * 10);
-	 * console.log(secondSignal.get()); // 10
-	 * 
-	 * firstSignal.set(5);
-	 * console.log(secondSignal.get()); // 10
-	 * 
-	 * update();
-	 * console.log(secondSignal.get()); // 50
-	 * 
-	 * @param output The destination signal.
-	 * @param transform An optional function that returns a new value.
-	 * The destination signal is set to this new value instead of the source state's value.
-	 */
-	pipe<U>(
-		output: WritableSignal<U>,
-		transform?: (value: T) => U
-	): void;
 
 	/**
 	 * Binds a property to the signal.
@@ -389,7 +363,6 @@ export function signal<T>(value: T): WritableSignal<T> {
 	use.get = get;
 	use.isSignal = true;
 	use.map = signalMap;
-	use.pipe = signalPipe;
 	use.prop = signalProp;
 	use.render = signalText;
 	use.set = set;
