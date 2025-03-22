@@ -13,7 +13,7 @@ import { toArray } from "./toArray.js";
 import { enqueueUpdate } from "./update.js";
 
 type Block = {
-	Effect: Effect;
+	effect: Effect;
 	index: number;
 	insertBefore(anchor: Node): void;
 	range: NodeRange;
@@ -32,7 +32,7 @@ function createBlock<ItemT>(
 ): Block {
 	var range = nodeRange(true);
 	
-	var Effect = createEffect(function(): void {
+	var effect = createEffect(function(): void {
 		var view = getView(model, block);
 		
 		if (range.start.nextSibling) {
@@ -42,7 +42,7 @@ function createBlock<ItemT>(
 	}, container, injector);
 	
 	function render(): Template {
-		enqueueUpdate(Effect.render);
+		enqueueUpdate(effect.render);
 		
 		return [
 			range.start,
@@ -58,11 +58,11 @@ function createBlock<ItemT>(
 			var prevInjector = getInjector(true);
 			
 			try {
-				setEffect(Effect);
+				setEffect(effect);
 				setInjector(injector);
 				insert(render(), end, end.parentNode, true);
 			} catch (error) {
-				throwError(error, Effect);
+				throwError(error, effect);
 			} finally {
 				setEffect(prevEffect);
 				setInjector(prevInjector);
@@ -71,7 +71,7 @@ function createBlock<ItemT>(
 	}
 	
 	var block = {
-		Effect: Effect,
+		effect: effect,
 		index: 0,
 		insertBefore: insertBefore,
 		range: range,
@@ -123,7 +123,7 @@ export function views<ViewT extends Template<ContextT>, ItemT, ContextT>(
 			if (!(key in newBlocks)) {
 				var block = oldBlocks[key];
 				block.range.remove();
-				destroyEffect(block.Effect);
+				destroyEffect(block.effect);
 			}
 		}
 		
