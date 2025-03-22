@@ -1,8 +1,7 @@
 import { getEffect } from "./contextGuard.js";
-import { onDestroy } from "./onDestroy.js";
 import { signal } from "./signal.js";
 import { Template } from "./Template.js";
-import { update } from "./update.js";
+import { view } from "./view.js";
 
 /**
  * Creates and returns an error boundary.
@@ -30,68 +29,41 @@ import { update } from "./update.js";
  * 		})
  * 	];
  * }
- * @param getView A function that returns a view.
- * @param getFallbackView A function that returns a placeholder view.
+ * @param getTemplate A function that returns a view.
+ * @param getFallbackTemplate A function that returns a placeholder view.
  * @returns The error boundary.
  */
-export function errorBoundary<T, U>(
-	getView: () => Template<T>,
-	getFallbackView: (error: unknown, retry: () => void) => Template<U>
+export function errorBoundary<P extends Element>(
+	getTemplate: () => Template<P>,
+	getFallbackTemplate: (error: unknown, retry: () => void) => Template<P>
 ) {
 	var error: unknown;
-	var failed = signal(false);
+	var isFailed = signal(false);
 	
 	function retry(): void {
-		failed.set(false);
-		update();
+		error = undefined;
+		isFailed.set(false);
 	}
 
 	function errorHandler(ex: unknown): void {
 		error = ex;
-		failed.set(true);
-		update();
+		isFailed.set(true);
 	}
-	
-	return failed.view(function(hasFailed: boolean): Template<T> | Template<U> {
-		if (hasFailed) {
-			return getFallbackView(error, retry);
+
+	function getOuterTemplate(): Template<P> {
+		if (isFailed()) {
+			return getFallbackTemplate(error, retry);
 		}
 		
-		var effect = getEffect();
-		var errorHandlers = effect.errorHandlers;
-		
-		if (errorHandlers) {
-			errorHandlers.push(errorHandler);
-		} else {
-			effect.errorHandlers = [errorHandler];
-		}
-		
-		onDestroy(function(): void {
-			var errorHandlers = effect.errorHandlers;
-
-			if (!errorHandlers) {
-				return;
-			}
-
-			var n = errorHandlers.length;
-
-			for (var i = n - 1; i >= 0; --i) {
-				if (errorHandlers[i] === errorHandler) {
-					if (n === 1) {
-						effect.errorHandlers = undefined;
-					} else {
-						errorHandlers.splice(i, 1);
-					}
-					break;
-				}
-			}
-		});
+		getEffect().errorHandler = errorHandler;
 		
 		try {
-			return getView();
+			return getTemplate();
 		} catch (ex) {
 			error = ex;
-			failed.set(true);
+			isFailed.set(true);
 		}
-	});
+	}
+	
+	return view(getOuterTemplate);
 }

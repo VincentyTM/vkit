@@ -6,16 +6,11 @@ export function throwError(error: any, effect: Effect | undefined): void {
 			error.stack += "\n" + effect.stack;
 		}
 
-		var errorHandlers = effect.errorHandlers;
+		var errorHandler = effect.errorHandler;
 		
-		if (errorHandlers) {
+		if (errorHandler) {
 			try {
-				var n = errorHandlers.length;
-
-				for (var i = 0; i < n; ++i) {
-					errorHandlers[i](error);
-				}
-
+				errorHandler(error);
 				return;
 			} catch (ex) {
 				error = ex;
