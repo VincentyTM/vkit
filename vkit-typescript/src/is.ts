@@ -2,9 +2,9 @@ import { getEffect } from "./contextGuard.js";
 import { effect } from "./effect.js";
 
 /**
- * Evaluates a function returning a boolean and rerenders the current view/views/effect block when that boolean value changes.
+ * Evaluates a function returning a boolean and updates the current reactive block when that boolean value changes.
  * 
- * See the following example. If `is` was not used there, the view block would be rerendered every time `count` changes.
+ * See the following example. If `is` was not used there, the view block would be rendered every time `count` changes.
  * @example
  * function Counter() {
  * 	const count = signal(5);
