@@ -12,8 +12,8 @@ export type InstanceOf<TokenT> = (
 
 export type Injector = {
 	container: WeakMap<TokenLike, Provider<unknown>>,
-	handleMissingProvider: ((token: TokenClass) => InstanceOf<TokenClass>) | null,
-	parent: Injector | null
+	handleMissingProvider: ((token: TokenClass) => InstanceOf<TokenClass>) | undefined,
+	parent: Injector | undefined
 };
 
 var Container = typeof WeakMap === "function" ? WeakMap : function<K extends object, V>(
@@ -45,8 +45,8 @@ var Container = typeof WeakMap === "function" ? WeakMap : function<K extends obj
 } as unknown as WeakMapConstructor;
 
 export function createInjector(
-	parent: Injector | null,
-	handleMissingProvider: ((token: TokenClass) => InstanceOf<TokenClass>) | null
+	parent: Injector | undefined,
+	handleMissingProvider: ((token: TokenClass) => InstanceOf<TokenClass>) | undefined
 ): Injector {
 	return {
 		container: new Container<TokenLike, Provider<unknown>>(),

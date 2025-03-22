@@ -78,7 +78,7 @@ export function errorBoundary<T, U>(
 			for (var i = n - 1; i >= 0; --i) {
 				if (errorHandlers[i] === errorHandler) {
 					if (n === 1) {
-						effect.errorHandlers = null;
+						effect.errorHandlers = undefined;
 					} else {
 						errorHandlers.splice(i, 1);
 					}

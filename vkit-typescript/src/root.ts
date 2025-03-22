@@ -14,10 +14,10 @@ export function getValueFromClass(config: Config): unknown {
 	return new (config as any)();
 }
 
-export var rootInjector = createInjector(null, function(token) {
+export var rootInjector = createInjector(undefined, function(token) {
 	var provider = createProvider(getValueFromClass, token, rootEffect);
 	rootInjector.container.set(token, provider);
 	return provider.getInstance();
 });
 
-export var rootEffect = createEffect(mount, null, rootInjector);
+export var rootEffect = createEffect(mount, undefined, rootInjector);

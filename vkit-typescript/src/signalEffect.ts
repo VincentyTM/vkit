@@ -9,7 +9,7 @@ export function signalEffect<T>(
 		value: T,
 		onCleanup?: (
 			callback: () => void,
-			effect?: Effect | null
+			effect?: Effect | undefined
 		) => void
 	) => void
 ): () => void {

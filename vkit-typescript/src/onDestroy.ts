@@ -9,7 +9,7 @@ import { rootEffect } from "./root.js";
  */
 export function onDestroy(
 	callback: () => void,
-	effect?: Effect | null
+	effect?: Effect | undefined
 ): void {
 	if (!effect) {
 		effect = getEffect();
@@ -19,7 +19,7 @@ export function onDestroy(
 		return;
 	}
 	
-	var e: Effect | null = effect;
+	var e: Effect | undefined = effect;
 	
 	while (e && e.destroyHandlers === undefined) {
 		e.destroyHandlers = [];

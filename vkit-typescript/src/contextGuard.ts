@@ -1,36 +1,36 @@
 import { Effect } from "./createEffect.js";
 import { Injector } from "./createInjector.js";
 
-var currentEffect: Effect | null = null;
-var currentInjector: Injector | null = null;
+var currentEffect: Effect | undefined;
+var currentInjector: Injector | undefined;
 var errorMessage = "This function can only be called synchronously from a reactive context";
 
 export function getEffect(): Effect;
 
-export function getEffect(allowNull: true): Effect | null;
+export function getEffect(doNotThrow: true): Effect | undefined;
 
-export function getEffect(allowNull?: boolean): Effect | null {
-	if (!allowNull && !currentEffect) {
+export function getEffect(doNotThrow?: boolean): Effect | undefined {
+	if (!doNotThrow && !currentEffect) {
 		throw new Error(errorMessage);
 	}
 	return currentEffect;
 }
 
-export function setEffect(effect: Effect | null): void {
+export function setEffect(effect: Effect | undefined): void {
 	currentEffect = effect;
 }
 
 export function getInjector(): Injector;
 
-export function getInjector(allowNull: true): Injector | null;
+export function getInjector(doNotThrow: true): Injector | undefined;
 
-export function getInjector(allowNull?: boolean): Injector | null {
-	if (!allowNull && (!currentEffect || !currentInjector)) {
+export function getInjector(doNotThrow?: boolean): Injector | undefined {
+	if (!doNotThrow && (!currentEffect || !currentInjector)) {
 		throw new Error(errorMessage);
 	}
 	return currentInjector;
 }
 
-export function setInjector(injector: Injector | null): void {
+export function setInjector(injector: Injector | undefined): void {
 	currentInjector = injector;
 }

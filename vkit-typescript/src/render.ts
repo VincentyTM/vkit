@@ -32,8 +32,8 @@ export function render<ContextT extends Node>(
 		
 		append(container, view, container, bind);
 	} finally {
-		setEffect(null);
-		setInjector(null);
+		setEffect(undefined);
+		setInjector(undefined);
 	}
 	
 	update();

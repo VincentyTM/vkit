@@ -35,7 +35,7 @@ export function inject<TokenT extends TokenLike>(token: TokenT, injector?: Injec
 	
 	while (!(provider = injector.container.get(token) as Provider<InstanceOf<TokenT>>)) {
 		var handleMissingProvider = injector.handleMissingProvider;
-		var parent: Injector | null = injector.parent;
+		var parent: Injector | undefined = injector.parent;
 		
 		if (!parent) {
 			if (typeof handleMissingProvider === "function") {

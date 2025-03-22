@@ -86,7 +86,7 @@ export function customElement(
 			CustomElement
 		);
 
-		var injector = createInjector(null, function(token): unknown {
+		var injector = createInjector(undefined, function(token): unknown {
 			var provider = createProvider(getValueFromClass, token, effect);
 			injector.container.set(token, provider);
 			return provider.getInstance();
@@ -97,7 +97,7 @@ export function customElement(
 			inject(WindowService).window = doc.defaultView || (doc as any).parentWindow;
 			var view = getView.call(el, el.observedAttributes, el);
 			append(el, view, el, bind);
-		}, null, injector);
+		}, undefined, injector);
 		
 		el.effect = effect;
 		el.observedAttributes = {};

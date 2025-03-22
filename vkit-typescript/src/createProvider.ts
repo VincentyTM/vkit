@@ -9,7 +9,7 @@ export type Provider<T> = {
 export function createProvider<T>(
 	createInstance: (config: Config) => T,
 	config: Config,
-	effect: Effect | null
+	effect: Effect | undefined
 ): Provider<T> {
 	var instance: T | undefined;
 	var instanceCreated = false;

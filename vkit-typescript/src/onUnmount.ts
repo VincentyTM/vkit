@@ -6,7 +6,7 @@ import { onDestroy } from "./onDestroy.js";
  */
 export function onUnmount(
 	callback: () => void,
-	effect?: Effect | null
+	effect?: Effect | undefined
 ): void {
     onDestroy(callback, effect);
 }

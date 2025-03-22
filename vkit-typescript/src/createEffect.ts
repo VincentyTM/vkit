@@ -4,25 +4,25 @@ import { Injector } from "./createInjector.js";
 import { throwError } from "./throwError.js";
 
 export interface Effect {
-	children: Effect[] | null;
+	children: Effect[] | undefined;
 	destroyHandlers: (() => void)[] | undefined;
-	errorHandlers: ((error: unknown) => void)[] | null;
-	parent: Effect | null;
+	errorHandlers: ((error: unknown) => void)[] | undefined;
+	parent: Effect | undefined;
 	stack: string | undefined;
 	render(): void;
 }
 
 export function createEffect(
 	mount: () => void,
-	parent?: Effect | null,
-	injector?: Injector | null
+	parent?: Effect | undefined,
+	injector?: Injector | undefined
 ) : Effect {
 	var isRendering = false;
 	
 	var effect = {
-		children: null,
+		children: undefined,
 		destroyHandlers: undefined,
-		errorHandlers: null,
+		errorHandlers: undefined,
 		parent: parent === undefined ? getEffect() : parent,
 		stack: new Error().stack,
 		render: updateEffect
@@ -42,10 +42,10 @@ export function createEffect(
 		
 		try {
 			isRendering = true;
-			setEffect(null);
+			setEffect(undefined);
 			emitUnmount(effect);
 			setEffect(effect);
-			setInjector(injector || null);
+			setInjector(injector);
 			mount();
 		} catch (error) {
 			throwError(error, effect);

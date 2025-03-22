@@ -4,7 +4,7 @@ export function emitUnmount(effect: Effect): void {
 	var children = effect.children;
 
 	if (children) {
-		effect.children = null;
+		effect.children = undefined;
 		
 		var n = children.length;
 		

@@ -85,8 +85,8 @@ export function provide<R>(
 ): R {
 	var effect = getEffect();
 	var prevInjector = getInjector(true);
-	var parentInjector = configs ? prevInjector : null;
-	var injector = createInjector(parentInjector, configs ? null : function(token) {
+	var parentInjector = configs ? prevInjector : undefined;
+	var injector = createInjector(parentInjector, configs ? undefined : function(token) {
 		var provider = createProvider(getValueFromClass, token, effect);
 		injector.container.set(token, provider);
 		return provider.getInstance();

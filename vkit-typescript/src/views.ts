@@ -28,8 +28,8 @@ type BlockInfo = {
 function createBlock<ItemT>(
 	model: ItemT,
 	getView: (value: ItemT, block?: BlockInfo) => Template,
-	container: Effect | null,
-	injector: Injector | null
+	container: Effect | undefined,
+	injector: Injector | undefined
 ): Block {
 	var range = nodeRange(true);
 	

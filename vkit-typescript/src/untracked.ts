@@ -27,7 +27,7 @@ export function untracked<T>(callback: () => T): T {
 	}
 	
 	try {
-		setEffect(null);
+		setEffect(undefined);
 		return callback();
 	} finally {
 		setEffect(effect);

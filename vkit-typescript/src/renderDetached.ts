@@ -14,7 +14,7 @@ export function renderDetached<C extends Node>(
     getView: (unmount: () => void) => Template<C>,
     container: C
 ): () => void {
-    var injector = createInjector(null, function(token) {
+    var injector = createInjector(undefined, function(token) {
         var provider = createProvider(getValueFromClass, token, effect);
         injector.container.set(token, provider);
         return provider.getInstance();
@@ -40,7 +40,7 @@ export function renderDetached<C extends Node>(
         if (container) {
             append(container, view, container, bind);
         }
-    }, null, injector);
+    }, undefined, injector);
 
     function unmount(): void {
         emitUnmount(effect);
