@@ -28,10 +28,15 @@ export function emitUnmount(component: Component): void {
 		}
 	}
 	
-	var unmount = component.unmount;
+	var destroyHandlers = component.destroyHandlers;
 	
-	if (unmount) {
-		unmount();
-		component.unmount = null;
+	if (destroyHandlers !== undefined) {
+		component.destroyHandlers = undefined;
+
+		var n = destroyHandlers.length;
+
+		for(var i = 0; i < n; ++i) {
+			destroyHandlers[i]();
+		}
 	}
 }

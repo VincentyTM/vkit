@@ -1,17 +1,16 @@
 import { emitUnmount } from "./emitUnmount.js";
 import { getComponent, getInjector, setComponent, setInjector } from "./contextGuard.js";
 import { Injector } from "./createInjector.js";
-import { Observable } from "./observable.js";
 import { throwError } from "./throwError.js";
 
-export type Component = {
+export interface Component {
 	children: Component[] | null;
+	destroyHandlers: (() => void)[] | undefined;
 	errorHandlers: ((error: unknown) => void)[] | null;
 	parent: Component | null;
-	render: () => void;
 	stack: string | undefined;
-	unmount: Observable<void> | null;
-};
+	render(): void;
+}
 
 export function createComponent(
 	mount: () => void,
@@ -22,11 +21,11 @@ export function createComponent(
 	
 	var component = {
 		children: null,
+		destroyHandlers: undefined,
 		errorHandlers: null,
 		parent: parent === undefined ? getComponent() : parent,
-		render: renderComponent,
 		stack: new Error().stack,
-		unmount: null
+		render: renderComponent
 	};
 	
 	if (injector === undefined) {

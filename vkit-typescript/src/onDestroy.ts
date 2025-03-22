@@ -1,6 +1,5 @@
 import { getComponent } from "./contextGuard.js";
 import { Component } from "./createComponent.js";
-import { observable } from "./observable.js";
 import { rootComponent } from "./root.js";
 
 /**
@@ -22,8 +21,8 @@ export function onDestroy(
 	
 	var c: Component | null = component;
 	
-	while (c && !c.unmount) {
-		c.unmount = observable();
+	while (c && c.destroyHandlers === undefined) {
+		c.destroyHandlers = [];
 		
 		if (c.parent) {
 			if (c.parent.children) {
@@ -36,5 +35,5 @@ export function onDestroy(
 		c = c.parent;
 	}
 	
-	component!.unmount!.subscribe(callback);
+	component!.destroyHandlers!.push(callback);
 }
