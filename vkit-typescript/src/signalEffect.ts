@@ -10,7 +10,7 @@ export function signalEffect<T>(
 		onCleanup?: (
 			callback: () => void,
 			component?: Component | null
-		) => (callback: () => void) => void
+		) => void
 	) => void
 ): () => void {
 	var signal = this;

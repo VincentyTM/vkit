@@ -1,25 +1,23 @@
 import { getComponent } from "./contextGuard.js";
 import { Component } from "./createComponent.js";
-import { noop } from "./noop.js";
 import { observable } from "./observable.js";
 import { rootComponent } from "./root.js";
 
 /**
  * Schedules a callback to be run when the current component is destroyed.
- * @param callback The handler that listens to the component unmount event.
- * @param component The component whose unmount event is handled. By default, it is the current component.
- * @returns A function that unsubscribes the callback from the component unmount event.
+ * @param callback The handler that listens to the component destroy event.
+ * @param component The component whose destroy event is handled. By default, it is the current component.
  */
 export function onDestroy(
 	callback: () => void,
 	component?: Component | null
-) : (callback: () => void) => void {
+): void {
 	if (!component) {
 		component = getComponent();
 	}
 	
 	if (component === rootComponent) {
-		return noop;
+		return;
 	}
 	
 	var c: Component | null = component;
@@ -38,5 +36,5 @@ export function onDestroy(
 		c = c.parent;
 	}
 	
-	return component!.unmount!.subscribe(callback);
+	component!.unmount!.subscribe(callback);
 }
