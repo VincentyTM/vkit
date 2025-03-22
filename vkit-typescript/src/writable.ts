@@ -7,7 +7,6 @@ export function writable<T, U extends T>(
 ): WritableSignal<T> {
     var output = input as Signal<T> as WritableSignal<T>;
     output.set = setValue;
-    output.setEagerly = setValue;
     output.toString = signalToString;
     output.update = updateSignal;
     return output;

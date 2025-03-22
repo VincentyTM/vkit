@@ -150,18 +150,6 @@ export type WritableSignal<T> = Signal<T> & {
 	 * @param value The new value of the signal.
 	 */
 	set(value: T): void;
-	
-	/**
-	 * Sets the signal's value and immediately notifies its subscribers about the change.
-	 * @example
-	 * const count = signal(10);
-	 * count.subscribe((value) => console.log("The value has changed to: " + value));
-	 * count.set(20);
-	 * console.log("This will run after the previous console.log.");
-	 * 
-	 * @param value The new value of the signal.
-	 */
-	setEagerly(value: T): void;
 
 	/**
 	 * Sets the signal's current value to the return value of the callback.
@@ -270,22 +258,6 @@ export function signal<T>(value: T): WritableSignal<T> {
 		}
 	}
 	
-	function setEagerly(newValue: T): void {
-		if (value !== newValue) {
-			value = newValue;
-			
-			var subs = subscriptions.slice();
-			var n = subs.length;
-				
-			for (var i = 0; i < n; ++i) {
-				var sub = subs[i];
-				if (sub.callback) {
-					sub.callback(value);
-				}
-			}
-		}
-	}
-	
 	function notify(): void {
 		enqueued = false;
 		var subs = subscriptions.slice();
@@ -305,7 +277,6 @@ export function signal<T>(value: T): WritableSignal<T> {
 	use.isSignal = true;
 	use.map = signalMap;
 	use.set = set;
-	use.setEagerly = setEagerly;
 	use.subscribe = subscribe;
 	use.toString = signalToString;
 	use.update = updateSignal;

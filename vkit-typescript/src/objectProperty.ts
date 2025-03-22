@@ -4,6 +4,7 @@ import { isSignal } from "./isSignal.js";
 import { observe } from "./observe.js";
 import { onDestroy } from "./onDestroy.js";
 import { signal, Signal, WritableSignal } from "./signal.js";
+import { update } from "./update.js";
 
 /**
  * Creates and returns a writable signal that reflects and updates a property of an object.
@@ -27,7 +28,6 @@ export function objectProperty<T, K extends keyof T>(
 	getDefaultValue?: () => T[K]
 ): WritableSignal<T[K]> {
 	var value = signal<T[K]>(get(object)[get(property)]);
-	var setEagerly = value.setEagerly;
 	
 	value.subscribe(function(v: T[K]) {
 		get(object)[get(property)] = v;
@@ -47,8 +47,13 @@ export function objectProperty<T, K extends keyof T>(
 			throw new Error("Property '" + String(p) + "' does not exist and there is no default value provided");
 		}
 		
-		onDestroy(change.subscribe(setEagerly));
-		setEagerly(o[p]);
+		onDestroy(change.subscribe(function(newValue: T[K]): void {
+			value.set(newValue);
+			update();
+		}));
+
+		value.set(o[p]);
+		update();
 	});
 	
 	return value;
