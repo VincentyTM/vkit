@@ -6,33 +6,29 @@ export type KeyedSignal<T, K> = ComputedSignal<T> & {
 	key: K;
 };
 
-type Records<T> = {
-	[key: string]: T;
-};
-
-type Store<T> = {
+interface KeysAndRecords<T> {
 	keys: string[];
-	records: Records<T>;
-};
+	records: Record<string, T>;
+}
 
-type UseKeyHandle<T> = {
+interface UseKeyHandle<T> {
 	array: Signal<T[]>;
+	records: ComputedSignal<Record<string, T>>;
 	getItem(key: string): T;
-	records: ComputedSignal<Records<T>>;
 	select(key: string): KeyedSignal<T, string>;
 	select(key: Signal<string>): KeyedSignal<T, Signal<string>>;
 	views<ViewT extends Template<ContextT>, ContextT>(getItemView: (item: KeyedSignal<T, string>) => ViewT): Template<ContextT>;
-};
+}
 
-function getKeys<T>(result: Store<T>): string[] {
+function getKeys<T>(result: KeysAndRecords<T>): string[] {
 	return result.keys;
 }
 
-function getRecords<T>(result: Store<T>): Records<T> {
+function getRecords<T>(result: KeysAndRecords<T>): Record<string, T> {
 	return result.records;
 }
 
-function selectRecord(keysAndRecords: Store<unknown>, currentKey: string): unknown {
+function selectRecord(keysAndRecords: KeysAndRecords<unknown>, currentKey: string): unknown {
 	return keysAndRecords.records[currentKey];
 }
 
@@ -78,8 +74,8 @@ export function useKey<T>(
 	arraySignal: Signal<T[]>,
 	getKey: keyof T | ((value: T) => string)
 ): UseKeyHandle<T> {
-	var signal = computed(function(array: T[]) {
-		var records: Records<T> = {};
+	var keysAndRecordsSignal = computed(function(array: T[]) {
+		var records: Record<string, T> = {};
 		var n = array.length;
 		var keys = new Array(n);
 		
@@ -104,28 +100,28 @@ export function useKey<T>(
 		};
 	}, [arraySignal]);
 	
-	var keysSignal = computed(getKeys, [signal]);
+	var keysSignal = computed(getKeys, [keysAndRecordsSignal]);
 	
 	function select<K extends string | Signal<string>>(key: K): KeyedSignal<T, K> {
-		var selected = computed(selectRecord, [signal, key]) as unknown as KeyedSignal<T, K>;
+		var selected = computed(selectRecord, [keysAndRecordsSignal, key]) as unknown as KeyedSignal<T, K>;
 		selected.key = key;
 		return selected;
 	}
 	
-	function views<ViewT extends Template<ContextT>, ContextT>(getItemView: (item: KeyedSignal<T, string>) => ViewT): Template<ContextT> {
-		return keysSignal.views(function(key): ViewT {
+	function views<V extends Template<P>, P>(getItemView: (item: KeyedSignal<T, string>) => V): Template<P> {
+		return keysSignal.views(function(key): V {
 			return getItemView(select(key));
 		});
 	}
 	
 	function getItem(key: string): T {
-		return signal.get().records[key];
+		return keysAndRecordsSignal.get().records[key];
 	}
 	
 	return {
 		array: arraySignal,
 		getItem: getItem,
-		records: signal.map(getRecords),
+		records: computed(getRecords, [keysAndRecordsSignal]),
 		select: select,
 		views: views
 	} as UseKeyHandle<T>;
