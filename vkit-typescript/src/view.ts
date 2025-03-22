@@ -1,9 +1,9 @@
 import { createEffect } from "./createEffect.js";
-import { nodeRange } from "./nodeRange.js";
-import { enqueueUpdate } from "./update.js";
 import { isSignal } from "./isSignal.js";
+import { nodeRange } from "./nodeRange.js";
 import { Signal } from "./signal.js";
 import { Template } from "./Template.js";
+import { enqueueUpdate } from "./update.js";
 
 /**
  * Creates a dynamic view (a part of the DOM) which is rerendered when any of its inputs change.

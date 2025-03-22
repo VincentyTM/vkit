@@ -5,13 +5,12 @@ import { destroyEffect } from "./destroyEffect.js";
 import { hashCode } from "./hashCode.js";
 import { insert } from "./insert.js";
 import { isArray } from "./isArray.js";
-import { nodeRange } from "./nodeRange.js";
-import { enqueueUpdate } from "./update.js";
-import { NodeRange } from "./nodeRange.js";
+import { nodeRange, NodeRange } from "./nodeRange.js";
 import { Signal } from "./signal.js";
+import { Template } from "./Template.js";
 import { throwError } from "./throwError.js";
 import { toArray } from "./toArray.js";
-import { Template } from "./Template.js";
+import { enqueueUpdate } from "./update.js";
 
 type Block = {
 	Effect: Effect;

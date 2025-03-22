@@ -1,5 +1,5 @@
-import { effect } from "./effect.js";
 import { getEffect } from "./contextGuard.js";
+import { effect } from "./effect.js";
 
 /**
  * Evaluates a function returning a boolean and rerenders the current view/views/effect block when that boolean value changes.

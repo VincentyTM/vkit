@@ -1,7 +1,7 @@
-import { enqueueUpdate } from "./update.js";
 import { getEffect } from "./contextGuard.js";
 import { observe } from "./observe.js";
 import { onDestroy } from "./onDestroy.js";
+import { enqueueUpdate } from "./update.js";
 
 function getValue<T, K extends keyof T>(object: T, property: K, _receiver: T): T[K] {
 	var value = object[property];

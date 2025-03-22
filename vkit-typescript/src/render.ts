@@ -1,9 +1,9 @@
 import { append } from "./append.js";
 import { bind } from "./bind.js";
-import { rootEffect, rootInjector } from "./root.js";
 import { setEffect, setInjector } from "./contextGuard.js";
-import { update } from "./update.js";
+import { rootEffect, rootInjector } from "./root.js";
 import { Template } from "./Template.js";
+import { update } from "./update.js";
 
 /**
  * Renders the root component of the application in the DOM.

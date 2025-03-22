@@ -1,6 +1,6 @@
 import { getEffect, getInjector, setEffect, setInjector } from "./contextGuard.js";
-import { throwError } from "./throwError.js";
 import { Template } from "./Template.js";
+import { throwError } from "./throwError.js";
 
 export function getContext<ContextT>(): (getView: () => Template<ContextT>) => Template<ContextT> {
 	var effect = getEffect();

@@ -1,5 +1,5 @@
-import { signal, Signal } from "./signal.js";
 import { onDestroy } from "./onDestroy.js";
+import { signal, Signal } from "./signal.js";
 import { update } from "./update.js";
 
 export function lazyArray<T>(arraySignal: Signal<T[]>, backwards: boolean): Signal<T[]> {

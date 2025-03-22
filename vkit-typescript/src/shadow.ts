@@ -1,5 +1,5 @@
-import { bind } from "./bind.js";
 import { append } from "./append.js";
+import { bind } from "./bind.js";
 import { Template } from "./Template.js";
 
 /**

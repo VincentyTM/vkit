@@ -1,8 +1,8 @@
 import { computed } from "./computed.js";
 import { getWindow } from "./getWindow.js";
-import { Signal } from "./signal.js";
 import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
+import { Signal } from "./signal.js";
 
 export function isWindowFocused(): Signal<boolean> {
 	var win = getWindow();

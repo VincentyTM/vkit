@@ -1,4 +1,3 @@
-import { enqueueUpdate } from "./update.js";
 import { ComputedSignal, signalMap } from "./computed.js";
 import { getEffect } from "./contextGuard.js";
 import { Effect } from "./createEffect.js";
@@ -6,6 +5,7 @@ import { onDestroy } from "./onDestroy.js";
 import { signalEffect } from "./signalEffect.js";
 import { signalText } from "./signalText.js";
 import { Template } from "./Template.js";
+import { enqueueUpdate } from "./update.js";
 import { view } from "./view.js";
 import { views } from "./views.js";
 
