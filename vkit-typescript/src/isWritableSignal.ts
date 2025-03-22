@@ -1,4 +1,4 @@
-import type { WritableSignal } from "./signal.js";
+import { WritableSignal } from "./signal.js";
 
 /**
  * Takes a value and returns whether it is a writable signal.

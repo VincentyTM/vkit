@@ -2,8 +2,8 @@ import { get } from "./get.js";
 import { isSignal } from "./isSignal.js";
 import { onEvent } from "./onEvent.js";
 import { renderDetached } from "./renderDetached.js";
-import type { Signal } from "./signal.js";
-import type { Template } from "./Template.js";
+import { Signal } from "./signal.js";
+import { Template } from "./Template.js";
 
 export function frameContent(getView: (() => Template<HTMLBodyElement>) | Signal<() => Template<HTMLBodyElement>>): Template<HTMLIFrameElement> {
 	var props = {

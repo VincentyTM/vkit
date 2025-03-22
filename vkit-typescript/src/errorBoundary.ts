@@ -2,7 +2,7 @@ import { getComponent } from "./contextGuard.js";
 import { onUnmount } from "./onUnmount.js";
 import { signal } from "./signal.js";
 import { update } from "./update.js";
-import type { Template } from "./Template.js";
+import { Template } from "./Template.js";
 
 /**
  * Creates and returns an error boundary.

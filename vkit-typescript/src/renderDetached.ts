@@ -7,7 +7,7 @@ import { emitUnmount } from "./emitUnmount.js";
 import { getValueFromClass } from "./root.js";
 import { inject } from "./inject.js";
 import { update } from "./update.js";
-import type { Template } from "./Template.js";
+import { Template } from "./Template.js";
 import { WindowService } from "./getWindow.js";
 
 export function renderDetached<C extends Node>(

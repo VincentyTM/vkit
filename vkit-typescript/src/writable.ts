@@ -1,5 +1,5 @@
-import type { ComputedSignal } from "./computed.js";
-import { signalToString, updateSignal, type Signal, type WritableSignal } from "./signal.js";
+import { ComputedSignal } from "./computed.js";
+import { signalToString, updateSignal, Signal, WritableSignal } from "./signal.js";
 
 export function writable<T, U extends T>(
     input: ComputedSignal<T>,

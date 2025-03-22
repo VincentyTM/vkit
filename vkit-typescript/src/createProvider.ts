@@ -1,6 +1,6 @@
 import { getComponent, setComponent } from "./contextGuard.js";
-import type { Component } from "./createComponent.js";
-import type { Config } from "./provide.js";
+import { Component } from "./createComponent.js";
+import { Config } from "./provide.js";
 
 export type Provider<T> = {
 	getInstance(): T;

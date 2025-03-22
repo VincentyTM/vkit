@@ -1,5 +1,5 @@
-import type { WritableSignal } from "./signal.js";
-import type { Template } from "./Template.js";
+import { WritableSignal } from "./signal.js";
+import { Template } from "./Template.js";
 
 /**
  * Sets up a two-way data binding between a writable signal and an input or textarea element.

@@ -1,4 +1,4 @@
-import { signal, type Signal } from "./signal.js";
+import { signal, Signal } from "./signal.js";
 import { onUnmount } from "./onUnmount.js";
 import { update } from "./update.js";
 

@@ -1,5 +1,5 @@
 import { getComponent } from "./contextGuard.js";
-import type { Component } from "./createComponent.js";
+import { Component } from "./createComponent.js";
 import { noop } from "./noop.js";
 import { observable } from "./observable.js";
 import { rootComponent } from "./root.js";

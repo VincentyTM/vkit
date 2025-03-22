@@ -1,7 +1,7 @@
 import { insert } from "./insert.js";
 import { isArray } from "./isArray.js";
 import { toArray } from "./toArray.js";
-import type { Template } from "./Template.js";
+import { Template } from "./Template.js";
 
 function findNodes(
 	result: Node[],

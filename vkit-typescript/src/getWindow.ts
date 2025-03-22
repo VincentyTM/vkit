@@ -1,6 +1,6 @@
 import { getContext } from "./getContext.js";
 import { inject } from "./inject.js";
-import type { Template } from "./Template.js";
+import { Template } from "./Template.js";
 
 type WindowService = {
 	new(): WindowService;

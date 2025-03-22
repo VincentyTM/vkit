@@ -3,7 +3,7 @@ import { bind } from "./bind.js";
 import { rootComponent, rootInjector } from "./root.js";
 import { setComponent, setInjector } from "./contextGuard.js";
 import { update } from "./update.js";
-import type { Template } from "./Template.js";
+import { Template } from "./Template.js";
 
 /**
  * Renders the root component of the application in the DOM.

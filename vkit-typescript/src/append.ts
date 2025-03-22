@@ -1,6 +1,6 @@
-import type { Bindings } from "./bind.js";
+import { Bindings } from "./bind.js";
 import { deepPush } from "./deepPush.js";
-import type { Template } from "./Template.js";
+import { Template } from "./Template.js";
 
 export function append<ItemT extends Template<ContextT>, ContextT>(
 	parent: {

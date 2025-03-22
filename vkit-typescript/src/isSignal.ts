@@ -1,4 +1,4 @@
-import type { Signal } from "./signal.js";
+import { Signal } from "./signal.js";
 
 /**
  * Takes a value and returns whether it is a signal.

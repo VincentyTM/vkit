@@ -1,6 +1,6 @@
 import { insert } from "./insert.js";
 import { remove } from "./remove.js";
-import type { Template } from "./Template.js";
+import { Template } from "./Template.js";
 
 export type NodeRange = {
 	append(...children: Template[]): void;

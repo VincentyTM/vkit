@@ -1,7 +1,7 @@
 import { empty } from "./empty.js";
 import { noop } from "./noop.js";
 import { renderDetached } from "./renderDetached.js";
-import type { Template } from "./Template.js";
+import { Template } from "./Template.js";
 
 export type AppRoot<C> = {
     /**

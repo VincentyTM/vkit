@@ -1,4 +1,4 @@
-import type { WritableSignal } from "./signal.js";
+import { WritableSignal } from "./signal.js";
 import { writable } from "./writable.js";
 
 /**

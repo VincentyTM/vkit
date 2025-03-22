@@ -3,7 +3,7 @@ import { get } from "./get.js";
 import { isSignal } from "./isSignal.js";
 import { observe } from "./observe.js";
 import { onUnmount } from "./onUnmount.js";
-import { signal, type Signal, type WritableSignal } from "./signal.js";
+import { signal, Signal, WritableSignal } from "./signal.js";
 
 /**
  * Creates and returns a writable signal that reflects and updates a property of an object.

@@ -1,4 +1,4 @@
-import type { Signal } from "./signal.js";
+import { Signal } from "./signal.js";
 
 export function signalText<T>(this: Signal<T>): Text {
 	var node = document.createTextNode(String(this.get()));

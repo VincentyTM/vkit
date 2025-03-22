@@ -1,5 +1,5 @@
 import { htmlTag } from "./htmlTag.js";
-import type { Template } from "./Template.js";
+import { Template } from "./Template.js";
 
 type HTMLProxy = {
 	[K in Capitalize<keyof HTMLElementTagNameMap>]: (...contents: Template<HTMLElementTagNameMap[Lowercase<K>]>[]) => HTMLElementTagNameMap[Lowercase<K>];

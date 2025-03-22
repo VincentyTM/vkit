@@ -1,5 +1,5 @@
-import { computed, type ComputedSignal } from "./computed.js";
-import type { WritableSignal } from "./signal.js";
+import { computed, ComputedSignal } from "./computed.js";
+import { WritableSignal } from "./signal.js";
 
 function getSelf<T>(value: T): T {
 	return value;

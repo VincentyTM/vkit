@@ -1,5 +1,5 @@
-import type { Bindings } from "./bind.js";
-import type { Signal } from "./signal.js";
+import { Bindings } from "./bind.js";
+import { Signal } from "./signal.js";
 
 export type Template<ContextT = unknown> = (
 	| Node

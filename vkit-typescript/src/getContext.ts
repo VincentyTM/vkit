@@ -1,6 +1,6 @@
 import { getComponent, getInjector, setComponent, setInjector } from "./contextGuard.js";
 import { throwError } from "./throwError.js";
-import type { Template } from "./Template.js";
+import { Template } from "./Template.js";
 
 export function getContext<ContextT>(): (getView: () => Template<ContextT>) => Template<ContextT> {
 	var component = getComponent();

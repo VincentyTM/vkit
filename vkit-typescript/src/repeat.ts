@@ -1,6 +1,6 @@
 import { isSignal } from "./isSignal.js";
-import type { Signal } from "./signal.js";
-import type { Template } from "./Template.js";
+import { Signal } from "./signal.js";
+import { Template } from "./Template.js";
 
 var MAX_COUNT = 9007199254740991;
 

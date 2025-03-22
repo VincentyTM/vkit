@@ -1,4 +1,4 @@
-import { observable, type Observable } from "./observable.js";
+import { observable, Observable } from "./observable.js";
 
 var defineProperty = Object.defineProperty;
 var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;

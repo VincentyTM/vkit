@@ -1,6 +1,6 @@
 import { append } from "./append.js";
 import { bind } from "./bind.js";
-import type { Template } from "./Template.js";
+import { Template } from "./Template.js";
 
 export type VirtualHTMLElement<T> = {
 	readonly arguments: Template<T>;

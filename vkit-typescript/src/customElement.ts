@@ -1,16 +1,16 @@
 import { append } from "./append.js";
 import { bind } from "./bind.js";
-import { createComponent, type Component } from "./createComponent.js";
+import { createComponent, Component } from "./createComponent.js";
 import { createInjector } from "./createInjector.js";
 import { createProvider } from "./createProvider.js";
 import { emitUnmount } from "./emitUnmount.js";
 import { empty } from "./empty.js";
 import { getValueFromClass } from "./root.js";
 import { inject } from "./inject.js";
-import { signal, type WritableSignal } from "./signal.js";
+import { signal, WritableSignal } from "./signal.js";
 import { tick } from "./tick.js";
 import { update } from "./update.js";
-import type { Template } from "./Template.js";
+import { Template } from "./Template.js";
 import { WindowService } from "./getWindow.js";
 
 type CustomElementGetView = (

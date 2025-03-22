@@ -1,6 +1,6 @@
 import { computed } from "./computed.js";
 import { getWindow } from "./getWindow.js";
-import type { Signal } from "./signal.js";
+import { Signal } from "./signal.js";
 import { onEvent } from "./onEvent.js";
 import { onUnmount } from "./onUnmount.js";
 

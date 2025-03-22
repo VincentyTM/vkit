@@ -2,8 +2,8 @@ import { createComponent } from "./createComponent.js";
 import { nodeRange } from "./nodeRange.js";
 import { enqueueUpdate } from "./update.js";
 import { isSignal } from "./isSignal.js";
-import type { Signal } from "./signal.js";
-import type { Template } from "./Template.js";
+import { Signal } from "./signal.js";
+import { Template } from "./Template.js";
 
 /**
  * Creates a dynamic view (a part of the DOM) which is rerendered when any of its inputs change.

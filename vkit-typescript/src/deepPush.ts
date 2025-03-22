@@ -1,4 +1,4 @@
-import type { Bindings } from "./bind.js";
+import { Bindings } from "./bind.js";
 import { directive } from "./directive.js";
 import { toArray } from "./toArray.js";
 
