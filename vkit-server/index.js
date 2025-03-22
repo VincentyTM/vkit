@@ -122,6 +122,7 @@ export {default as unipack} from "./unipack.js";
 export {default as untracked} from "./untracked.js";
 export {default as useKey} from "./useKey.js";
 export {default as view} from "./view.js";
+export {default as viewList} from "./viewList.js";
 export {default as webSocket} from "./webSocket.js";
 export {default as windowContent} from "./windowContent.js";
 export {default as windowData} from "./windowData.js";
