@@ -1,8 +1,8 @@
 import { getComponent } from "./contextGuard.js";
-import { onUnmount } from "./onUnmount.js";
+import { onDestroy } from "./onDestroy.js";
 import { signal } from "./signal.js";
-import { update } from "./update.js";
 import { Template } from "./Template.js";
+import { update } from "./update.js";
 
 /**
  * Creates and returns an error boundary.
@@ -66,7 +66,7 @@ export function errorBoundary<T, U>(
 			component.errorHandlers = [errorHandler];
 		}
 		
-		onUnmount(function(): void {
+		onDestroy(function(): void {
 			var errorHandlers = component.errorHandlers;
 
 			if (!errorHandlers) {

@@ -1,8 +1,8 @@
 import { computed, ComputedSignal } from "./computed.js";
 import { getWindow } from "./getWindow.js";
 import { observable } from "./observable.js";
+import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
-import { onUnmount } from "./onUnmount.js";
 
 type HistoryState = unknown;
 
@@ -42,8 +42,8 @@ export function history(win?: Window & typeof globalThis): HistoryHandle {
 		});
 		var invalidate = historyState.invalidate;
 		
-		onUnmount(onEvent(win!, "popstate", invalidate));
-		onUnmount(updateHistory.subscribe(updateLocal));
+		onDestroy(onEvent(win!, "popstate", invalidate));
+		onDestroy(updateHistory.subscribe(updateLocal));
 		
 		function updateLocal(h: History): void {
 			if (h === history) {
@@ -60,8 +60,8 @@ export function history(win?: Window & typeof globalThis): HistoryHandle {
 		});
 		var invalidate = historyURL.invalidate;
 		
-		onUnmount(onEvent(win!, "popstate", invalidate));
-		onUnmount(updateHistory.subscribe(updateLocal));
+		onDestroy(onEvent(win!, "popstate", invalidate));
+		onDestroy(updateHistory.subscribe(updateLocal));
 		
 		function updateLocal(h: HistoryState): void {
 			if (h === history) {

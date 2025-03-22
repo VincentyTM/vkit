@@ -426,7 +426,7 @@ Side effects can also be created that run when the value of an input signal chan
 $.effect(() => {
     console.log(`Hello ${name()}`);
     
-    $.onUnmount(() => {
+    $.onDestroy(() => {
         console.log("Optional cleanup function");
     });
 });
@@ -577,7 +577,7 @@ const BookRow = (bookSignal) => $.html`
 
 Components can disappear from the tree when the value of `$.view` changes or the corresponding item is no longer in the array used in `$.views`. When this happens, all side effects caused by creating the component must be reverted. This includes all timeouts, AJAX requests, external state changes initiated by the component.
 
-Fortunately, the `$.onUnmount` function can be used here.
+Fortunately, the `$.onDestroy` function can be used here.
 
 ```javascript
 function Clock() {
@@ -587,7 +587,7 @@ function Clock() {
         date.set(new Date());
     }, 1000);
     
-    $.onUnmount(() => {
+    $.onDestroy(() => {
         clearInterval(interval);
     });
     
@@ -669,7 +669,7 @@ const unsubscribe = saveFile.subscribe((file) => {
 And when you no longer need to be subscribed, be sure to unsubscribe. Not doing so may lead to memory leaks.
 
 ```javascript
-$.onUnmount(unsubscribe);
+$.onDestroy(unsubscribe);
 ```
 
 An observable can be called like any function. When this happens, all of its subscribers are called with the same arguments. The observable has no return value.
@@ -832,7 +832,7 @@ $.customElement("hello-element", function({name}) {
     
     console.log("The <hello-element> is connected!");
     
-    $.onUnmount(() => {
+    $.onDestroy(() => {
         console.log("The <hello-element> is disconnected!");
     });
     

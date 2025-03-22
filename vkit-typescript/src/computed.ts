@@ -1,6 +1,6 @@
 import { getComponent, getInjector } from "./contextGuard.js";
 import { createComponent } from "./createComponent.js";
-import { onUnmount } from "./onUnmount.js";
+import { onDestroy } from "./onDestroy.js";
 import { Signal } from "./signal.js";
 import { signalEffect } from "./signalEffect.js";
 import { signalPipe } from "./signalPipe.js";
@@ -157,7 +157,7 @@ export function computed<F extends (...args: never[]) => unknown>(
 		}
 		
 		if (component !== parent && !persistent) {
-			onUnmount(unsubscribe);
+			onDestroy(unsubscribe);
 		}
 		
 		return unsubscribe;

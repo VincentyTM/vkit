@@ -1,5 +1,5 @@
 import { signal, Signal } from "./signal.js";
-import { onUnmount } from "./onUnmount.js";
+import { onDestroy } from "./onDestroy.js";
 import { update } from "./update.js";
 
 export function lazyArray<T>(arraySignal: Signal<T[]>, backwards: boolean): Signal<T[]> {
@@ -27,7 +27,7 @@ export function lazyArray<T>(arraySignal: Signal<T[]>, backwards: boolean): Sign
 				update();
 			}, 1);
 			
-			onUnmount(function() {
+			onDestroy(function() {
 				clearInterval(interval);
 			});
 		}

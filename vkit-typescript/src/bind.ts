@@ -1,5 +1,5 @@
+import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
-import { onUnmount } from "./onUnmount.js";
 import { prop } from "./prop.js";
 import { Signal } from "./signal.js";
 
@@ -52,7 +52,7 @@ function setValue<T>(
 	if (!persistent) {
 		var old = target[name];
 
-		onUnmount(function() {
+		onDestroy(function() {
 			if (target[name] === value) {
 				target[name] = old;
 			}
@@ -111,7 +111,7 @@ export function bind<T>(
 					var unsub = onEvent(target as never, name.substring(2), value as never);
 					
 					if (!persistent) {
-						onUnmount(unsub);
+						onDestroy(unsub);
 					}
 				} else {
 					prop(name, value as () => unknown)(target);

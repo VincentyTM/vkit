@@ -1,8 +1,8 @@
 import { computed } from "./computed.js";
 import { getWindow } from "./getWindow.js";
 import { Signal } from "./signal.js";
+import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
-import { onUnmount } from "./onUnmount.js";
 
 export function isWindowFocused(): Signal<boolean> {
 	var win = getWindow();
@@ -23,8 +23,8 @@ export function isWindowFocused(): Signal<boolean> {
         focused.invalidate();
     }
 	
-	onUnmount(onEvent(win, "blur", invalidate));
-	onUnmount(onEvent(win, "focus", invalidate));
+	onDestroy(onEvent(win, "blur", invalidate));
+	onDestroy(onEvent(win, "focus", invalidate));
 	
 	return focused;
 }

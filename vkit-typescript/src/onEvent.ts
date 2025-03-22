@@ -30,7 +30,7 @@ function stopPropagation(this: EventType): void {
  * It is patched so that there is always an update after the event listener runs.
  * @example
  * // This will remove the event listener when the current component unmounts
- * onUnmount(
+ * onDestroy(
  * 	onEvent(document, "click", () => console.log("Clicked!"))
  * );
  * 

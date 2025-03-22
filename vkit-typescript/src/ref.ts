@@ -1,5 +1,5 @@
 import { getComponent } from "./contextGuard.js";
-import { onUnmount } from "./onUnmount.js";
+import { onDestroy } from "./onDestroy.js";
 
 type MutableRef<T> = {
 	(value: T): void;
@@ -44,7 +44,7 @@ export function ref<T = HTMLElement>(): Ref<T> {
 		reference.current = value;
 		
 		if (getComponent() !== component) {
-			onUnmount(reset);
+			onDestroy(reset);
 		}
 	} as MutableRef<T>;
 	

@@ -2,8 +2,8 @@ import { append } from "./append.js";
 import { bind } from "./bind.js";
 import { effect } from "./effect.js";
 import { isSignal } from "./isSignal.js";
+import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
-import { onUnmount } from "./onUnmount.js";
 import { Signal } from "./signal.js";
 import { Template } from "./Template.js";
 
@@ -68,7 +68,7 @@ function setAttribute(
 	if (!persistent) {
 		var old = el.getAttributeNS(null, name);
 
-		onUnmount(function() {
+		onDestroy(function() {
 			if (el.getAttributeNS(null, name) === value) {
 				setAttribute(el, name, old, true);
 			}
@@ -97,7 +97,7 @@ function bindAttribute(
 			var unsub = onEvent(el, name.substring(2), value);
 
 			if (!persistent) {
-				onUnmount(unsub);
+				onDestroy(unsub);
 			}
 		} else {
 			effect(function() {

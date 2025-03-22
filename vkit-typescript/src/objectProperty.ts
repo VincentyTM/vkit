@@ -2,7 +2,7 @@ import { effect } from "./effect.js";
 import { get } from "./get.js";
 import { isSignal } from "./isSignal.js";
 import { observe } from "./observe.js";
-import { onUnmount } from "./onUnmount.js";
+import { onDestroy } from "./onDestroy.js";
 import { signal, Signal, WritableSignal } from "./signal.js";
 
 /**
@@ -47,7 +47,7 @@ export function objectProperty<T, K extends keyof T>(
 			throw new Error("Property '" + String(p) + "' does not exist and there is no default value provided");
 		}
 		
-		onUnmount(change.subscribe(setEagerly));
+		onDestroy(change.subscribe(setEagerly));
 		setEagerly(o[p]);
 	});
 	

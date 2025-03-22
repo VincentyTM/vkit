@@ -1,5 +1,5 @@
 import { createStyleContainer, StyleContainer, StyleController } from "./createStyleContainer.js";
-import { onUnmount } from "./onUnmount.js";
+import { onDestroy } from "./onDestroy.js";
 import { Signal } from "./signal.js";
 import { tick } from "./tick.js";
 
@@ -154,7 +154,7 @@ export function style(
 			(element as HTMLElement).setAttribute(attribute!, "");
 		}
 		
-		onUnmount(function() {
+		onDestroy(function() {
 			if ((element as HTMLElement).removeAttribute) {
 				(element as HTMLElement).removeAttribute(attribute!);
 			}

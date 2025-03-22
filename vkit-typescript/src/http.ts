@@ -1,6 +1,6 @@
 import { computed, ComputedSignal } from "./computed.js";
 import { isSignal } from "./isSignal.js";
-import { onUnmount } from "./onUnmount.js";
+import { onDestroy } from "./onDestroy.js";
 import { readOnly } from "./readOnly.js";
 import { signal, Signal } from "./signal.js";
 import { update } from "./update.js";
@@ -193,7 +193,7 @@ export function http<T = unknown>(request: HttpRequest | Signal<HttpRequest> | (
 			xhr.send(req.body);
 		}
 
-		onUnmount(function() {
+		onDestroy(function() {
 			xhr.onprogress = null;
 			xhr.onreadystatechange = null;
 			

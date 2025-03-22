@@ -53,7 +53,7 @@ function attrToPropName(attrName: string): string {
  * Registers a custom element with the specified name.
  * The custom element is like a component but independent from the main tree.
  * The component is created when the element is added to the DOM.
- * The `onUnmount` callbacks are called when the element is removed from the DOM.
+ * The `onDestroy` callbacks are called when the element is removed from the DOM.
  * @example
  * customElement("my-element", ({name}, element) => {
  * 	return [

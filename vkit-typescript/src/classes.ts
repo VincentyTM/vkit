@@ -1,7 +1,7 @@
 import { effect } from "./effect.js";
 import { isArray } from "./isArray.js";
 import { isSignal } from "./isSignal.js";
-import { onUnmount } from "./onUnmount.js";
+import { onDestroy } from "./onDestroy.js";
 import { Signal } from "./signal.js";
 
 type BooleanValue = boolean | Signal<boolean> | (() => boolean);
@@ -97,7 +97,7 @@ function bindClasses(el: HTMLElement, arg: ClassArgument, onCleanup?: CleanupFun
 	
 	if (typeof arg === "function") {
 		effect(function() {
-			bindClasses(el, arg(), onUnmount);
+			bindClasses(el, arg(), onDestroy);
 		});
 		return;
 	}

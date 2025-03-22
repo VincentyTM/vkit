@@ -2,7 +2,7 @@ import { enqueueUpdate } from "./update.js";
 import { ComputedSignal, signalMap } from "./computed.js";
 import { getComponent } from "./contextGuard.js";
 import { Component } from "./createComponent.js";
-import { onUnmount } from "./onUnmount.js";
+import { onDestroy } from "./onDestroy.js";
 import { signalEffect } from "./signalEffect.js";
 import { signalPipe } from "./signalPipe.js";
 import { signalProp } from "./signalProp.js";
@@ -34,12 +34,12 @@ export type Signal<T> = {
 	 * 		console.log("Hello world");
 	 * 	}, currentDelay);
 	 * 
-	 * 	onUnmount(() => clearInterval(interval));
+	 * 	onDestroy(() => clearInterval(interval));
 	 * });
 	 * 
 	 * @param callback A function containing the side effect.
 	 * It is called everytime the signal's value changes.
-	 * Remember to call onUnmount in it to clean up the side effect.
+	 * Remember to call onDestroy in it to clean up the side effect.
 	 */
 	effect(callback: (value: T) => void): void;
 
@@ -338,7 +338,7 @@ export function signal<T>(value: T): WritableSignal<T> {
 		}
 		
 		if (component !== parent && !persistent) {
-			onUnmount(unsubscribe);
+			onDestroy(unsubscribe);
 		}
 		
 		return unsubscribe;

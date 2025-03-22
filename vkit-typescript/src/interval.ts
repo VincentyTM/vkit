@@ -1,5 +1,5 @@
 import { getWindow } from "./getWindow.js";
-import { onUnmount } from "./onUnmount.js";
+import { onDestroy } from "./onDestroy.js";
 import { update } from "./update.js";
 
 /**
@@ -15,7 +15,7 @@ export function interval(callback: () => void, delay: number): void {
 	var win = getWindow()!;
 	var interval = win.setInterval(tick, delay);
 	
-	onUnmount(clear);
+	onDestroy(clear);
 	
 	function tick(): void {
 		callback();

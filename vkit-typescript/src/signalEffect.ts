@@ -1,6 +1,6 @@
 import { getComponent } from "./contextGuard.js";
 import { createComponent, Component } from "./createComponent.js";
-import { onUnmount } from "./onUnmount.js";
+import { onDestroy } from "./onDestroy.js";
 import { Signal } from "./signal.js";
 
 export function signalEffect<T>(
@@ -18,7 +18,7 @@ export function signalEffect<T>(
 	
 	if (prev) {
 		var component = createComponent(function() {
-			callback(signal.get(), onUnmount);
+			callback(signal.get(), onDestroy);
 		});
 		component.render();
 

@@ -1,5 +1,5 @@
 import { getWindow } from "./getWindow.js";
-import { onUnmount } from "./onUnmount.js";
+import { onDestroy } from "./onDestroy.js";
 import { update } from "./update.js";
 
 /**
@@ -14,7 +14,7 @@ export function timeout(callback: () => void, delay: number): void {
 	var win = getWindow()!;
 	var timeout = win.setTimeout(tick, delay);
 	
-	onUnmount(clear);
+	onDestroy(clear);
 	
 	function tick(): void {
 		callback();
