@@ -6,6 +6,7 @@ import { signalEffect } from "./signalEffect.js";
 import { signalText } from "./signalText.js";
 import { Template } from "./Template.js";
 import { enqueueUpdate } from "./update.js";
+import { updateEffect } from "./updateEffect.js";
 import { view } from "./view.js";
 import { views } from "./views.js";
 
@@ -236,14 +237,16 @@ export function signal<T>(value: T): WritableSignal<T> {
 	var enqueued = false;
 	
 	function use(): T {
-		var component = getEffect(true);
+		var effect = getEffect(true);
 		
-		if (component) {
-			if (component === parent) {
+		if (effect) {
+			if (effect === parent) {
 				throw new Error("A signal cannot be used in the reactive block it was created in");
 			}
 			
-			subscribe(component.render);
+			subscribe(function(): void {
+				updateEffect(effect!);
+			});
 		}
 		
 		return value;

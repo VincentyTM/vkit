@@ -11,6 +11,7 @@ import { Template } from "./Template.js";
 import { throwError } from "./throwError.js";
 import { toArray } from "./toArray.js";
 import { enqueueUpdate } from "./update.js";
+import { updateEffect } from "./updateEffect.js";
 
 type Block = {
 	effect: Effect;
@@ -32,17 +33,19 @@ function createBlock<ItemT>(
 ): Block {
 	var range = nodeRange(true);
 	
-	var effect = createEffect(function(): void {
+	var effect = createEffect(container, injector, function(): void {
 		var view = getView(model, block);
 		
 		if (range.start.nextSibling) {
 			range.clear();
 			range.append(view);
 		}
-	}, container, injector);
+	});
 	
 	function render(): Template {
-		enqueueUpdate(effect.render);
+		enqueueUpdate(function(): void {
+			updateEffect(effect);
+		});
 		
 		return [
 			range.start,

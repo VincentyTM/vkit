@@ -1,5 +1,4 @@
-import { getEffect, getInjector } from "./contextGuard.js";
-import { createEffect } from "./createEffect.js";
+import { effect } from "./effect.js";
 
 /**
  * Creates and returns a dynamic text node.
@@ -16,15 +15,14 @@ import { createEffect } from "./createEffect.js";
 export function text(getText: () => string | number): Text {
 	var oldText = "";
 	var node = document.createTextNode(oldText);
-	var effect = createEffect(setText, getEffect(), getInjector());
-	
-	function setText(): void {
+
+	effect(function(): void {
 		var newText = getText();
+
 		if (oldText !== newText) {
 			node.nodeValue = oldText = String(newText);
 		}
-	}
-	
-	effect.render();
+	});
+
 	return node;
 }

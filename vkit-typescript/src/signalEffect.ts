@@ -2,6 +2,7 @@ import { getEffect, getInjector } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { onDestroy } from "./onDestroy.js";
 import { Signal } from "./signal.js";
+import { updateEffect } from "./updateEffect.js";
 
 export function signalEffect<T>(
 	this: Signal<T>,
@@ -17,17 +18,20 @@ export function signalEffect<T>(
 	var prev = getEffect(true);
 	
 	if (prev) {
-		var effect = createEffect(function() {
+		var effect = createEffect(prev, getInjector(), function(): void {
 			callback(signal.get(), onDestroy);
-		}, prev, getInjector());
-		effect.render();
+		});
 
-		return signal.subscribe(effect.render);
+		updateEffect(effect);
+
+		return signal.subscribe(function(): void {
+			updateEffect(effect);
+		});
 	}
 
 	callback(signal.get());
 
-	return signal.subscribe(function(value: T) {
+	return signal.subscribe(function(value: T): void {
 		callback(value);
 	});
 }

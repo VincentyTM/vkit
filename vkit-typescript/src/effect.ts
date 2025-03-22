@@ -1,5 +1,6 @@
 import { getEffect, getInjector } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
+import { updateEffect } from "./updateEffect.js";
 
 /**
  * Creates a side effect and runs it every time its dependencies change.
@@ -17,9 +18,13 @@ import { createEffect } from "./createEffect.js";
  * 	
  * 	onDestroy(() => clearInterval(interval));
  * });
- * @param callback A callback function which is called initially and when any of its dependencies change.
+ * @param updateHandler A callback function which is called initially and when any of its dependencies change.
  * In order to clean up side effects, call onDestroy within the callback.
  */
-export function effect(callback: () => void): void {
-	createEffect(callback, getEffect(), getInjector()).render();
+export function effect(updateHandler: () => void): void {
+	var parentEffect = getEffect();
+	
+	updateEffect(
+		createEffect(parentEffect, getInjector(), updateHandler)
+	);
 }

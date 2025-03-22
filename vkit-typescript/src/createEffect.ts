@@ -1,56 +1,29 @@
-import { getEffect, getInjector, setEffect, setInjector } from "./contextGuard.js";
 import { Injector } from "./createInjector.js";
-import { destroyEffect } from "./destroyEffect.js";
-import { throwError } from "./throwError.js";
 
 export interface Effect {
 	children: Effect[] | undefined;
 	destroyHandlers: (() => void)[] | undefined;
 	errorHandlers: ((error: unknown) => void)[] | undefined;
+	readonly injector: Injector | undefined;
+	isRendering: boolean;
 	readonly parent: Effect | undefined;
 	stack: string | undefined;
-	render(): void;
+	updateHandler(): void;
 }
 
 export function createEffect(
-	mount: () => void,
 	parentEffect: Effect | undefined,
-	injector: Injector | undefined
+	injector: Injector | undefined,
+	updateHandler: () => void
 ) : Effect {
-	var isRendering = false;
-	
-	var effect = {
+	return {
 		children: undefined,
 		destroyHandlers: undefined,
 		errorHandlers: undefined,
+		injector: injector,
+		isRendering: false,
 		parent: parentEffect,
 		stack: new Error().stack,
-		render: updateEffect
+		updateHandler: updateHandler
 	};
-	
-	function updateEffect(): void {
-		if (isRendering) {
-			throwError(new Error("Circular dependency detected"), effect.parent);
-		}
-		
-		var previousEffect = getEffect(true);
-		var previousInjector = getInjector(true);
-		
-		try {
-			isRendering = true;
-			setEffect(undefined);
-			destroyEffect(effect);
-			setEffect(effect);
-			setInjector(injector);
-			mount();
-		} catch (error) {
-			throwError(error, effect);
-		} finally {
-			setEffect(previousEffect);
-			setInjector(previousInjector);
-			isRendering = false;
-		}
-	}
-	
-	return effect;
 }

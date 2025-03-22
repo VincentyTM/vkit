@@ -2,6 +2,7 @@ import { getEffect } from "./contextGuard.js";
 import { observe } from "./observe.js";
 import { onDestroy } from "./onDestroy.js";
 import { enqueueUpdate } from "./update.js";
+import { updateEffect } from "./updateEffect.js";
 
 function getValue<T, K extends keyof T>(object: T, property: K, _receiver: T): T[K] {
 	var value = object[property];
@@ -18,7 +19,6 @@ function getValue<T, K extends keyof T>(object: T, property: K, _receiver: T): T
 	}
 	
 	var enqueued = false;
-	var render = effect.render;
 
 	function set(newValue: T[K]): void {
 		if (value !== newValue) {
@@ -33,7 +33,7 @@ function getValue<T, K extends keyof T>(object: T, property: K, _receiver: T): T
 	
 	function updateOf(): void {
 		enqueued = false;
-		render();
+		updateEffect(effect!);
 	}
 
 	onDestroy(

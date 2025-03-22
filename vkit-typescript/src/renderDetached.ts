@@ -9,6 +9,7 @@ import { inject } from "./inject.js";
 import { getValueFromClass } from "./root.js";
 import { Template } from "./Template.js";
 import { update } from "./update.js";
+import { updateEffect } from "./updateEffect.js";
 
 export function renderDetached<C extends Node>(
     getView: (unmount: () => void) => Template<C>,
@@ -20,7 +21,7 @@ export function renderDetached<C extends Node>(
         return provider.getInstance();
     });
     
-    var effect = createEffect(function(): void {
+    var effect = createEffect(undefined, injector, function(): void {
         var win: (Window & typeof globalThis) | null = null;
         
         if (container) {
@@ -40,13 +41,13 @@ export function renderDetached<C extends Node>(
         if (container) {
             append(container, view, container, bind);
         }
-    }, undefined, injector);
+    });
 
     function unmount(): void {
         destroyEffect(effect);
     }
     
-    effect.render();
+    updateEffect(effect);
     update();
     return unmount;
 }

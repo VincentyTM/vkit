@@ -1,5 +1,6 @@
 import { getEffect } from "./contextGuard.js";
 import { effect } from "./effect.js";
+import { updateEffect } from "./updateEffect.js";
 
 /**
  * Evaluates a function returning a boolean and updates the current reactive block when that boolean value changes.
@@ -30,7 +31,7 @@ export function is(condition: () => boolean): boolean {
 		value = condition();
 		
 		if (oldValue !== value && oldValue !== undefined) {
-			parent.render();
+			updateEffect(parent);
 		}
 	});
 	

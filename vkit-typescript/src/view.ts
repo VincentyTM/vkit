@@ -5,6 +5,7 @@ import { nodeRange } from "./nodeRange.js";
 import { Signal } from "./signal.js";
 import { Template } from "./Template.js";
 import { enqueueUpdate } from "./update.js";
+import { updateEffect } from "./updateEffect.js";
 
 /**
  * Creates a dynamic view (a part of the DOM) which is rerendered when any of its inputs change.
@@ -39,13 +40,14 @@ export function view<ViewT extends Template<ContextT>, ValueT, ContextT>(
 	this: Signal<ValueT> | void,
 	getCurrentView: (value: ValueT | null) => ViewT
 ) : Template<ContextT> {
-	var effect = createEffect(mount, getEffect(), getInjector());
+	var effect = createEffect(getEffect(), getInjector(), mount);
 	var range = nodeRange(true);
-	var render = effect.render;
 	var signal: Signal<ValueT> | null | void = this;
 	
 	if (isSignal(signal)) {
-		signal.subscribe(render);
+		signal.subscribe(function(): void {
+			updateEffect(effect);
+		});
 	} else {
 		signal = null;
 	}
@@ -59,7 +61,9 @@ export function view<ViewT extends Template<ContextT>, ValueT, ContextT>(
 		}
 	}
 	
-	enqueueUpdate(render);
+	enqueueUpdate(function(): void {
+		updateEffect(effect);
+	});
 	
 	return [
 		range.start,

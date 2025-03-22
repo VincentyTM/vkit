@@ -20,4 +20,4 @@ export var rootInjector = createInjector(undefined, function(token) {
 	return provider.getInstance();
 });
 
-export var rootEffect = createEffect(mount, undefined, rootInjector);
+export var rootEffect = createEffect(undefined, rootInjector, mount);

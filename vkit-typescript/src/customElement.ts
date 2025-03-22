@@ -92,12 +92,12 @@ export function customElement(
 			return provider.getInstance();
 		});
 		
-		var effect = createEffect(function(): void {
+		var effect = createEffect(undefined, injector, function(): void {
 			var doc = el.ownerDocument;
 			inject(WindowService).window = doc.defaultView || (doc as any).parentWindow;
 			var view = getView.call(el, el.observedAttributes, el);
 			append(el, view, el, bind);
-		}, undefined, injector);
+		});
 		
 		el.effect = effect;
 		el.observedAttributes = {};

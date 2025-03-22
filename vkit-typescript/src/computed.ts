@@ -4,6 +4,7 @@ import { onDestroy } from "./onDestroy.js";
 import { Signal } from "./signal.js";
 import { signalEffect } from "./signalEffect.js";
 import { signalText } from "./signalText.js";
+import { updateEffect } from "./updateEffect.js";
 import { view } from "./view.js";
 import { views } from "./views.js";
 
@@ -57,8 +58,11 @@ export function computed<F extends (...args: never[]) => unknown>(
 	var parent = getEffect(true);
 	var subscriptions: Subscription[] = [];
 	var value: Value = none as Value;
-	var effectOfSignal = createEffect(computeValue, parent, getInjector(true));
-	var invalidate = effectOfSignal.render;
+	var effectOfSignal = createEffect(parent, getInjector(true), computeValue);
+
+	function invalidate(): void {
+		updateEffect(effectOfSignal);
+	}
 	
 	if (dependencies) {
 		var n = dependencies.length as number;
@@ -121,7 +125,9 @@ export function computed<F extends (...args: never[]) => unknown>(
 				throw new Error("A signal cannot be used in the reactive block it was created in");
 			}
 			
-			subscribe(effect.render);
+			subscribe(function(): void {
+				updateEffect(effect!);
+			});
 		}
 		
 		return value;
