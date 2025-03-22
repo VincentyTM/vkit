@@ -1,5 +1,7 @@
 import { Bindings } from "./bind.js";
 import { directive } from "./directive.js";
+import { isSignal } from "./isSignal.js";
+import { signalText } from "./signalText.js";
 import { toArray } from "./toArray.js";
 
 type Pushable<ItemType> = {
@@ -18,6 +20,11 @@ export function deepPush<ItemT, ContextT>(
 	crossView: boolean
 ): Pushable<ItemT> {
 	if (item === null || item === undefined || typeof item === "boolean") {
+		return array;
+	}
+
+	if (isSignal(item)) {
+		array.push(signalText(item));
 		return array;
 	}
 	

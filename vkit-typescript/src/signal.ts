@@ -3,7 +3,6 @@ import { getEffect } from "./contextGuard.js";
 import { Effect } from "./createEffect.js";
 import { onDestroy } from "./onDestroy.js";
 import { signalEffect } from "./signalEffect.js";
-import { signalText } from "./signalText.js";
 import { Template } from "./Template.js";
 import { enqueueUpdate } from "./update.js";
 import { updateEffect } from "./updateEffect.js";
@@ -67,29 +66,6 @@ export type Signal<T> = {
 	 * @returns The computed signal which contains the new value.
 	 */
 	map<U>(transform: (value: T) => U): ComputedSignal<U>;
-
-	/**
-	 * Creates and returns a text node with the signal's value in it.
-	 * 
-	 * When the signal's value changes, so does the text node's value.
-	 * You do not need to call this method manually, just put the signal in an element factory call.
-	 * @example
-	 * function MyComponent() {
-	 * 	const count = signal(0);
-	 * 	
-	 * 	return [
-	 * 		// This could also be written as Div(count.render())
-	 * 		Div(count),
-	 * 		
-	 * 		// Even if the text is a top-level node,
-	 * 		// there is no need to call .render()
-	 * 		count
-	 * 	];
-	 * }
-	 * 
-	 * @returns The text node.
-	 */
-	render(): Text;
 
 	/**
 	 * Subscribes a change handler function to the signal and returns a function to unsubscribe.
@@ -328,7 +304,6 @@ export function signal<T>(value: T): WritableSignal<T> {
 	use.get = get;
 	use.isSignal = true;
 	use.map = signalMap;
-	use.render = signalText;
 	use.set = set;
 	use.setEagerly = setEagerly;
 	use.subscribe = subscribe;
