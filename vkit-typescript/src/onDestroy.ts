@@ -4,16 +4,10 @@ import { rootEffect } from "./root.js";
 
 /**
  * Schedules a callback to be run when the current reactive context is destroyed.
- * @param callback The handler that listens to the destroy event.
- * @param effect The effect whose destroy event is handled. By default, it is the current effect.
+ * @param destroyHandler The handler that listens to the destroy event.
  */
-export function onDestroy(
-	callback: () => void,
-	effect?: Effect | undefined
-): void {
-	if (!effect) {
-		effect = getEffect();
-	}
+export function onDestroy(destroyHandler: () => void): void {
+	var effect = getEffect();
 	
 	if (effect === rootEffect) {
 		return;
@@ -35,5 +29,5 @@ export function onDestroy(
 		e = e.parent;
 	}
 	
-	effect!.destroyHandlers!.push(callback);
+	effect!.destroyHandlers!.push(destroyHandler);
 }
