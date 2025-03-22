@@ -4,7 +4,6 @@ import { getComponent } from "./contextGuard.js";
 import { Component } from "./createComponent.js";
 import { onDestroy } from "./onDestroy.js";
 import { signalEffect } from "./signalEffect.js";
-import { signalProp } from "./signalProp.js";
 import { signalText } from "./signalText.js";
 import { Template } from "./Template.js";
 import { view } from "./view.js";
@@ -67,43 +66,6 @@ export type Signal<T> = {
 	 * @returns The computed signal which contains the new value.
 	 */
 	map<U>(transform: (value: T) => U): ComputedSignal<U>;
-
-	/**
-	 * Binds a property to the signal.
-	 * 
-	 * You should use a property binding object instead of this method.
-	 * 
-	 * @example
-	 * function MyComponent() {
-	 * 	const bgColor = signal("yellow");
-	 * 	const h1Color = signal("red");
-	 * 	const h1Title = signal("Some title");
-	 * 	
-	 * 	// It is not recommended to explicitly write prop:
-	 * 	// bgColor.prop(document.body.style, "backgroundColor");
-	 * 	bind(document.body, {
-	 * 		style: {
-	 * 			backgroundColor: bgColor
-	 * 		}
-	 * 	});
-	 * 	
-	 * 	// Binding multiple properties of the same element:
-	 * 	// (el) => {
-	 * 	// 	h1Color.prop(el.style, "color");
-	 * 	// 	h1Title.prop(el, "title");
-	 * 	// }
-	 * 	return H1("Hello world", {
-	 * 		style: {
-	 * 			color: h1Color
-	 * 		},
-	 * 		title: h1Title
-	 * 	});
-	 * }
-	 * 
-	 * @param name The name of the property.
-	 * @returns A function that takes an element and binds its property to the signal.
-	 */
-	prop(name: string): (element: any) => void;
 
 	/**
 	 * Creates and returns a text node with the signal's value in it.
@@ -363,7 +325,6 @@ export function signal<T>(value: T): WritableSignal<T> {
 	use.get = get;
 	use.isSignal = true;
 	use.map = signalMap;
-	use.prop = signalProp;
 	use.render = signalText;
 	use.set = set;
 	use.setEagerly = setEagerly;

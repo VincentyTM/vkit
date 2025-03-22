@@ -1,7 +1,9 @@
+import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
 import { prop } from "./prop.js";
 import { Signal } from "./signal.js";
+import { signalProp } from "./signalProp.js";
 
 type HTMLSelfClosingElement = (
 	| HTMLAreaElement
@@ -94,8 +96,8 @@ export function bind<T>(
 			case "object":
 				if (!value) {
 					setValue(target, name, value as never, !!persistent);
-				} else if ((value as any).prop) {
-					(value as any).prop(name)(target);
+				} else if (isSignal(value)) {
+					signalProp(target, name, value);
 				} else {
 					var obj = target[name];
 					

@@ -3,7 +3,6 @@ import { createComponent } from "./createComponent.js";
 import { onDestroy } from "./onDestroy.js";
 import { Signal } from "./signal.js";
 import { signalEffect } from "./signalEffect.js";
-import { signalProp } from "./signalProp.js";
 import { signalText } from "./signalText.js";
 import { view } from "./view.js";
 import { views } from "./views.js";
@@ -168,7 +167,6 @@ export function computed<F extends (...args: never[]) => unknown>(
 	use.invalidate = invalidate;
 	use.isSignal = true;
 	use.map = signalMap;
-	use.prop = signalProp;
 	use.render = signalText;
 	use.subscribe = subscribe;
 	use.toString = toString;
