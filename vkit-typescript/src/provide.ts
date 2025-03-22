@@ -1,6 +1,6 @@
 import { createInjector, TokenLike } from "./createInjector.js";
 import { createProvider, Provider } from "./createProvider.js";
-import { getComponent, getInjector, setInjector } from "./contextGuard.js";
+import { getEffect, getInjector, setInjector } from "./contextGuard.js";
 import { inject } from "./inject.js";
 
 export type ConfigClass = (new () => unknown) | {create: () => unknown};
@@ -83,11 +83,11 @@ export function provide<R>(
 	configs: Config[] | null,
 	getView: () => R
 ): R {
-	var component = getComponent();
+	var effect = getEffect();
 	var prevInjector = getInjector(true);
 	var parentInjector = configs ? prevInjector : null;
 	var injector = createInjector(parentInjector, configs ? null : function(token) {
-		var provider = createProvider(getValueFromClass, token, component);
+		var provider = createProvider(getValueFromClass, token, effect);
 		injector.container.set(token, provider);
 		return provider.getInstance();
 	});
@@ -101,19 +101,19 @@ export function provide<R>(
 
 			if ((config as ConfigProvidable).provide) {
 				if ((config as ConfigUseFactory).useFactory) {
-					provider = createProvider(getValueFromUseFactory, config, component);
+					provider = createProvider(getValueFromUseFactory, config, effect);
 				} else if ("useValue" in (config as ConfigUseValue)) {
-					provider = createProvider(getValueFromUseValue, config, component);
+					provider = createProvider(getValueFromUseValue, config, effect);
 				} else if ((config as ConfigUseClass).useClass) {
-					provider = createProvider(getValueFromUseClass, config, component);
+					provider = createProvider(getValueFromUseClass, config, effect);
 				} else if ((config as ConfigUseExisting).useExisting) {
-					provider = createProvider(getValueFromUseExisting, config, component);
+					provider = createProvider(getValueFromUseExisting, config, effect);
 				} else {
-					provider = createProvider(getValueFromProvide, config, component);
+					provider = createProvider(getValueFromProvide, config, effect);
 				}
 				injector.container.set((config as ConfigProvidable).provide, provider);
 			} else {
-				provider = createProvider(getValueFromClass, config, component);
+				provider = createProvider(getValueFromClass, config, effect);
 				injector.container.set(config as never, provider);
 			}
 		}

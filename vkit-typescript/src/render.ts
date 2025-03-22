@@ -1,7 +1,7 @@
 import { append } from "./append.js";
 import { bind } from "./bind.js";
-import { rootComponent, rootInjector } from "./root.js";
-import { setComponent, setInjector } from "./contextGuard.js";
+import { rootEffect, rootInjector } from "./root.js";
+import { setEffect, setInjector } from "./contextGuard.js";
 import { update } from "./update.js";
 import { Template } from "./Template.js";
 
@@ -25,14 +25,14 @@ export function render<ContextT extends Node>(
 	container: ContextT
 ): void {
 	try {
-		setComponent(rootComponent);
+		setEffect(rootEffect);
 		setInjector(rootInjector);
 		
 		var view = getView();
 		
 		append(container, view, container, bind);
 	} finally {
-		setComponent(null);
+		setEffect(null);
 		setInjector(null);
 	}
 	

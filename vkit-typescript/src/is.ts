@@ -1,5 +1,5 @@
 import { effect } from "./effect.js";
-import { getComponent } from "./contextGuard.js";
+import { getEffect } from "./contextGuard.js";
 
 /**
  * Evaluates a function returning a boolean and rerenders the current view/views/effect block when that boolean value changes.
@@ -22,7 +22,7 @@ import { getComponent } from "./contextGuard.js";
  * @returns The return value of the `condition` function.
  */
 export function is(condition: () => boolean): boolean {
-	var parent = getComponent();
+	var parent = getEffect();
 	var value: boolean | undefined;
 	
 	effect(function() {

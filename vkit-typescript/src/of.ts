@@ -1,13 +1,13 @@
 import { enqueueUpdate } from "./update.js";
-import { getComponent } from "./contextGuard.js";
+import { getEffect } from "./contextGuard.js";
 import { observe } from "./observe.js";
 import { onDestroy } from "./onDestroy.js";
 
 function getValue<T, K extends keyof T>(object: T, property: K, _receiver: T): T[K] {
 	var value = object[property];
-	var component = getComponent(true);
+	var effect = getEffect(true);
 	
-	if (!component) {
+	if (!effect) {
 		return value;
 	}
 	
@@ -18,7 +18,7 @@ function getValue<T, K extends keyof T>(object: T, property: K, _receiver: T): T
 	}
 	
 	var enqueued = false;
-	var render = component.render;
+	var render = effect.render;
 
 	function set(newValue: T[K]): void {
 		if (value !== newValue) {
@@ -72,9 +72,9 @@ export function of<T extends object, K extends keyof T>(object: T, property?: K)
 		return getValue(object, property, object);
 	}
 
-	var component = getComponent(true);
+	var effect = getEffect(true);
 	
-	if (!component) {
+	if (!effect) {
 		return object;
 	}
 

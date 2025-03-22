@@ -1,19 +1,13 @@
 import { getWindow } from "./getWindow.js";
 
 /**
- * Returns the document of the current component.
+ * Returns the current document.
  * It is useful in multi-window applications and iframes.
  * It returns null on the server.
  * @example
- * const document = getDocument();
- * 
- * if (document) {
- * 	bind(document, {
- * 		onclick() {
- * 			console.log("You clicked on the document!");
- * 		}
- * 	});
- * }
+ * effect(() => {
+ * 	console.log("Document:", getDocument());
+ * });
  * 
  * @returns The current document.
  */

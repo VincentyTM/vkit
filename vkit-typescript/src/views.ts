@@ -1,5 +1,5 @@
-import { getComponent, getInjector, setComponent, setInjector } from "./contextGuard.js";
-import { createComponent, Component } from "./createComponent.js";
+import { getEffect, getInjector, setEffect, setInjector } from "./contextGuard.js";
+import { createEffect, Effect } from "./createEffect.js";
 import { Injector } from "./createInjector.js";
 import { emitUnmount } from "./emitUnmount.js";
 import { hashCode } from "./hashCode.js";
@@ -14,7 +14,7 @@ import { toArray } from "./toArray.js";
 import { Template } from "./Template.js";
 
 type Block = {
-	component: Component;
+	Effect: Effect;
 	index: number;
 	insertBefore(anchor: Node): void;
 	range: NodeRange;
@@ -28,12 +28,12 @@ type BlockInfo = {
 function createBlock<ItemT>(
 	model: ItemT,
 	getView: (value: ItemT, block?: BlockInfo) => Template,
-	container: Component | null,
+	container: Effect | null,
 	injector: Injector | null
 ): Block {
 	var range = nodeRange(true);
 	
-	var component = createComponent(function(): void {
+	var Effect = createEffect(function(): void {
 		var view = getView(model, block);
 		
 		if (range.start.nextSibling) {
@@ -43,7 +43,7 @@ function createBlock<ItemT>(
 	}, container, injector);
 	
 	function render(): Template {
-		enqueueUpdate(component.render);
+		enqueueUpdate(Effect.render);
 		
 		return [
 			range.start,
@@ -55,24 +55,24 @@ function createBlock<ItemT>(
 		if (range.start.nextSibling) {
 			range.insertBefore(end);
 		} else {
-			var prevComponent = getComponent(true);
+			var prevEffect = getEffect(true);
 			var prevInjector = getInjector(true);
 			
 			try {
-				setComponent(component);
+				setEffect(Effect);
 				setInjector(injector);
 				insert(render(), end, end.parentNode, true);
 			} catch (error) {
-				throwError(error, component);
+				throwError(error, Effect);
 			} finally {
-				setComponent(prevComponent);
+				setEffect(prevEffect);
 				setInjector(prevInjector);
 			}
 		}
 	}
 	
 	var block = {
-		component: component,
+		Effect: Effect,
 		index: 0,
 		insertBefore: insertBefore,
 		range: range,
@@ -87,7 +87,7 @@ export function views<ViewT extends Template<ContextT>, ItemT, ContextT>(
 	getItemView: (item: ItemT, block?: BlockInfo) => ViewT
 ): Template<ContextT> {
 	var signal = this;
-	var container = getComponent();
+	var container = getEffect();
 	var injector = getInjector();
 	var range = nodeRange();
 	var oldBlocks: {[key: string]: Block} = {};
@@ -124,7 +124,7 @@ export function views<ViewT extends Template<ContextT>, ItemT, ContextT>(
 			if (!(key in newBlocks)) {
 				var block = oldBlocks[key];
 				block.range.remove();
-				emitUnmount(block.component);
+				emitUnmount(block.Effect);
 			}
 		}
 		

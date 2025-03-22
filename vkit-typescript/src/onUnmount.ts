@@ -1,4 +1,4 @@
-import { Component } from "./createComponent.js";
+import { Effect } from "./createEffect.js";
 import { onDestroy } from "./onDestroy.js";
 
 /**
@@ -6,7 +6,7 @@ import { onDestroy } from "./onDestroy.js";
  */
 export function onUnmount(
 	callback: () => void,
-	component?: Component | null
+	effect?: Effect | null
 ): void {
-    onDestroy(callback, component);
+    onDestroy(callback, effect);
 }

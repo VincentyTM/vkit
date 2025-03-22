@@ -1,6 +1,6 @@
 import { append } from "./append.js";
 import { bind } from "./bind.js";
-import { createComponent } from "./createComponent.js";
+import { createEffect } from "./createEffect.js";
 import { createInjector } from "./createInjector.js";
 import { createProvider } from "./createProvider.js";
 import { emitUnmount } from "./emitUnmount.js";
@@ -15,12 +15,12 @@ export function renderDetached<C extends Node>(
     container: C
 ): () => void {
     var injector = createInjector(null, function(token) {
-        var provider = createProvider(getValueFromClass, token, component);
+        var provider = createProvider(getValueFromClass, token, effect);
         injector.container.set(token, provider);
         return provider.getInstance();
     });
     
-    var component = createComponent(function(): void {
+    var effect = createEffect(function(): void {
         var win: (Window & typeof globalThis) | null = null;
         
         if (container) {
@@ -43,10 +43,10 @@ export function renderDetached<C extends Node>(
     }, null, injector);
 
     function unmount(): void {
-        emitUnmount(component);
+        emitUnmount(effect);
     }
     
-    component.render();
+    effect.render();
     update();
     return unmount;
 }

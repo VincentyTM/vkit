@@ -64,8 +64,8 @@ var INIITIAL_PROGRESS: HttpProgress = {
 
 /**
  * Sends an HTTP request initially and when its input changes.
- * When the current component is unmounted, the HTTP is request is aborted.
- * This method can only be used in component context.
+ * When the current reactive context is destroyed, the HTTP is request is aborted.
+ * This method can only be used in a reactive context.
  * @example
  * function HttpExample() {
  * 	const response = http({

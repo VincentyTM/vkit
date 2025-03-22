@@ -1,4 +1,4 @@
-import { createComponent } from "./createComponent.js";
+import { createEffect } from "./createEffect.js";
 
 /**
  * Creates and returns a dynamic text node.
@@ -15,7 +15,7 @@ import { createComponent } from "./createComponent.js";
 export function text(getText: () => string | number): Text {
 	var oldText = "";
 	var node = document.createTextNode(oldText);
-	var component = createComponent(setText);
+	var effect = createEffect(setText);
 	
 	function setText(): void {
 		var newText = getText();
@@ -24,6 +24,6 @@ export function text(getText: () => string | number): Text {
 		}
 	}
 	
-	component.render();
+	effect.render();
 	return node;
 }

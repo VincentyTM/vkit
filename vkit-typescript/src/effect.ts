@@ -1,4 +1,4 @@
-import { createComponent } from "./createComponent.js";
+import { createEffect } from "./createEffect.js";
 
 /**
  * Creates a side effect and runs it every time its dependencies change.
@@ -20,5 +20,5 @@ import { createComponent } from "./createComponent.js";
  * In order to clean up side effects, call onDestroy within the callback.
  */
 export function effect(callback: () => void): void {
-	createComponent(callback).render();
+	createEffect(callback).render();
 }

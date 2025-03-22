@@ -1,7 +1,7 @@
-import { getComponent, setComponent } from "./contextGuard.js";
+import { getEffect, setEffect } from "./contextGuard.js";
 
 /**
- * Executes a function outside component context.
+ * Executes a function outside reactive context.
  * Signal calls in it are non-reactive which means they do not update the surrounding context when the value of the signal changes.
  * @example
  * const showCountOnConsole = signal(true);
@@ -20,16 +20,16 @@ import { getComponent, setComponent } from "./contextGuard.js";
  * @returns The return value of the function.
  */
 export function untracked<T>(callback: () => T): T {
-	var component = getComponent(true);
+	var effect = getEffect(true);
 	
-	if (!component) {
+	if (!effect) {
 		return callback();
 	}
 	
 	try {
-		setComponent(null);
+		setEffect(null);
 		return callback();
 	} finally {
-		setComponent(component);
+		setEffect(effect);
 	}
 }

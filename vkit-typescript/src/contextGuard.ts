@@ -1,23 +1,23 @@
-import { Component } from "./createComponent.js";
+import { Effect } from "./createEffect.js";
 import { Injector } from "./createInjector.js";
 
-var currentComponent: Component | null = null;
+var currentEffect: Effect | null = null;
 var currentInjector: Injector | null = null;
-var errorMessage = "This function can only be called synchronously from a component";
+var errorMessage = "This function can only be called synchronously from a reactive context";
 
-export function getComponent(): Component;
+export function getEffect(): Effect;
 
-export function getComponent(allowNull: true): Component | null;
+export function getEffect(allowNull: true): Effect | null;
 
-export function getComponent(allowNull?: boolean): Component | null {
-	if (!allowNull && !currentComponent) {
+export function getEffect(allowNull?: boolean): Effect | null {
+	if (!allowNull && !currentEffect) {
 		throw new Error(errorMessage);
 	}
-	return currentComponent;
+	return currentEffect;
 }
 
-export function setComponent(component: Component | null): void {
-	currentComponent = component;
+export function setEffect(effect: Effect | null): void {
+	currentEffect = effect;
 }
 
 export function getInjector(): Injector;
@@ -25,7 +25,7 @@ export function getInjector(): Injector;
 export function getInjector(allowNull: true): Injector | null;
 
 export function getInjector(allowNull?: boolean): Injector | null {
-	if (!allowNull && (!currentComponent || !currentInjector)) {
+	if (!allowNull && (!currentEffect || !currentInjector)) {
 		throw new Error(errorMessage);
 	}
 	return currentInjector;

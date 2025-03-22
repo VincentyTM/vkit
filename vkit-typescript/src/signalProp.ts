@@ -1,4 +1,4 @@
-import { getComponent } from "./contextGuard.js";
+import { getEffect } from "./contextGuard.js";
 import { Signal } from "./signal.js";
 
 type ElementType = {
@@ -46,11 +46,11 @@ export function signalProp<T>(
 	name: string,
 	valueSignal: Signal<T>
 ): void {
-	var component = getComponent(true);
+	var effect = getEffect(true);
 	
 	element[name] = valueSignal.get();
 	
 	valueSignal.subscribe(function(value: T) {
 		element[name] = value;
-	}, valueSignal.component === component);
+	}, valueSignal.parentEffect === effect);
 }

@@ -1,4 +1,4 @@
-import { getComponent } from "./contextGuard.js";
+import { getEffect } from "./contextGuard.js";
 import { onDestroy } from "./onDestroy.js";
 import { signal } from "./signal.js";
 import { Template } from "./Template.js";
@@ -57,17 +57,17 @@ export function errorBoundary<T, U>(
 			return getFallbackView(error, retry);
 		}
 		
-		var component = getComponent();
-		var errorHandlers = component.errorHandlers;
+		var effect = getEffect();
+		var errorHandlers = effect.errorHandlers;
 		
 		if (errorHandlers) {
 			errorHandlers.push(errorHandler);
 		} else {
-			component.errorHandlers = [errorHandler];
+			effect.errorHandlers = [errorHandler];
 		}
 		
 		onDestroy(function(): void {
-			var errorHandlers = component.errorHandlers;
+			var errorHandlers = effect.errorHandlers;
 
 			if (!errorHandlers) {
 				return;
@@ -78,7 +78,7 @@ export function errorBoundary<T, U>(
 			for (var i = n - 1; i >= 0; --i) {
 				if (errorHandlers[i] === errorHandler) {
 					if (n === 1) {
-						component.errorHandlers = null;
+						effect.errorHandlers = null;
 					} else {
 						errorHandlers.splice(i, 1);
 					}

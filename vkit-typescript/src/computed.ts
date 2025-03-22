@@ -1,5 +1,5 @@
-import { getComponent, getInjector } from "./contextGuard.js";
-import { createComponent } from "./createComponent.js";
+import { getEffect, getInjector } from "./contextGuard.js";
+import { createEffect } from "./createEffect.js";
 import { onDestroy } from "./onDestroy.js";
 import { Signal } from "./signal.js";
 import { signalEffect } from "./signalEffect.js";
@@ -54,11 +54,11 @@ export function computed<F extends (...args: never[]) => unknown>(
 	type Subscription = {callback: ((value: Value) => void) | null};
 	type Value = ReturnType<F>;
 
-	var parent = getComponent(true);
+	var parent = getEffect(true);
 	var subscriptions: Subscription[] = [];
 	var value: Value = none as Value;
-	var signalComponent = createComponent(computeValue, parent, getInjector(true));
-	var invalidate = signalComponent.render;
+	var effectOfSignal = createEffect(computeValue, parent, getInjector(true));
+	var invalidate = effectOfSignal.render;
 	
 	if (dependencies) {
 		var n = dependencies.length as number;
@@ -114,14 +114,14 @@ export function computed<F extends (...args: never[]) => unknown>(
 	
 	function use(): Value {
 		var value = get();
-		var component = getComponent(true);
+		var effect = getEffect(true);
 		
-		if (component) {
-			if (component === parent) {
+		if (effect) {
+			if (effect === parent) {
 				throw new Error("A signal cannot be used in the reactive block it was created in");
 			}
 			
-			subscribe(component.render);
+			subscribe(effect.render);
 		}
 		
 		return value;
@@ -138,7 +138,7 @@ export function computed<F extends (...args: never[]) => unknown>(
 		callback: (value: Value) => void,
 		persistent?: boolean
 	): () => void {
-		var component = getComponent(true);
+		var effect = getEffect(true);
 		var subscription: Subscription = {callback: callback};
 		
 		subscriptions.push(subscription);
@@ -154,14 +154,14 @@ export function computed<F extends (...args: never[]) => unknown>(
 			}
 		}
 		
-		if (component !== parent && !persistent) {
+		if (effect !== parent && !persistent) {
 			onDestroy(unsubscribe);
 		}
 		
 		return unsubscribe;
 	}
 	
-	use.component = parent;
+	use.parentEffect = parent;
 	use.effect = signalEffect;
 	use.get = get;
 	use.invalidate = invalidate;

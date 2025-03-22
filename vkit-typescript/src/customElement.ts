@@ -1,6 +1,6 @@
 import { append } from "./append.js";
 import { bind } from "./bind.js";
-import { createComponent, Component } from "./createComponent.js";
+import { createEffect, Effect } from "./createEffect.js";
 import { createInjector } from "./createInjector.js";
 import { createProvider } from "./createProvider.js";
 import { emitUnmount } from "./emitUnmount.js";
@@ -31,7 +31,7 @@ type ExtendedHTMLElement = HTMLElement & {
 	observedAttributes: {
 		[propName: string]: WritableSignal<string | null>;
 	};
-	component: Component;
+	effect: Effect;
 };
 
 var setPrototypeOf = Object.setPrototypeOf;
@@ -87,19 +87,19 @@ export function customElement(
 		);
 
 		var injector = createInjector(null, function(token): unknown {
-			var provider = createProvider(getValueFromClass, token, component);
+			var provider = createProvider(getValueFromClass, token, effect);
 			injector.container.set(token, provider);
 			return provider.getInstance();
 		});
 		
-		var component = createComponent(function(): void {
+		var effect = createEffect(function(): void {
 			var doc = el.ownerDocument;
 			inject(WindowService).window = doc.defaultView || (doc as any).parentWindow;
 			var view = getView.call(el, el.observedAttributes, el);
 			append(el, view, el, bind);
 		}, null, injector);
 		
-		el.component = component;
+		el.effect = effect;
 		el.observedAttributes = {};
 		
 		if (CustomElement.observedAttributes) {
@@ -129,8 +129,8 @@ export function customElement(
 			return;
 		}
 		
-		var component = this.component;
-		component.render();
+		var effect = this.effect;
+		effect.render();
 		update();
 	};
 	
@@ -144,7 +144,7 @@ export function customElement(
 		}
 		
 		empty(this);
-		emitUnmount(this.component);
+		emitUnmount(this.effect);
 		update();
 	};
 	

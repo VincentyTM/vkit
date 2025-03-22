@@ -1,4 +1,4 @@
-import { createComponent } from "./createComponent.js";
+import { createEffect } from "./createEffect.js";
 import { nodeRange } from "./nodeRange.js";
 import { enqueueUpdate } from "./update.js";
 import { isSignal } from "./isSignal.js";
@@ -38,9 +38,9 @@ export function view<ViewT extends Template<ContextT>, ValueT, ContextT>(
 	this: Signal<ValueT> | void,
 	getCurrentView: (value: ValueT | null) => ViewT
 ) : Template<ContextT> {
-	var component = createComponent(mount);
+	var effect = createEffect(mount);
 	var range = nodeRange(true);
-	var render = component.render;
+	var render = effect.render;
 	var signal: Signal<ValueT> | null | void = this;
 	
 	if (isSignal(signal)) {

@@ -1,10 +1,10 @@
-import { createComponent } from "./createComponent.js";
+import { createEffect } from "./createEffect.js";
 import { createInjector } from "./createInjector.js";
 import { createProvider } from "./createProvider.js";
 import { Config } from "./provide.js";
 
 function mount(): void {
-	throw new Error("The root component cannot be rerendered");
+	throw new Error("The root effect cannot be updated");
 }
 
 export function getValueFromClass(config: Config): unknown {
@@ -15,9 +15,9 @@ export function getValueFromClass(config: Config): unknown {
 }
 
 export var rootInjector = createInjector(null, function(token) {
-	var provider = createProvider(getValueFromClass, token, rootComponent);
+	var provider = createProvider(getValueFromClass, token, rootEffect);
 	rootInjector.container.set(token, provider);
 	return provider.getInstance();
 });
 
-export var rootComponent = createComponent(mount, null, rootInjector);
+export var rootEffect = createEffect(mount, null, rootInjector);

@@ -1,5 +1,5 @@
-import { getComponent, setComponent } from "./contextGuard.js";
-import { Component } from "./createComponent.js";
+import { getEffect, setEffect } from "./contextGuard.js";
+import { Effect } from "./createEffect.js";
 import { Config } from "./provide.js";
 
 export type Provider<T> = {
@@ -9,7 +9,7 @@ export type Provider<T> = {
 export function createProvider<T>(
 	createInstance: (config: Config) => T,
 	config: Config,
-	component: Component | null
+	effect: Effect | null
 ): Provider<T> {
 	var instance: T | undefined;
 	var instanceCreated = false;
@@ -19,13 +19,13 @@ export function createProvider<T>(
 			return instance!;
 		}
 
-		var previousComponent = getComponent();
+		var previousEffect = getEffect();
 
 		try {
-			setComponent(component);
+			setEffect(effect);
 			instance = createInstance(config);
 		} finally {
-			setComponent(previousComponent);
+			setEffect(previousEffect);
 		}
 
 		instanceCreated = true;

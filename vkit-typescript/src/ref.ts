@@ -1,4 +1,4 @@
-import { getComponent } from "./contextGuard.js";
+import { getEffect } from "./contextGuard.js";
 import { onDestroy } from "./onDestroy.js";
 
 type MutableRef<T> = {
@@ -29,7 +29,7 @@ type Ref<T> = {
  * 		})
  * 	];
  * }
- * @returns A function directive which binds an element (or any other object) to the reference until the current component unmounts.
+ * @returns A function directive which binds an element (or any other object) to the reference until the current reactive context is destroyed.
  */
 export function ref<T = HTMLElement>(): Ref<T> {
 	function reset(): void {
@@ -43,12 +43,12 @@ export function ref<T = HTMLElement>(): Ref<T> {
 		
 		reference.current = value;
 		
-		if (getComponent() !== component) {
+		if (getEffect() !== effect) {
 			onDestroy(reset);
 		}
 	} as MutableRef<T>;
 	
-	var component = getComponent(true);
+	var effect = getEffect(true);
 	reference.current = null;
 	return reference;
 }

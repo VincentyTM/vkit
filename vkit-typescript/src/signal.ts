@@ -1,7 +1,7 @@
 import { enqueueUpdate } from "./update.js";
 import { ComputedSignal, signalMap } from "./computed.js";
-import { getComponent } from "./contextGuard.js";
-import { Component } from "./createComponent.js";
+import { getEffect } from "./contextGuard.js";
+import { Effect } from "./createEffect.js";
 import { onDestroy } from "./onDestroy.js";
 import { signalEffect } from "./signalEffect.js";
 import { signalText } from "./signalText.js";
@@ -15,10 +15,10 @@ export type Signal<T> = {
 	(): T;
 
 	/**
-	 * The component in which the signal was created.
-	 * It is null if the signal was created outside the component tree (for example, in an event listener).
+	 * The parent effect in which the signal was created.
+	 * It is null if the signal was created outside the reactivity tree (for example, in an event listener).
 	 */
-	component: Component | null;
+	parentEffect: Effect | null;
 
 	/**
 	 * Subscribes a side effect to the signal.
@@ -231,12 +231,12 @@ export function signal<T>(value: T): WritableSignal<T> {
 		callback: ((value: T) => void) | null;
 	};
 
-	var parent = getComponent(true);
+	var parent = getEffect(true);
 	var subscriptions: Subscription[] = [];
 	var enqueued = false;
 	
 	function use(): T {
-		var component = getComponent(true);
+		var component = getEffect(true);
 		
 		if (component) {
 			if (component === parent) {
@@ -257,7 +257,7 @@ export function signal<T>(value: T): WritableSignal<T> {
 		callback: (value: T) => void,
 		persistent?: boolean
 	): () => void {
-		var component = getComponent(true);
+		var component = getEffect(true);
 		var subscription: Subscription = {callback: callback};
 		
 		subscriptions.push(subscription);
@@ -320,7 +320,7 @@ export function signal<T>(value: T): WritableSignal<T> {
 		}
 	}
 	
-	use.component = parent;
+	use.parentEffect = parent;
 	use.effect = signalEffect;
 	use.get = get;
 	use.isSignal = true;

@@ -1,10 +1,10 @@
-import { Component } from "./createComponent.js";
+import { Effect } from "./createEffect.js";
 
-export function emitUnmount(component: Component): void {
-	var children = component.children;
+export function emitUnmount(effect: Effect): void {
+	var children = effect.children;
 
 	if (children) {
-		component.children = null;
+		effect.children = null;
 		
 		var n = children.length;
 		
@@ -13,14 +13,14 @@ export function emitUnmount(component: Component): void {
 		}
 	}
 	
-	var parent = component.parent;
+	var parent = effect.parent;
 
 	if (parent) {
 		var siblings = parent.children;
 		
 		if (siblings) {
 			for (var i = siblings.length; i--;) {
-				if (siblings[i] === component) {
+				if (siblings[i] === effect) {
 					siblings.splice(i, 1);
 					break;
 				}
@@ -28,10 +28,10 @@ export function emitUnmount(component: Component): void {
 		}
 	}
 	
-	var destroyHandlers = component.destroyHandlers;
+	var destroyHandlers = effect.destroyHandlers;
 	
 	if (destroyHandlers !== undefined) {
-		component.destroyHandlers = undefined;
+		effect.destroyHandlers = undefined;
 
 		var n = destroyHandlers.length;
 

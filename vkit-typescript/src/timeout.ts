@@ -3,7 +3,7 @@ import { onDestroy } from "./onDestroy.js";
 import { update } from "./update.js";
 
 /**
- * Sets a timeout in the current window and clears it when the current component is unmounted.
+ * Sets a timeout in the current window and clears it when the current reactive context is destroyed.
  * @example
  * timeout(() => {
  * 	console.log("Timeout is over!");

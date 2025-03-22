@@ -1,12 +1,12 @@
-import { Component } from "./createComponent.js";
+import { Effect } from "./createEffect.js";
 
-export function throwError(error: any, component: Component | null): void {
-	while (component) {
-		if (component.parent && component.stack && error && typeof error.stack === "string" && error.stack.indexOf(component.stack) === -1) {
-			error.stack += "\n" + component.stack;
+export function throwError(error: any, effect: Effect | null): void {
+	while (effect) {
+		if (effect.parent && effect.stack && error && typeof error.stack === "string" && error.stack.indexOf(effect.stack) === -1) {
+			error.stack += "\n" + effect.stack;
 		}
 
-		var errorHandlers = component.errorHandlers;
+		var errorHandlers = effect.errorHandlers;
 		
 		if (errorHandlers) {
 			try {
@@ -22,7 +22,7 @@ export function throwError(error: any, component: Component | null): void {
 			}
 		}
 		
-		component = component.parent;
+		effect = effect.parent;
 	}
 
 	throw error;

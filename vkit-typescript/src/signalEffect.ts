@@ -1,5 +1,5 @@
-import { getComponent } from "./contextGuard.js";
-import { createComponent, Component } from "./createComponent.js";
+import { getEffect } from "./contextGuard.js";
+import { createEffect, Effect } from "./createEffect.js";
 import { onDestroy } from "./onDestroy.js";
 import { Signal } from "./signal.js";
 
@@ -9,20 +9,20 @@ export function signalEffect<T>(
 		value: T,
 		onCleanup?: (
 			callback: () => void,
-			component?: Component | null
+			effect?: Effect | null
 		) => void
 	) => void
 ): () => void {
 	var signal = this;
-	var prev = getComponent(true);
+	var prev = getEffect(true);
 	
 	if (prev) {
-		var component = createComponent(function() {
+		var effect = createEffect(function() {
 			callback(signal.get(), onDestroy);
 		});
-		component.render();
+		effect.render();
 
-		return signal.subscribe(component.render);
+		return signal.subscribe(effect.render);
 	}
 
 	callback(signal.get());

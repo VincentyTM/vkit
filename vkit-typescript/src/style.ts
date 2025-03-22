@@ -85,7 +85,7 @@ function getStyleContainer(el: Node): StyleContainer {
 /**
  * Creates a style which can be applied to one or more DOM elements.
  * 
- * The style is added to an element with an attribute which is removed when the current component (the component in which the style was added to the element) is unmounted.
+ * The style is added to an element with an attribute which is removed when the current reactive context (the context in which the style was added to the element) is destroyed.
  * 
  * The stylesheet is removed from the document or shadow root when no DOM elements use it anymore.
  * A style can be used in multiple documents/shadow DOMs, each having their own independent stylesheet.
@@ -118,7 +118,7 @@ export function style(
 	
 	/**
 	 * Adds the stylesheet's selector attribute to a DOM element and keeps a reference to that element.
-	 * The attribute is removed when the current component (the component in which the `bind` function was called) is unmounted.
+	 * The attribute is removed when the current reactive context (the context in which the `bind` function was called) is destroyed.
 	 * 
 	 * @param element The DOM element to which the attribute is added.
 	 * The `::this` selector in the stylesheet selects this element.

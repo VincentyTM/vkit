@@ -1,39 +1,39 @@
-import { getComponent } from "./contextGuard.js";
-import { Component } from "./createComponent.js";
-import { rootComponent } from "./root.js";
+import { getEffect } from "./contextGuard.js";
+import { Effect } from "./createEffect.js";
+import { rootEffect } from "./root.js";
 
 /**
- * Schedules a callback to be run when the current component is destroyed.
- * @param callback The handler that listens to the component destroy event.
- * @param component The component whose destroy event is handled. By default, it is the current component.
+ * Schedules a callback to be run when the current reactive context is destroyed.
+ * @param callback The handler that listens to the destroy event.
+ * @param effect The effect whose destroy event is handled. By default, it is the current effect.
  */
 export function onDestroy(
 	callback: () => void,
-	component?: Component | null
+	effect?: Effect | null
 ): void {
-	if (!component) {
-		component = getComponent();
+	if (!effect) {
+		effect = getEffect();
 	}
 	
-	if (component === rootComponent) {
+	if (effect === rootEffect) {
 		return;
 	}
 	
-	var c: Component | null = component;
+	var e: Effect | null = effect;
 	
-	while (c && c.destroyHandlers === undefined) {
-		c.destroyHandlers = [];
+	while (e && e.destroyHandlers === undefined) {
+		e.destroyHandlers = [];
 		
-		if (c.parent) {
-			if (c.parent.children) {
-				c.parent.children.push(c);
+		if (e.parent) {
+			if (e.parent.children) {
+				e.parent.children.push(e);
 			} else {
-				c.parent.children = [c];
+				e.parent.children = [e];
 			}
 		}
 		
-		c = c.parent;
+		e = e.parent;
 	}
 	
-	component!.destroyHandlers!.push(callback);
+	effect!.destroyHandlers!.push(callback);
 }

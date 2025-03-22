@@ -1,24 +1,24 @@
-import { getComponent, getInjector, setComponent, setInjector } from "./contextGuard.js";
+import { getEffect, getInjector, setEffect, setInjector } from "./contextGuard.js";
 import { throwError } from "./throwError.js";
 import { Template } from "./Template.js";
 
 export function getContext<ContextT>(): (getView: () => Template<ContextT>) => Template<ContextT> {
-	var component = getComponent();
+	var effect = getEffect();
 	var injector = getInjector();
 	
 	return function(getView: () => Template<ContextT>): Template<ContextT> {
-		var prevComponent = getComponent(true);
-		var prevInjector = getInjector(true);
+		var previousEffect = getEffect(true);
+		var previousInjector = getInjector(true);
 		
 		try {
-			setComponent(component);
+			setEffect(effect);
 			setInjector(injector);
 			return getView();
 		} catch (error) {
-			throwError(error, component);
+			throwError(error, effect);
 		} finally {
-			setComponent(prevComponent);
-			setInjector(prevInjector);
+			setEffect(previousEffect);
+			setInjector(previousInjector);
 		}
 	};
 }
