@@ -1,12 +1,12 @@
 (function($) {
 
-var getComponent = $.getComponent;
+var getEffect = $.getEffect;
 var observable = $.observable;
-var onUnmount = $.onUnmount;
+var onDestroy = $.onDestroy;
 var update = $.update;
 
 function createEmitter(base) {
-	var component = getComponent(true);
+	var parentEffect = getEffect(true);
 	var dataChannel = observable();
 	var errorChannel = observable();
 	
@@ -29,14 +29,14 @@ function createEmitter(base) {
 		
 		child.unsubscribe = unsubscribe;
 		
-		var currentComponent = getComponent(true);
+		var currentEffect = getEffect(true);
 		
-		if (component !== currentComponent) {
-			if (!currentComponent) {
-				throw new Error("Source emitter is created in a component, but not the destination");
+		if (parentEffect !== currentEffect) {
+			if (!currentEffect) {
+				throw new Error("Source emitter is created in a reactive context, but not the destination");
 			}
 			
-			onUnmount(unsubscribe);
+			onDestroy(unsubscribe);
 		}
 		
 		return child;

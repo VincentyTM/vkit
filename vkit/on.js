@@ -1,23 +1,23 @@
 (function($) {
 
-var getComponent = $.getComponent;
+var getEffect = $.getEffect;
+var onDestroy = $.onDestroy;
 var onEvent = $.onEvent;
-var onUnmount = $.onUnmount;
 
 function on(type, action) {
-	var outer = getComponent(true);
+	var outer = getEffect(true);
 	
 	return function(el) {
-		var inner = getComponent(true);
+		var inner = getEffect(true);
 		
 		if (!inner && outer) {
-			getComponent();
+			getEffect();
 		}
 		
 		var unsubscribe = onEvent(el, type, action);
 		
 		if (outer !== inner) {
-			onUnmount(unsubscribe);
+			onDestroy(unsubscribe);
 		}
 	};
 }

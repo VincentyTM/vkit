@@ -1,14 +1,14 @@
 (function($) {
 
-var getComponent = $.getComponent;
+var getEffect = $.getEffect;
 var getWindow = $.getWindow;
+var onDestroy = $.onDestroy;
 var onEvent = $.onEvent;
-var onUnmount = $.onUnmount;
 var signal = $.signal;
 var update = $.update;
 
 function permissionPrompt(name, requestPermission, onError) {
-	var component = getComponent();
+	var component = getEffect();
 	var nav = getWindow().navigator;
 	
 	function grant() {
@@ -66,17 +66,21 @@ function permissionPrompt(name, requestPermission, onError) {
 		};
 	});
 	
+	var unsubscribe;
+	
+	onDestroy(function() {
+		if (unsubscribe) {
+			unsubscribe();
+		}
+	});
+	
 	if (nav.permissions) {
 		nav.permissions.query({name: name}).then(function(perm) {
 			permission.set(perm.state || perm.status);
 			
-			onUnmount(
-				onEvent(perm, "change", function() {
-					permission.set(perm.state || perm.status);
-				}),
-				
-				component
-			);
+			unsubscribe = onEvent(perm, "change", function() {
+				permission.set(perm.state || perm.status);
+			});
 			
 			update();
 		}, function(error) {

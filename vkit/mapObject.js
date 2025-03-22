@@ -1,17 +1,18 @@
 (function($) {
 
-var createComponent = $.createComponent;
+var createEffect = $.createEffect;
+var destroyEffect = $.destroyEffect;
 var effect = $.effect;
-var emitUnmount = $.emitUnmount;
-var getComponent = $.getComponent;
+var getEffect = $.getEffect;
 var getInjector = $.getInjector;
 var isSignal = $.isSignal;
 var objectAssign = $.objectAssign;
 var readOnly = $.readOnly;
 var signal = $.signal;
+var updateEffect = $.updateEffect;
 
 function mapObject(objectSignal, mapKey, data) {
-	var parent = getComponent();
+	var parent = getEffect();
 	var injector = getInjector();
 	var components = {};
 	var values = signal({});
@@ -19,7 +20,7 @@ function mapObject(objectSignal, mapKey, data) {
 	function setObject(object) {
 		for (var key in components) {
 			if(!(key in object)) {
-				emitUnmount(components[key]);
+				destroyEffect(components[key]);
 				values.update(removeKey, key);
 			}
 		}
@@ -31,9 +32,9 @@ function mapObject(objectSignal, mapKey, data) {
 				next[key] = components[key];
 			} else {
 				var mount = getMount(values, key, mapKey, objectSignal, data);
-				var component = createComponent(mount, parent, injector);
-				next[key] = component;
-				component.render();
+				var instanceEffect = createEffect(parent, injector, mount);
+				next[key] = instanceEffect;
+				updateEffect(instanceEffect);
 			}
 		}
 		

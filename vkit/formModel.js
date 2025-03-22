@@ -1,8 +1,8 @@
 (function($) {
 
-var getComponent = $.getComponent;
+var getEffect = $.getEffect;
 var observable = $.observable;
-var onUnmount = $.onUnmount;
+var onDestroy = $.onDestroy;
 var readOnly = $.readOnly;
 var signal = $.signal;
 
@@ -17,7 +17,7 @@ function formModel(data) {
 	var updateModel = observable();
 	var validators = observable();
 	var isFormValid = signal(true);
-	var component = getComponent(true);
+	var effect = getEffect(true);
 	
 	function validate(options) {
 		updateModel();
@@ -44,13 +44,13 @@ function formModel(data) {
 			return function(input) {
 				getter(input, data);
 				
-				onUnmount(
+				onDestroy(
 					dataChange.subscribe(function() {
 						getter(input, data);
 					})
 				);
 				
-				onUnmount(
+				onDestroy(
 					updateModel.subscribe(function() {
 						setter(input, data);
 					})
@@ -74,11 +74,11 @@ function formModel(data) {
 				isFormValid.set(false);
 			}
 			
-			if (getComponent() !== component) {
-				onUnmount(validate);
+			if (getEffect() !== effect) {
+				onDestroy(validate);
 			}
 			
-			onUnmount(
+			onDestroy(
 				validators.subscribe(function(options) {
 					if (rule(data)) {
 						isValid.set(true);

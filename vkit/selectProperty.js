@@ -1,12 +1,12 @@
 (function($, undefined) {
 
 var compose = $.compose;
-var getComponent = $.getComponent;
+var getEffect = $.getEffect;
 var isArray = $.isArray;
 var observable = $.observable;
 var observe = $.observe;
-var onUnmount = $.onUnmount;
-var setComponent = $.setComponent;
+var onDestroy = $.onDestroy;
+var setEffect = $.setEffect;
 var signal = $.signal;
 
 function select(key, factory) {
@@ -35,8 +35,8 @@ function selectProperty(parent, key, factory) {
 	if (substore) {
 		++substore.refCount;
 	} else {
-		var prev = getComponent();
-		setComponent(parent.component);
+		var prev = getEffect();
+		setEffect(parent.component);
 		
 		var child = signal();
 		var value = typeof factory === "function" ? factory() : undefined;
@@ -118,10 +118,10 @@ function selectProperty(parent, key, factory) {
 			)
 		};
 		
-		setComponent(prev);
+		setEffect(prev);
 	}
 	
-	onUnmount(function() {
+	onDestroy(function() {
 		if (--substore.refCount === 0) {
 			delete parent.substores[key];
 			substore.unsubscribe();

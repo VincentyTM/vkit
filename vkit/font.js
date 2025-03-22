@@ -1,9 +1,9 @@
 (function($) {
 
 var effect = $.effect;
-var getComponent = $.getComponent;
+var getEffect = $.getEffect;
 var getWindow = $.getWindow;
-var onUnmount = $.onUnmount;
+var onDestroy = $.onDestroy;
 var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
@@ -73,8 +73,8 @@ function createFont(name, url, doc) {
 		setFont(null);
 	}
 	
-	if (getComponent(true)) {
-		onUnmount(remove);
+	if (getEffect(true)) {
+		onDestroy(remove);
 	}
 	
 	var result = readOnly(fontFaceState);

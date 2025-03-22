@@ -1,9 +1,9 @@
 (function($, undefined) {
 
-var getComponent = $.getComponent;
+var getEffect = $.getEffect;
 var observable = $.observable;
-var onUnmount = $.onUnmount;
-var setComponent = $.setComponent;
+var onDestroy = $.onDestroy;
+var setEffect = $.setEffect;
 var signal = $.signal;
 var update = $.update;
 
@@ -47,15 +47,15 @@ function useGenerator(generator, updater) {
 	
 	var cleanup = observable();
 	var autoNext = typeof updater !== "function";
-	var prev = getComponent();
+	var prev = getEffect();
 	var gen = signal();
 	
-	setComponent(null);
+	setEffect(null);
 	next();
-	setComponent(prev);
+	setEffect(prev);
 	
 	if (autoNext) {
-		onUnmount(function() {
+		onDestroy(function() {
 			autoNext = false;
 			cleanup();
 		});

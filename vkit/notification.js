@@ -1,14 +1,14 @@
 (function($) {
 
-var getComponent = $.getComponent;
+var getEffect = $.getEffect;
 var getWindow = $.getWindow;
+var onDestroy = $.onDestroy;
 var onEvent = $.onEvent;
-var onUnmount = $.onUnmount;
 var signal = $.signal;
 var update = $.update;
 
 function createNotificationManager() {
-	var component = getComponent();
+	var component = getEffect();
 	var win = getWindow();
 	var nav = win.navigator;
 	var Notification = win.Notification;
@@ -51,6 +51,14 @@ function createNotificationManager() {
 		};
 	});
 	
+	var unsubscribe;
+	
+	onDestroy(function() {
+		if (unsubscribe) {
+			unsubscribe();
+		}
+	});
+	
 	if (nav.permissions) {
 		nav.permissions.query({name: "notifications"}).then(function(perm) {
 			var state = perm.state || perm.status;
@@ -61,19 +69,15 @@ function createNotificationManager() {
 			
 			permission.set(state);
 			
-			onUnmount(
-				onEvent(perm, "change", function() {
-					var state = perm.state || perm.status;
-					
-					if (Notification.permission === "denied" && state === "prompt") {
-						state = "default";
-					}
-					
-					permission.set(state);
-				}),
+			unsubscribe = onEvent(perm, "change", function() {
+				var state = perm.state || perm.status;
 				
-				component
-			);
+				if (Notification.permission === "denied" && state === "prompt") {
+					state = "default";
+				}
+				
+				permission.set(state);
+			});
 			
 			update();
 		}, function(ex) {
