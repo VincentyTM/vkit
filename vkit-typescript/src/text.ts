@@ -1,3 +1,4 @@
+import { getEffect, getInjector } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
 
 /**
@@ -15,7 +16,7 @@ import { createEffect } from "./createEffect.js";
 export function text(getText: () => string | number): Text {
 	var oldText = "";
 	var node = document.createTextNode(oldText);
-	var effect = createEffect(setText);
+	var effect = createEffect(setText, getEffect(), getInjector());
 	
 	function setText(): void {
 		var newText = getText();

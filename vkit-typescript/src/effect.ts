@@ -1,3 +1,4 @@
+import { getEffect, getInjector } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
 
 /**
@@ -20,5 +21,5 @@ import { createEffect } from "./createEffect.js";
  * In order to clean up side effects, call onDestroy within the callback.
  */
 export function effect(callback: () => void): void {
-	createEffect(callback).render();
+	createEffect(callback, getEffect(), getInjector()).render();
 }

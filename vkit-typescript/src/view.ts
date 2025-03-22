@@ -1,3 +1,4 @@
+import { getEffect, getInjector } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
 import { isSignal } from "./isSignal.js";
 import { nodeRange } from "./nodeRange.js";
@@ -38,7 +39,7 @@ export function view<ViewT extends Template<ContextT>, ValueT, ContextT>(
 	this: Signal<ValueT> | void,
 	getCurrentView: (value: ValueT | null) => ViewT
 ) : Template<ContextT> {
-	var effect = createEffect(mount);
+	var effect = createEffect(mount, getEffect(), getInjector());
 	var range = nodeRange(true);
 	var render = effect.render;
 	var signal: Signal<ValueT> | null | void = this;

@@ -7,15 +7,15 @@ export interface Effect {
 	children: Effect[] | undefined;
 	destroyHandlers: (() => void)[] | undefined;
 	errorHandlers: ((error: unknown) => void)[] | undefined;
-	parent: Effect | undefined;
+	readonly parent: Effect | undefined;
 	stack: string | undefined;
 	render(): void;
 }
 
 export function createEffect(
 	mount: () => void,
-	parent?: Effect | undefined,
-	injector?: Injector | undefined
+	parentEffect: Effect | undefined,
+	injector: Injector | undefined
 ) : Effect {
 	var isRendering = false;
 	
@@ -23,14 +23,10 @@ export function createEffect(
 		children: undefined,
 		destroyHandlers: undefined,
 		errorHandlers: undefined,
-		parent: parent === undefined ? getEffect() : parent,
+		parent: parentEffect,
 		stack: new Error().stack,
 		render: updateEffect
 	};
-	
-	if (injector === undefined) {
-		injector = getInjector();
-	}
 	
 	function updateEffect(): void {
 		if (isRendering) {

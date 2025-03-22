@@ -1,4 +1,4 @@
-import { getEffect } from "./contextGuard.js";
+import { getEffect, getInjector } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { onDestroy } from "./onDestroy.js";
 import { Signal } from "./signal.js";
@@ -19,7 +19,7 @@ export function signalEffect<T>(
 	if (prev) {
 		var effect = createEffect(function() {
 			callback(signal.get(), onDestroy);
-		});
+		}, prev, getInjector());
 		effect.render();
 
 		return signal.subscribe(effect.render);
