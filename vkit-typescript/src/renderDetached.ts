@@ -3,7 +3,7 @@ import { bind } from "./bind.js";
 import { createEffect } from "./createEffect.js";
 import { createInjector } from "./createInjector.js";
 import { createProvider } from "./createProvider.js";
-import { emitUnmount } from "./emitUnmount.js";
+import { destroyEffect } from "./destroyEffect.js";
 import { getValueFromClass } from "./root.js";
 import { inject } from "./inject.js";
 import { update } from "./update.js";
@@ -43,7 +43,7 @@ export function renderDetached<C extends Node>(
     }, undefined, injector);
 
     function unmount(): void {
-        emitUnmount(effect);
+        destroyEffect(effect);
     }
     
     effect.render();

@@ -1,6 +1,6 @@
 import { Effect } from "./createEffect.js";
 
-export function emitUnmount(effect: Effect): void {
+export function destroyEffect(effect: Effect): void {
 	var children = effect.children;
 
 	if (children) {
@@ -9,7 +9,7 @@ export function emitUnmount(effect: Effect): void {
 		var n = children.length;
 		
 		for (var i = 0; i < n; ++i) {
-			emitUnmount(children[i]);
+			destroyEffect(children[i]);
 		}
 	}
 	

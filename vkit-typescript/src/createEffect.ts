@@ -1,6 +1,6 @@
-import { emitUnmount } from "./emitUnmount.js";
 import { getEffect, getInjector, setEffect, setInjector } from "./contextGuard.js";
 import { Injector } from "./createInjector.js";
+import { destroyEffect } from "./destroyEffect.js";
 import { throwError } from "./throwError.js";
 
 export interface Effect {
@@ -43,7 +43,7 @@ export function createEffect(
 		try {
 			isRendering = true;
 			setEffect(undefined);
-			emitUnmount(effect);
+			destroyEffect(effect);
 			setEffect(effect);
 			setInjector(injector);
 			mount();

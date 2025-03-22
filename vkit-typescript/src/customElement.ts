@@ -3,7 +3,7 @@ import { bind } from "./bind.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { createInjector } from "./createInjector.js";
 import { createProvider } from "./createProvider.js";
-import { emitUnmount } from "./emitUnmount.js";
+import { destroyEffect } from "./destroyEffect.js";
 import { empty } from "./empty.js";
 import { getValueFromClass } from "./root.js";
 import { inject } from "./inject.js";
@@ -144,7 +144,7 @@ export function customElement(
 		}
 		
 		empty(this);
-		emitUnmount(this.effect);
+		destroyEffect(this.effect);
 		update();
 	};
 	

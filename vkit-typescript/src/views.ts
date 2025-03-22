@@ -1,7 +1,7 @@
 import { getEffect, getInjector, setEffect, setInjector } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { Injector } from "./createInjector.js";
-import { emitUnmount } from "./emitUnmount.js";
+import { destroyEffect } from "./destroyEffect.js";
 import { hashCode } from "./hashCode.js";
 import { insert } from "./insert.js";
 import { isArray } from "./isArray.js";
@@ -124,7 +124,7 @@ export function views<ViewT extends Template<ContextT>, ItemT, ContextT>(
 			if (!(key in newBlocks)) {
 				var block = oldBlocks[key];
 				block.range.remove();
-				emitUnmount(block.Effect);
+				destroyEffect(block.Effect);
 			}
 		}
 		
