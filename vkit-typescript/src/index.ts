@@ -34,6 +34,7 @@ export { objectProperty } from "./objectProperty.js";
 export { observable } from "./observable.js";
 export { observe } from "./observe.js";
 export { of } from "./of.js";
+export { onDestroy } from "./onDestroy.js";
 export { onEvent } from "./onEvent.js";
 export { onUnmount } from "./onUnmount.js";
 export { provide } from "./provide.js";

@@ -24,6 +24,7 @@ export {
 	lang,
 	LanguageService,
 	noop,
+	noop as onDestroy,
 	noop as onUnmount,
 	returnComputedNullWithOnError as serviceWorker,
 	signal,
