@@ -1,5 +1,4 @@
 import { computed, type ComputedSignal } from "./computed.js";
-import { isSignal } from "./isSignal.js";
 import type { Signal } from "./signal.js";
 import type { Template } from "./Template.js";
 
@@ -31,6 +30,10 @@ function getKeys<T>(result: Store<T>): string[] {
 
 function getRecords<T>(result: Store<T>): Records<T> {
 	return result.records;
+}
+
+function selectRecord(keysAndRecords: Store<unknown>, currentKey: string): unknown {
+	return keysAndRecords.records[currentKey];
 }
 
 /**
@@ -104,16 +107,7 @@ export function useKey<T>(
 	var keysSignal = computed(getKeys, [signal]);
 	
 	function select<K extends string | Signal<string>>(key: K): KeyedSignal<T, K> {
-		var selected = computed(function() {
-			var k = isSignal(key) ? key.get() : key as string;
-			return signal.get().records[k];
-		}) as KeyedSignal<T, K>;
-		
-		if (isSignal(key)) {
-			key.subscribe(selected.invalidate);
-		}
-		
-		signal.subscribe(selected.invalidate);
+		var selected = computed(selectRecord, [signal, key]) as unknown as KeyedSignal<T, K>;
 		selected.key = key;
 		return selected;
 	}
