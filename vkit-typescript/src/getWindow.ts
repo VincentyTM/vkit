@@ -16,19 +16,13 @@ export var WindowService = function(this: WindowService) {
 } as unknown as WindowService;
 
 /**
- * Returns the window of the current component.
+ * Returns the current window.
  * It is useful in multi-window applications and iframes.
  * It returns null on the server.
  * @example
- * const window = getWindow();
- * 
- * if (window) {
- * 	bind(window, {
- * 		onload() {
- * 			console.log("The window has loaded!");
- * 		}
- * 	});
- * }
+ * effect(() => {
+ * 	console.log("Window:", getWindow());
+ * });
  * 
  * @returns The current window.
  */
