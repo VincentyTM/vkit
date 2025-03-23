@@ -69,7 +69,6 @@ export {default as history} from "./history.js";
 export {default as href} from "./href.js";
 export {default as html} from "./html.js";
 export {default as http} from "./http.js";
-export {default as ifElse} from "./ifElse.js";
 export {default as inject} from "./inject.js";
 export {default as is} from "./is.js";
 export {default as isArray} from "./isArray.js";
