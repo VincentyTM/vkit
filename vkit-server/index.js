@@ -1,6 +1,5 @@
 import htmlTag from "./htmlTag.js";
 import htmlTags from "./htmlTags.js";
-import {define, lang, LanguageService, word} from "./languageService.js";
 import noop from "./noop.js";
 import returnComputedNull from "./returnComputedNull.js";
 import returnComputedNullWithOnError from "./returnComputedNullWithOnError.js";
@@ -10,7 +9,6 @@ import styledHtmlTag from "./styledHtmlTag.js";
 import userMedia from "./userMedia.js";
 
 export {
-	define,
 	userMedia as displayMedia,
 	htmlTag,
 	htmlTags,
@@ -21,8 +19,6 @@ export {
 	returnNull as frameContent,
 	returnComputedNull as installPrompt,
 	noop as interval,
-	lang,
-	LanguageService,
 	noop,
 	noop as onDestroy,
 	noop as onUnmount,
@@ -39,8 +35,7 @@ export {
 	returnComputedNull as updatePrompt,
 	userMedia,
 	returnComputedNullWithOnError as webPush,
-	returnNull as window,
-	word,
+	returnNull as window
 };
 
 export {default as array} from "./array.js";
