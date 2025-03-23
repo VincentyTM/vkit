@@ -18,7 +18,6 @@ type Block = {
 	index: number;
 	insertBefore(anchor: Node): void;
 	range: NodeRange;
-	render(): Template;
 };
 
 type BlockInfo = {
@@ -42,15 +41,8 @@ function createBlock<ItemT>(
 		}
 	});
 	
-	function render(): Template {
-		enqueueUpdate(function(): void {
-			updateEffect(effect);
-		});
-		
-		return [
-			range.start,
-			range.end
-		];
+	function render(): void {
+		updateEffect(effect);
 	}
 	
 	function insertBefore(end: Node): void {
@@ -63,7 +55,13 @@ function createBlock<ItemT>(
 			try {
 				setEffect(effect);
 				setInjector(injector);
-				insert(render(), end, end.parentNode, true);
+
+				enqueueUpdate(render);
+
+				insert([
+					range.start,
+					range.end
+				], end, end.parentNode, true);
 			} catch (error) {
 				throwError(error, effect);
 			} finally {
@@ -77,8 +75,7 @@ function createBlock<ItemT>(
 		effect: effect,
 		index: 0,
 		insertBefore: insertBefore,
-		range: range,
-		render: render
+		range: range
 	};
 
 	return block;
