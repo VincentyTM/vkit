@@ -35,14 +35,14 @@ export interface HTMLElementTemplate<N extends keyof HTMLElementTagNameMap> exte
  * 	);
  * }
  */
-export function htmlTag<N extends keyof HTMLElementTagNameMap>(tagName: N): (
-	...contents: Template<HTMLElementTagNameMap[N]>[]
-) => HTMLElementTemplate<N> {
-	return function(): HTMLElementTemplate<N> {
-		return {
-			child: arguments as Template<HTMLElementTagNameMap[N]>,
-			tagName: tagName,
-			clientRender: clientRenderHTMLElement
-		};
-	};
+export function htmlTag<N extends keyof HTMLElementTagNameMap>(tagName: N): (...children: Template<HTMLElementTagNameMap[N]>[]) => HTMLElementTemplate<N>;
+
+export function htmlTag<N extends keyof HTMLElementTagNameMap>(tagName: N): () => HTMLElementTemplate<N> {
+    return function(): HTMLElementTemplate<N> {
+        return {
+            child: arguments.length > 1 ? arguments : arguments[0],
+            tagName: tagName,
+            clientRender: clientRenderHTMLElement
+        };
+    };
 }
