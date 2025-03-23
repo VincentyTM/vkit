@@ -108,7 +108,6 @@ export {default as readOnly} from "./readOnly.js";
 export {default as ref} from "./ref.js";
 export {default as repeat} from "./repeat.js";
 export {default as server} from "./server.js";
-export {default as shuffle} from "./shuffle.js";
 export {default as string} from "./string.js";
 export {default as style} from "./style.js";
 export {default as styleSelector} from "./styleSelector.js";
