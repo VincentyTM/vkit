@@ -48,7 +48,7 @@ function Dialogs() {
 	
 	function render() {
 		return openDialogs.views(function(dialog) {
-			return dialog;
+			return dialog.render();
 		});
 	}
 	
