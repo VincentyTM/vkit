@@ -6,7 +6,7 @@ import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
 import { Signal } from "./signal.js";
-import { Template } from "./Template.js";
+import { CustomTemplate, Template } from "./Template.js";
 
 type AttributeValue = string | null;
 type Reactive<T> = T | Signal<T> | (() => T);
@@ -51,17 +51,10 @@ export type SVGView<ContextT = unknown> = (
 	| ((element: ContextT) => void)
 );
 
-export type VirtualSVGElement<T> = {
-	readonly arguments: Template<T>;
-	readonly isVirtual: true;
-	readonly nodeName: string;
-	clientRender(
-		array: Pushable<T>,
-		template: VirtualSVGElement<T>,
-		context: unknown,
-		crossView: boolean
-	): void;
-};
+export interface SVGElementTemplate<N extends keyof SVGElementTagNameMap> extends CustomTemplate<SVGElementTagNameMap[N]> {
+	readonly child: Template<SVGElementTagNameMap[N]>;
+	readonly tagName: N;
+}
 
 var xmlns = "http://www.w3.org/2000/svg";
 
@@ -127,14 +120,14 @@ function bindAttributes(
 	}
 }
 
-function clientRenderSVGElement<T extends Element>(
-	array: Pushable<T>,
-	template: VirtualSVGElement<T>,
+function clientRenderSVGElement<N extends keyof SVGElementTagNameMap>(
+	array: Pushable<SVGElementTagNameMap[N]>,
+	template: SVGElementTemplate<N>,
 	context: unknown,
 	crossView: boolean
 ): void {
-	var element = document.createElementNS(xmlns, template.nodeName) as T;
-	append<Template<typeof element>, typeof element>(element, arguments, element, bindAttributes as never);
+	var element = document.createElementNS(xmlns, template.tagName) as SVGElementTagNameMap[N];
+	append(element, template.child, element, bindAttributes as never);
 	deepPush(array, element, context, bind, crossView);
 }
 
@@ -165,12 +158,11 @@ function clientRenderSVGElement<T extends Element>(
  */
 export function svgTag<N extends keyof SVGElementTagNameMap>(tagName: N): (
 	...contents: SVGView<SVGElementTagNameMap[N]>[]
-) => VirtualSVGElement<SVGElementTagNameMap[N]> {
-	return function(): VirtualSVGElement<SVGElementTagNameMap[N]> {
+) => SVGElementTemplate<N> {
+	return function(): SVGElementTemplate<N> {
 		return {
-			arguments: arguments as SVGView<SVGElementTagNameMap[N]>,
-			isVirtual: true,
-			nodeName: tagName,
+			child: arguments as SVGView<SVGElementTagNameMap[N]>,
+			tagName: tagName,
 			clientRender: clientRenderSVGElement
 		};
 	};
