@@ -12,6 +12,7 @@ import { signal, WritableSignal } from "./signal.js";
 import { Template } from "./Template.js";
 import { tick } from "./tick.js";
 import { update } from "./update.js";
+import { updateEffect } from "./updateEffect.js";
 
 type CustomElementGetView = (
 	this: HTMLElement,
@@ -114,12 +115,12 @@ export function customElement(
 	var proto = CustomElement.prototype;
 	var win = window;
 	
-	proto.connectedCallback = function(): void {
+	proto.connectedCallback = function(this: ExtendedHTMLElement): void {
 		if (!rendered) {
 			return;
 		}
 		
-		var el = this;
+		var el: ParentNode = this;
 		
 		while (el.parentNode !== null) {
 			el = el.parentNode;
@@ -130,11 +131,11 @@ export function customElement(
 		}
 		
 		var effect = this.effect;
-		effect.render();
+		updateEffect(effect);
 		update();
 	};
 	
-	proto.disconnectedCallback = function(): void {
+	proto.disconnectedCallback = function(this: ExtendedHTMLElement): void {
 		if (!rendered) {
 			return;
 		}
