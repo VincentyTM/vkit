@@ -8,7 +8,6 @@ export type NodeRange = {
 	end: ChildNode;
 	insertBefore(anchor: Node): void;
 	remove(): void;
-	render(): Template;
 	start: ChildNode;
 };
 
@@ -59,31 +58,12 @@ export function nodeRange(crossView?: boolean) : NodeRange {
 		}
 	}
 	
-	function render(): ChildNode[] {
-		if (!start.nextSibling) {
-			throw new Error("Cannot render detached range");
-		}
-		
-		var nodes: ChildNode[] = [];
-		var parent = start.parentNode;
-		
-		if (parent) {
-			for (var el: ChildNode | null = start; el && el !== end; el = el.nextSibling) {
-				nodes.push(el);
-			}
-			nodes.push(end);
-		}
-		
-		return nodes;
-	}
-	
 	return {
 		append: append,
 		clear: clear,
 		end: end,
 		insertBefore: insertBefore,
 		remove: removeRange,
-		render: render,
 		start: start
 	};
 }
