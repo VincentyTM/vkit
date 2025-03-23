@@ -8,16 +8,15 @@ export interface HTMLElementTemplate<N extends keyof HTMLElementTagNameMap> exte
 
 /**
  * Creates and returns an HTML tag (element factory).
- * In order to create a custom HTML element, you may use underscores instead of dashes.
  * For a shorter syntax see `htmlTags`.
  * @example
  * const Button = htmlTag("button");
+ * const Div = htmlTag("div");
  * const H1 = htmlTag("h1");
  * const Input = htmlTag("input");
- * const My_Custom_Element = htmlTag("my-custom-element");
  * 
  * function Component() {
- * 	return My_Custom_Element(
+ * 	return Div(
  * 		H1("Hello world", {
  * 			style: {
  * 				color: "red"
