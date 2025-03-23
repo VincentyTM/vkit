@@ -1,28 +1,21 @@
 import { append } from "./append.js";
 import { bind } from "./bind.js";
 import { deepPush, Pushable } from "./deepPush.js";
-import { Template } from "./Template.js";
+import { CustomTemplate, Template } from "./Template.js";
 
-export type VirtualHTMLElement<T> = {
-	readonly arguments: Template<T>;
-	readonly isVirtual: true;
-	readonly nodeName: string;
-	clientRender(
-		array: Pushable<T>,
-		template: VirtualHTMLElement<T>,
-		context: unknown,
-		crossView: boolean
-	): void;
-};
+export interface HTMLElementTemplate<N extends keyof HTMLElementTagNameMap> extends CustomTemplate<HTMLElementTagNameMap[N]> {
+	readonly child: Template<HTMLElementTagNameMap[N]>;
+	readonly tagName: N;
+}
 
-function clientRenderHTMLElement<T extends HTMLElement>(
-	array: Pushable<T>,
-	template: VirtualHTMLElement<T>,
+function clientRenderHTMLElement<N extends keyof HTMLElementTagNameMap>(
+	array: Pushable<HTMLElementTagNameMap[N]>,
+	template: HTMLElementTemplate<N>,
 	context: unknown,
 	crossView: boolean
 ): void {
-	var element = document.createElement(template.nodeName) as T;
-	append(element, template.arguments, element, bind);
+	var element = document.createElement(template.tagName);
+	append(element, template.child, element, bind);
 	deepPush(array, element, context, bind, crossView);
 }
 
@@ -57,12 +50,11 @@ function clientRenderHTMLElement<T extends HTMLElement>(
  */
 export function htmlTag<N extends keyof HTMLElementTagNameMap>(tagName: N): (
 	...contents: Template<HTMLElementTagNameMap[N]>[]
-) => VirtualHTMLElement<HTMLElementTagNameMap[N]> {
-	return function(): VirtualHTMLElement<HTMLElementTagNameMap[N]> {
+) => HTMLElementTemplate<N> {
+	return function(): HTMLElementTemplate<N> {
 		return {
-			arguments: arguments as Template<HTMLElementTagNameMap[N]>,
-			isVirtual: true,
-			nodeName: tagName.toUpperCase(),
+			child: arguments as Template<HTMLElementTagNameMap[N]>,
+			tagName: tagName,
 			clientRender: clientRenderHTMLElement
 		};
 	};
