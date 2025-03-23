@@ -1,12 +1,13 @@
 import { Bindings } from "./bind.js";
 import { directive } from "./directive.js";
+import { isCustomTemplate } from "./isCustomTemplate.js";
 import { isSignal } from "./isSignal.js";
 import { signalText } from "./signalText.js";
 import { toArray } from "./toArray.js";
 
-type Pushable<ItemType> = {
+export interface Pushable<ItemType> {
 	push(value: ItemType | Text): number | void;
-};
+}
 
 export function deepPush<ItemT, ContextT>(
 	array: Pushable<ItemT>,
@@ -28,8 +29,8 @@ export function deepPush<ItemT, ContextT>(
 		return array;
 	}
 	
-	if (typeof (item as any).render === "function") {
-		deepPush(array, (item as any).render(), context, bind, crossView);
+	if (isCustomTemplate(item)) {
+		item.clientRender(array, item, context, crossView);
 		return array;
 	}
 

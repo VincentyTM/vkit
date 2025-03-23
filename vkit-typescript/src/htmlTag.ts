@@ -1,18 +1,29 @@
 import { append } from "./append.js";
 import { bind } from "./bind.js";
+import { deepPush, Pushable } from "./deepPush.js";
 import { Template } from "./Template.js";
 
 export type VirtualHTMLElement<T> = {
 	readonly arguments: Template<T>;
 	readonly isVirtual: true;
 	readonly nodeName: string;
-	render(): T;
+	clientRender(
+		array: Pushable<T>,
+		template: VirtualHTMLElement<T>,
+		context: unknown,
+		crossView: boolean
+	): void;
 };
 
-function renderElement<T extends HTMLElement>(this: VirtualHTMLElement<T>): T {
-	var el = document.createElement(this.nodeName) as T;
-	append(el, this.arguments, el, bind);
-	return el;
+function clientRenderHTMLElement<T extends HTMLElement>(
+	array: Pushable<T>,
+	template: VirtualHTMLElement<T>,
+	context: unknown,
+	crossView: boolean
+): void {
+	var element = document.createElement(template.nodeName) as T;
+	append(element, template.arguments, element, bind);
+	deepPush(array, element, context, bind, crossView);
 }
 
 /**
@@ -52,7 +63,7 @@ export function htmlTag<N extends keyof HTMLElementTagNameMap>(tagName: N): (
 			arguments: arguments as Template<HTMLElementTagNameMap[N]>,
 			isVirtual: true,
 			nodeName: tagName.toUpperCase(),
-			render: renderElement
+			clientRender: clientRenderHTMLElement
 		};
 	};
 }

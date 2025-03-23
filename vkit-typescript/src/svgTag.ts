@@ -1,5 +1,6 @@
 import { append } from "./append.js";
 import { bind } from "./bind.js";
+import { deepPush, Pushable } from "./deepPush.js";
 import { effect } from "./effect.js";
 import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
@@ -54,7 +55,12 @@ export type VirtualSVGElement<T> = {
 	readonly arguments: Template<T>;
 	readonly isVirtual: true;
 	readonly nodeName: string;
-	render(): T;
+	clientRender(
+		array: Pushable<T>,
+		template: VirtualSVGElement<T>,
+		context: unknown,
+		crossView: boolean
+	): void;
 };
 
 var xmlns = "http://www.w3.org/2000/svg";
@@ -121,10 +127,15 @@ function bindAttributes(
 	}
 }
 
-function renderElement<T extends Element>(this: VirtualSVGElement<T>): T {
-	var el = document.createElementNS(xmlns, this.nodeName) as T;
-	append<Template<typeof el>, typeof el>(el, arguments, el, bindAttributes as never);
-	return el;
+function clientRenderSVGElement<T extends Element>(
+	array: Pushable<T>,
+	template: VirtualSVGElement<T>,
+	context: unknown,
+	crossView: boolean
+): void {
+	var element = document.createElementNS(xmlns, template.nodeName) as T;
+	append<Template<typeof element>, typeof element>(element, arguments, element, bindAttributes as never);
+	deepPush(array, element, context, bind, crossView);
 }
 
 /**
@@ -160,7 +171,7 @@ export function svgTag<N extends keyof SVGElementTagNameMap>(tagName: N): (
 			arguments: arguments as SVGView<SVGElementTagNameMap[N]>,
 			isVirtual: true,
 			nodeName: tagName,
-			render: renderElement
+			clientRender: clientRenderSVGElement
 		};
 	};
 }
