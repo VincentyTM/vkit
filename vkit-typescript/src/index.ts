@@ -12,6 +12,7 @@ export { customElement } from "./customElement.js";
 export { deriveSignal } from "./deriveSignal.js";
 export { effect } from "./effect.js";
 export { errorBoundary } from "./errorBoundary.js";
+export { escapeHTML } from "./escapeHTML.js";
 export { frameContent } from "./frameContent.js";
 export { get } from "./get.js";
 export { getDocument } from "./getDocument.js";
