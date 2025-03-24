@@ -39,6 +39,7 @@ export { of } from "./of.js";
 export { onDestroy } from "./onDestroy.js";
 export { onEvent } from "./onEvent.js";
 export { onUnmount } from "./onUnmount.js";
+export { preferredLanguages } from "./preferredLanguages.js";
 export { provide } from "./provide.js";
 export { propertySignal } from "./propertySignal.js";
 export { readOnly } from "./readOnly.js";
