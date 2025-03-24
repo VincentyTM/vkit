@@ -7,11 +7,11 @@ import { Signal } from "./signal.js";
 export function isWindowFocused(): Signal<boolean> {
 	var win = getWindow();
 
-    if (!win) {
-        return computed(function() {
-            return false;
-        });
-    }
+	if (!win) {
+		return computed(function() {
+			return false;
+		});
+	}
 
 	var doc = win.document;
 	
@@ -19,9 +19,9 @@ export function isWindowFocused(): Signal<boolean> {
 		return doc.hasFocus();
 	});
 
-    function invalidate(): void {
-        focused.invalidate();
-    }
+	function invalidate(): void {
+		focused.invalidate();
+	}
 	
 	onDestroy(onEvent(win, "blur", invalidate));
 	onDestroy(onEvent(win, "focus", invalidate));
