@@ -34,6 +34,7 @@ export { mediaDevices } from "./mediaDevices.js";
 export { mediaQuery } from "./mediaQuery.js";
 export { noop } from "./noop.js";
 export { objectProperty } from "./objectProperty.js";
+export { objectURL } from "./objectURL.js";
 export { observable } from "./observable.js";
 export { observe } from "./observe.js";
 export { of } from "./of.js";
