@@ -29,6 +29,7 @@ export { isWindowFocused } from "./isWindowFocused.js";
 export { isWritableSignal } from "./isWritableSignal.js";
 export { lazyArray } from "./lazyArray.js";
 export { map } from "./map.js";
+export { mediaQuery } from "./mediaQuery.js";
 export { noop } from "./noop.js";
 export { objectProperty } from "./objectProperty.js";
 export { observable } from "./observable.js";
