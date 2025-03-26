@@ -5,7 +5,7 @@ var inject = $.inject;
 var navigate = $.navigate;
 var observable = $.observable;
 var onNavigate = $.onNavigate;
-var onUnmount = $.onUnmount;
+var onDestroy = $.onDestroy;
 var readOnly = $.readOnly;
 var signal = $.signal;
 var update = $.update;
@@ -33,7 +33,7 @@ function SavePromptService() {
 		var showIf = options.showIf;
 		
 		if (typeof showIf === "function") {
-			onUnmount(
+			onDestroy(
 				emitNavigate.subscribe(function(nav) {
 					if (showIf(nav)) {
 						enabled = false;
@@ -43,13 +43,13 @@ function SavePromptService() {
 		}
 		
 		if (typeof save === "function") {
-			onUnmount(
+			onDestroy(
 				emitSave.subscribe(save)
 			);
 		}
 		
 		if (typeof discard === "function") {
-			onUnmount(
+			onDestroy(
 				emitDiscard.subscribe(discard)
 			);
 		}
@@ -59,7 +59,7 @@ function SavePromptService() {
 		prompt.set(null);
 	}
 	
-	onUnmount(
+	onDestroy(
 		onNavigate(function(nav) {
 			if (allSaved.get()) {
 				return;
