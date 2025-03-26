@@ -7,7 +7,7 @@ import { updateEffect } from "./updateEffect.js";
 import { view } from "./view.js";
 import { views } from "./views.js";
 
-export type WritableSignal<T> = Signal<T> & {
+export interface WritableSignal<T> extends Signal<T> {
 	/**
 	 * Sets the signal's value and enqueues a notification of its subscribers.
 	 * @example
@@ -37,7 +37,7 @@ export type WritableSignal<T> = Signal<T> & {
 	 */
 	update<A>(transform: (value: T, action: A) => T, action: A): void;
 	update(transform: (state: T) => T): void;
-};
+}
 
 /**
  * Creates and returns a writable signal.

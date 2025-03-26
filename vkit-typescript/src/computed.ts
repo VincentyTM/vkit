@@ -9,17 +9,17 @@ import { views } from "./views.js";
 
 var none = {};
 
-export type ArrayOfMaybeSignals<ArrayType extends unknown[]> = unknown[] & {
-	[I in keyof ArrayType]: ArrayType[I] | Signal<ArrayType[I]>;
+export type ArrayOfMaybeSignals<A extends unknown[]> = unknown[] & {
+	[I in keyof A]: A[I] | Signal<A[I]>;
 };
 
-export type ComputedSignal<ValueType> = Signal<ValueType> & {
+export interface ComputedSignal<T> extends Signal<T> {
 	invalidate(): void;
-};
+}
 
 type ItemType<T> = T extends (infer ItemType)[] ? ItemType : never;
 
-export type Signal<T> = {
+export interface Signal<T> {
 	(): T;
 
 	/**
@@ -117,7 +117,7 @@ export type Signal<T> = {
 	 * @param getCurrentView A function that returns the current view.
 	 * @returns The initial view.
 	 */
-	view<ViewT extends Template<ContextT>, ContextT>(getCurrentView: (value: T) => ViewT): Template<ContextT>;
+	view<V extends Template<P>, P>(getCurrentView: (value: T) => V): Template<P>;
 
 	/**
 	 * Creates a dynamic view with a subview for each element in the array contained in the signal.
@@ -142,8 +142,8 @@ export type Signal<T> = {
 	 * @param getItemView The function that returns a subview for an array item.
 	 * @returns The initial view containing the subviews for all items in the array.
 	 */
-	views<ViewT extends Template<ContextT>, ContextT>(getItemView: (value: ItemType<T>) => ViewT): Template<ContextT>;
-};
+	views<V extends Template<P>, P>(getItemView: (value: ItemType<T>) => V): Template<P>;
+}
 
 /**
  * Creates and returns a computed signal.
