@@ -1,5 +1,5 @@
+import { Signal } from "./computed.js";
 import { getEffect } from "./contextGuard.js";
-import { Signal } from "./signal.js";
 
 type ElementType = {
 	[key: string]: any;

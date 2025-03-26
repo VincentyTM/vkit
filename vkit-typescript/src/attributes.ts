@@ -1,6 +1,6 @@
+import { Signal } from "./computed.js";
 import { effect } from "./effect.js";
 import { isSignal } from "./isSignal.js";
-import { Signal } from "./signal.js";
 
 type Attributes = {
 	[attributeName: string]: ReactiveAttributeValue

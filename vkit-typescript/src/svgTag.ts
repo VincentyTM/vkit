@@ -1,5 +1,5 @@
 import { clientRenderSVGElement } from "./clientRenderSVGElement.js";
-import { Signal } from "./signal.js";
+import { Signal } from "./computed.js";
 import { CustomTemplate, Template } from "./Template.js";
 
 export type Reactive<T> = T | Signal<T> | (() => T);

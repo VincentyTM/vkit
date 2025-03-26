@@ -1,4 +1,4 @@
-import { Signal } from "./signal.js";
+import { Signal } from "./computed.js";
 import { Template } from "./Template.js";
 
 export function viewList<T, P extends Element>(

@@ -1,8 +1,7 @@
-import { computed } from "./computed.js";
+import { computed, Signal } from "./computed.js";
 import { getWindow } from "./getWindow.js";
 import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
-import { Signal } from "./signal.js";
 
 export function visibilityState(): Signal<boolean> {
 	var win = getWindow();

@@ -1,8 +1,8 @@
+import { Signal } from "./computed.js";
 import { effect } from "./effect.js";
 import { isArray } from "./isArray.js";
 import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
-import { Signal } from "./signal.js";
 
 type BooleanValue = boolean | Signal<boolean> | (() => boolean);
 type ClassArgument = (

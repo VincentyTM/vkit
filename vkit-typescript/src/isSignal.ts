@@ -1,4 +1,4 @@
-import { Signal } from "./signal.js";
+import { Signal } from "./computed.js";
 
 /**
  * Takes a value and returns whether it is a signal.

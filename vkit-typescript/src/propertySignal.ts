@@ -1,7 +1,7 @@
-import { computed } from "./computed.js";
+import { computed, Signal } from "./computed.js";
 import { get } from "./get.js";
 import { objectAssign } from "./objectAssign.js";
-import { Signal, WritableSignal } from "./signal.js";
+import { WritableSignal } from "./signal.js";
 import { writable } from "./writable.js";
 
 /**

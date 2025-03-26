@@ -1,6 +1,7 @@
+import { Signal } from "./computed";
 import { effect } from "./effect.js";
 import { onDestroy } from "./onDestroy.js";
-import { signal, Signal } from "./signal.js";
+import { signal } from "./signal.js";
 
 interface URLType {
     createObjectURL(obj: Blob | MediaSource): string;

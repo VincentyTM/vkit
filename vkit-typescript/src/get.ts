@@ -1,5 +1,5 @@
+import { Signal } from "./computed.js";
 import { isSignal } from "./isSignal.js";
-import { Signal } from "./signal.js";
 
 /**
  * Returns the current value of a signal or the input value itself if it is not a signal.

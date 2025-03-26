@@ -1,8 +1,8 @@
+import { Signal } from "./computed.js";
 import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
 import { prop } from "./prop.js";
-import { Signal } from "./signal.js";
 import { signalProp } from "./signalProp.js";
 
 type HTMLSelfClosingElement = (

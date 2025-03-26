@@ -1,3 +1,4 @@
+import { Signal } from "./computed.js";
 import { getEffect, getInjector, setEffect, setInjector } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { Injector } from "./createInjector.js";
@@ -6,7 +7,6 @@ import { hashCode } from "./hashCode.js";
 import { insert } from "./insert.js";
 import { isArray } from "./isArray.js";
 import { nodeRange, NodeRange } from "./nodeRange.js";
-import { Signal } from "./signal.js";
 import { Template } from "./Template.js";
 import { throwError } from "./throwError.js";
 import { toArray } from "./toArray.js";

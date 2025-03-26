@@ -1,7 +1,7 @@
+import { Signal } from "./computed.js";
 import { getEffect, getInjector } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { onDestroy } from "./onDestroy.js";
-import { Signal } from "./signal.js";
 import { updateEffect } from "./updateEffect.js";
 
 export function signalEffect<T>(

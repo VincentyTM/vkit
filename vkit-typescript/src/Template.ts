@@ -1,6 +1,6 @@
 import { Bindings } from "./bind.js";
+import { Signal } from "./computed.js";
 import { Pushable } from "./deepPush.js";
-import { Signal } from "./signal.js";
 
 export interface CustomTemplate<P> {
 	clientRender(

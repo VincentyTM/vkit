@@ -1,6 +1,6 @@
+import { Signal } from "./computed.js";
 import { createStyleContainer, StyleContainer, StyleController } from "./createStyleContainer.js";
 import { onDestroy } from "./onDestroy.js";
-import { Signal } from "./signal.js";
 import { tick } from "./tick.js";
 
 type WithStyleContainer = {

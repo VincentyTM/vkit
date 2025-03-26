@@ -1,5 +1,4 @@
-import { computed, ComputedSignal } from "./computed.js";
-import { Signal } from "./signal.js";
+import { computed, ComputedSignal, Signal } from "./computed.js";
 import { Template } from "./Template.js";
 
 export type KeyedSignal<T, K> = ComputedSignal<T> & {

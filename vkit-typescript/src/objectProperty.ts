@@ -1,9 +1,10 @@
+import { Signal } from "./computed.js";
 import { effect } from "./effect.js";
 import { get } from "./get.js";
 import { isSignal } from "./isSignal.js";
 import { observe } from "./observe.js";
 import { onDestroy } from "./onDestroy.js";
-import { signal, Signal, WritableSignal } from "./signal.js";
+import { signal, WritableSignal } from "./signal.js";
 import { update } from "./update.js";
 
 /**

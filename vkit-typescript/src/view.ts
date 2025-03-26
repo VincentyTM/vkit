@@ -1,8 +1,8 @@
+import { Signal } from "./computed.js";
 import { getEffect, getInjector } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
 import { isSignal } from "./isSignal.js";
 import { nodeRange } from "./nodeRange.js";
-import { Signal } from "./signal.js";
 import { Template } from "./Template.js";
 import { enqueueUpdate } from "./update.js";
 import { updateEffect } from "./updateEffect.js";

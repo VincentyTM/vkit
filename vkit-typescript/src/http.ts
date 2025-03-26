@@ -1,8 +1,8 @@
-import { computed, ComputedSignal } from "./computed.js";
+import { computed, ComputedSignal, Signal } from "./computed.js";
 import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 import { readOnly } from "./readOnly.js";
-import { signal, Signal } from "./signal.js";
+import { signal } from "./signal.js";
 import { update } from "./update.js";
 
 type HttpRequestHeaders = {

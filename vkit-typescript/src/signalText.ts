@@ -1,4 +1,4 @@
-import { Signal } from "./signal.js";
+import { Signal } from "./computed.js";
 
 /**
  * Creates and returns a text node with the signal's value in it.

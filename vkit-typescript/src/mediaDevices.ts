@@ -1,8 +1,8 @@
-import { computed } from "./computed.js";
+import { computed, Signal } from "./computed.js";
 import { getWindow } from "./getWindow.js";
 import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
-import { signal, Signal } from "./signal.js";
+import { signal } from "./signal.js";
 
 enum AsyncStatus {
     Rejected,

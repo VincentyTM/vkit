@@ -1,7 +1,7 @@
-import { computed } from "./computed.js";
+import { computed, Signal } from "./computed.js";
 import { getWindow } from "./getWindow.js";
 import { onDestroy } from "./onDestroy.js";
-import { signal, Signal } from "./signal.js";
+import { signal } from "./signal.js";
 import { update } from "./update.js";
 
 function getFalse(): boolean {
