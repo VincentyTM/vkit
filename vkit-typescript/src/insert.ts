@@ -2,10 +2,10 @@ import { bind } from "./bind.js";
 import { deepPush } from "./deepPush.js";
 import { Template } from "./Template.js";
 
-export function insert<ItemT extends Template<ContextT>, ContextT>(
-	children: ItemT,
+export function insert<P>(
+	children: Template<P>,
 	nextSibling: Node,
-	context: ContextT,
+	context: P,
 	crossView?: boolean
 ): void {
 	var parent = nextSibling.parentNode;
@@ -14,14 +14,14 @@ export function insert<ItemT extends Template<ContextT>, ContextT>(
 		return;
 	}
 	
-	function push(node: ItemT & Node): void {
+	function push(node: Node): void {
 		parent!.insertBefore(node, nextSibling);
 	}
 	
 	if ((nextSibling as any).before) {
-		var array: ItemT[] = [];
+		var array: Template<P>[] = [];
 		
-		deepPush<ItemT, ContextT>(
+		deepPush(
 			array,
 			children,
 			context,
@@ -31,7 +31,7 @@ export function insert<ItemT extends Template<ContextT>, ContextT>(
 		
 		(nextSibling as any).before.apply(nextSibling, array);
 	} else {
-		deepPush<ItemT, ContextT>(
+		deepPush(
 			{push: push},
 			children,
 			context,

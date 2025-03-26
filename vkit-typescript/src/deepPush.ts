@@ -3,60 +3,61 @@ import { directive } from "./directive.js";
 import { isCustomTemplate } from "./isCustomTemplate.js";
 import { isSignal } from "./isSignal.js";
 import { signalText } from "./signalText.js";
+import { Template } from "./Template.js";
 import { toArray } from "./toArray.js";
 
-export interface Pushable<ItemType> {
-	push(value: ItemType | Text): number | void;
+export interface Pushable<T> {
+	push(value: T | Text): number | void;
 }
 
-export function deepPush<ItemT, ContextT>(
-	array: Pushable<ItemT>,
-	item: ItemT,
-	context: ContextT,
+export function deepPush<P>(
+	array: Pushable<Template<P>>,
+	template: Template<P>,
+	context: P,
 	bind: (
-		target: ContextT,
-		modifier: ItemT & Bindings<ContextT>,
+		target: P,
+		modifier: Bindings<P>,
 		isExternal?: boolean
 	) => void,
 	crossView: boolean
-): Pushable<ItemT> {
-	if (item === null || item === undefined || typeof item === "boolean") {
+): Pushable<Template<P>> {
+	if (template === null || template === undefined || typeof template === "boolean") {
 		return array;
 	}
 
-	if (isSignal(item)) {
-		array.push(signalText(item));
+	if (isSignal(template)) {
+		array.push(signalText(template));
 		return array;
 	}
 	
-	if (isCustomTemplate(item)) {
-		item.clientRender(array, item, context, crossView);
+	if (isCustomTemplate(template)) {
+		template.clientRender(array, template, context, crossView);
 		return array;
 	}
 
-	if (typeof item === "function") {
+	if (typeof template === "function") {
 		if (directive) {
-			var returnValue = directive(context, item as unknown as (element: ContextT) => string | void) as unknown as ItemT;
+			var returnValue = directive(context, template);
 			deepPush(array, returnValue, context, bind, crossView);
 		} else {
-			item(context);
+			template(context);
 		}
 		return array;
 	}
 	
-	if (typeof item !== "object") {
-		array.push(document.createTextNode(item as any));
+	if (typeof template !== "object") {
+		array.push(document.createTextNode(String(template)));
 		return array;
 	}
 	
-	if ((item as any).nodeType) {
-		array.push(item);
+	if ("nodeType" in template) {
+		array.push(template);
 		return array;
 	}
 	
-	if (typeof (item as any).length === "number") {
-		var n = (item as any).length;
-		var a = toArray<any>(item as any);
+	if ("length" in template) {
+		var n = template.length;
+		var a = toArray(template);
 
 		for (var i = 0; i < n; ++i) {
 			deepPush(array, a[i], context, bind, crossView);
@@ -65,11 +66,11 @@ export function deepPush<ItemT, ContextT>(
 		return array;
 	}
 	
-	if (typeof (item as any).next === "function") {
-		var x: any;
+	if ("next" in template) {
+		var x: IteratorResult<Template<P>, Template<P>>;
 
 		do {
-			x = (item as any).next();
+			x = template.next();
 			deepPush(array, x.value, context, bind, crossView);
 		} while (!x.done);
 
@@ -77,7 +78,7 @@ export function deepPush<ItemT, ContextT>(
 	}
 	
 	if (bind) {
-		bind(context, item, !crossView);
+		bind(context, template, !crossView);
 		return array;
 	}
 

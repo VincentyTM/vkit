@@ -4,7 +4,7 @@ import { Pushable } from "./deepPush.js";
 
 export interface CustomTemplate<P> {
 	clientRender(
-		array: Pushable<P>,
+		array: Pushable<Template<P>>,
 		template: CustomTemplate<P>,
 		context: unknown,
 		crossView: boolean
@@ -19,7 +19,7 @@ export type Template<P = unknown> = (
 	| null
 	| undefined
 	| ArrayLike<Template<P>>
-	| Omit<Bindings<P>, number>
+	| Bindings<P>
 	| Generator<Template<P>, Template<P>>
 	| Signal<unknown>
 	| CustomTemplate<P>

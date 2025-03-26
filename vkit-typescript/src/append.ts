@@ -2,28 +2,28 @@ import { Bindings } from "./bind.js";
 import { deepPush } from "./deepPush.js";
 import { Template } from "./Template.js";
 
-export function append<ItemT extends Template<ContextT>, ContextT>(
+export function append<P>(
 	parent: {
-		appendChild(node: ItemT): ItemT | void;
-		append?(...nodes: ItemT[]): void;
+		appendChild<T extends Node>(node: T): T | void;
+		append?(...nodes: Template<P>[]): void;
 	},
-	children: ItemT,
-	context: ContextT,
+	children: Template<P>,
+	context: P,
 	bind: (
-		target: ContextT,
-		modifier: ItemT & Bindings<ContextT>,
+		target: P,
+		modifier: Bindings<P>,
 		isExternal?: boolean
 	) => void,
 	crossView?: boolean
 ): void {
-	function push(node: ItemT): void {
+	function push(node: Node): void {
 		parent.appendChild(node);
 	}
 	
 	if (parent.append) {
-		var array: ItemT[] = [];
+		var array: Template<P>[] = [];
 		
-		deepPush<ItemT, ContextT>(
+		deepPush(
 			array,
 			children,
 			context,
@@ -33,7 +33,7 @@ export function append<ItemT extends Template<ContextT>, ContextT>(
 		
 		parent.append.apply(parent, array);
 	} else {
-		deepPush<ItemT, ContextT>(
+		deepPush(
 			{push: push},
 			children,
 			context,

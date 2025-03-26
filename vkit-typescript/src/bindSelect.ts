@@ -27,13 +27,13 @@ export function bindSelect(signal: WritableSignal<string>): Template<HTMLSelectE
 				el.value = signal.get();
 			}
 			
-			signal.effect(function() {
+			signal.effect(function(): void {
 				tick(updateValue);
 			});
 		},
 		
 		{
-			onchange: function() {
+			onchange: function(this: HTMLSelectElement): void {
 				signal.set(this.value);
 			}
 		}
