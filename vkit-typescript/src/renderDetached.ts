@@ -2,11 +2,9 @@ import { append } from "./append.js";
 import { bind } from "./bind.js";
 import { createEffect } from "./createEffect.js";
 import { createInjector } from "./createInjector.js";
-import { createProvider } from "./createProvider.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { WindowService } from "./getWindow.js";
 import { inject } from "./inject.js";
-import { getValueFromClass } from "./root.js";
 import { Template } from "./Template.js";
 import { update } from "./update.js";
 import { updateEffect } from "./updateEffect.js";
@@ -15,11 +13,7 @@ export function renderDetached<C extends Node>(
     getView: (unmount: () => void) => Template<C>,
     container: C
 ): () => void {
-    var injector = createInjector(undefined, function(token) {
-        var provider = createProvider(getValueFromClass, token, effect);
-        injector.container.set(token, provider);
-        return provider.getInstance();
-    });
+    var injector = createInjector(undefined, true);
     
     var effect = createEffect(undefined, injector, function(): void {
         var win: (Window & typeof globalThis) | null = null;

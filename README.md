@@ -622,19 +622,17 @@ function MyComponent() {
     return P(myService.getText());
 }
 
-class MyService {
-    constructor() { // No arguments
-        this.anotherService = $.inject(AnotherService);
-    }
+const MyService = $.createInjectable(() => ({
+    anotherService: $.inject(AnotherService),
     
     getText() {
         return this.anotherService.text;
     }
-}
+}));
 
-class AnotherService {
-    text = "Hello world";
-}
+const AnotherService = $.createInjectable(() => ({
+    text: "Hello world"
+}));
 ```
 
 As your application grows, you might need to limit the scope of these services. You can do this easily with `$.provide`.

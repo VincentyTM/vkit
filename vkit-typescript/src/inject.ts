@@ -1,6 +1,6 @@
-import { getInjector } from "./contextGuard.js";
-import { Injector, InstanceOf, TokenClass, TokenLike } from "./createInjector.js";
-import { Provider } from "./createProvider.js";
+import { getEffect, getInjector, setEffect, setInjector } from "./contextGuard.js";
+import { Injectable } from "./createInjectable.js";
+import { createProvider, Provider } from "./createProvider.js";
 
 /**
  * This method can be used to inject a service instance instead of passing it as a parameter.
@@ -10,9 +10,9 @@ import { Provider } from "./createProvider.js";
  * The method then creates a service instance for the service provider if no instance exists in the provider yet and returns it.
  * If it does exist, the method returns the existing instance.
  * @example
- * class MyService {
- * 	name = "world";
- * }
+ * const MyService = createInjectable(() => {
+ * 	return {name: "world"};
+ * });
  * 
  * function MyComponent() {
  * 	const myService1 = inject(MyService);
@@ -22,30 +22,58 @@ import { Provider } from "./createProvider.js";
  * 	
  * 	return H1("Hello ", myService1.name);
  * }
- * @param token Used as a key to find a provider of the service.
- * @param injector An optional injector to start the search of the provider. By default, it is the current injector.
+ * @param injectable Used as a key to find a provider of the service.
  * @returns An instance of the injectable service.
  */
-export function inject<TokenT extends TokenLike>(token: TokenT, injector?: Injector): InstanceOf<TokenT> {
-	if (!injector) {
-		injector = getInjector();
-	}
-	
-	var provider: Provider<InstanceOf<TokenT>> | undefined;
-	
-	while (!(provider = injector.container.get(token) as Provider<InstanceOf<TokenT>>)) {
-		var handleMissingProvider = injector.handleMissingProvider;
-		var parent: Injector | undefined = injector.parent;
-		
-		if (!parent) {
-			if (typeof handleMissingProvider === "function") {
-				return handleMissingProvider(token as TokenClass) as InstanceOf<TokenT>;
-			}
-			throw new Error("There is no provider for this token");
-		}
-		
-		injector = parent;
-	}
-	
-	return provider.getInstance();
-}
+ export function inject<T>(injectable: Injectable<T>): T {
+	 var parentInjector = getInjector();
+	 var parentEffect = getEffect();
+	 var injector = parentInjector;
+	 var provider: Provider<T> | undefined;
+ 
+	 while (!(provider = injector.providers.get(injectable) as Provider<T>)) {
+		 var parent = injector.parent;
+ 
+		 if (!parent) {
+			 if (injector.allowMissingProvider) {
+				 var newProvider = createProvider(injectable, parentEffect, parentInjector);
+				 injector.providers.set(injectable, newProvider);
+				 
+				 try {
+					 setEffect(newProvider.effect);
+					 setInjector(newProvider.injector);
+ 
+					 var instance = injectable.create();
+					 newProvider.isCreated = true;
+					 newProvider.instance = instance;
+					 return instance;
+				 } finally {
+					 setEffect(parentEffect);
+					 setInjector(parentInjector);
+				 }
+			 }
+ 
+			 throw new Error("No injector contains a provider for this injectable");
+		 }
+ 
+		 injector = parent;
+	 }
+ 
+	 if (provider.isCreated) {
+		 return provider.instance as T;
+	 }
+ 
+	 try {
+		 setEffect(provider.effect);
+		 setInjector(provider.injector);
+ 
+		 var instance = provider.injectable.create();
+		 provider.isCreated = true;
+		 provider.instance = instance;
+		 return instance as T;
+	 } finally {
+		 setEffect(parentEffect);
+		 setInjector(parentInjector);
+	 }
+ }
+ 

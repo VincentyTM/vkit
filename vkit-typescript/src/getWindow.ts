@@ -1,19 +1,21 @@
+import { createInjectable } from "./createInjectable.js";
 import { getContext } from "./getContext.js";
 import { inject } from "./inject.js";
 import { Template } from "./Template.js";
 
-type WindowService = {
-	new(): WindowService;
+interface WindowService {
 	context: (getView: () => Template) => any;
 	data: {[key: string]: any} | null;
 	window: Window & typeof globalThis;
-};
+}
 
-export var WindowService = function(this: WindowService) {
-	this.context = getContext();
-	this.data = null;
-	this.window = window;
-} as unknown as WindowService;
+export var WindowService = createInjectable(function(): WindowService {
+	return {
+		context: getContext(),
+		data: null,
+		window: window
+	};
+});
 
 /**
  * Returns the current window.

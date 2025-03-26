@@ -2,12 +2,10 @@ import { append } from "./append.js";
 import { bind } from "./bind.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { createInjector } from "./createInjector.js";
-import { createProvider } from "./createProvider.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { empty } from "./empty.js";
 import { WindowService } from "./getWindow.js";
 import { inject } from "./inject.js";
-import { getValueFromClass } from "./root.js";
 import { signal, WritableSignal } from "./signal.js";
 import { Template } from "./Template.js";
 import { tick } from "./tick.js";
@@ -87,11 +85,7 @@ export function customElement(
 			CustomElement
 		);
 
-		var injector = createInjector(undefined, function(token): unknown {
-			var provider = createProvider(getValueFromClass, token, effect);
-			injector.container.set(token, provider);
-			return provider.getInstance();
-		});
+		var injector = createInjector(undefined, true);
 		
 		var effect = createEffect(undefined, injector, function(): void {
 			var doc = el.ownerDocument;

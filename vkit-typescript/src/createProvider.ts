@@ -1,38 +1,25 @@
-import { getEffect, setEffect } from "./contextGuard.js";
 import { Effect } from "./createEffect.js";
-import { Config } from "./provide.js";
+import { Injectable } from "./createInjectable.js";
+import { Injector } from "./createInjector.js";
 
-export type Provider<T> = {
-	getInstance(): T;
-};
+export interface Provider<T> {
+    readonly effect: Effect;
+    readonly injectable: Injectable<T>;
+    readonly injector: Injector;
+    instance: T | undefined;
+    isCreated: boolean;
+}
 
 export function createProvider<T>(
-	createInstance: (config: Config) => T,
-	config: Config,
-	effect: Effect | undefined
+    injectable: Injectable<T>,
+    effect: Effect,
+    injector: Injector
 ): Provider<T> {
-	var instance: T | undefined;
-	var instanceCreated = false;
-
-	function getInstance(): T {
-		if (instanceCreated) {
-			return instance!;
-		}
-
-		var previousEffect = getEffect();
-
-		try {
-			setEffect(effect);
-			instance = createInstance(config);
-		} finally {
-			setEffect(previousEffect);
-		}
-
-		instanceCreated = true;
-		return instance;
-	}
-
-	return {
-		getInstance: getInstance
-	};
+    return {
+        effect: effect,
+        injectable: injectable,
+        injector: injector,
+        instance: undefined,
+        isCreated: false
+    };
 }
