@@ -1,8 +1,8 @@
 import { Signal } from "./computed.js";
+import { effect } from "./effect.js";
 import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
-import { prop } from "./prop.js";
 import { signalProp } from "./signalProp.js";
 
 type HTMLSelfClosingElement = (
@@ -64,6 +64,16 @@ function setValue<T>(
 	target[name] = value;
 }
 
+function prop<T>(
+	target: T,
+	name: keyof T,
+	value: () => T[keyof T]
+) {
+	effect(function(): void {
+		target[name] = value();
+	});
+}
+
 /**
  * Binds some properties to a specific target.
  * @example
@@ -116,7 +126,7 @@ export function bind<T>(
 						onDestroy(unsub);
 					}
 				} else {
-					prop(name, value as () => unknown)(target);
+					prop(target, name, value as never);
 				}
 				break;
 			case "undefined":
