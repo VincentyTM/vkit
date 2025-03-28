@@ -16,7 +16,7 @@ type ClassArgument = (
 type CleanupFunction = (callback: () => void) => void;
 type NoClass = null | undefined | boolean;
 
-function addClass(el: HTMLElement, name: string): void {
+function addClass(el: Element, name: string): void {
 	if (el.classList) {
 		el.classList.add(name);
 	} else {
@@ -24,7 +24,7 @@ function addClass(el: HTMLElement, name: string): void {
 	}
 }
 
-function removeClass(el: HTMLElement, name: string): void {
+function removeClass(el: Element, name: string): void {
 	if (el.classList) {
 		el.classList.remove(name);
 	} else {
@@ -32,7 +32,7 @@ function removeClass(el: HTMLElement, name: string): void {
 	}
 }
 
-function bindClass(el: HTMLElement, name: string, value: BooleanValue): void {
+function bindClass(el: Element, name: string, value: BooleanValue): void {
 	if (isSignal(value)) {
 		value.effect(function(v) {
 			v ? addClass(el, name) : removeClass(el, name);
@@ -58,7 +58,7 @@ function bindClass(el: HTMLElement, name: string, value: BooleanValue): void {
 	}
 }
 
-function bindClasses(el: HTMLElement, arg: ClassArgument, onCleanup?: CleanupFunction): void {
+function bindClasses(el: Element, arg: ClassArgument, onCleanup?: CleanupFunction): void {
 	if (!arg) {
 		return;
 	}
@@ -103,10 +103,8 @@ function bindClasses(el: HTMLElement, arg: ClassArgument, onCleanup?: CleanupFun
 	}
 }
 
-export function classes(...args: ClassArgument[]): (element: HTMLElement) => void;
-
 /**
- * Creates a class collection that can be bound to one or more HTML elements.
+ * Creates a class collection that can be bound to one or more elements.
  * The classes can be static strings or dynamic signals or functions.
  * Objects with class name keys and boolean values can also be used to add multiple classes.
  * Functions can be used to dynamically switch between multiple classes.
@@ -128,13 +126,15 @@ export function classes(...args: ClassArgument[]): (element: HTMLElement) => voi
  * 	classes(() => shouldClass11BeUsed() && "class11")
  * )
  * 
- * @returns A directive that binds the classes to an HTML element.
+ * @returns A directive that binds the classes to an element.
  */
-export function classes(): (element: HTMLElement) => void {
+export function classes(...args: ClassArgument[]): (element: Element) => void;
+
+export function classes(): (element: Element) => void {
 	var args = arguments;
 	var n = args.length;
 	
-	return function(element: HTMLElement): void {
+	return function(element: Element): void {
 		for (var i = 0; i < n; ++i) {
 			bindClasses(element, args[i]);
 		}
