@@ -40,7 +40,7 @@ export type SVGView<ContextT = unknown> = (
 	| SVGBindings<ContextT>
 	| Generator<SVGView<ContextT>, SVGView<ContextT>>
 	| Signal<unknown>
-	| ((element: ContextT) => void)
+	| (() => string | number)
 );
 
 export interface SVGElementTemplate<N extends keyof SVGElementTagNameMap> extends CustomTemplate<SVGElementTagNameMap[N]> {

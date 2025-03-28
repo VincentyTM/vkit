@@ -1,4 +1,5 @@
 import { Signal } from "./computed.js";
+import { directive, DirectiveTemplate } from "./directive.js";
 import { effect } from "./effect.js";
 import { isArray } from "./isArray.js";
 import { isSignal } from "./isSignal.js";
@@ -128,15 +129,15 @@ function bindClasses(el: Element, arg: ClassArgument, onCleanup?: CleanupFunctio
  * 
  * @returns A directive that binds the classes to an element.
  */
-export function classes(...args: ClassArgument[]): (element: Element) => void;
+export function classes(...args: ClassArgument[]): DirectiveTemplate<Element>;
 
-export function classes(): (element: Element) => void {
+export function classes(): DirectiveTemplate<Element> {
 	var args = arguments;
 	var n = args.length;
 	
-	return function(element: Element): void {
+	return directive(function(element: Element): void {
 		for (var i = 0; i < n; ++i) {
 			bindClasses(element, args[i]);
 		}
-	};
+	});
 }

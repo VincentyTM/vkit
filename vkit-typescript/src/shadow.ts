@@ -1,5 +1,6 @@
 import { append } from "./append.js";
 import { bind } from "./bind.js";
+import { directive } from "./directive.js";
 import { Template } from "./Template.js";
 
 /**
@@ -19,8 +20,8 @@ export function shadow(...contents: Template<ShadowRoot>[]): Template<HTMLElemen
 export function shadow(): Template<HTMLElement> {
 	var contents: Template<ShadowRoot> = arguments;
 	
-	return function(element: HTMLElement): void {
+	return directive(function(element: HTMLElement): void {
 		var shadowRoot = element.shadowRoot || element.attachShadow({mode: "open"});
 		append(shadowRoot, contents, shadowRoot, bind);
-	};
+	});
 }

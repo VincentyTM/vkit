@@ -1,4 +1,5 @@
 import { Signal } from "./computed.js";
+import { directive, DirectiveTemplate } from "./directive.js";
 import { effect } from "./effect.js";
 import { isSignal } from "./isSignal.js";
 
@@ -79,10 +80,10 @@ function addAttribute(el: Element, name: string, value: ReactiveAttributeValue):
  * True is converted to an empty string, while false means the attribute should be removed (similarly to null).
  * @returns A function directive which can be added to an element.
  */
-export function attributes(attributes: Attributes): (element: Element) => void {
-	return function(element: Element): void {
+export function attributes(attributes: Attributes): DirectiveTemplate<Element> {
+	return directive(function(element: Element): void {
 		for (var name in attributes) {
 			addAttribute(element, name, attributes[name]);
 		}
-	};
+	});
 }

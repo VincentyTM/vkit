@@ -23,5 +23,5 @@ export type Template<P = unknown> = (
 	| Generator<Template<P>, Template<P>>
 	| Signal<unknown>
 	| CustomTemplate<P>
-	| ((element: P) => void)
+	| (() => string | number)
 );

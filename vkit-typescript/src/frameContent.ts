@@ -1,4 +1,5 @@
 import { Signal } from "./computed.js";
+import { directive } from "./directive.js";
 import { get } from "./get.js";
 import { isSignal } from "./isSignal.js";
 import { onEvent } from "./onEvent.js";
@@ -32,10 +33,10 @@ export function frameContent(getView: (() => Template<HTMLBodyElement>) | Signal
 	return [
 		props,
 		
-		function(iframe: HTMLIFrameElement): void {
+		directive(function(iframe: HTMLIFrameElement): void {
 			getView.subscribe(function(): void {
 				iframe.src = "";
 			});
-		}
+		})
 	];
 }

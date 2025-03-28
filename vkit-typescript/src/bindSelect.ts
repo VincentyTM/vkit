@@ -1,3 +1,4 @@
+import { directive } from "./directive.js";
 import { WritableSignal } from "./signal.js";
 import { Template } from "./Template.js";
 import { tick } from "./tick.js";
@@ -22,7 +23,7 @@ import { tick } from "./tick.js";
  */
 export function bindSelect(signal: WritableSignal<string>): Template<HTMLSelectElement> {
 	return [
-		function(el) {
+		directive(function(el) {
 			function updateValue(): void {
 				el.value = signal.get();
 			}
@@ -30,7 +31,7 @@ export function bindSelect(signal: WritableSignal<string>): Template<HTMLSelectE
 			signal.effect(function(): void {
 				tick(updateValue);
 			});
-		},
+		}),
 		
 		{
 			onchange: function(this: HTMLSelectElement): void {

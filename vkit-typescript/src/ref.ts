@@ -1,15 +1,15 @@
 import { getEffect } from "./contextGuard.js";
+import { directive, DirectiveTemplate } from "./directive.js";
 import { onDestroy } from "./onDestroy.js";
+import { CustomTemplate } from "./Template.js";
 
-type MutableRef<T> = {
-	(value: T): void;
+interface MutableRef<T> extends DirectiveTemplate<T> {
 	current: T | null;
-};
+}
 
-type Ref<T> = {
-	(value: T): void;
+interface Ref<T> extends CustomTemplate<T> {
 	readonly current: T | null;
-};
+}
 
 /**
  * Creates and returns a reference which can contain any object (usually an HTML element) or null.
@@ -36,7 +36,7 @@ export function ref<T = HTMLElement>(): Ref<T> {
 		reference.current = null;
 	}
 	
-	var reference = function(value: T): void {
+	var reference = directive(function(value: T): void {
 		if (reference.current) {
 			throw new Error("This reference has already been set.");
 		}
@@ -46,7 +46,7 @@ export function ref<T = HTMLElement>(): Ref<T> {
 		if (getEffect() !== effect) {
 			onDestroy(reset);
 		}
-	} as MutableRef<T>;
+	}) as MutableRef<T>;
 	
 	var effect = getEffect(true);
 	reference.current = null;

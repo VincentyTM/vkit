@@ -1,5 +1,7 @@
 import { Signal } from "./computed.js";
 import { createStyleContainer, StyleContainer, StyleController } from "./createStyleContainer.js";
+import { directive, DirectiveTemplate } from "./directive.js";
+import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 import { tick } from "./tick.js";
 
@@ -109,7 +111,7 @@ function getStyleContainer(el: Node): StyleContainer {
 export function style(
 	css: CSSTextOrDeclaration | Signal<CSSTextOrDeclaration>,
 	attribute?: string
-): (element: Node) => void {
+): DirectiveTemplate<Node> {
 	if (!attribute) {
 		attribute = "vkit-" + (++styleCount);
 	}
@@ -131,32 +133,32 @@ export function style(
 			throw new Error("Style can only be added to a DOM node");
 		}
 		
-		tick(function() {
+		tick(function(): void {
 			container = getStyleContainer(element);
 			controller = container.add(selector);
 			controller.setValue(
 				prepareCSS(
-					css && typeof (css as Signal<string>).get === "function" ? (css as Signal<string>).get() : (css as string),
+					isSignal(css) ? css.get() : css,
 					selector
 				)
 			);
 		});
 		
-		if (css && typeof (css as Signal<string>).subscribe === "function") {
-			(css as Signal<string>).subscribe(function(value) {
+		if (isSignal(css)) {
+			css.subscribe(function(value: CSSTextOrDeclaration): void {
 				if (controller) {
 					controller.setValue(prepareCSS(value, selector));
 				}
 			});
 		}
 		
-		if ((element as HTMLElement).setAttribute) {
-			(element as HTMLElement).setAttribute(attribute!, "");
+		if ((element as Element).setAttribute) {
+			(element as Element).setAttribute(attribute!, "");
 		}
 		
-		onDestroy(function() {
-			if ((element as HTMLElement).removeAttribute) {
-				(element as HTMLElement).removeAttribute(attribute!);
+		onDestroy(function(): void {
+			if ((element as Element).removeAttribute) {
+				(element as Element).removeAttribute(attribute!);
 			}
 			
 			if (container && container.remove(selector)) {
@@ -179,5 +181,5 @@ export function style(
 		});	
 	}
 	
-	return bind;
+	return directive(bind);
 }

@@ -1,9 +1,9 @@
 import { Bindings } from "./bind.js";
-import { directive } from "./directive.js";
 import { isCustomTemplate } from "./isCustomTemplate.js";
 import { isSignal } from "./isSignal.js";
 import { signalText } from "./signalText.js";
 import { Template } from "./Template.js";
+import { text } from "./text.js";
 import { toArray } from "./toArray.js";
 
 export interface Pushable<T> {
@@ -36,12 +36,7 @@ export function deepPush<P>(
 	}
 
 	if (typeof template === "function") {
-		if (directive) {
-			var returnValue = directive(context, template);
-			deepPush(array, returnValue, context, bind, crossView);
-		} else {
-			template(context);
-		}
+		array.push(text(template));
 		return array;
 	}
 	

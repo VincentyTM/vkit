@@ -598,9 +598,9 @@ function Clock() {
 You can enqueue a function to be called after the current render cycle using `$.tick`. This is useful for interacting with the DOM after it has been rendered (e.g. when playing videos, scrolling, measuring CSS properties of elements, auto-focusing).
 
 ```javascript
-const AutoFocus = (element) => {
+const AutoFocus = $.directive((element) => {
     $.tick(() => element.focus());
-};
+});
 
 const {Input} = $.htmlTags;
 
