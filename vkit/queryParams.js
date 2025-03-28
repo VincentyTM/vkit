@@ -124,7 +124,6 @@ function queryParams(search) {
 		each: each,
 		clear: clear,
 		clone: clone,
-		render: toString,
 		toString: toString
 	};
 }
