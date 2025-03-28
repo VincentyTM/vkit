@@ -10,7 +10,7 @@ type AttributeValue = string | number | boolean;
 
 type ReactiveAttributeValue = AttributeValue | Signal<AttributeValue> | (() => AttributeValue);
 
-function setAttribute(el: HTMLElement, name: string, value: AttributeValue): void {
+function setAttribute(el: Element, name: string, value: AttributeValue): void {
 	if (typeof value === "number") {
 		value = value.toString();
 	}
@@ -28,7 +28,7 @@ function setAttribute(el: HTMLElement, name: string, value: AttributeValue): voi
 	el.removeAttribute(name);
 }
 
-function addAttribute(el: HTMLElement, name: string, value: ReactiveAttributeValue): void {
+function addAttribute(el: Element, name: string, value: ReactiveAttributeValue): void {
 	if (typeof value === "number") {
 		value = value.toString();
 	}
@@ -61,7 +61,7 @@ function addAttribute(el: HTMLElement, name: string, value: ReactiveAttributeVal
 }
 
 /**
- * Creates a binding for attributes which can be applied on one or more HTML elements.
+ * Creates a binding for attributes which can be applied on one or more elements.
  * @example
  * Div(
  * 	attributes({
@@ -77,10 +77,10 @@ function addAttribute(el: HTMLElement, name: string, value: ReactiveAttributeVal
  * In order to remove an attribute, you can specify null instead of a string.
  * You can also use boolean or numeric values which are converted to string or null values.
  * True is converted to an empty string, while false means the attribute should be removed (similarly to null).
- * @returns A function directive which can be added to an HTML element.
+ * @returns A function directive which can be added to an element.
  */
-export function attributes(attributes: Attributes): (element: HTMLElement) => void {
-	return function(element: HTMLElement): void {
+export function attributes(attributes: Attributes): (element: Element) => void {
+	return function(element: Element): void {
 		for (var name in attributes) {
 			addAttribute(element, name, attributes[name]);
 		}
