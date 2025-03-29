@@ -1,65 +1,19 @@
+import { clientRenderAttributes } from "./clientRenderAttributes.js";
 import { Signal } from "./computed.js";
-import { directive, DirectiveTemplate } from "./directive.js";
-import { effect } from "./effect.js";
-import { isSignal } from "./isSignal.js";
+import { serverRenderAttributes } from "./serverRenderAttributes.js";
+import { CustomTemplate } from "./Template.js";
+
+export interface AttributesTemplate extends CustomTemplate<Element> {
+	attributes: Record<string, AttributeValue | Signal<AttributeValue> | (() => AttributeValue)>;
+}
 
 type Attributes = {
 	[attributeName: string]: ReactiveAttributeValue
 };
 
-type AttributeValue = string | number | boolean;
+export type AttributeValue = string | number | boolean | null;
 
-type ReactiveAttributeValue = AttributeValue | Signal<AttributeValue> | (() => AttributeValue);
-
-function setAttribute(el: Element, name: string, value: AttributeValue): void {
-	if (typeof value === "number") {
-		value = value.toString();
-	}
-	
-	if (typeof value === "string") {
-		el.setAttribute(name, value);
-		return;
-	}
-	
-	if (value) {
-		el.setAttribute(name, "");
-		return;
-	}
-
-	el.removeAttribute(name);
-}
-
-function addAttribute(el: Element, name: string, value: ReactiveAttributeValue): void {
-	if (typeof value === "number") {
-		value = value.toString();
-	}
-	
-	if (typeof value === "string") {
-		el.setAttribute(name, value);
-		return;
-	}
-	
-	if (isSignal(value)) {
-		value.effect(function(val) {
-			setAttribute(el, name, val);
-		});
-		return;
-	}
-	
-	if (typeof value === "function") {
-		effect(function() {
-			setAttribute(el, name, (value as () => AttributeValue)());
-		});
-		return;
-	}
-	
-	if (value) {
-		el.setAttribute(name, "");
-		return;
-	}
-
-	el.removeAttribute(name);
-}
+export type ReactiveAttributeValue = AttributeValue | Signal<AttributeValue> | (() => AttributeValue);
 
 /**
  * Creates a binding for attributes which can be applied on one or more elements.
@@ -80,10 +34,10 @@ function addAttribute(el: Element, name: string, value: ReactiveAttributeValue):
  * True is converted to an empty string, while false means the attribute should be removed (similarly to null).
  * @returns A function directive which can be added to an element.
  */
-export function attributes(attributes: Attributes): DirectiveTemplate<Element> {
-	return directive(function(element: Element): void {
-		for (var name in attributes) {
-			addAttribute(element, name, attributes[name]);
-		}
-	});
+export function attributes(attributes: Attributes): AttributesTemplate {
+	return {
+		attributes: attributes,
+		clientRender: clientRenderAttributes,
+		serverRender: serverRenderAttributes
+	};
 }
