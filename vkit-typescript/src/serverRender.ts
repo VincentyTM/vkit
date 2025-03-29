@@ -77,16 +77,7 @@ function bindTemplate<P>(container: ServerElement, template: Bindings<P>): void 
 		}
 	
 		if (isSignal(value)) {
-			var evaluatedValue = value();
-
-			if (typeof evaluatedValue === "string" || typeof evaluatedValue === "boolean") {
-				setProperty(container, key, evaluatedValue);
-			}
-
-			if (typeof evaluatedValue === "number") {
-				setProperty(container, key, evaluatedValue);
-			}
-
+			setProperty(container, key, value());
 			continue;
 		}
 		
@@ -99,12 +90,6 @@ function bindTemplate<P>(container: ServerElement, template: Bindings<P>): void 
 			continue;
 		}
 
-		if (typeof value === "string" || typeof value === "boolean") {
-			setProperty(container, key, value);
-		}
-
-		if (typeof value === "number") {
-			setProperty(container, key, String(value));
-		}
+		setProperty(container, key, value);
 	}
 }
