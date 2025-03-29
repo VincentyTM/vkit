@@ -21,13 +21,14 @@ export type Template<P = unknown> = (
 	| Node
 	| string
 	| number
+	| bigint
 	| boolean
 	| null
 	| undefined
 	| ArrayLike<Template<P>>
 	| Bindings<P>
 	| Generator<Template<P>, Template<P>>
-	| Signal<unknown>
+	| Signal<string | number | bigint | boolean>
+	| (() => string | number | bigint | boolean)
 	| CustomTemplate<P>
-	| (() => string | number)
 );

@@ -12,7 +12,7 @@ import { effect } from "./effect.js";
  * It may contain signal calls.
  * @returns A DOM text node that has the current text as its value.
  */
-export function text(getText: () => string | number): Text {
+export function text(getText: () => string | number | bigint | boolean): Text {
 	var oldText = "";
 	var node = document.createTextNode(oldText);
 
