@@ -43,7 +43,7 @@ export type SVGView<ContextT = unknown> = (
 	| (() => string | number)
 );
 
-export interface SVGElementTemplate<N extends keyof SVGElementTagNameMap> extends CustomTemplate<SVGElementTagNameMap[N]> {
+export interface SVGElementTemplate<N extends keyof SVGElementTagNameMap> extends CustomTemplate<unknown> {
 	readonly child: Template<SVGElementTagNameMap[N]>;
 	readonly tagName: N;
 }

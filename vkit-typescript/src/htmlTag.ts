@@ -1,7 +1,7 @@
 import { clientRenderHTMLElement } from "./clientRenderHTMLElement.js";
 import { CustomTemplate, Template } from "./Template.js";
 
-export interface HTMLElementTemplate<N extends keyof HTMLElementTagNameMap> extends CustomTemplate<HTMLElementTagNameMap[N]> {
+export interface HTMLElementTemplate<N extends keyof HTMLElementTagNameMap> extends CustomTemplate<unknown> {
 	readonly child: Template<HTMLElementTagNameMap[N]>;
 	readonly tagName: N;
 }
