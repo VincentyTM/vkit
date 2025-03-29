@@ -6,7 +6,6 @@ export { bindSelect } from "./bindSelect.js";
 export { bindText } from "./bindText.js";
 export { classes } from "./classes.js";
 export { createInjectable, Injectable } from "./createInjectable.js";
-export { createRoot, AppRoot } from "./createRoot.js";
 export { computed, ComputedSignal, Signal } from "./computed.js";
 export { customElement } from "./customElement.js";
 export { deriveSignal } from "./deriveSignal.js";
