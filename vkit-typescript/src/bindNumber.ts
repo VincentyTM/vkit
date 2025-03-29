@@ -1,3 +1,4 @@
+import { computed } from "./computed.js";
 import { WritableSignal } from "./signal.js";
 import { Template } from "./Template.js";
 
@@ -25,7 +26,6 @@ import { Template } from "./Template.js";
  * If there is no default value given, the signal's value is not set in that case.
  * @returns A directive which can be used on an input element (or even multiple elements) to create the binding(s).
  */
-
 export function bindNumber(signal: WritableSignal<number>, defaultValue?: number): Template<HTMLInputElement> {
 	function set(this: HTMLInputElement): void {
 		if (this.value === "" && defaultValue !== undefined) {
@@ -44,6 +44,6 @@ export function bindNumber(signal: WritableSignal<number>, defaultValue?: number
 		oninput: set,
 		onchange: set,
 		onkeyup: set,
-		value: signal as never
+		value: computed(String, [signal])
 	};
 }
