@@ -9,7 +9,6 @@ import { inject } from "./inject.js";
 import { signal, WritableSignal } from "./signal.js";
 import { Template } from "./Template.js";
 import { tick } from "./tick.js";
-import { update } from "./update.js";
 import { updateEffect } from "./updateEffect.js";
 
 type CustomElementGetView = (
@@ -126,7 +125,6 @@ export function customElement(
 		
 		var effect = this.effect;
 		updateEffect(effect);
-		update();
 	};
 	
 	proto.disconnectedCallback = function(this: ExtendedHTMLElement): void {
@@ -140,7 +138,6 @@ export function customElement(
 		
 		empty(this);
 		destroyEffect(this.effect);
-		update();
 	};
 	
 	if (options) {
@@ -165,7 +162,6 @@ export function customElement(
 				}
 				
 				this.observedAttributes[attrToPropName(attrName)].set(newValue);
-				update();
 			};
 		}
 	}

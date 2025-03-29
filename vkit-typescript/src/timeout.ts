@@ -1,6 +1,5 @@
 import { getWindow } from "./getWindow.js";
 import { onDestroy } from "./onDestroy.js";
-import { update } from "./update.js";
 
 /**
  * Sets a timeout in the current window and clears it when the current reactive context is destroyed.
@@ -12,14 +11,9 @@ import { update } from "./update.js";
  */
 export function timeout(callback: () => void, delay: number): void {
 	var win = getWindow()!;
-	var timeout = win.setTimeout(tick, delay);
+	var timeout = win.setTimeout(callback, delay);
 	
 	onDestroy(clear);
-	
-	function tick(): void {
-		callback();
-		update();
-	}
 	
 	function clear(): void {
 		win.clearTimeout(timeout);

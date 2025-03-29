@@ -1,7 +1,6 @@
 import { Signal } from "./computed";
 import { onDestroy } from "./onDestroy.js";
 import { signal } from "./signal.js";
-import { update } from "./update.js";
 
 export function lazyArray<T>(arraySignal: Signal<T[]>, backwards: boolean): Signal<T[]> {
 	var optimized = signal<T[]>([]);
@@ -25,7 +24,6 @@ export function lazyArray<T>(arraySignal: Signal<T[]>, backwards: boolean): Sign
 				}
 				
 				optimized.set(backwards ? array.slice(Math.max(0, m - n)) : array.slice(0, n));
-				update();
 			}, 1);
 			
 			onDestroy(function() {

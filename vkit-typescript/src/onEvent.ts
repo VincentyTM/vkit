@@ -1,5 +1,3 @@
-import { update } from "./update.js";
-
 export type EventListenerType = (this: unknown, event: EventType) => unknown;
 
 export type EventTargetType = {
@@ -57,14 +55,7 @@ export function onEvent(
 			e.currentTarget = target;
 		}
 		
-		var ret = listener.call(target, e);
-		
-		if (ret && typeof (ret as Promise<unknown>).then === "function") {
-			(ret as Promise<unknown>).then(update);
-		}
-		
-		update();
-		return ret;
+		return listener.call(target, e);
 	}
 	
 	if (target.addEventListener) {

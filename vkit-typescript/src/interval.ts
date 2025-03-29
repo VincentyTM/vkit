@@ -1,6 +1,5 @@
 import { getWindow } from "./getWindow.js";
 import { onDestroy } from "./onDestroy.js";
-import { update } from "./update.js";
 
 /**
  * Sets an interval in the current window and clears it when the current component is unmounted.
@@ -13,14 +12,9 @@ import { update } from "./update.js";
  */
 export function interval(callback: () => void, delay: number): void {
 	var win = getWindow()!;
-	var interval = win.setInterval(tick, delay);
+	var interval = win.setInterval(callback, delay);
 	
 	onDestroy(clear);
-	
-	function tick(): void {
-		callback();
-		update();
-	}
 	
 	function clear(): void {
 		win.clearInterval(interval);

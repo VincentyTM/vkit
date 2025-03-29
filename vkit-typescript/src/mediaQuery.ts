@@ -2,7 +2,6 @@ import { computed, Signal } from "./computed.js";
 import { getWindow } from "./getWindow.js";
 import { onDestroy } from "./onDestroy.js";
 import { signal } from "./signal.js";
-import { update } from "./update.js";
 
 function getFalse(): boolean {
     return false;
@@ -20,7 +19,6 @@ export function mediaQuery(query: string): Signal<boolean> {
     
     function handleChange(e: MediaQueryListEvent): void {
         matches.set(e.matches);
-        update();
     }
     
     if (matcher.addEventListener) {

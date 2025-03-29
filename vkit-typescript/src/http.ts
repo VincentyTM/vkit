@@ -3,7 +3,6 @@ import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 import { readOnly } from "./readOnly.js";
 import { signal } from "./signal.js";
-import { update } from "./update.js";
 
 type HttpRequestHeaders = {
 	[name: string]: string;
@@ -125,7 +124,6 @@ export function http<T = unknown>(request: HttpRequest | Signal<HttpRequest> | (
 
 		xhr.onprogress = function(event: ProgressEvent<EventTarget>): void {
 			progress.set(event);
-			update();
 		};
 
 		xhr.onreadystatechange = function(): void {
@@ -148,15 +146,12 @@ export function http<T = unknown>(request: HttpRequest | Signal<HttpRequest> | (
 						return xhr.getResponseHeader(name);
 					}
 				});
-
-				update();
 			}
 		};
 		
 		if (xhr.upload) {
 			xhr.upload.onprogress = function(event: ProgressEvent<EventTarget>): void {
 				uploadProgress.set(event);
-				update();
 			};
 		}
 

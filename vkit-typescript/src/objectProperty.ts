@@ -5,7 +5,6 @@ import { isSignal } from "./isSignal.js";
 import { observe } from "./observe.js";
 import { onDestroy } from "./onDestroy.js";
 import { signal, WritableSignal } from "./signal.js";
-import { update } from "./update.js";
 
 /**
  * Creates and returns a writable signal that reflects and updates a property of an object.
@@ -50,11 +49,9 @@ export function objectProperty<T, K extends keyof T>(
 		
 		onDestroy(change.subscribe(function(newValue: T[K]): void {
 			value.set(newValue);
-			update();
 		}));
 
 		value.set(o[p]);
-		update();
 	});
 	
 	return value;
