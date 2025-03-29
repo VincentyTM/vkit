@@ -1,4 +1,4 @@
-import { Signal } from "./computed";
+import { Signal } from "./computed.js";
 import { effect } from "./effect.js";
 import { onDestroy } from "./onDestroy.js";
 import { signal } from "./signal.js";
