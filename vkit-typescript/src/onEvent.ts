@@ -1,19 +1,19 @@
 export type EventListenerType = (this: unknown, event: EventType) => unknown;
 
-export type EventTargetType = {
+export interface EventTargetType {
 	addEventListener: (type: string, listener: EventListenerType, options?: boolean | AddEventListenerOptions | undefined) => void;
 	removeEventListener: (type: string, listener: EventListenerType, options?: boolean | AddEventListenerOptions | undefined) => void;
 	attachEvent?: (type: string, listener: EventListenerType) => void;
 	detachEvent?: (type: string, listener: EventListenerType) => void;
-};
+}
 
-type EventType = {
+export interface EventType {
 	returnValue?: boolean;
 	cancelBubble?: boolean;
 	currentTarget?: EventTargetType;
 	preventDefault?: () => void;
 	stopPropagation?: () => void;
-};
+}
 
 function preventDefault(this: EventType): void {
 	this.returnValue = false;
