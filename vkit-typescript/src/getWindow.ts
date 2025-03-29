@@ -6,14 +6,14 @@ import { Template } from "./Template.js";
 interface WindowService {
 	context: (getView: () => Template) => any;
 	data: {[key: string]: any} | null;
-	window: Window & typeof globalThis;
+	window: Window & typeof globalThis | null;
 }
 
 export var WindowService = createInjectable(function(): WindowService {
 	return {
 		context: getContext(),
 		data: null,
-		window: window
+		window: null
 	};
 });
 

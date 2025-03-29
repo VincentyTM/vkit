@@ -1,6 +1,5 @@
 import { getEffect } from "./contextGuard.js";
 import { Effect } from "./createEffect.js";
-import { rootEffect } from "./root.js";
 
 /**
  * Schedules a callback to be run when the current reactive context is destroyed.
@@ -8,10 +7,6 @@ import { rootEffect } from "./root.js";
  */
 export function onDestroy(destroyHandler: () => void): void {
 	var effect = getEffect();
-	
-	if (effect === rootEffect) {
-		return;
-	}
 	
 	var e: Effect | undefined = effect;
 	

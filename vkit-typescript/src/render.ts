@@ -1,9 +1,11 @@
 import { append } from "./append.js";
 import { bind } from "./bind.js";
-import { setEffect, setInjector } from "./contextGuard.js";
-import { rootEffect, rootInjector } from "./root.js";
+import { createEffect } from "./createEffect.js";
+import { createInjector } from "./createInjector.js";
+import { WindowService } from "./getWindow.js";
+import { inject } from "./inject.js";
 import { Template } from "./Template.js";
-import { update } from "./update.js";
+import { updateEffect } from "./updateEffect.js";
 
 /**
  * Renders the root component of the application in the DOM.
@@ -17,24 +19,27 @@ import { update } from "./update.js";
  * // This is the entry point of the application
  * render(App, document.body);
  * 
- * @param getView The top-level component. It must be a function.
+ * @param getTemplate The top-level component. It must be a function.
  * @param container A container DOM node in which the application is rendered.
  */
-export function render<ContextT extends Node>(
-	getView: () => Template<ContextT>,
-	container: ContextT
+export function render<P extends Node>(
+	getTemplate: () => Template<P>,
+	container: P
 ): void {
-	try {
-		setEffect(rootEffect);
-		setInjector(rootInjector);
+	var doc = container.ownerDocument;
+	var win: (Window & typeof globalThis) | null = doc && doc.defaultView || (doc as any).parentWindow || null;
+
+	var rootInjector = createInjector(undefined, true);
+	var rootEffect = createEffect(undefined, rootInjector, function(): void {
+		inject(WindowService).window = win;
 		
-		var view = getView();
-		
-		append(container, view, container, bind);
-	} finally {
-		setEffect(undefined);
-		setInjector(undefined);
-	}
-	
-	update();
+		append(
+			container,
+			getTemplate(),
+			container,
+			bind
+		);
+	});
+
+	updateEffect(rootEffect);
 }
