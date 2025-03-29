@@ -1,5 +1,7 @@
-import { getEffect, getInjector } from "./contextGuard.js";
+import { getEffect } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
+import { inject } from "./inject.js";
+import { RenderConfigService } from "./RenderConfigService.js";
 import { updateEffect } from "./updateEffect.js";
 
 /**
@@ -22,9 +24,11 @@ import { updateEffect } from "./updateEffect.js";
  * In order to clean up side effects, call onDestroy within the callback.
  */
 export function effect(updateHandler: () => void): void {
-	var parentEffect = getEffect();
-	
-	updateEffect(
-		createEffect(parentEffect, getInjector(), updateHandler)
-	);
+    if (inject(RenderConfigService).doRunEffects) {
+		var parentEffect = getEffect();
+		
+		updateEffect(
+			createEffect(parentEffect, parentEffect.injector, updateHandler)
+		);
+	}
 }
