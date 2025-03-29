@@ -23,13 +23,11 @@ import { tick } from "./tick.js";
  */
 export function bindSelect(signal: WritableSignal<string>): Template<HTMLSelectElement> {
 	return [
-		directive(function(el) {
-			function updateValue(): void {
-				el.value = signal.get();
-			}
-			
-			signal.effect(function(): void {
-				tick(updateValue);
+		directive(function(el: HTMLSelectElement): void {
+			var value = signal();
+
+			tick(function(): void {
+				el.value = value;
 			});
 		}),
 		
