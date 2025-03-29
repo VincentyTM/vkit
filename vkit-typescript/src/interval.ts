@@ -1,8 +1,9 @@
-import { getWindow } from "./getWindow.js";
+import { effect } from "./effect.js";
+import { getGlobalContext } from "./getGlobalContext.js";
 import { onDestroy } from "./onDestroy.js";
 
 /**
- * Sets an interval in the current window and clears it when the current component is unmounted.
+ * Sets an interval in the current global context and clears it when the current reactive context is destroyed.
  * @example
  * interval(() => {
  * 	console.log("Date and time:", new Date().toLocaleString());
@@ -11,12 +12,12 @@ import { onDestroy } from "./onDestroy.js";
  * @param delay The time delay in milliseconds between two function calls.
  */
 export function interval(callback: () => void, delay: number): void {
-	var win = getWindow()!;
-	var interval = win.setInterval(callback, delay);
-	
-	onDestroy(clear);
-	
-	function clear(): void {
-		win.clearInterval(interval);
-	}
+	effect(function(): void {
+		var global = getGlobalContext();
+		var interval = global.setInterval(callback, delay);
+		
+		onDestroy(function(): void {
+			global.clearInterval(interval);
+		});
+	});
 }
