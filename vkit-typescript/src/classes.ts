@@ -1,107 +1,23 @@
+import { clientRenderClasses } from "./clientRenderClasses.js";
 import { Signal } from "./computed.js";
-import { directive, DirectiveTemplate } from "./directive.js";
-import { effect } from "./effect.js";
-import { isArray } from "./isArray.js";
-import { isSignal } from "./isSignal.js";
-import { onDestroy } from "./onDestroy.js";
+import { serverRenderClasses } from "./serverRenderClasses.js";
+import { CustomTemplate } from "./Template.js";
 
-type BooleanValue = boolean | Signal<boolean> | (() => boolean);
-type ClassArgument = (
+export type BooleanValue = boolean | Signal<boolean> | (() => boolean);
+
+export type ClassArgument = (
 	| string
 	| NoClass
 	| Signal<string | NoClass>
 	| (() => string | NoClass)
-	| ClassArgument[]
+	| ArrayLike<ClassArgument>
 	| {[className: string]: BooleanValue}
 );
-type CleanupFunction = (callback: () => void) => void;
-type NoClass = null | undefined | boolean;
 
-function addClass(el: Element, name: string): void {
-	if (el.classList) {
-		el.classList.add(name);
-	} else {
-		el.className += " " + name;
-	}
-}
+export type NoClass = null | undefined | boolean;
 
-function removeClass(el: Element, name: string): void {
-	if (el.classList) {
-		el.classList.remove(name);
-	} else {
-		el.className = el.className.replace(" " + name, "");
-	}
-}
-
-function bindClass(el: Element, name: string, value: BooleanValue): void {
-	if (isSignal(value)) {
-		value.effect(function(v) {
-			v ? addClass(el, name) : removeClass(el, name);
-		});
-		return;
-	}
-	
-	if (value === true) {
-		addClass(el, name);
-		return;
-	}
-	
-	if (value === false) {
-		removeClass(el, name);
-		return;
-	}
-	
-	if (typeof value === "function") {
-		effect(function() {
-			bindClass(el, name, value());
-		});
-		return;
-	}
-}
-
-function bindClasses(el: Element, arg: ClassArgument, onCleanup?: CleanupFunction): void {
-	if (!arg) {
-		return;
-	}
-	
-	if (isArray(arg)) {
-		var n = arg.length;
-		for (var i = 0; i < n; ++i) {
-			bindClasses(el, arg[i], onCleanup);
-		}
-		return;
-	}
-	
-	if (typeof arg === "string") {
-		addClass(el, arg);
-		if (onCleanup) {
-			onCleanup(function() {
-				removeClass(el, arg);
-			});
-		}
-		return;
-	}
-	
-	if (isSignal(arg)) {
-		arg.effect(function(value: ClassArgument, onCleanup?: CleanupFunction) {
-			bindClasses(el, value, onCleanup);
-		});
-		return;
-	}
-	
-	if (typeof arg === "object") {
-		for (var name in arg) {
-			bindClass(el, name, arg[name]);
-		}
-		return;
-	}
-	
-	if (typeof arg === "function") {
-		effect(function() {
-			bindClasses(el, arg(), onDestroy);
-		});
-		return;
-	}
+export interface ClassesTemplate extends CustomTemplate<Element> {
+	args: ClassArgument;
 }
 
 /**
@@ -129,15 +45,12 @@ function bindClasses(el: Element, arg: ClassArgument, onCleanup?: CleanupFunctio
  * 
  * @returns A directive that binds the classes to an element.
  */
-export function classes(...args: ClassArgument[]): DirectiveTemplate<Element>;
+export function classes(...args: readonly ClassArgument[]): ClassesTemplate;
 
-export function classes(): DirectiveTemplate<Element> {
-	var args = arguments;
-	var n = args.length;
-	
-	return directive(function(element: Element): void {
-		for (var i = 0; i < n; ++i) {
-			bindClasses(element, args[i]);
-		}
-	});
+export function classes(): ClassesTemplate {
+	return {
+		args: arguments.length > 1 ? arguments : arguments[0],
+		clientRender: clientRenderClasses,
+		serverRender: serverRenderClasses
+	};
 }
