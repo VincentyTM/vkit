@@ -1,7 +1,6 @@
-import { computed, ComputedSignal, Signal } from "./computed.js";
+import { computed, Signal } from "./computed.js";
 import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
-import { readOnly } from "./readOnly.js";
 import { signal } from "./signal.js";
 
 type HttpRequestHeaders = {
@@ -28,9 +27,9 @@ export type HttpResponse<T> = {
 	readonly uploadProgress: null;
 } | {
 	readonly ok: false;
-	readonly progress: ComputedSignal<HttpProgress>;
+	readonly progress: Signal<HttpProgress>;
 	readonly unsent: false;
-	readonly uploadProgress: ComputedSignal<HttpProgress>;
+	readonly uploadProgress: Signal<HttpProgress>;
 } | {
 	readonly body: T;
 	readonly ok: boolean;
@@ -101,7 +100,9 @@ var INIITIAL_PROGRESS: HttpProgress = {
  * @param request The HTTP request as a string URL or object. It can optionally be wrapped in a signal or a function.
  * @returns A computed signal containing the HTTP response object.
  */
-export function http<T = unknown>(request: HttpRequest | Signal<HttpRequest> | (() => HttpRequest)) {
+export function http<T = unknown>(
+	request: HttpRequest | Signal<HttpRequest> | (() => HttpRequest)
+): Signal<HttpResponse<T>> {
 	var response = signal<HttpResponse<T>>(UNSENT);
 
 	function setRequest(req: HttpRequest): void {
@@ -115,9 +116,9 @@ export function http<T = unknown>(request: HttpRequest | Signal<HttpRequest> | (
 
 		response.set({
 			ok: false,
-			progress: readOnly(progress),
+			progress: progress,
 			unsent: false,
-			uploadProgress: readOnly(uploadProgress)
+			uploadProgress: uploadProgress
 		});
 		
 		var xhr = new XMLHttpRequest();
@@ -206,5 +207,5 @@ export function http<T = unknown>(request: HttpRequest | Signal<HttpRequest> | (
 		setRequest(request);
 	}
 	
-	return readOnly(response);
+	return response;
 }
