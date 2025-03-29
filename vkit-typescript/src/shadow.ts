@@ -15,12 +15,12 @@ import { Template } from "./Template.js";
  * )
  * @returns A directive that attaches a shadow root to an element and inserts nodes into it.
  */
-export function shadow(...contents: Template<ShadowRoot>[]): Template<HTMLElement>;
+export function shadow(...contents: Template<ShadowRoot>[]): Template<Element>;
 
-export function shadow(): Template<HTMLElement> {
+export function shadow(): Template<Element> {
 	var contents: Template<ShadowRoot> = arguments;
 	
-	return directive(function(element: HTMLElement): void {
+	return directive(function(element: Element): void {
 		var shadowRoot = element.shadowRoot || element.attachShadow({mode: "open"});
 		append(shadowRoot, contents, shadowRoot, bind);
 	});
