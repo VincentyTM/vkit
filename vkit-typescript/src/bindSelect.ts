@@ -34,6 +34,7 @@ export function bindSelect(signal: WritableSignal<string>): Template<HTMLSelectE
 		}),
 		
 		{
+			value: signal,
 			onchange: function(this: HTMLSelectElement): void {
 				signal.set(this.value);
 			}
