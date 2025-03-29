@@ -1,5 +1,6 @@
 import { clientRenderSVGElement } from "./clientRenderSVGElement.js";
 import { Signal } from "./computed.js";
+import { serverRenderSVGElement } from "./serverRenderSVGElement.js";
 import { CustomTemplate, Template } from "./Template.js";
 
 export type Reactive<T> = T | Signal<T> | (() => T);
@@ -73,15 +74,15 @@ export interface SVGElementTemplate<N extends keyof SVGElementTagNameMap> extend
  * 	);
  * }
  */
- export function svgTag<N extends keyof SVGElementTagNameMap>(tagName: N): (...children: Template<SVGElementTagNameMap[N]>[]) => SVGElementTemplate<N>;
+export function svgTag<N extends keyof SVGElementTagNameMap>(tagName: N): (...children: Template<SVGElementTagNameMap[N]>[]) => SVGElementTemplate<N>;
 
- export function svgTag<N extends keyof SVGElementTagNameMap>(tagName: N): () => SVGElementTemplate<N> {
-	 return function(): SVGElementTemplate<N> {
-		 return {
-			 child: arguments.length > 1 ? arguments : arguments[0],
-			 tagName: tagName,
-			 clientRender: clientRenderSVGElement
-		 };
-	 };
- }
- 
+export function svgTag<N extends keyof SVGElementTagNameMap>(tagName: N): () => SVGElementTemplate<N> {
+	return function(): SVGElementTemplate<N> {
+		return {
+			child: arguments.length > 1 ? arguments : arguments[0],
+			tagName: tagName,
+			clientRender: clientRenderSVGElement,
+			serverRender: serverRenderSVGElement
+		};
+	};
+}

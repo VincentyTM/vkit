@@ -1,6 +1,7 @@
 import { getEffect } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
 import { Pushable } from "./deepPush.js";
+import { noop } from "./noop.js";
 import { CustomTemplate } from "./Template.js";
 import { updateEffect } from "./updateEffect.js";
 
@@ -23,6 +24,7 @@ function clientRenderDirective<P>(
 export function directive<P>(callback: (element: P) => void): DirectiveTemplate<P> {
 	return {
 		callback: callback,
-		clientRender: clientRenderDirective
+		clientRender: clientRenderDirective,
+		serverRender: noop
 	};
 }

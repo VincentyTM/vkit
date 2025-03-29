@@ -1,5 +1,6 @@
 import { Bindings } from "./bind.js";
 import { Signal } from "./computed.js";
+import { ServerElement } from "./createServerElement.js";
 import { Pushable } from "./deepPush.js";
 
 export interface CustomTemplate<P> {
@@ -8,6 +9,11 @@ export interface CustomTemplate<P> {
 		template: CustomTemplate<P>,
 		context: unknown,
 		crossView: boolean
+	): void;
+
+	serverRender(
+		serverElement: ServerElement,
+		template: CustomTemplate<P>
 	): void;
 }
 

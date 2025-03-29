@@ -1,4 +1,5 @@
 import { clientRenderHTMLElement } from "./clientRenderHTMLElement.js";
+import { serverRenderHTMLElement } from "./serverRenderHTMLElement.js";
 import { CustomTemplate, Template } from "./Template.js";
 
 export interface HTMLElementTemplate<N extends keyof HTMLElementTagNameMap> extends CustomTemplate<unknown> {
@@ -41,7 +42,8 @@ export function htmlTag<N extends keyof HTMLElementTagNameMap>(tagName: N): () =
         return {
             child: arguments.length > 1 ? arguments : arguments[0],
             tagName: tagName,
-            clientRender: clientRenderHTMLElement
+            clientRender: clientRenderHTMLElement,
+            serverRender: serverRenderHTMLElement
         };
     };
 }
