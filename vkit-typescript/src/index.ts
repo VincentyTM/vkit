@@ -49,6 +49,7 @@ export { readOnly } from "./readOnly.js";
 export { ref } from "./ref.js";
 export { render } from "./render.js";
 export { renderToStream } from "./renderToStream.js";
+export { renderToString } from "./renderToString.js";
 export { repeat } from "./repeat.js";
 export { shadow } from "./shadow.js";
 export { signal, WritableSignal } from "./signal.js";
