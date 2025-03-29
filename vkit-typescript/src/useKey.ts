@@ -76,7 +76,7 @@ export function useKey<T>(
 	var keysAndRecordsSignal = computed(function(array: T[]) {
 		var records: Record<string, T> = {};
 		var n = array.length;
-		var keys = new Array(n);
+		var keys = new Array<string>(n);
 		
 		for (var i = 0; i < n; ++i) {
 			var value: T = array[i];
@@ -102,7 +102,7 @@ export function useKey<T>(
 	var keysSignal = computed(getKeys, [keysAndRecordsSignal]);
 	
 	function select<K extends string | Signal<string>>(key: K): KeyedSignal<T, K> {
-		var selected = computed(selectRecord, [keysAndRecordsSignal, key]) as unknown as KeyedSignal<T, K>;
+		var selected = computed(selectRecord, [keysAndRecordsSignal, key]) as Signal<T> as KeyedSignal<T, K>;
 		selected.key = key;
 		return selected;
 	}
