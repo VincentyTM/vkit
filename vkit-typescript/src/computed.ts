@@ -248,10 +248,6 @@ export function computed<F extends (...args: never[]) => unknown>(
 		var effect = getEffect(true);
 		
 		if (effect) {
-			if (effect === parent) {
-				throw new Error("A signal cannot be used in the reactive block it was created in");
-			}
-			
 			subscribe(function(): void {
 				updateEffect(effect!);
 			});
