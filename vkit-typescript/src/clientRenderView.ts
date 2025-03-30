@@ -1,21 +1,23 @@
+import { bind } from "./bind.js";
 import { createEffect } from "./createEffect.js";
-import { Pushable } from "./deepPush.js";
+import { deepPush, Pushable } from "./deepPush.js";
 import { insert } from "./insert.js";
 import { Template } from "./Template.js";
-import { enqueueUpdate } from "./update.js";
 import { updateEffect } from "./updateEffect.js";
 import { ViewTemplate } from "./view.js";
 
-export function clientRenderView<P extends ParentNode, T>(
+export function clientRenderView<P, T>(
 	array: Pushable<Template<P>>,
-	template: ViewTemplate<P, T>
+	template: ViewTemplate<P, T>,
+	parentElement: P
 ): void {
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
     var parentEffect = template.parentEffect;
+	var signal = template.signal;
 
-	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
-		var currentView = template.getTemplate(signal ? signal.get() : null);
+	var viewEffect = createEffect(parentEffect, parentEffect.injector, function(): void {
+		var innerTemplate = template.getTemplate(signal ? signal.get() : null);
 		var parent = start.parentNode;
 		
 		if (parent) {
@@ -23,22 +25,19 @@ export function clientRenderView<P extends ParentNode, T>(
 				parent.removeChild(el);
 			}
 
-			insert(currentView, end, parent as P, true);
+			insert(innerTemplate, end, parentElement, true);
+		} else {
+			array.push(start);
+			deepPush(array, innerTemplate, parentElement, bind, true);
+			array.push(end);
 		}
 	}, template.errorHandler);
 
-	var signal = template.signal;
+	updateEffect(viewEffect);
 	
 	if (signal !== null) {
 		signal.subscribe(function(): void {
-			updateEffect(effect);
+			updateEffect(viewEffect);
 		});
 	}
-	
-	enqueueUpdate(function(): void {
-		updateEffect(effect);
-	});
-
-    array.push(start);
-    array.push(end);
 }
