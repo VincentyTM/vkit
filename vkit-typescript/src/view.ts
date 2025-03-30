@@ -1,11 +1,17 @@
+import { clientRenderView } from "./clientRenderView.js";
 import { Signal } from "./computed.js";
-import { getEffect, getInjector } from "./contextGuard.js";
-import { createEffect } from "./createEffect.js";
+import { getEffect } from "./contextGuard.js";
+import { Effect } from "./createEffect.js";
 import { isSignal } from "./isSignal.js";
-import { nodeRange } from "./nodeRange.js";
-import { Template } from "./Template.js";
-import { enqueueUpdate } from "./update.js";
-import { updateEffect } from "./updateEffect.js";
+import { serverRenderView } from "./serverRenderView.js";
+import { CustomTemplate, Template } from "./Template.js";
+
+export interface ViewTemplate<P, T> extends CustomTemplate<P> {
+	readonly parentEffect: Effect;
+	readonly signal: Signal<T> | null;
+	errorHandler: ((error: unknown) => void) | undefined;
+	getTemplate(value: T | null): Template<P>;
+}
 
 /**
  * Creates a dynamic view (a part of the DOM) which is rerendered when any of its inputs change.
@@ -27,38 +33,17 @@ import { updateEffect } from "./updateEffect.js";
  * @param getTemplate A function that returns the current template.
  * @returns A template that represents a dynamic view hierarchy.
  */
-export function view<T, P>(getTemplate: (value: T | null) => Template<P>): Template<P>;
+export function view<P>(getTemplate: () => Template<P>): ViewTemplate<P, unknown>;
 
-export function view<T, P>(this: Signal<T>, getTemplate: (value: T | null) => Template<P>): Template<P>;
+export function view<P, T>(this: Signal<T>, getTemplate: (value: T) => Template<P>): ViewTemplate<P, T>;
 
-export function view<T, P>(this: Signal<T> | void, getTemplate: (value: T | null) => Template<P>): Template<P> {
-	var effect = createEffect(getEffect(), getInjector(), mount);
-	var range = nodeRange(true);
-	var signal: Signal<T> | null | void = this;
-	
-	if (isSignal(signal)) {
-		signal.subscribe(function(): void {
-			updateEffect(effect);
-		});
-	} else {
-		signal = null;
-	}
-	
-	function mount(): void {
-		var currentView = getTemplate(signal ? signal.get() : null);
-		
-		if (range.start.nextSibling) {
-			range.clear();
-			range.append(currentView);
-		}
-	}
-	
-	enqueueUpdate(function(): void {
-		updateEffect(effect);
-	});
-	
-	return [
-		range.start,
-		range.end
-	];
+export function view<P, T>(this: Signal<T> | void, getTemplate: (value: T) => Template<P>): ViewTemplate<P, T> {
+	return {
+		parentEffect: getEffect(),
+		signal: isSignal(this) ? this : null,
+		clientRender: clientRenderView,
+		errorHandler: undefined,
+		getTemplate: getTemplate,
+		serverRender: serverRenderView
+	};
 }
