@@ -13,20 +13,20 @@ import { toArray } from "./toArray.js";
 import { enqueueUpdate } from "./update.js";
 import { updateEffect } from "./updateEffect.js";
 
-type Block = {
+interface Block {
 	effect: Effect;
 	index: number;
-	insertBefore(anchor: Node): void;
 	range: NodeRange;
-};
+	insertBefore(anchor: Node): void;
+}
 
-type BlockInfo = {
+interface BlockInfo {
 	index: number;
-};
+}
 
-function createBlock<ItemT>(
-	model: ItemT,
-	getView: (value: ItemT, block?: BlockInfo) => Template,
+function createBlock<T>(
+	model: T,
+	getView: (value: T, block?: BlockInfo) => Template,
 	container: Effect | undefined,
 	injector: Injector | undefined
 ): Block {
@@ -81,18 +81,18 @@ function createBlock<ItemT>(
 	return block;
 }
 
-export function views<ViewT extends Template<ContextT>, ItemT, ContextT>(
-	this: Signal<ArrayLike<ItemT>>,
-	getItemView: (item: ItemT, block?: BlockInfo) => ViewT
-): Template<ContextT> {
-	var signal = this;
+export function views<T, P>(
+	this: Signal<ArrayLike<T>>,
+	getItemTemplate: (item: T, block?: BlockInfo) => Template<P>
+): Template<P> {
+	var input = this;
 	var container = getEffect();
 	var injector = getInjector();
 	var range = nodeRange();
 	var oldBlocks: {[key: string]: Block} = {};
 	var array: Block[] = [];
 	
-	function render(models: ArrayLike<ItemT>): void {
+	function render(models: ArrayLike<T>): void {
 		if (!isArray(models)) {
 			models = toArray(models);
 		}
@@ -109,9 +109,9 @@ export function views<ViewT extends Template<ContextT>, ItemT, ContextT>(
 				key = "_" + key;
 			}
 			
-			var block = newArray[i] = newBlocks[key] = oldBlocks[key] || createBlock<ItemT>(
+			var block = newArray[i] = newBlocks[key] = oldBlocks[key] || createBlock<T>(
 				model,
-				getItemView,
+				getItemTemplate,
 				container,
 				injector
 			);
@@ -160,10 +160,10 @@ export function views<ViewT extends Template<ContextT>, ItemT, ContextT>(
 		array = newArray;
 	}
 	
-	signal.subscribe(render);
+	input.subscribe(render);
 	
 	enqueueUpdate(function(): void {
-		render(signal.get());
+		render(input.get());
 	});
 	
 	return [
