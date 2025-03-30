@@ -5,7 +5,8 @@ var onEvent = $.onEvent;
 var onUnmount = $.onUnmount;
 var signal = $.signal;
 
-function useStorage(storageArea, key, win) {
+function useStorage(storageArea, key) {
+	var win = getWindow();
 	var storage = signal(storageArea.getItem(key));
 	
 	storage.subscribe(function(value) {
@@ -16,13 +17,15 @@ function useStorage(storageArea, key, win) {
 		}
 	});
 	
-	onUnmount(
-		onEvent(win || getWindow(), "storage", function(e) {
-			if (e.storageArea === storageArea && e.key === key) {
-				storage.set(e.newValue);
-			}
-		})
-	);
+	if (win) {
+		onUnmount(
+			onEvent(win, "storage", function(e) {
+				if (e.storageArea === storageArea && e.key === key) {
+					storage.set(e.newValue);
+				}
+			})
+		);
+	}
 	
 	return storage;
 }
