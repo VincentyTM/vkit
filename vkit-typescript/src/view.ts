@@ -9,7 +9,7 @@ import { updateEffect } from "./updateEffect.js";
 
 /**
  * Creates a dynamic view (a part of the DOM) which is rerendered when any of its inputs change.
- * The inputs can be declared by calling signals within the `getCurrentView` function.
+ * The inputs can be declared by calling signals within the `getTemplate` function.
  * @example
  * function MyComponent() {
  * 	const count = signal(0);
@@ -24,25 +24,17 @@ import { updateEffect } from "./updateEffect.js";
  * 	});
  * }
  * 
- * @param getCurrentView A function that returns the current view.
- * @returns The initial view.
+ * @param getTemplate A function that returns the current template.
+ * @returns A template that represents a dynamic view hierarchy.
  */
-export function view<ViewT extends Template<ContextT>, ValueT, ContextT>(
-	getCurrentView: (value: ValueT | null) => ViewT
-) : Template<ContextT>;
+export function view<T, P>(getTemplate: (value: T | null) => Template<P>): Template<P>;
 
-export function view<ViewT extends Template<ContextT>, ValueT, ContextT>(
-	this: Signal<ValueT>,
-	getCurrentView: (value: ValueT | null) => ViewT
-) : Template<ContextT>;
+export function view<T, P>(this: Signal<T>, getTemplate: (value: T | null) => Template<P>): Template<P>;
 
-export function view<ViewT extends Template<ContextT>, ValueT, ContextT>(
-	this: Signal<ValueT> | void,
-	getCurrentView: (value: ValueT | null) => ViewT
-) : Template<ContextT> {
+export function view<T, P>(this: Signal<T> | void, getTemplate: (value: T | null) => Template<P>): Template<P> {
 	var effect = createEffect(getEffect(), getInjector(), mount);
 	var range = nodeRange(true);
-	var signal: Signal<ValueT> | null | void = this;
+	var signal: Signal<T> | null | void = this;
 	
 	if (isSignal(signal)) {
 		signal.subscribe(function(): void {
@@ -52,8 +44,8 @@ export function view<ViewT extends Template<ContextT>, ValueT, ContextT>(
 		signal = null;
 	}
 	
-	function mount() {
-		var currentView = getCurrentView(signal ? signal.get() : null);
+	function mount(): void {
+		var currentView = getTemplate(signal ? signal.get() : null);
 		
 		if (range.start.nextSibling) {
 			range.clear();
