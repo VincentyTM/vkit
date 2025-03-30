@@ -13,27 +13,23 @@ import { toArray } from "./toArray.js";
 import { enqueueUpdate } from "./update.js";
 import { updateEffect } from "./updateEffect.js";
 
-export interface Block {
+interface Block {
 	effect: Effect;
 	index: number;
 	range: NodeRange;
 	insertBefore(anchor: Node): void;
 }
 
-export interface BlockInfo {
-	index: number;
-}
-
 function createBlock<T>(
 	model: T,
-	getView: (value: T, block?: BlockInfo) => Template,
+	getItemTemplate: (value: T) => Template,
 	container: Effect | undefined,
 	injector: Injector | undefined
 ): Block {
 	var range = nodeRange(true);
 	
 	var effect = createEffect(container, injector, function(): void {
-		var view = getView(model, block);
+		var view = getItemTemplate(model);
 		
 		if (range.start.nextSibling) {
 			range.clear();
@@ -83,7 +79,7 @@ function createBlock<T>(
 
 export function viewList<T, P>(
 	input: Signal<ArrayLike<T>>,
-	getItemTemplate: (item: T, block?: BlockInfo) => Template<P>
+	getItemTemplate: (item: T) => Template<P>
 ): Template<P> {
 	var container = getEffect();
 	var injector = getInjector();
