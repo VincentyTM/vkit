@@ -17,6 +17,7 @@ export { get } from "./get.js";
 export { getDocument } from "./getDocument.js";
 export { getWindow } from "./getWindow.js";
 export { history } from "./history.js";
+export { href } from "./href.js";
 export { html } from "./html.js";
 export { htmlTag } from "./htmlTag.js";
 export { htmlTags } from "./htmlTags.js";
