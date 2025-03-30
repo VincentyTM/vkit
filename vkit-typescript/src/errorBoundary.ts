@@ -1,7 +1,9 @@
+import { clientRenderView } from "./clientRenderView.js";
 import { getEffect } from "./contextGuard.js";
+import { serverRenderView } from "./serverRenderView.js";
 import { signal } from "./signal.js";
 import { Template } from "./Template.js";
-import { view } from "./view.js";
+import { ViewTemplate } from "./view.js";
 
 /**
  * Creates and returns an error boundary.
@@ -36,7 +38,7 @@ import { view } from "./view.js";
 export function errorBoundary<P extends Element>(
 	getTemplate: () => Template<P>,
 	getFallbackTemplate: (error: unknown, retry: () => void) => Template<P>
-) {
+): ViewTemplate<P, void> {
 	var error: unknown;
 	var isFailed = signal(false);
 	
@@ -44,26 +46,30 @@ export function errorBoundary<P extends Element>(
 		error = undefined;
 		isFailed.set(false);
 	}
-
+	
 	function errorHandler(ex: unknown): void {
 		error = ex;
 		isFailed.set(true);
 	}
-
+	
 	function getOuterTemplate(): Template<P> {
 		if (isFailed()) {
 			return getFallbackTemplate(error, retry);
 		}
 		
-		getEffect().errorHandler = errorHandler;
-		
 		try {
 			return getTemplate();
 		} catch (ex) {
-			error = ex;
-			isFailed.set(true);
+			return getFallbackTemplate(ex, retry);
 		}
 	}
-	
-	return view(getOuterTemplate);
+
+	return {
+		parentEffect: getEffect(),
+		signal: null,
+		clientRender: clientRenderView,
+		errorHandler: errorHandler,
+		getTemplate: getOuterTemplate,
+		serverRender: serverRenderView
+	};
 }

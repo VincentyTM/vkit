@@ -11,7 +11,12 @@ export function clientRenderView<P, T>(
 	template: ViewTemplate<P, T>
 ): void {
     var parentEffect = template.parentEffect;
-	var effect = createEffect(parentEffect, parentEffect.injector, mount);
+	var effect = createEffect(
+        parentEffect,
+        parentEffect.injector,
+        updateHandler,
+        template.errorHandler
+    );
 	var range = nodeRange(true);
 	var signal = template.signal;
 	
@@ -21,7 +26,7 @@ export function clientRenderView<P, T>(
 		});
 	}
 	
-	function mount(): void {
+	function updateHandler(): void {
 		var currentView = template.getTemplate(signal ? signal.get() : null);
 		
 		if (range.start.nextSibling) {
