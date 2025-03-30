@@ -18,7 +18,12 @@ function createScript(url, options) {
 		options = {};
 	}
 	
-	var d = options.document || getWindow().document;
+	var win = getWindow();
+	var d = options.document || (win ? win.document : null);
+	
+	if (!d) {
+		return promise(function() {});
+	}
 	
 	return promise(function(resolve, reject) {
 		var t = d.getElementsByTagName("script")[0];
