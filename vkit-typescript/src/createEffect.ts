@@ -6,7 +6,6 @@ export interface Effect {
 	readonly injector: Injector | undefined;
 	isRendering: boolean;
 	readonly parent: Effect | undefined;
-	stack: string | undefined;
     errorHandler: ((error: unknown) => void) | undefined;
 	updateHandler(): void;
 }
@@ -23,7 +22,6 @@ export function createEffect(
 		injector: injector,
 		isRendering: false,
 		parent: parentEffect,
-		stack: new Error().stack,
 		errorHandler: errorHandler,
 		updateHandler: updateHandler
 	};
