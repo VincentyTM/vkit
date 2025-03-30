@@ -3,12 +3,12 @@ import { remove } from "./remove.js";
 import { Template } from "./Template.js";
 
 export interface NodeRange {
+	readonly end: ChildNode;
+	readonly start: ChildNode;
 	append(...children: Template[]): void;
 	clear(): void;
-	end: ChildNode;
 	insertBefore(anchor: Node): void;
 	remove(): void;
-	start: ChildNode;
 }
 
 export function nodeRange(crossView?: boolean) : NodeRange {
