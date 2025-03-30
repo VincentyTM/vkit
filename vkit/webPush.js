@@ -1,7 +1,9 @@
 (function($) {
 
+var computed = $.computed;
 var getWindow = $.getWindow;
 var map = $.map;
+var noop = $.noop;
 var notification = $.notification;
 var readOnly = $.readOnly;
 var signal = $.signal;
@@ -43,6 +45,15 @@ function createWebPushManager(serviceWorker, serverKey) {
 	}
 	
 	var win = getWindow();
+	
+	if (!win) {
+		var result = computed(function() {
+			return null;
+		});
+		result.onError = noop;
+		return result;
+	}
+	
 	var nav = win.navigator;
 	var permission = notification(onError, win).permission;
 	var subscription = signal(null);
