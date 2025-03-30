@@ -5,7 +5,6 @@ import { destroyEffect } from "./destroyEffect.js";
 import { hashCode } from "./hashCode.js";
 import { insert } from "./insert.js";
 import { isArray } from "./isArray.js";
-import { nodeRange, NodeRange } from "./nodeRange.js";
 import { Template } from "./Template.js";
 import { throwError } from "./throwError.js";
 import { toArray } from "./toArray.js";
@@ -14,22 +13,24 @@ import { updateEffect } from "./updateEffect.js";
 import { ViewListTemplate } from "./viewList.js";
 
 export interface Block {
-	effect: Effect;
+	readonly effect: Effect;
+	readonly end: ChildNode;
 	index: number;
-	range: NodeRange;
-	insertBefore(anchor: Node): void;
+	readonly start: ChildNode;
+	render(): void;
 }
 
 export function clientRenderViewList<T, P>(
 	array: Pushable<Template<P>>,
 	template: ViewListTemplate<T, P>
 ): void {
+	var listStart = document.createTextNode("");
+	var listEnd = document.createTextNode("");
     var input = template.models;
     var getItemTemplate = template.getItemTemplate;
 	var parentEffect = getEffect();
-	var range = nodeRange();
-	var oldBlocks: {[key: string]: Block} = {};
-	var blocksArray: Block[] = [];
+	var blockMap: Record<string, Block> = {};
+	var blockArray: Block[] = [];
 	
 	function render(models: ArrayLike<T>): void {
 		if (!isArray(models)) {
@@ -38,7 +39,7 @@ export function clientRenderViewList<T, P>(
 		
 		var newBlocks: {[key: string]: Block} = {};
 		var n = models.length;
-		var newArray = new Array(n);
+		var newArray = new Array<Block>(n);
 		
 		for (var i = 0; i < n; ++i) {
 			var model = models[i];
@@ -48,7 +49,7 @@ export function clientRenderViewList<T, P>(
 				key = "_" + key;
 			}
 			
-			var block = newArray[i] = newBlocks[key] = oldBlocks[key] || createBlock<T>(
+			var block = newArray[i] = newBlocks[key] = blockMap[key] || createBlock<T>(
 				model,
 				getItemTemplate,
 				parentEffect
@@ -57,45 +58,81 @@ export function clientRenderViewList<T, P>(
 			block.index = i;
 		}
 		
-		for (var key in oldBlocks) {
+		for (var key in blockMap) {
 			if (!(key in newBlocks)) {
-				var block = oldBlocks[key];
-				block.range.remove();
+				var block = blockMap[key];
+				var blockStart = block.start;
+				var blockEnd = block.end;
+
+				clearRange(blockStart, blockEnd);
+
+				var blockParent = blockStart.parentNode;
+
+				if (blockParent) {
+					blockParent.removeChild(blockStart);
+					blockParent.removeChild(blockEnd);
+				}
+				
 				destroyEffect(block.effect);
 			}
 		}
 		
-		oldBlocks = newBlocks;
+		blockMap = newBlocks;
 		
-		if (range.start.nextSibling) {
-			var m = blocksArray.length;
+		if (listStart.nextSibling) {
+			var m = blockArray.length;
 			var l = m;
 			
-			while (m > 0 && n > 0 && blocksArray[m - 1] === newArray[n - 1]) {
+			while (m > 0 && n > 0 && blockArray[m - 1] === newArray[n - 1]) {
 				--m;
 				--n;
 			}
 			
 			if (n === 0 && m === 0) {
-				blocksArray = newArray;
+				blockArray = newArray;
 				return;
 			}
 			
 			var i = 0;
 			var k = Math.min(m, n);
-			var end = m < l ? blocksArray[m].range.start : range.end;
+			var end = m < l ? blockArray[m].start : listEnd;
 			
-			while (i < k && blocksArray[i] === newArray[i]) {
+			while (i < k && blockArray[i] === newArray[i]) {
 				++i;
 			}
 			
 			while (i < n) {
-				newArray[i].insertBefore(end);
+				var block = newArray[i];
+
+				if (block.start.nextSibling) {
+					insertRangeBefore(block.start, block.end, end);
+				} else {
+					var prevEffect = getEffect(true);
+					var prevInjector = getInjector(true);
+					
+					try {
+						setEffect(block.effect);
+						setInjector(block.effect.injector);
+			
+						enqueueUpdate(block.render);
+			
+						insert([
+							block.start,
+							block.end
+						], end, end.parentNode, true);
+					} catch (error) {
+						throwError(error, block.effect);
+					} finally {
+						setEffect(prevEffect);
+						setInjector(prevInjector);
+					}
+				}
+
 				++i;
 			}
 		}
 		
-		blocksArray = newArray;
+		blockArray = newArray;
 	}
 	
 	input.subscribe(render);
@@ -104,8 +141,22 @@ export function clientRenderViewList<T, P>(
 		render(input.get());
 	});
 	
-	array.push(range.start);
-	array.push(range.end);
+	array.push(listStart);
+	array.push(listEnd);
+}
+
+function clearRange(start: Node, end: Node): void {
+	if (!start.nextSibling) {
+		throw new Error("Cannot clear detached range");
+	}
+	
+	var parent = start.parentNode;
+	
+	if (parent) {
+		for (var el = end.previousSibling; el && el !== start; el = end.previousSibling) {
+			parent.removeChild(el);
+		}
+	}
 }
 
 function createBlock<T>(
@@ -113,14 +164,15 @@ function createBlock<T>(
 	getView: (value: T) => Template,
 	parentEffect: Effect
 ): Block {
-	var range = nodeRange(true);
+	var start = document.createTextNode("");
+	var end = document.createTextNode("");
 	
 	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
 		var view = getView(model);
 		
-		if (range.start.nextSibling) {
-			range.clear();
-			range.append(view);
+		if (start.nextSibling) {
+			clearRange(start, end);
+			insert(view, end, start.parentNode, true);
 		}
 	});
 	
@@ -128,38 +180,29 @@ function createBlock<T>(
 		updateEffect(effect);
 	}
 	
-	function insertBefore(end: Node): void {
-		if (range.start.nextSibling) {
-			range.insertBefore(end);
-		} else {
-			var prevEffect = getEffect(true);
-			var prevInjector = getInjector(true);
-			
-			try {
-				setEffect(effect);
-				setInjector(effect.injector);
-
-				enqueueUpdate(render);
-
-				insert([
-					range.start,
-					range.end
-				], end, end.parentNode, true);
-			} catch (error) {
-				throwError(error, effect);
-			} finally {
-				setEffect(prevEffect);
-				setInjector(prevInjector);
-			}
-		}
-	}
-	
 	var block = {
 		effect: effect,
+		end: end,
 		index: 0,
-		insertBefore: insertBefore,
-		range: range
+		start: start,
+		render: render
 	};
 
 	return block;
+}
+
+function insertRangeBefore(start: ChildNode, end: ChildNode, anchor: Node): void {
+	if (!start.nextSibling) {
+		throw new Error("Cannot insert detached range");
+	}
+	
+	var parent = anchor.parentNode;
+	
+	if (parent) {
+		for (var el: ChildNode | null = start; el && el !== end; el = next) {
+			var next: ChildNode | null = el.nextSibling;
+			parent.insertBefore(el, anchor);
+		}
+		parent.insertBefore(end, anchor);
+	}
 }
