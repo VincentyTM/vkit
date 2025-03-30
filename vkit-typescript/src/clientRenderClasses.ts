@@ -1,5 +1,4 @@
 import { BooleanValue, ClassArgument, ClassesTemplate, NoClass } from "./classes.js";
-import { Signal } from "./computed.js";
 import { Pushable } from "./deepPush.js";
 import { effect } from "./effect.js";
 import { isArrayLike } from "./isArrayLike.js";
