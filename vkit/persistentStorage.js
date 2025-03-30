@@ -1,5 +1,6 @@
 (function($) {
 
+var computed = $.computed;
 var getWindow = $.getWindow;
 var noop = $.noop;
 var permission = $.permission;
@@ -8,7 +9,23 @@ var signal = $.signal;
 var update = $.update;
 
 function persistentStorage() {
-	var nav = getWindow().navigator;
+	var win = getWindow();
+	
+	if (!win) {
+		return {
+			permission: computed(function() {
+				return {
+					state: "default"
+				};
+			}),
+			
+			persisted: computed(function() {
+				return false;
+			})
+		};
+	}
+	
+	var nav = win.navigator;
 	
 	function requestPermission(grant, deny) {
 		if (isSupported) {
