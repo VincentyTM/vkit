@@ -9,8 +9,9 @@ import { getWindow } from "./getWindow.js";
  * 	console.log("Document:", getDocument());
  * });
  * 
- * @returns The current document.
+ * @returns The document of the current window or null if it does not exist.
  */
 export function getDocument(): Document | null {
-	return getWindow()!.document;
+	var win = getWindow();
+	return win ? win.document : null;
 }
