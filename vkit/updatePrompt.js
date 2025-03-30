@@ -11,9 +11,13 @@ function getInstalling(reg) {
 	return reg ? reg.installing : null;
 }
 
-function createUpdatePrompt(serviceWorker, message, win) {
-	if(!win){
-		win = getWindow();
+function createUpdatePrompt(serviceWorker, message) {
+	var win = getWindow();
+	
+	if (!win) {
+		return computed(function() {
+			return null;
+		});
 	}
 	
 	var updatePrompt = signal(null);
