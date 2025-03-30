@@ -22,13 +22,13 @@ export function preferredLanguages(): Signal<readonly string[]> {
 	var win = getWindow();
 
 	if (!win) {
-        var headers = inject(RenderConfigService).headers;
+        var request = inject(RenderConfigService).request;
     
-        if (headers === undefined) {
+        if (request === undefined) {
             return computed(getEmptyArray);
         }
         
-        var header = headers["accept-language"];
+        var header = request.headers["accept-language"];
         var langs = typeof header === "string" ? header.replace(/\s+/g, "").split(",") : [];
         
         for (var i = langs.length; i--;) {

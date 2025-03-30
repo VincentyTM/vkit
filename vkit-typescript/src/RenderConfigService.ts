@@ -2,12 +2,17 @@ import { createInjectable } from "./createInjectable.js";
 
 export interface RenderConfig {
     doRunEffects: boolean;
-    headers: Record<string, string | string[] | undefined> | undefined;
+    request: ServerRequest | undefined;
+}
+
+interface ServerRequest {
+    headers: Record<string, string | string[] | undefined>;
+    url: string;
 }
 
 export var RenderConfigService = createInjectable(function(): RenderConfig {
     return {
         doRunEffects: true,
-        headers: undefined
+        request: undefined
     };
 });
