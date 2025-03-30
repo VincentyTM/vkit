@@ -2,14 +2,14 @@ import { insert } from "./insert.js";
 import { remove } from "./remove.js";
 import { Template } from "./Template.js";
 
-export type NodeRange = {
+export interface NodeRange {
 	append(...children: Template[]): void;
 	clear(): void;
 	end: ChildNode;
 	insertBefore(anchor: Node): void;
 	remove(): void;
 	start: ChildNode;
-};
+}
 
 export function nodeRange(crossView?: boolean) : NodeRange {
 	var start: ChildNode = document.createTextNode("");
@@ -39,7 +39,7 @@ export function nodeRange(crossView?: boolean) : NodeRange {
 		if (!start.nextSibling) {
 			throw new Error("Cannot append to detached range");
 		}
-		insert(arguments, end, (start as any).parentNode, crossView);
+		insert(arguments, end, start.parentNode, crossView);
 	}
 	
 	function insertBefore(anchor: Node): void {
