@@ -1,15 +1,33 @@
 (function($) {
 
-var getEffect = $.getEffect;
+var computed = $.computed;
 var getWindow = $.getWindow;
+var noop = $.noop;
 var onDestroy = $.onDestroy;
 var onEvent = $.onEvent;
 var signal = $.signal;
 var update = $.update;
 
 function createNotificationManager() {
-	var component = getEffect();
 	var win = getWindow();
+	
+	if (!win) {
+		return {
+			granted: function() {
+				return false;
+			},
+			permission: computed(function() {
+				return {
+					state: "default"
+				};
+			}),
+			requestPermission: noop,
+			show: function() {
+				return null;
+			}
+		};
+	}
+	
 	var nav = win.navigator;
 	var Notification = win.Notification;
 	var isSupported = typeof Notification === "function";
