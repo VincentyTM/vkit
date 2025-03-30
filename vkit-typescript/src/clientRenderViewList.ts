@@ -1,6 +1,5 @@
 import { getEffect, getInjector, setEffect, setInjector } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
-import { Injector } from "./createInjector.js";
 import { Pushable } from "./deepPush.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { hashCode } from "./hashCode.js";
@@ -28,7 +27,6 @@ export function clientRenderViewList<T, P>(
     var input = template.models;
     var getItemTemplate = template.getItemTemplate;
 	var parentEffect = getEffect();
-	var injector = parentEffect.injector;
 	var range = nodeRange();
 	var oldBlocks: {[key: string]: Block} = {};
 	var blocksArray: Block[] = [];
@@ -53,8 +51,7 @@ export function clientRenderViewList<T, P>(
 			var block = newArray[i] = newBlocks[key] = oldBlocks[key] || createBlock<T>(
 				model,
 				getItemTemplate,
-				parentEffect,
-				injector
+				parentEffect
 			);
 
 			block.index = i;
@@ -114,12 +111,11 @@ export function clientRenderViewList<T, P>(
 function createBlock<T>(
 	model: T,
 	getView: (value: T) => Template,
-	container: Effect | undefined,
-	injector: Injector | undefined
+	parentEffect: Effect
 ): Block {
 	var range = nodeRange(true);
 	
-	var effect = createEffect(container, injector, function(): void {
+	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
 		var view = getView(model);
 		
 		if (range.start.nextSibling) {
@@ -141,7 +137,7 @@ function createBlock<T>(
 			
 			try {
 				setEffect(effect);
-				setInjector(injector);
+				setInjector(effect.injector);
 
 				enqueueUpdate(render);
 
