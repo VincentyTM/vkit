@@ -10,7 +10,7 @@ var update = $.update;
 function createInstallPrompt() {
 	var win = getWindow();
 	
-	var isAppInstalled = (
+	var isAppInstalled = !!win && (
 		win.navigator.standalone ||
 		(win.matchMedia && win.matchMedia("(display-mode: standalone) or (display-mode: fullscreen) or (display-mode: minimal-ui)").matches) ||
 		win.document.referrer.indexOf("android-app://") > -1
@@ -46,8 +46,10 @@ function createInstallPrompt() {
 		result.set("dismissed");
 	}
 	
-	onUnmount(onEvent(win, "beforeinstallprompt", beforeInstall));
-	onUnmount(onEvent(win, "appinstalled", appInstalled));
+	if (win) {
+		onUnmount(onEvent(win, "beforeinstallprompt", beforeInstall));
+		onUnmount(onEvent(win, "appinstalled", appInstalled));
+	}
 	
 	var installPromptState = readOnly(installPrompt);
 	installPromptState.result = readOnly(result);
