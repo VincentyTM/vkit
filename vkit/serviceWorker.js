@@ -6,9 +6,17 @@ var signal = $.signal;
 var update = $.update;
 
 function serviceWorker(src, options) {
-	var nav = getWindow().navigator;
+	var win = getWindow();
 	var error = signal(null);
 	var registration = signal(null);
+	
+	if (!win) {
+		var result = readOnly(registration);
+		result.onError = error.subscribe;
+		return result;
+	}
+	
+	var nav = win.navigator;
 	
 	if (nav.serviceWorker && typeof nav.serviceWorker.register === "function") {
 		nav.serviceWorker.register(src, options).then(function(reg) {
