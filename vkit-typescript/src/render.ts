@@ -6,6 +6,7 @@ import { destroyEffect } from "./destroyEffect.js";
 import { WindowService } from "./getWindow.js";
 import { inject } from "./inject.js";
 import { Template } from "./Template.js";
+import { update } from "./update.js";
 import { updateEffect } from "./updateEffect.js";
 
 export interface RenderRoot {
@@ -48,6 +49,7 @@ export function render<P extends Node>(getTemplate: () => Template<P>, container
 	});
 
 	updateEffect(rootEffect);
+	update();
 	
 	return {
 		destroy: function(): void {

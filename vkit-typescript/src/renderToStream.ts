@@ -8,6 +8,7 @@ import { RenderConfig, RenderConfigService } from "./RenderConfigService.js";
 import { serverRender } from "./serverRender.js";
 import { StreamWriter } from "./StreamWriter.js";
 import { Template } from "./Template.js";
+import { update } from "./update.js";
 import { updateEffect } from "./updateEffect.js";
 import { writeServerNode } from "./writeServerNode.js";
 
@@ -36,5 +37,6 @@ export function renderToStream(
 	});
 
 	updateEffect(effect);
+	update();
 	destroyEffect(effect);
 }
