@@ -15,7 +15,6 @@ export interface Block {
 	readonly end: ChildNode;
 	index: number;
 	readonly start: ChildNode;
-	render(): void;
 }
 
 export function clientRenderViewList<T, P extends ParentNode>(
@@ -113,7 +112,7 @@ export function clientRenderViewList<T, P extends ParentNode>(
 						listParent.insertBefore(block.end, end);
 					}
 
-					block.render();
+					updateEffect(block.effect);
 				}
 
 				++i;
@@ -128,7 +127,7 @@ export function clientRenderViewList<T, P extends ParentNode>(
 				var block = newBlockArray[i];
 				parentElement.insertBefore(block.start, listEnd);
 				parentElement.insertBefore(block.end, listEnd);
-				block.render();
+				updateEffect(block.effect);
 			}
 		}
 		
@@ -169,16 +168,11 @@ function createBlock<T>(
 		}
 	});
 	
-	function render(): void {
-		updateEffect(effect);
-	}
-	
 	var block: Block = {
 		effect: effect,
 		end: end,
 		index: 0,
-		start: start,
-		render: render
+		start: start
 	};
 
 	return block;
