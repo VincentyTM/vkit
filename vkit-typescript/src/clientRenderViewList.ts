@@ -37,19 +37,19 @@ export function clientRenderViewList<T, P>(
 			models = toArray(models);
 		}
 		
-		var newBlocks: {[key: string]: Block} = {};
 		var n = models.length;
-		var newArray = new Array<Block>(n);
+		var newBlockArray = new Array<Block>(n);
+		var newBlockMap: Record<string, Block> = {};
 		
 		for (var i = 0; i < n; ++i) {
 			var model = models[i];
 			var key = hashCode(model);
 			
-			while (key in newBlocks) {
+			while (key in newBlockMap) {
 				key = "_" + key;
 			}
 			
-			var block = newArray[i] = newBlocks[key] = blockMap[key] || createBlock<T>(
+			var block = newBlockArray[i] = newBlockMap[key] = blockMap[key] || createBlock<T>(
 				model,
 				getItemTemplate,
 				parentEffect
@@ -59,7 +59,7 @@ export function clientRenderViewList<T, P>(
 		}
 		
 		for (var key in blockMap) {
-			if (!(key in newBlocks)) {
+			if (!(key in newBlockMap)) {
 				var block = blockMap[key];
 				var blockStart = block.start;
 				var blockEnd = block.end;
@@ -77,19 +77,19 @@ export function clientRenderViewList<T, P>(
 			}
 		}
 		
-		blockMap = newBlocks;
+		blockMap = newBlockMap;
 		
 		if (listStart.nextSibling) {
 			var m = blockArray.length;
 			var l = m;
 			
-			while (m > 0 && n > 0 && blockArray[m - 1] === newArray[n - 1]) {
+			while (m > 0 && n > 0 && blockArray[m - 1] === newBlockArray[n - 1]) {
 				--m;
 				--n;
 			}
 			
 			if (n === 0 && m === 0) {
-				blockArray = newArray;
+				blockArray = newBlockArray;
 				return;
 			}
 			
@@ -97,12 +97,12 @@ export function clientRenderViewList<T, P>(
 			var k = Math.min(m, n);
 			var end = m < l ? blockArray[m].start : listEnd;
 			
-			while (i < k && blockArray[i] === newArray[i]) {
+			while (i < k && blockArray[i] === newBlockArray[i]) {
 				++i;
 			}
 			
 			while (i < n) {
-				var block = newArray[i];
+				var block = newBlockArray[i];
 
 				if (block.start.nextSibling) {
 					insertRangeBefore(block.start, block.end, end);
@@ -132,7 +132,7 @@ export function clientRenderViewList<T, P>(
 			}
 		}
 		
-		blockArray = newArray;
+		blockArray = newBlockArray;
 	}
 	
 	input.subscribe(render);
@@ -161,18 +161,18 @@ function clearRange(start: Node, end: Node): void {
 
 function createBlock<T>(
 	model: T,
-	getView: (value: T) => Template,
+	getItemTemplate: (value: T) => Template,
 	parentEffect: Effect
 ): Block {
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
 	
 	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
-		var view = getView(model);
+		var itemTemplate = getItemTemplate(model);
 		
 		if (start.nextSibling) {
 			clearRange(start, end);
-			insert(view, end, start.parentNode, true);
+			insert(itemTemplate, end, start.parentNode, true);
 		}
 	});
 	
@@ -180,7 +180,7 @@ function createBlock<T>(
 		updateEffect(effect);
 	}
 	
-	var block = {
+	var block: Block = {
 		effect: effect,
 		end: end,
 		index: 0,
