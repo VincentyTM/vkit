@@ -113,13 +113,15 @@ export function clientRenderViewList<T, P>(
 					try {
 						setEffect(block.effect);
 						setInjector(block.effect.injector);
-			
+						
 						enqueueUpdate(block.render);
-			
-						insert([
-							block.start,
-							block.end
-						], end, end.parentNode, true);
+
+						var listParent = end.parentNode;
+
+						if (listParent) {
+							listParent.insertBefore(block.start, end);
+							listParent.insertBefore(block.end, end);
+						}
 					} catch (error) {
 						throwError(error, block.effect);
 					} finally {
