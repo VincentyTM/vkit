@@ -11,7 +11,7 @@ export interface NodeRange {
 	remove(): void;
 }
 
-export function nodeRange(crossView?: boolean) : NodeRange {
+export function nodeRange(crossView: boolean) : NodeRange {
 	var start: ChildNode = document.createTextNode("");
 	var end: ChildNode = document.createTextNode("");
 	

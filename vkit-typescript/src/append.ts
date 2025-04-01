@@ -12,9 +12,9 @@ export function append<P>(
 	bind: (
 		target: P,
 		modifier: Bindings<P>,
-		isExternal?: boolean
+		isExternal: boolean
 	) => void,
-	crossView?: boolean
+	crossView: boolean
 ): void {
 	function push(node: Node): void {
 		parent.appendChild(node);
@@ -28,7 +28,7 @@ export function append<P>(
 			children,
 			context,
 			bind,
-			!!crossView
+			crossView
 		);
 		
 		parent.append.apply(parent, array);
@@ -38,7 +38,7 @@ export function append<P>(
 			children,
 			context,
 			bind,
-			!!crossView
+			crossView
 		);
 	}
 }

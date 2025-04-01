@@ -10,6 +10,6 @@ export function clientRenderHTMLElement<N extends keyof HTMLElementTagNameMap>(
 	crossView: boolean
 ): void {
 	var element = document.createElement(template.tagName);
-	append(element, template.child, element, bind);
+	append(element, template.child, element, bind, crossView);
 	deepPush(array, element, context, bind, crossView);
 }

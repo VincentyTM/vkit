@@ -17,7 +17,7 @@ export function deepPush<P>(
 	bind: (
 		target: P,
 		modifier: Bindings<P>,
-		isExternal?: boolean
+		isExternal: boolean
 	) => void,
 	crossView: boolean
 ): Pushable<Template<P>> {

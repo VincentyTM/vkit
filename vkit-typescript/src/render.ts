@@ -44,7 +44,8 @@ export function render<P extends Node>(getTemplate: () => Template<P>, container
 			container,
 			getTemplate(),
 			container,
-			bind
+			bind,
+			false
 		);
 	});
 

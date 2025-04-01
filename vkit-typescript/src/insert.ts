@@ -6,7 +6,7 @@ export function insert<P>(
 	children: Template<P>,
 	nextSibling: Node,
 	context: P,
-	crossView?: boolean
+	crossView: boolean
 ): void {
 	var parent = nextSibling.parentNode;
 	
@@ -26,7 +26,7 @@ export function insert<P>(
 			children,
 			context,
 			bind,
-			!!crossView
+			crossView
 		);
 		
 		(nextSibling as any).before.apply(nextSibling, array);
@@ -36,7 +36,7 @@ export function insert<P>(
 			children,
 			context,
 			bind,
-			!!crossView
+			crossView
 		);
 	}
 }
