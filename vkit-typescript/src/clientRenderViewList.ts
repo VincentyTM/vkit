@@ -7,7 +7,6 @@ import { insert } from "./insert.js";
 import { isArray } from "./isArray.js";
 import { Template } from "./Template.js";
 import { toArray } from "./toArray.js";
-import { enqueueUpdate } from "./update.js";
 import { updateEffect } from "./updateEffect.js";
 import { ViewListTemplate } from "./viewList.js";
 
@@ -19,9 +18,10 @@ export interface Block {
 	render(): void;
 }
 
-export function clientRenderViewList<T, P>(
-	array: Pushable<Template<P>>,
-	template: ViewListTemplate<T, P>
+export function clientRenderViewList<T, P extends ParentNode>(
+	_array: Pushable<Template<P>>,
+	template: ViewListTemplate<T, P>,
+	parentElement: P
 ): void {
 	var listStart = document.createTextNode("");
 	var listEnd = document.createTextNode("");
@@ -118,19 +118,24 @@ export function clientRenderViewList<T, P>(
 
 				++i;
 			}
+		} else {
+			var m = newBlockArray.length;
+		
+			parentElement.appendChild(listStart);
+			parentElement.appendChild(listEnd);
+		
+			for (var i = 0; i < m; ++i) {
+				var block = newBlockArray[i];
+				parentElement.insertBefore(block.start, listEnd);
+				parentElement.insertBefore(block.end, listEnd);
+				block.render();
+			}
 		}
 		
 		blockArray = newBlockArray;
 	}
 	
-	input.subscribe(render);
-	
-	enqueueUpdate(function(): void {
-		render(input.get());
-	});
-	
-	array.push(listStart);
-	array.push(listEnd);
+	input.effect(render);
 }
 
 function clearRange(start: Node, end: Node): void {
