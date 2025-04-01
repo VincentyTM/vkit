@@ -1,4 +1,4 @@
-import { getEffect, getInjector, setEffect, setInjector } from "./contextGuard.js";
+import { getEffect } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { Pushable } from "./deepPush.js";
 import { destroyEffect } from "./destroyEffect.js";
@@ -6,7 +6,6 @@ import { hashCode } from "./hashCode.js";
 import { insert } from "./insert.js";
 import { isArray } from "./isArray.js";
 import { Template } from "./Template.js";
-import { throwError } from "./throwError.js";
 import { toArray } from "./toArray.js";
 import { enqueueUpdate } from "./update.js";
 import { updateEffect } from "./updateEffect.js";
@@ -107,27 +106,14 @@ export function clientRenderViewList<T, P>(
 				if (block.start.nextSibling) {
 					insertRangeBefore(block.start, block.end, end);
 				} else {
-					var prevEffect = getEffect(true);
-					var prevInjector = getInjector(true);
-					
-					try {
-						setEffect(block.effect);
-						setInjector(block.effect.injector);
+					var listParent = end.parentNode;
 
-						var listParent = end.parentNode;
-
-						if (listParent) {
-							listParent.insertBefore(block.start, end);
-							listParent.insertBefore(block.end, end);
-						}
-
-						block.render();
-					} catch (error) {
-						throwError(error, block.effect);
-					} finally {
-						setEffect(prevEffect);
-						setInjector(prevInjector);
+					if (listParent) {
+						listParent.insertBefore(block.start, end);
+						listParent.insertBefore(block.end, end);
 					}
+
+					block.render();
 				}
 
 				++i;
