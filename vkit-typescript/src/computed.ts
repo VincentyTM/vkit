@@ -182,10 +182,10 @@ export function computed<F extends (...args: never[]) => unknown>(
 	type Subscription = {callback: ((value: Value) => void) | null};
 	type Value = ReturnType<F>;
 
-	var parent = getEffect(true);
+	var parentEffect = getEffect(true);
 	var subscriptions: Subscription[] = [];
 	var value: Value = none as Value;
-	var effectOfSignal = createEffect(parent, getInjector(true), computeValue);
+	var effectOfSignal = createEffect(parentEffect, getInjector(true), computeValue);
 
 	function invalidate(): void {
 		updateEffect(effectOfSignal);
@@ -283,14 +283,14 @@ export function computed<F extends (...args: never[]) => unknown>(
 			}
 		}
 		
-		if (effect !== parent && !persistent) {
+		if (effect !== parentEffect && !persistent) {
 			onDestroy(unsubscribe);
 		}
 		
 		return unsubscribe;
 	}
 	
-	use.parentEffect = parent;
+	use.parentEffect = parentEffect;
 	use.effect = signalEffect;
 	use.get = get;
 	use.invalidate = invalidate;

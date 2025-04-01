@@ -66,7 +66,7 @@ export function signal<T>(value: T): WritableSignal<T> {
 		callback: ((value: T) => void) | null;
 	};
 
-	var parent = getEffect(true);
+	var parentEffect = getEffect(true);
 	var subscriptions: Subscription[] = [];
 	var enqueued = false;
 	
@@ -106,7 +106,7 @@ export function signal<T>(value: T): WritableSignal<T> {
 			}
 		}
 		
-		if (component !== parent && !persistent) {
+		if (component !== parentEffect && !persistent) {
 			onDestroy(unsubscribe);
 		}
 		
@@ -137,7 +137,7 @@ export function signal<T>(value: T): WritableSignal<T> {
 		}
 	}
 	
-	use.parentEffect = parent;
+	use.parentEffect = parentEffect;
 	use.effect = signalEffect;
 	use.get = get;
 	use.isSignal = true;

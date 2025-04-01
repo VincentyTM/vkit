@@ -15,10 +15,10 @@ export function signalEffect<T>(
 	) => void
 ): () => void {
 	var signal = this;
-	var prev = getEffect(true);
+	var parentEffect = getEffect(true);
 	
-	if (prev) {
-		var effect = createEffect(prev, getInjector(), function(): void {
+	if (parentEffect) {
+		var effect = createEffect(parentEffect, getInjector(), function(): void {
 			callback(signal.get(), onDestroy);
 		});
 
