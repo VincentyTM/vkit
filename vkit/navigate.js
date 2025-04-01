@@ -1,24 +1,18 @@
-(function($, window) {
+(function($) {
 
-var history = $.history;
+var isSignal = $.isSignal;
 var observable = $.observable;
 
 var emitNavigate = observable();
 
-function navigate(url, win, noScroll) {
-	if (!win) {
-		win = window;
-	}
-	
-	if (typeof url.get === "function") {
-		url = url.get();
-	}
+function navigate(win, url) {
+	var currentURL = isSignal(url) ? url.get() : url;
 	
 	if (emitNavigate.count() > 0) {
 		var prevented = false;
 		
 		emitNavigate({
-			url: url,
+			url: currentURL,
 			window: win,
 			prevent: function() {
 				prevented = true;
@@ -30,14 +24,21 @@ function navigate(url, win, noScroll) {
 		}
 	}
 	
-	history(win).push(url);
-	
-	if (!noScroll) {
-		win.scrollTo(0, 0);
+	var history = win.history;
+
+	if (!history.pushState || typeof PopStateEvent !== "function") {
+		win.location.assign(currentURL);
+		return;
 	}
+
+	history.pushState(null, "", currentURL);
+
+	var event = new PopStateEvent("popstate", {state: null});
+	win.dispatchEvent(event);
+	win.scrollTo(0, 0);
 }
 
 $.navigate = navigate;
 $.onNavigate = emitNavigate.subscribe;
 
-})($, window);
+})($);
