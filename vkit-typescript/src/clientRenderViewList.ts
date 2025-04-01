@@ -13,7 +13,6 @@ import { ViewListTemplate } from "./viewList.js";
 export interface Block {
 	readonly effect: Effect;
 	readonly end: ChildNode;
-	index: number;
 	readonly start: ChildNode;
 }
 
@@ -52,8 +51,6 @@ export function clientRenderViewList<T, P extends ParentNode>(
 				getItemTemplate,
 				parentEffect
 			);
-
-			block.index = i;
 		}
 		
 		for (var key in blockMap) {
@@ -171,7 +168,6 @@ function createBlock<T>(
 	var block: Block = {
 		effect: effect,
 		end: end,
-		index: 0,
 		start: start
 	};
 
