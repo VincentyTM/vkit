@@ -72,8 +72,5 @@ export function deepPush<P>(
 		return;
 	}
 	
-	if (bind) {
-		bind(context, template, !crossView);
-		return;
-	}
+	bind(context, template, !crossView);
 }
