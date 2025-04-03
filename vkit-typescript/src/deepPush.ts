@@ -20,34 +20,34 @@ export function deepPush<P>(
 		isExternal: boolean
 	) => void,
 	crossView: boolean
-): Pushable<Template<P>> {
+): void {
 	if (template === null || template === undefined || typeof template === "boolean") {
-		return array;
+		return;
 	}
 
 	if (isSignal(template)) {
 		array.push(signalText(template));
-		return array;
+		return;
 	}
 	
 	if (isCustomTemplate(template)) {
 		template.clientRender(array, template, context, crossView);
-		return array;
+		return;
 	}
 
 	if (typeof template === "function") {
 		array.push(text(template));
-		return array;
+		return;
 	}
 	
 	if (typeof template !== "object") {
 		array.push(document.createTextNode(String(template)));
-		return array;
+		return;
 	}
 	
 	if ("nodeType" in template) {
 		array.push(template);
-		return array;
+		return;
 	}
 	
 	if ("length" in template) {
@@ -58,7 +58,7 @@ export function deepPush<P>(
 			deepPush(array, a[i], context, bind, crossView);
 		}
 
-		return array;
+		return;
 	}
 	
 	if ("next" in template) {
@@ -69,13 +69,11 @@ export function deepPush<P>(
 			deepPush(array, x.value, context, bind, crossView);
 		} while (!x.done);
 
-		return array;
+		return;
 	}
 	
 	if (bind) {
 		bind(context, template, !crossView);
-		return array;
+		return;
 	}
-
-	return array;
 }
