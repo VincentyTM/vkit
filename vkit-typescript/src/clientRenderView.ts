@@ -2,12 +2,11 @@ import { bind } from "./bind.js";
 import { createEffect } from "./createEffect.js";
 import { deepPush, Pushable } from "./deepPush.js";
 import { insert } from "./insert.js";
-import { Template } from "./Template.js";
 import { updateEffect } from "./updateEffect.js";
 import { ViewTemplate } from "./view.js";
 
 export function clientRenderView<P, T>(
-	array: Pushable<Template<P>>,
+	array: Pushable,
 	template: ViewTemplate<P, T>,
 	parentElement: P
 ): void {

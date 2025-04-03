@@ -2,10 +2,9 @@ import { AttributesTemplate, AttributeValue, ReactiveAttributeValue } from "./at
 import { Pushable } from "./deepPush.js";
 import { effect } from "./effect.js";
 import { isSignal } from "./isSignal.js";
-import { Template } from "./Template.js";
 
 export function clientRenderAttributes<P extends Element>(
-	_array: Pushable<Template<P>>,
+	_array: Pushable,
 	template: AttributesTemplate,
 	context: P
 ): void {

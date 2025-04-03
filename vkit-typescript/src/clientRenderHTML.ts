@@ -25,7 +25,7 @@ function findNodes(
 }
 
 export function clientRenderHTML<P extends HTMLElement>(
-	array: Pushable<Template<P>>,
+	array: Pushable,
 	template: HTMLTemplate<P>,
 	parentContext: unknown,
 	crossView: boolean

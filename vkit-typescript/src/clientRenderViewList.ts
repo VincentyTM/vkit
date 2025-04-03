@@ -17,7 +17,7 @@ export interface Block {
 }
 
 export function clientRenderViewList<T, P extends ParentNode>(
-	_array: Pushable<Template<P>>,
+	_array: Pushable,
 	template: ViewListTemplate<T, P>,
 	parentElement: P
 ): void {

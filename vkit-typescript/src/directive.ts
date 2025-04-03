@@ -10,7 +10,7 @@ export interface DirectiveTemplate<P> extends CustomTemplate<P> {
 }
 
 function clientRenderDirective<P>(
-	_array: Pushable<P>,
+	_array: Pushable,
 	template: DirectiveTemplate<P>,
 	context: P
 ): void {

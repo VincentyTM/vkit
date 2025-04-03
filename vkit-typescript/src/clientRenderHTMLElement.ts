@@ -4,7 +4,7 @@ import { deepPush, Pushable } from "./deepPush.js";
 import { HTMLElementTemplate } from "./htmlTag.js";
 
 export function clientRenderHTMLElement<N extends keyof HTMLElementTagNameMap>(
-	array: Pushable<HTMLElementTagNameMap[N]>,
+	array: Pushable,
 	template: HTMLElementTemplate<N>,
 	context: unknown,
 	crossView: boolean

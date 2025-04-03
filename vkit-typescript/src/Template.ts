@@ -5,7 +5,7 @@ import { Pushable } from "./deepPush.js";
 
 export interface CustomTemplate<P> {
 	clientRender(
-		array: Pushable<Template<P>>,
+		array: Pushable,
 		template: CustomTemplate<P>,
 		context: unknown,
 		crossView: boolean

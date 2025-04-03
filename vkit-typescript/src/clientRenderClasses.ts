@@ -4,10 +4,9 @@ import { effect } from "./effect.js";
 import { isArrayLike } from "./isArrayLike.js";
 import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
-import { Template } from "./Template.js";
 
 export function clientRenderClasses<P extends Element>(
-	_array: Pushable<Template<P>>,
+	_array: Pushable,
 	template: ClassesTemplate,
 	context: P,
     crossView: boolean

@@ -13,7 +13,7 @@ type ReactiveAttributeValue = Reactive<AttributeValue>;
 var xmlns = "http://www.w3.org/2000/svg";
 
 export function clientRenderSVGElement<N extends keyof SVGElementTagNameMap>(
-	array: Pushable<SVGElementTagNameMap[N]>,
+	array: Pushable,
 	template: SVGElementTemplate<N>,
 	context: unknown,
 	crossView: boolean

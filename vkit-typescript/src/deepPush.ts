@@ -6,12 +6,12 @@ import { Template } from "./Template.js";
 import { text } from "./text.js";
 import { toArray } from "./toArray.js";
 
-export interface Pushable<T> {
-	push(value: T | Text): number | void;
+export interface Pushable {
+	push(value: Node): void;
 }
 
 export function deepPush<P>(
-	array: Pushable<Template<P>>,
+	array: Pushable,
 	template: Template<P>,
 	context: P,
 	bind: (

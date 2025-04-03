@@ -2,10 +2,9 @@ import { getEffect } from "./contextGuard.js";
 import { Pushable } from "./deepPush.js";
 import { onDestroy } from "./onDestroy.js";
 import { MutableRef } from "./ref.js";
-import { Template } from "./Template.js";
 
 export function clientRenderRef<P>(
-	_array: Pushable<Template<P>>,
+	_array: Pushable,
 	ref: MutableRef<P>,
 	context: P
 ): void {
