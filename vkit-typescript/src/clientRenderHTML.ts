@@ -23,12 +23,12 @@ function findNodes(
 	return count;
 }
 
-export function clientRenderHTML<P extends HTMLElement>(
+export function clientRenderHTML<P>(
 	clientRenderer: ClientRenderer<P>,
 	template: HTMLTemplate<P>
 ): void {
 	var args = template.args;
-	var operators: Template<P>[] = [];
+	var operators: Template<unknown>[] = [];
 	var placeholder = "<!---->";
 	var result: (string | number | bigint)[] = [];
 	var l = args.length;
@@ -121,7 +121,13 @@ export function clientRenderHTML<P extends HTMLElement>(
 				context = null;
 			}
 
-			insert(operator, comment, context as any);
+			insert(
+				operator,
+				comment,
+				context as ParentNode,
+				clientRenderer.parentEffect
+			);
+
 			comment.parentNode!.removeChild(comment);
 		}
 	}

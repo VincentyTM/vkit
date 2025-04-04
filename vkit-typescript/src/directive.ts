@@ -1,4 +1,3 @@
-import { getEffect } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
 import { ClientRenderer } from "./deepPush.js";
 import { noop } from "./noop.js";
@@ -14,7 +13,7 @@ function clientRenderDirective<P>(
 	template: DirectiveTemplate<P>
 ): void {
 	var context = clientRenderer.context;
-	var parentEffect = getEffect();
+	var parentEffect = clientRenderer.parentEffect;
 	var effect = createEffect(parentEffect, parentEffect.injector, function() {
 		template.callback(context);
 	});

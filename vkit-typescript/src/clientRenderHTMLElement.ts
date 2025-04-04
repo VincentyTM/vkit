@@ -8,6 +8,11 @@ export function clientRenderHTMLElement<N extends keyof HTMLElementTagNameMap>(
 	template: HTMLElementTemplate<N>
 ): void {
 	var element = document.createElement(template.tagName);
-	append(element, template.child, bind);
+	append(
+		element,
+		template.child,
+		clientRenderer.parentEffect,
+		bind
+	);
 	deepPush(clientRenderer, element);
 }

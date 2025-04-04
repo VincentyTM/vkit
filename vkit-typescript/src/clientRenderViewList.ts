@@ -162,7 +162,7 @@ function createBlock<T>(
 		
 		if (parentNode) {
 			clearRange(start, end);
-			insert(itemTemplate, end, parentNode);
+			insert(itemTemplate, end, parentNode, effect);
 		}
 	});
 	

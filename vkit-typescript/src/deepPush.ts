@@ -1,4 +1,5 @@
 import { Bindings } from "./bind.js";
+import { Effect } from "./createEffect.js";
 import { isCustomTemplate } from "./isCustomTemplate.js";
 import { isSignal } from "./isSignal.js";
 import { signalText } from "./signalText.js";
@@ -8,6 +9,7 @@ import { toArray } from "./toArray.js";
 
 export interface ClientRenderer<P> {
 	readonly context: P;
+	readonly parentEffect: Effect;
 	add(node: Node): void;
 	bind(target: P, modifier: Bindings<P>): void;
 }

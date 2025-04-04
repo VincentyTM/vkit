@@ -39,7 +39,12 @@ export function render<P extends ParentNode>(getTemplate: () => Template<P>, con
 	var rootInjector = createInjector(undefined, true);
 	var rootEffect = createEffect(undefined, rootInjector, function(): void {
 		inject(WindowService).window = win;
-		append(container, getTemplate(), bind);
+		append(
+			container,
+			getTemplate(),
+			rootEffect,
+			bind
+		);
 	});
 
 	updateEffect(rootEffect);

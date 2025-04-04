@@ -1,5 +1,6 @@
 import { append } from "./append.js";
 import { bind } from "./bind.js";
+import { getEffect } from "./contextGuard.js";
 import { directive } from "./directive.js";
 import { empty } from "./empty.js";
 import { Template } from "./Template.js";
@@ -16,7 +17,7 @@ import { Template } from "./Template.js";
  * )
  * @returns A directive that attaches a shadow root to an element and inserts nodes into it.
  */
-export function shadow(...contents: Template<ShadowRoot>[]): Template<Element>;
+export function shadow(...contents: readonly Template<ShadowRoot>[]): Template<Element>;
 
 export function shadow(): Template<Element> {
 	var contents: Template<ShadowRoot> = arguments;
@@ -24,6 +25,6 @@ export function shadow(): Template<Element> {
 	return directive(function(element: Element): void {
 		var shadowRoot = element.shadowRoot || element.attachShadow({mode: "open"});
 		empty(shadowRoot);
-		append(shadowRoot, contents, bind);
+		append(shadowRoot, contents, getEffect(), bind);
 	});
 }

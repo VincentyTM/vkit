@@ -17,7 +17,12 @@ export function clientRenderSVGElement<N extends keyof SVGElementTagNameMap>(
 	template: SVGElementTemplate<N>
 ): void {
 	var element = document.createElementNS(xmlns, template.tagName) as SVGElementTagNameMap[N];
-	append(element, template.child, bindAttributes as never);
+	append(
+		element,
+		template.child,
+		clientRenderer.parentEffect,
+		bindAttributes as never
+	);
 	deepPush(clientRenderer, element);
 }
 

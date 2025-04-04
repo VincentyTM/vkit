@@ -1,4 +1,5 @@
 import { bind } from "./bind.js";
+import { Effect } from "./createEffect.js";
 import { ClientRenderer, deepPush } from "./deepPush.js";
 import { Template } from "./Template.js";
 
@@ -18,7 +19,8 @@ function insertNode(this: Inserter<ParentNode>, node: Node): void {
 export function insert<P extends ParentNode>(
 	children: Template<P>,
 	nextSibling: Node,
-	context: P
+	context: P,
+	parentEffect: Effect
 ): void {
 	var fragment = document.createDocumentFragment ? document.createDocumentFragment() : null;
 
@@ -26,6 +28,7 @@ export function insert<P extends ParentNode>(
 		context: context,
 		fragment: fragment,
 		nextSibling: nextSibling,
+		parentEffect: parentEffect,
 		add: insertNode,
 		bind: bind
 	};

@@ -23,7 +23,7 @@ export function clientRenderView<P extends ParentNode, T>(
 				parent.removeChild(el);
 			}
 
-			insert(innerTemplate, end, parentElement);
+			insert(innerTemplate, end, parentElement, clientRenderer.parentEffect);
 		} else {
 			clientRenderer.add(start);
 			deepPush(clientRenderer, innerTemplate);
