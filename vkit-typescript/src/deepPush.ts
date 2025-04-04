@@ -32,12 +32,7 @@ export function deepPush<P>(clientRenderer: ClientRenderer<P>, template: Templat
 	}
 	
 	if (isCustomTemplate(template)) {
-		template.clientRender(
-			clientRenderer.array,
-			template,
-			clientRenderer.context,
-			clientRenderer.crossView
-		);
+		template.clientRender(clientRenderer, template);
 		return;
 	}
 

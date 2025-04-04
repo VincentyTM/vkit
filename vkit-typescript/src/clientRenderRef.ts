@@ -1,18 +1,17 @@
 import { getEffect } from "./contextGuard.js";
-import { Pushable } from "./deepPush.js";
+import { ClientRenderer } from "./deepPush.js";
 import { onDestroy } from "./onDestroy.js";
 import { MutableRef } from "./ref.js";
 
 export function clientRenderRef<P>(
-	_array: Pushable,
-	ref: MutableRef<P>,
-	context: P
+	clientRenderer: ClientRenderer<P>,
+	ref: MutableRef<P>
 ): void {
 	if (ref.current !== null) {
 		throw new Error("This reference has already been set.");
 	}
 
-	ref.current = context;
+	ref.current = clientRenderer.context;
 
 	if (getEffect() !== ref.effect) {
 		onDestroy(function(): void {

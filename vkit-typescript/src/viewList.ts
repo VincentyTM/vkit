@@ -11,7 +11,7 @@ export interface ViewListTemplate<T, P> extends CustomTemplate<P> {
 	getItemTemplate(model: T): Template<P>;
 }
 
-export function viewList<T, P>(
+export function viewList<T, P extends ParentNode>(
 	models: Signal<ArrayLike<T>>,
 	getItemTemplate: (model: T) => Template<P>
 ): ViewListTemplate<T, P> {

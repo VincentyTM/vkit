@@ -1,17 +1,15 @@
 import { BooleanValue, ClassArgument, ClassesTemplate, NoClass } from "./classes.js";
-import { Pushable } from "./deepPush.js";
+import { ClientRenderer } from "./deepPush.js";
 import { effect } from "./effect.js";
 import { isArrayLike } from "./isArrayLike.js";
 import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 
 export function clientRenderClasses<P extends Element>(
-	_array: Pushable,
-	template: ClassesTemplate,
-	context: P,
-    crossView: boolean
+	clientRenderer: ClientRenderer<P>,
+	template: ClassesTemplate
 ): void {
-	bindClasses(context, template.args, crossView);
+	bindClasses(clientRenderer.context, template.args, clientRenderer.crossView);
 }
 
 function addClass(el: Element, name: string): void {

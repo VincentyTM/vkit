@@ -1,6 +1,6 @@
 import { getEffect } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
-import { Pushable } from "./deepPush.js";
+import { ClientRenderer } from "./deepPush.js";
 import { noop } from "./noop.js";
 import { CustomTemplate } from "./Template.js";
 import { updateEffect } from "./updateEffect.js";
@@ -10,10 +10,10 @@ export interface DirectiveTemplate<P> extends CustomTemplate<P> {
 }
 
 function clientRenderDirective<P>(
-	_array: Pushable,
-	template: DirectiveTemplate<P>,
-	context: P
+	clientRenderer: ClientRenderer<P>,
+	template: DirectiveTemplate<P>
 ): void {
+	var context = clientRenderer.context;
 	var parentEffect = getEffect();
 	var effect = createEffect(parentEffect, parentEffect.injector, function() {
 		template.callback(context);

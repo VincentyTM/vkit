@@ -1,6 +1,6 @@
 import { getEffect } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
-import { Pushable } from "./deepPush.js";
+import { ClientRenderer } from "./deepPush.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { hashCode } from "./hashCode.js";
 import { insert } from "./insert.js";
@@ -17,10 +17,10 @@ export interface Block {
 }
 
 export function clientRenderViewList<T, P extends ParentNode>(
-	_array: Pushable,
-	template: ViewListTemplate<T, P>,
-	parentElement: P
+	clientRenderer: ClientRenderer<P>,
+	template: ViewListTemplate<T, P>
 ): void {
+	var parentElement = clientRenderer.context;
 	var listStart = document.createTextNode("");
 	var listEnd = document.createTextNode("");
     var input = template.models;

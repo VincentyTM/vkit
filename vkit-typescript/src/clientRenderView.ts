@@ -1,15 +1,16 @@
 import { bind } from "./bind.js";
 import { createEffect } from "./createEffect.js";
-import { deepPush, Pushable } from "./deepPush.js";
+import { ClientRenderer, deepPush, Pushable } from "./deepPush.js";
 import { insert } from "./insert.js";
 import { updateEffect } from "./updateEffect.js";
 import { ViewTemplate } from "./view.js";
 
 export function clientRenderView<P, T>(
-	array: Pushable,
-	template: ViewTemplate<P, T>,
-	parentElement: P
+	clientRenderer: ClientRenderer<P>,
+	template: ViewTemplate<P, T>
 ): void {
+	var array = clientRenderer.array;
+	var parentElement = clientRenderer.context;
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
     var parentEffect = template.parentEffect;

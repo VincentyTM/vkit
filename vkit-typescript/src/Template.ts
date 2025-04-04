@@ -1,20 +1,11 @@
 import { Bindings } from "./bind.js";
 import { Signal } from "./computed.js";
 import { ServerElement } from "./createServerElement.js";
-import { Pushable } from "./deepPush.js";
+import { ClientRenderer } from "./deepPush.js";
 
 export interface CustomTemplate<P> {
-	clientRender(
-		array: Pushable,
-		template: CustomTemplate<P>,
-		context: unknown,
-		crossView: boolean
-	): void;
-
-	serverRender(
-		serverElement: ServerElement,
-		template: CustomTemplate<P>
-	): void;
+	clientRender(clientRenderer: ClientRenderer<P>, template: CustomTemplate<P>): void;
+	serverRender(serverElement: ServerElement, template: CustomTemplate<P>): void;
 }
 
 export type Template<P = unknown> = (

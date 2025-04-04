@@ -1,6 +1,6 @@
 import { append } from "./append.js";
 import { bind } from "./bind.js";
-import { Pushable, deepPush } from "./deepPush.js";
+import { ClientRenderer, deepPush } from "./deepPush.js";
 import { effect } from "./effect.js";
 import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
@@ -13,19 +13,12 @@ type ReactiveAttributeValue = Reactive<AttributeValue>;
 var xmlns = "http://www.w3.org/2000/svg";
 
 export function clientRenderSVGElement<N extends keyof SVGElementTagNameMap>(
-	array: Pushable,
-	template: SVGElementTemplate<N>,
-	context: unknown,
-	crossView: boolean
+	clientRenderer: ClientRenderer<unknown>,
+	template: SVGElementTemplate<N>
 ): void {
 	var element = document.createElementNS(xmlns, template.tagName) as SVGElementTagNameMap[N];
-	append(element, template.child, element, bindAttributes as never, crossView);
-	deepPush({
-		array: array,
-		context: context,
-		crossView: crossView,
-		bind: bind
-	}, element);
+	append(element, template.child, element, bindAttributes as never, clientRenderer.crossView);
+	deepPush(clientRenderer, element);
 }
 
 function setAttribute(

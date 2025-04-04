@@ -1,5 +1,4 @@
-import { bind } from "./bind.js";
-import { deepPush, Pushable } from "./deepPush.js";
+import { ClientRenderer, deepPush } from "./deepPush.js";
 import { HTMLTemplate } from "./html.js";
 import { insert } from "./insert.js";
 import { Template } from "./Template.js";
@@ -25,10 +24,8 @@ function findNodes(
 }
 
 export function clientRenderHTML<P extends HTMLElement>(
-	array: Pushable,
-	template: HTMLTemplate<P>,
-	parentContext: unknown,
-	crossView: boolean
+	clientRenderer: ClientRenderer<P>,
+	template: HTMLTemplate<P>
 ): void {
 	var args = template.args;
 	var operators: Template<P>[] = [];
@@ -124,15 +121,10 @@ export function clientRenderHTML<P extends HTMLElement>(
 				context = null;
 			}
 
-			insert(operator, comment, context as any, crossView);
+			insert(operator, comment, context as any, clientRenderer.crossView);
 			comment.parentNode!.removeChild(comment);
 		}
 	}
 
-	deepPush({
-		array: array,
-		context: parentContext,
-		crossView: crossView,
-		bind: bind
-	}, toArray(container.childNodes));
+	deepPush(clientRenderer, toArray(container.childNodes));
 }

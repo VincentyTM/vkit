@@ -2,7 +2,10 @@ import { ServerElement } from "./createServerElement.js";
 import { ViewListTemplate } from "./viewList.js";
 import { serverRender } from "./serverRender.js";
 
-export function serverRenderViewList<T, P>(element: ServerElement, template: ViewListTemplate<T, P>): void {
+export function serverRenderViewList<T, P extends ParentNode>(
+	element: ServerElement,
+	template: ViewListTemplate<T, P>
+): void {
 	var list = template.models.get();
 	var n = list.length;
 

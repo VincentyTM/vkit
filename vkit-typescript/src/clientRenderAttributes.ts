@@ -1,17 +1,16 @@
 import { AttributesTemplate, AttributeValue, ReactiveAttributeValue } from "./attributes.js";
-import { Pushable } from "./deepPush.js";
+import { ClientRenderer } from "./deepPush.js";
 import { effect } from "./effect.js";
 import { isSignal } from "./isSignal.js";
 
 export function clientRenderAttributes<P extends Element>(
-	_array: Pushable,
-	template: AttributesTemplate,
-	context: P
+	clientRenderer: ClientRenderer<P>,
+	template: AttributesTemplate
 ): void {
 	var attributes = template.attributes;
 
 	for (var name in attributes) {
-		addAttribute(context, name, attributes[name]);
+		addAttribute(clientRenderer.context, name, attributes[name]);
 	}
 }
 
