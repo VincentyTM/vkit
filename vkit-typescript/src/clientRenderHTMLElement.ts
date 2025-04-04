@@ -11,5 +11,10 @@ export function clientRenderHTMLElement<N extends keyof HTMLElementTagNameMap>(
 ): void {
 	var element = document.createElement(template.tagName);
 	append(element, template.child, element, bind, crossView);
-	deepPush(array, element, context, bind, crossView);
+	deepPush({
+		array: array,
+		context: context,
+		crossView: crossView,
+		bind: bind
+	}, element);
 }

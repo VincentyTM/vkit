@@ -20,7 +20,12 @@ export function clientRenderSVGElement<N extends keyof SVGElementTagNameMap>(
 ): void {
 	var element = document.createElementNS(xmlns, template.tagName) as SVGElementTagNameMap[N];
 	append(element, template.child, element, bindAttributes as never, crossView);
-	deepPush(array, element, context, bind, crossView);
+	deepPush({
+		array: array,
+		context: context,
+		crossView: crossView,
+		bind: bind
+	}, element);
 }
 
 function setAttribute(

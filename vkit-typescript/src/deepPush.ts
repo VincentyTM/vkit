@@ -6,47 +6,53 @@ import { Template } from "./Template.js";
 import { text } from "./text.js";
 import { toArray } from "./toArray.js";
 
+export interface ClientRenderer<P> {
+	readonly array: Pushable;
+	readonly context: P;
+	readonly crossView: boolean;
+	bind(target: P, modifier: Bindings<P>, isExternal: boolean): void;
+}
+
 export interface Pushable {
 	push(value: Node): void;
 }
 
-export function deepPush<P>(
-	array: Pushable,
-	template: Template<P>,
-	context: P,
-	bind: (
-		target: P,
-		modifier: Bindings<P>,
-		isExternal: boolean
-	) => void,
-	crossView: boolean
-): void {
+function clientRenderNode<P>(clientRenderer: ClientRenderer<P>, node: Node): void {
+	clientRenderer.array.push(node);
+}
+
+export function deepPush<P>(clientRenderer: ClientRenderer<P>, template: Template<P>): void {
 	if (template === null || template === undefined || typeof template === "boolean") {
 		return;
 	}
 
 	if (isSignal(template)) {
-		array.push(signalText(template));
+		clientRenderNode(clientRenderer, signalText(template));
 		return;
 	}
 	
 	if (isCustomTemplate(template)) {
-		template.clientRender(array, template, context, crossView);
+		template.clientRender(
+			clientRenderer.array,
+			template,
+			clientRenderer.context,
+			clientRenderer.crossView
+		);
 		return;
 	}
 
 	if (typeof template === "function") {
-		array.push(text(template));
+		clientRenderNode(clientRenderer, text(template));
 		return;
 	}
 	
 	if (typeof template !== "object") {
-		array.push(document.createTextNode(String(template)));
+		clientRenderNode(clientRenderer, document.createTextNode(String(template)));
 		return;
 	}
 	
 	if ("nodeType" in template) {
-		array.push(template);
+		clientRenderNode(clientRenderer, template);
 		return;
 	}
 	
@@ -55,7 +61,7 @@ export function deepPush<P>(
 		var a = toArray(template);
 
 		for (var i = 0; i < n; ++i) {
-			deepPush(array, a[i], context, bind, crossView);
+			deepPush(clientRenderer, a[i]);
 		}
 
 		return;
@@ -66,11 +72,11 @@ export function deepPush<P>(
 
 		do {
 			x = template.next();
-			deepPush(array, x.value, context, bind, crossView);
+			deepPush(clientRenderer, x.value);
 		} while (!x.done);
 
 		return;
 	}
 	
-	bind(context, template, !crossView);
+	clientRenderer.bind(clientRenderer.context, template, !clientRenderer.crossView);
 }

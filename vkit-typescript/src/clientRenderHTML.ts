@@ -129,11 +129,10 @@ export function clientRenderHTML<P extends HTMLElement>(
 		}
 	}
 
-	deepPush(
-		array,
-		toArray(container.childNodes),
-		parentContext,
-		bind,
-		crossView
-	);
+	deepPush({
+		array: array,
+		context: parentContext,
+		crossView: crossView,
+		bind: bind
+	}, toArray(container.childNodes));
 }

@@ -23,22 +23,20 @@ export function append<P>(
 	if (parent.append) {
 		var array: Template<P>[] = [];
 		
-		deepPush(
-			array,
-			children,
-			context,
-			bind,
-			crossView
-		);
+		deepPush({
+			array: array,
+			context: context,
+			crossView: crossView,
+			bind: bind
+		}, children);
 		
 		parent.append.apply(parent, array);
 	} else {
-		deepPush(
-			{push: push},
-			children,
-			context,
-			bind,
-			crossView
-		);
+		deepPush({
+			array: {push: push},
+			context: context,
+			crossView: crossView,
+			bind: bind
+		}, children);
 	}
 }

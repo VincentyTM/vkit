@@ -27,7 +27,12 @@ export function clientRenderView<P, T>(
 			insert(innerTemplate, end, parentElement, true);
 		} else {
 			array.push(start);
-			deepPush(array, innerTemplate, parentElement, bind, true);
+			deepPush({
+				array: array,
+				context: parentElement,
+				crossView: true,
+				bind: bind
+			}, innerTemplate);
 			array.push(end);
 		}
 	}, template.errorHandler);
