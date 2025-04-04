@@ -36,10 +36,13 @@ export function nodeRange() : NodeRange {
 	}
 	
 	function append(): void {
-		if (!start.nextSibling) {
+		var parentNode = start.parentNode;
+		
+		if (!parentNode) {
 			throw new Error("Cannot append to detached range");
 		}
-		insert(arguments, end, start.parentNode);
+
+		insert(arguments, end, parentNode);
 	}
 	
 	function insertBefore(anchor: Node): void {

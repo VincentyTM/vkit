@@ -1,37 +1,38 @@
 import { bind } from "./bind.js";
-import { deepPush } from "./deepPush.js";
+import { ClientRenderer, deepPush } from "./deepPush.js";
 import { Template } from "./Template.js";
 
-export function insert<P>(
+interface Inserter<P> extends ClientRenderer<P> {
+	readonly fragment: DocumentFragment | null;
+	readonly nextSibling: Node;
+}
+
+function insertNode(this: Inserter<ParentNode>, node: Node): void {
+	if (this.fragment) {
+		this.fragment.appendChild(node);
+	} else {
+		this.context.insertBefore(node, this.nextSibling);
+	}
+}
+
+export function insert<P extends ParentNode>(
 	children: Template<P>,
 	nextSibling: Node,
 	context: P
 ): void {
-	var parent = nextSibling.parentNode;
+	var fragment = document.createDocumentFragment ? document.createDocumentFragment() : null;
+
+	var inserter: Inserter<P> = {
+		context: context,
+		fragment: fragment,
+		nextSibling: nextSibling,
+		add: insertNode,
+		bind: bind
+	};
 	
-	if (!parent) {
-		return;
-	}
-	
-	function push(node: Node): void {
-		parent!.insertBefore(node, nextSibling);
-	}
-	
-	if ((nextSibling as any).before) {
-		var array: Template<P>[] = [];
-		
-		deepPush({
-			array: array,
-			context: context,
-			bind: bind
-		}, children);
-		
-		(nextSibling as any).before.apply(nextSibling, array);
-	} else {
-		deepPush({
-			array: {push: push},
-			context: context,
-			bind: bind
-		}, children);
+	deepPush(inserter, children);
+
+	if (fragment) {
+		context.insertBefore(fragment, nextSibling);
 	}
 }

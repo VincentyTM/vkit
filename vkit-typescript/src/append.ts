@@ -1,35 +1,37 @@
 import { Bindings } from "./bind.js";
-import { deepPush } from "./deepPush.js";
+import { ClientRenderer, deepPush } from "./deepPush.js";
 import { Template } from "./Template.js";
 
-export function append<P>(
-	parent: {
-		appendChild<T extends Node>(node: T): T | void;
-		append?(...nodes: Template<P>[]): void;
-	},
+interface Appender<P> extends ClientRenderer<P> {
+	readonly fragment: DocumentFragment | null;
+}
+
+function appendNode(this: Appender<ParentNode>, node: Node): void {
+	if (this.fragment) {
+		this.fragment.appendChild(node);
+	} else {
+		this.context.appendChild(node);
+	}
+}
+
+export function append<P extends ParentNode>(
+	parent: P,
 	children: Template<P>,
 	context: P,
 	bind: (target: P, modifier: Bindings<P>) => void
 ): void {
-	function push(node: Node): void {
-		parent.appendChild(node);
-	}
+	var fragment = document.createDocumentFragment ? document.createDocumentFragment() : null;
+
+	var appender: Appender<P> = {
+		context: context,
+		fragment: fragment,
+		add: appendNode,
+		bind: bind
+	};
 	
-	if (parent.append) {
-		var array: Template<P>[] = [];
-		
-		deepPush({
-			array: array,
-			context: context,
-			bind: bind
-		}, children);
-		
-		parent.append.apply(parent, array);
-	} else {
-		deepPush({
-			array: {push: push},
-			context: context,
-			bind: bind
-		}, children);
+	deepPush(appender, children);
+
+	if (fragment) {
+		parent.appendChild(fragment);
 	}
 }

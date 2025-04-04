@@ -7,8 +7,8 @@ import { text } from "./text.js";
 import { toArray } from "./toArray.js";
 
 export interface ClientRenderer<P> {
-	readonly array: Pushable;
 	readonly context: P;
+	add(node: Node): void;
 	bind(target: P, modifier: Bindings<P>): void;
 }
 
@@ -17,7 +17,7 @@ export interface Pushable {
 }
 
 function clientRenderNode<P>(clientRenderer: ClientRenderer<P>, node: Node): void {
-	clientRenderer.array.push(node);
+	clientRenderer.add(node);
 }
 
 export function deepPush<P>(clientRenderer: ClientRenderer<P>, template: Template<P>): void {

@@ -158,10 +158,11 @@ function createBlock<T>(
 	
 	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
 		var itemTemplate = getItemTemplate(model);
+		var parentNode = start.parentNode;
 		
-		if (start.nextSibling) {
+		if (parentNode) {
 			clearRange(start, end);
-			insert(itemTemplate, end, start.parentNode);
+			insert(itemTemplate, end, parentNode);
 		}
 	});
 	
