@@ -90,7 +90,7 @@ export function customElement(
 			var doc = el.ownerDocument;
 			inject(WindowService).window = doc.defaultView || (doc as any).parentWindow;
 			var view = getView.call(el, el.observedAttributes, el);
-			append(el, view, el, bind);
+			append(el, view, bind);
 		});
 		
 		el.effect = effect;

@@ -15,15 +15,14 @@ function appendNode(this: Appender<ParentNode>, node: Node): void {
 }
 
 export function append<P extends ParentNode>(
-	parent: P,
+	parentNode: P,
 	children: Template<P>,
-	context: P,
-	bind: (target: P, modifier: Bindings<P>) => void
+	bind: (target: P, bindings: Bindings<P>) => void
 ): void {
 	var fragment = document.createDocumentFragment ? document.createDocumentFragment() : null;
 
 	var appender: Appender<P> = {
-		context: context,
+		context: parentNode,
 		fragment: fragment,
 		add: appendNode,
 		bind: bind
@@ -32,6 +31,6 @@ export function append<P extends ParentNode>(
 	deepPush(appender, children);
 
 	if (fragment) {
-		parent.appendChild(fragment);
+		parentNode.appendChild(fragment);
 	}
 }
