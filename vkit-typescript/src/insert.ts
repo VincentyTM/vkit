@@ -5,8 +5,7 @@ import { Template } from "./Template.js";
 export function insert<P>(
 	children: Template<P>,
 	nextSibling: Node,
-	context: P,
-	crossView: boolean
+	context: P
 ): void {
 	var parent = nextSibling.parentNode;
 	
@@ -24,7 +23,6 @@ export function insert<P>(
 		deepPush({
 			array: array,
 			context: context,
-			crossView: crossView,
 			bind: bind
 		}, children);
 		
@@ -33,7 +31,6 @@ export function insert<P>(
 		deepPush({
 			array: {push: push},
 			context: context,
-			crossView: crossView,
 			bind: bind
 		}, children);
 	}

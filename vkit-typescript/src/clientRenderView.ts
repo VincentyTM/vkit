@@ -25,13 +25,12 @@ export function clientRenderView<P, T>(
 				parent.removeChild(el);
 			}
 
-			insert(innerTemplate, end, parentElement, true);
+			insert(innerTemplate, end, parentElement);
 		} else {
 			array.push(start);
 			deepPush({
 				array: array,
 				context: parentElement,
-				crossView: true,
 				bind: bind
 			}, innerTemplate);
 			array.push(end);

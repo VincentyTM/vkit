@@ -1,7 +1,6 @@
 import { Signal } from "./computed.js";
 import { effect } from "./effect.js";
 import { isSignal } from "./isSignal.js";
-import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
 import { signalProp } from "./signalProp.js";
 
@@ -45,25 +44,6 @@ export type Bindings<T> = {
 	)
 };
 
-function setValue<T>(
-	target: T,
-	name: keyof T,
-	value: T[keyof T],
-	persistent: boolean
-) {
-	if (!persistent) {
-		var old = target[name];
-
-		onDestroy(function() {
-			if (target[name] === value) {
-				target[name] = old;
-			}
-		});
-	}
-
-	target[name] = value;
-}
-
 function prop<T>(
 	target: T,
 	name: keyof T,
@@ -94,37 +74,29 @@ function prop<T>(
  * If the key starts with "on", the value is attached as an event listener instead.
  * @param persistent If true, the attached event listeners are not removed when the current reactive context is destroyed.
  */
-export function bind<T>(
-	target: T,
-	bindings: Bindings<T>,
-	persistent?: boolean
-): void {
+export function bind<T>(target: T, bindings: Bindings<T>): void {
 	for (var name in bindings) {
 		var value = bindings[name];
 		
 		switch (typeof value) {
 			case "object":
 				if (!value) {
-					setValue(target, name, value as never, !!persistent);
+					target[name] = value as never;
 				} else if (isSignal(value)) {
 					signalProp(target, name, value);
 				} else {
 					var obj = target[name];
 					
 					if (obj) {
-						bind(obj, value as never, persistent);
+						bind(obj, value as never);
 					} else {
-						setValue(target, name, value as never, !!persistent);
+						target[name] = value as never;
 					}
 				}
 				break;
 			case "function":
 				if (name.indexOf("on") === 0) {
-					var unsub = onEvent(target as never, name.substring(2), value as never);
-					
-					if (!persistent) {
-						onDestroy(unsub);
-					}
+					onEvent(target as never, name.substring(2), value as never);
 				} else {
 					prop(target, name, value as never);
 				}
@@ -132,7 +104,7 @@ export function bind<T>(
 			case "undefined":
 				break;
 			default:
-				setValue(target, name, value as never, !!persistent);
+				target[name] = value as never;
 		}
 	}
 }

@@ -3,13 +3,12 @@ import { ClientRenderer } from "./deepPush.js";
 import { effect } from "./effect.js";
 import { isArrayLike } from "./isArrayLike.js";
 import { isSignal } from "./isSignal.js";
-import { onDestroy } from "./onDestroy.js";
 
 export function clientRenderClasses<P extends Element>(
 	clientRenderer: ClientRenderer<P>,
 	template: ClassesTemplate
 ): void {
-	bindClasses(clientRenderer.context, template.args, clientRenderer.crossView);
+	bindClasses(clientRenderer.context, template.args);
 }
 
 function addClass(el: Element, name: string): void {
@@ -54,34 +53,27 @@ function bindClass(el: Element, name: string, value: BooleanValue): void {
 	}
 }
 
-function bindClasses(el: Element, arg: ClassArgument, crossView: boolean): void {
+function bindClasses(el: Element, arg: ClassArgument): void {
 	if (arg === null || arg === undefined || arg === true || arg === false) {
 		return;
 	}
 	
 	if (typeof arg === "string") {
 		addClass(el, arg);
-
-		if (crossView) {
-			onDestroy(function(): void {
-				removeClass(el, arg);
-			});
-		}
-
 		return;
 	}
 	
 	if (isArrayLike(arg)) {
 		var n = arg.length;
 		for (var i = 0; i < n; ++i) {
-			bindClasses(el, arg[i], crossView);
+			bindClasses(el, arg[i]);
 		}
 		return;
 	}
 	
 	if (isSignal(arg)) {
 		arg.effect(function(value: string | NoClass): void {
-			bindClasses(el, value, true);
+			bindClasses(el, value);
 		});
 		return;
 	}
@@ -95,7 +87,7 @@ function bindClasses(el: Element, arg: ClassArgument, crossView: boolean): void 
 	
 	if (typeof arg === "function") {
 		effect(function(): void {
-			bindClasses(el, arg(), true);
+			bindClasses(el, arg());
 		});
 		return;
 	}

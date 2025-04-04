@@ -24,6 +24,6 @@ export function shadow(): Template<Element> {
 	return directive(function(element: Element): void {
 		var shadowRoot = element.shadowRoot || element.attachShadow({mode: "open"});
 		empty(shadowRoot);
-		append(shadowRoot, contents, shadowRoot, bind, true);
+		append(shadowRoot, contents, shadowRoot, bind);
 	});
 }

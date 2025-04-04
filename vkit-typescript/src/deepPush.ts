@@ -9,8 +9,7 @@ import { toArray } from "./toArray.js";
 export interface ClientRenderer<P> {
 	readonly array: Pushable;
 	readonly context: P;
-	readonly crossView: boolean;
-	bind(target: P, modifier: Bindings<P>, isExternal: boolean): void;
+	bind(target: P, modifier: Bindings<P>): void;
 }
 
 export interface Pushable {
@@ -73,5 +72,5 @@ export function deepPush<P>(clientRenderer: ClientRenderer<P>, template: Templat
 		return;
 	}
 	
-	clientRenderer.bind(clientRenderer.context, template, !clientRenderer.crossView);
+	clientRenderer.bind(clientRenderer.context, template);
 }

@@ -9,12 +9,7 @@ export function append<P>(
 	},
 	children: Template<P>,
 	context: P,
-	bind: (
-		target: P,
-		modifier: Bindings<P>,
-		isExternal: boolean
-	) => void,
-	crossView: boolean
+	bind: (target: P, modifier: Bindings<P>) => void
 ): void {
 	function push(node: Node): void {
 		parent.appendChild(node);
@@ -26,7 +21,6 @@ export function append<P>(
 		deepPush({
 			array: array,
 			context: context,
-			crossView: crossView,
 			bind: bind
 		}, children);
 		
@@ -35,7 +29,6 @@ export function append<P>(
 		deepPush({
 			array: {push: push},
 			context: context,
-			crossView: crossView,
 			bind: bind
 		}, children);
 	}

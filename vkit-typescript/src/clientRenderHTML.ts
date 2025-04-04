@@ -121,7 +121,7 @@ export function clientRenderHTML<P extends HTMLElement>(
 				context = null;
 			}
 
-			insert(operator, comment, context as any, clientRenderer.crossView);
+			insert(operator, comment, context as any);
 			comment.parentNode!.removeChild(comment);
 		}
 	}
