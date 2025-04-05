@@ -22,6 +22,7 @@ export function hydrateView<P extends ParentNode>(pointer: HydrationPointer<P>, 
 			var innerPointer: HydrationPointer<P> = {
 				context: parentNode,
 				currentNode: end,
+				isSVG: pointer.isSVG,
 				parentEffect: getEffect(),
 				stopNode: end
 			};
@@ -31,6 +32,7 @@ export function hydrateView<P extends ParentNode>(pointer: HydrationPointer<P>, 
 			var innerPointer: HydrationPointer<P> = {
 				context: parentNode,
 				currentNode: pointer.currentNode,
+				isSVG: pointer.isSVG,
 				parentEffect: getEffect(),
 				stopNode: end
 			};

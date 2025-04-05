@@ -11,7 +11,7 @@ type Attributes = {
 	[attributeName: string]: ReactiveAttributeValue
 };
 
-export type AttributeValue = string | number | boolean | null;
+export type AttributeValue = string | number | bigint | boolean | null;
 
 export type ReactiveAttributeValue = AttributeValue | Signal<AttributeValue> | (() => AttributeValue);
 

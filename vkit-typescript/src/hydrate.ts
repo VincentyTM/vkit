@@ -10,6 +10,7 @@ import { updateEffect } from "./updateEffect.js";
 
 export interface ClientRenderer<P> {
 	readonly context: P;
+	readonly isSVG: boolean;
 	readonly parentEffect: Effect;
 }
 

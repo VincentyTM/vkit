@@ -28,6 +28,7 @@ export function shadow(): Template<Element> {
 		var pointer: HydrationPointer<ShadowRoot> = {
 			context: shadowRoot,
 			currentNode: null,
+			isSVG: false,
 			parentEffect: getEffect(),
 			stopNode: null
 		};

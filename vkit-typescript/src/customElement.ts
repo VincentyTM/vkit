@@ -93,6 +93,7 @@ export function customElement(
 			var pointer: HydrationPointer<ExtendedHTMLElement> = {
 				context: el,
 				currentNode: null,
+				isSVG: false,
 				parentEffect: effect,
 				stopNode: null
 			};

@@ -10,6 +10,7 @@ export function hydrateSVGElement<N extends keyof SVGElementTagNameMap>(pointer:
 		var childPointer: HydrationPointer<SVGElementTagNameMap[N]> = {
 			context: current as SVGElementTagNameMap[N],
 			currentNode: current.firstChild,
+			isSVG: true,
 			parentEffect: pointer.parentEffect,
 			stopNode: null
 		};
@@ -23,6 +24,7 @@ export function hydrateSVGElement<N extends keyof SVGElementTagNameMap>(pointer:
 		hydrate({
 			context: el,
 			currentNode: null, 
+			isSVG: true,
 			parentEffect: pointer.parentEffect,
 			stopNode: null
 		}, template.child);

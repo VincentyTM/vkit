@@ -10,6 +10,7 @@ export function hydrateHTMLElement<N extends keyof HTMLElementTagNameMap>(pointe
 		var childPointer: HydrationPointer<HTMLElementTagNameMap[N]> = {
 			context: current as HTMLElementTagNameMap[N],
 			currentNode: current.firstChild,
+			isSVG: false,
 			parentEffect: pointer.parentEffect,
 			stopNode: null
 		};
@@ -23,10 +24,11 @@ export function hydrateHTMLElement<N extends keyof HTMLElementTagNameMap>(pointe
 		hydrate({
 			context: el,
 			currentNode: null,
+			isSVG: false,
 			parentEffect: pointer.parentEffect,
 			stopNode: null
 		}, template.child);
-		
+
 		pointer.context.insertBefore(el, current);
 	}
 }

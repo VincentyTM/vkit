@@ -120,6 +120,7 @@ export function hydrateHTML<P extends HTMLElement>(pointer: HydrationPointer<P>,
 			hydrate({
 				context: comment.parentNode!,
 				currentNode: comment,
+				isSVG: false,
 				parentEffect: pointer.parentEffect,
 				stopNode: comment
 			}, operator as Template<ParentNode>);

@@ -32,7 +32,7 @@ export interface RenderRoot {
  * @param container A container DOM node in which the application is rendered.
  * @returns An object that can be used to destroy the rendered effects.
  */
-export function render<P extends ParentNode>(getTemplate: () => Template<P>, container: P): RenderRoot {
+export function render<P extends HTMLElement>(getTemplate: () => Template<P>, container: P): RenderRoot {
 	var doc = container.ownerDocument;
 	var win: (Window & typeof globalThis) | null = doc && doc.defaultView || (doc as any).parentWindow || null;
 
@@ -43,6 +43,7 @@ export function render<P extends ParentNode>(getTemplate: () => Template<P>, con
 		var pointer: HydrationPointer<P> = {
 			context: container,
 			currentNode: container.firstChild,
+			isSVG: false,
 			parentEffect: rootEffect,
 			stopNode: null
 		};

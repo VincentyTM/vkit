@@ -108,6 +108,7 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 					var blockPointer: HydrationPointer<P> = {
 						context: pointer.context,
 						currentNode: block.start.nextSibling,
+						isSVG: pointer.isSVG,
 						parentEffect: block.effect,
 						stopNode: block.end
 					};
@@ -130,6 +131,7 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 				var blockPointer: HydrationPointer<P> = {
 					context: pointer.context,
 					currentNode: pointer.currentNode,
+					isSVG: pointer.isSVG,
 					parentEffect: block.effect,
 					stopNode: block.end
 				};
@@ -183,6 +185,7 @@ function createBlock<T, P extends ParentNode>(
 			var innerPointer: HydrationPointer<P> = {
 				context: pointer.context,
 				currentNode: start.nextSibling,
+				isSVG: pointer.isSVG,
 				parentEffect: effect,
 				stopNode: end
 			};

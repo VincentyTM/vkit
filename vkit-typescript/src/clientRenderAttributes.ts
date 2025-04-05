@@ -8,58 +8,49 @@ export function clientRenderAttributes<P extends Element>(
 	template: AttributesTemplate
 ): void {
 	var attributes = template.attributes;
+	var isSVG = clientRenderer.isSVG;
 
 	for (var name in attributes) {
-		addAttribute(clientRenderer.context, name, attributes[name]);
+		addAttribute(clientRenderer.context, name, attributes[name], isSVG);
 	}
 }
 
-function setAttribute(el: Element, name: string, value: AttributeValue): void {
-	if (typeof value === "number") {
-		value = value.toString();
-	}
-	
-	if (typeof value === "string") {
-		el.setAttribute(name, value);
-		return;
-	}
-	
-	if (value) {
-		el.setAttribute(name, "");
-		return;
+function setAttribute(el: Element, name: string, value: AttributeValue, isSVG: boolean): void {
+	if (value === true) {
+		value = "";
+	} else if (value === false) {
+		value = null;
 	}
 
-	el.removeAttribute(name);
+	if (value === null) {
+		if (isSVG) {
+			el.removeAttributeNS(null, name);
+		} else {
+			el.removeAttribute(name);
+		}
+	} else {
+		if (isSVG) {
+			el.setAttributeNS(null, name, String(value));
+		} else {
+			el.setAttribute(name, String(value));
+		}
+	}
 }
 
-function addAttribute(el: Element, name: string, value: ReactiveAttributeValue): void {
-	if (typeof value === "number") {
-		value = value.toString();
-	}
-	
-	if (typeof value === "string") {
-		el.setAttribute(name, value);
-		return;
-	}
-	
+function addAttribute(el: Element, name: string, value: ReactiveAttributeValue, isSVG: boolean): void {
 	if (isSignal(value)) {
 		value.effect(function(val) {
-			setAttribute(el, name, val);
+			setAttribute(el, name, val, isSVG);
 		});
 		return;
 	}
 	
 	if (typeof value === "function") {
 		effect(function() {
-			setAttribute(el, name, (value as () => AttributeValue)());
+			setAttribute(el, name, (value as () => AttributeValue)(), isSVG);
 		});
 		return;
 	}
-	
-	if (value) {
-		el.setAttribute(name, "");
-		return;
-	}
 
-	el.removeAttribute(name);
+	setAttribute(el, name, value, isSVG);
 }
