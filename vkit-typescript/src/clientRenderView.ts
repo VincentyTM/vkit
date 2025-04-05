@@ -1,6 +1,6 @@
 import { createEffect } from "./createEffect.js";
 import { ClientRenderer, deepPush } from "./deepPush.js";
-import { insert } from "./insert.js";
+import { hydrate, HydrationPointer } from "./hydrate.js";
 import { updateEffect } from "./updateEffect.js";
 import { ViewTemplate } from "./view.js";
 
@@ -23,7 +23,14 @@ export function clientRenderView<P extends ParentNode, T>(
 				parent.removeChild(el);
 			}
 
-			insert(innerTemplate, end, parentElement, clientRenderer.parentEffect);
+			var innerPointer: HydrationPointer<P> = {
+				context: parentElement,
+				currentNode: end,
+				parentEffect: clientRenderer.parentEffect,
+				stopNode: end
+			};
+			
+			hydrate(innerPointer, innerTemplate);
 		} else {
 			clientRenderer.add(start);
 			deepPush(clientRenderer, innerTemplate);

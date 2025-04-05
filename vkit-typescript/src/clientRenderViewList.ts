@@ -3,7 +3,7 @@ import { createEffect, Effect } from "./createEffect.js";
 import { ClientRenderer } from "./deepPush.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { hashCode } from "./hashCode.js";
-import { insert } from "./insert.js";
+import { hydrate, HydrationPointer } from "./hydrate.js";
 import { isArray } from "./isArray.js";
 import { Template } from "./Template.js";
 import { toArray } from "./toArray.js";
@@ -162,7 +162,15 @@ function createBlock<T>(
 		
 		if (parentNode) {
 			clearRange(start, end);
-			insert(itemTemplate, end, parentNode, effect);
+
+			var pointer: HydrationPointer<ParentNode> = {
+				context: parentNode,
+				currentNode: start.nextSibling,
+				parentEffect: effect,
+				stopNode: end
+			};
+
+			hydrate(pointer, itemTemplate);
 		}
 	});
 	

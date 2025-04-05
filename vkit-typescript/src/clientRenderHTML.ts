@@ -1,6 +1,6 @@
 import { ClientRenderer, deepPush } from "./deepPush.js";
 import { HTMLTemplate } from "./html.js";
-import { insert } from "./insert.js";
+import { hydrate } from "./hydrate.js";
 import { Template } from "./Template.js";
 import { toArray } from "./toArray.js";
 
@@ -121,12 +121,12 @@ export function clientRenderHTML<P>(
 				context = null;
 			}
 
-			insert(
-				operator,
-				comment,
-				context as ParentNode,
-				clientRenderer.parentEffect
-			);
+			hydrate({
+				context: comment.parentNode as ParentNode,
+				currentNode: comment,
+				parentEffect: clientRenderer.parentEffect,
+				stopNode: comment
+			}, operator);
 
 			comment.parentNode!.removeChild(comment);
 		}

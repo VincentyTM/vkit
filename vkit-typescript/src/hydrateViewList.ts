@@ -188,7 +188,7 @@ function createBlock<T, P extends ParentNode>(
 			};
 
 			hydrate(innerPointer, innerTemplate);
-		}	
+		}
 	});
 	
 	var block: Block = {
