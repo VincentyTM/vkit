@@ -1,11 +1,11 @@
 import { BooleanValue, ClassArgument, ClassesTemplate, NoClass } from "./classes.js";
-import { ClientRendererBase } from "./deepPush.js";
 import { effect } from "./effect.js";
+import { ClientRenderer } from "./hydrate.js";
 import { isArrayLike } from "./isArrayLike.js";
 import { isSignal } from "./isSignal.js";
 
 export function clientRenderClasses<P extends Element>(
-	clientRenderer: ClientRendererBase<P>,
+	clientRenderer: ClientRenderer<P>,
 	template: ClassesTemplate
 ): void {
 	bindClasses(clientRenderer.context, template.args);

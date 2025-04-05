@@ -1,10 +1,10 @@
 import { AttributesTemplate, AttributeValue, ReactiveAttributeValue } from "./attributes.js";
-import { ClientRendererBase } from "./deepPush.js";
 import { effect } from "./effect.js";
+import { ClientRenderer } from "./hydrate.js";
 import { isSignal } from "./isSignal.js";
 
 export function clientRenderAttributes<P extends Element>(
-	clientRenderer: ClientRendererBase<P>,
+	clientRenderer: ClientRenderer<P>,
 	template: AttributesTemplate
 ): void {
 	var attributes = template.attributes;

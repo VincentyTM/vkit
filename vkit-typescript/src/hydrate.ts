@@ -1,7 +1,6 @@
 import { Bindings } from "./bind.js";
 import { Signal } from "./computed.js";
-import { createEffect } from "./createEffect.js";
-import { ClientRendererBase } from "./deepPush.js";
+import { createEffect, Effect } from "./createEffect.js";
 import { hydrateInlineStyle } from "./hydrateInlineStyle.js";
 import { InlineStyleInput } from "./inlineStyle.js";
 import { isSignal } from "./isSignal.js";
@@ -9,7 +8,12 @@ import { onEvent, EventListenerType } from "./onEvent.js";
 import { Template } from "./Template.js";
 import { updateEffect } from "./updateEffect.js";
 
-export interface HydrationPointer<P> extends ClientRendererBase<P> {
+export interface ClientRenderer<P> {
+	readonly context: P;
+	readonly parentEffect: Effect;
+}
+
+export interface HydrationPointer<P> extends ClientRenderer<P> {
 	currentNode: Node | null;
 	readonly stopNode: Node | null;
 }

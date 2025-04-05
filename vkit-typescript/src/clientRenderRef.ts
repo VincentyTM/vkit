@@ -1,10 +1,10 @@
 import { getEffect } from "./contextGuard.js";
-import { ClientRendererBase } from "./deepPush.js";
+import { ClientRenderer } from "./hydrate.js";
 import { onDestroy } from "./onDestroy.js";
 import { MutableRef } from "./ref.js";
 
 export function clientRenderRef<P>(
-	clientRenderer: ClientRendererBase<P>,
+	clientRenderer: ClientRenderer<P>,
 	ref: MutableRef<P>
 ): void {
 	if (ref.current !== null) {

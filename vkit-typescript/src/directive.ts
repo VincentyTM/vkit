@@ -1,5 +1,5 @@
 import { createEffect } from "./createEffect.js";
-import { ClientRendererBase } from "./deepPush.js";
+import { ClientRenderer } from "./hydrate.js";
 import { noop } from "./noop.js";
 import { CustomTemplate } from "./Template.js";
 import { updateEffect } from "./updateEffect.js";
@@ -9,7 +9,7 @@ export interface DirectiveTemplate<P> extends CustomTemplate<P> {
 }
 
 function clientRenderDirective<P>(
-	clientRenderer: ClientRendererBase<P>,
+	clientRenderer: ClientRenderer<P>,
 	template: DirectiveTemplate<P>
 ): void {
 	var context = clientRenderer.context;
