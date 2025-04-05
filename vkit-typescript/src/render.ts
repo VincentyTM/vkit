@@ -1,10 +1,10 @@
-import { append } from "./append.js";
-import { bind } from "./bind.js";
 import { createEffect } from "./createEffect.js";
 import { createInjector } from "./createInjector.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { WindowService } from "./getWindow.js";
+import { hydrate, HydrationPointer } from "./hydrate.js";
 import { inject } from "./inject.js";
+import { removeRemainingNodes } from "./removeRemainingNodes.js";
 import { Template } from "./Template.js";
 import { update } from "./update.js";
 import { updateEffect } from "./updateEffect.js";
@@ -39,12 +39,16 @@ export function render<P extends ParentNode>(getTemplate: () => Template<P>, con
 	var rootInjector = createInjector(undefined, true);
 	var rootEffect = createEffect(undefined, rootInjector, function(): void {
 		inject(WindowService).window = win;
-		append(
-			container,
-			getTemplate(),
-			rootEffect,
-			bind
-		);
+
+		var pointer: HydrationPointer<P> = {
+			context: container,
+			currentNode: container.firstChild,
+			parentEffect: rootEffect,
+			stopNode: null
+		};
+
+		hydrate(pointer, getTemplate());
+		removeRemainingNodes(pointer);
 	});
 
 	updateEffect(rootEffect);
