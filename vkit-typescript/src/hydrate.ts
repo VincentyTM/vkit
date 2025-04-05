@@ -4,7 +4,6 @@ import { createEffect } from "./createEffect.js";
 import { ClientRendererBase } from "./deepPush.js";
 import { hydrateInlineStyle } from "./hydrateInlineStyle.js";
 import { InlineStyleInput } from "./inlineStyle.js";
-import { isCustomTemplate } from "./isCustomTemplate.js";
 import { isSignal } from "./isSignal.js";
 import { onEvent, EventListenerType } from "./onEvent.js";
 import { Template } from "./Template.js";
@@ -42,7 +41,7 @@ export function hydrate<P extends ParentNodeCore>(pointer: HydrationPointer<P>, 
 		return;
 	}
 
-    if (isCustomTemplate(template)) {
+    if ("hydrate" in template) {
 		template.hydrate(pointer, template);
 		return;
     }

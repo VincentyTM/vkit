@@ -23,7 +23,6 @@ function clientRenderDirective<P>(
 export function directive<P>(callback: (element: P) => void): DirectiveTemplate<P> {
 	return {
 		callback: callback,
-		clientRender: clientRenderDirective,
 		hydrate: clientRenderDirective,
 		serverRender: noop
 	};

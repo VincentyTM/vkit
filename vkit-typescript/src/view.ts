@@ -1,4 +1,3 @@
-import { clientRenderView } from "./clientRenderView.js";
 import { Signal } from "./computed.js";
 import { getEffect } from "./contextGuard.js";
 import { Effect } from "./createEffect.js";
@@ -42,7 +41,6 @@ export function view<P extends ParentNode, T>(this: Signal<T> | void, getTemplat
 	return {
 		parentEffect: getEffect(),
 		signal: isSignal(this) ? this : null,
-		clientRender: clientRenderView,
 		errorHandler: undefined,
 		getTemplate: getTemplate,
 		hydrate: hydrateView,

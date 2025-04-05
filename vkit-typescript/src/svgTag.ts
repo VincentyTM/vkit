@@ -1,4 +1,3 @@
-import { clientRenderSVGElement } from "./clientRenderSVGElement.js";
 import { Signal } from "./computed.js";
 import { hydrateSVGElement } from "./hydrateSVGElement.js";
 import { serverRenderSVGElement } from "./serverRenderSVGElement.js";
@@ -82,7 +81,6 @@ export function svgTag<N extends keyof SVGElementTagNameMap>(tagName: N): () => 
 		return {
 			child: arguments.length > 1 ? arguments : arguments[0],
 			tagName: tagName,
-			clientRender: clientRenderSVGElement,
 			hydrate: hydrateSVGElement,
 			serverRender: serverRenderSVGElement
 		};

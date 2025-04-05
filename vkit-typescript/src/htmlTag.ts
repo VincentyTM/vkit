@@ -1,4 +1,3 @@
-import { clientRenderHTMLElement } from "./clientRenderHTMLElement.js";
 import { hydrateHTMLElement } from "./hydrateHTMLElement.js";
 import { serverRenderHTMLElement } from "./serverRenderHTMLElement.js";
 import { CustomTemplate, Template } from "./Template.js";
@@ -43,7 +42,6 @@ export function htmlTag<N extends keyof HTMLElementTagNameMap>(tagName: N): () =
         return {
             child: arguments.length > 1 ? arguments : arguments[0],
             tagName: tagName,
-            clientRender: clientRenderHTMLElement,
             hydrate: hydrateHTMLElement,
             serverRender: serverRenderHTMLElement
         };

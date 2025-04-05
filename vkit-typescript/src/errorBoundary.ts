@@ -1,4 +1,3 @@
-import { clientRenderView } from "./clientRenderView.js";
 import { getEffect } from "./contextGuard.js";
 import { hydrateView } from "./hydrateView.js";
 import { serverRenderView } from "./serverRenderView.js";
@@ -68,7 +67,6 @@ export function errorBoundary<P extends Element>(
 	return {
 		parentEffect: getEffect(),
 		signal: null,
-		clientRender: clientRenderView,
 		errorHandler: errorHandler,
 		getTemplate: getOuterTemplate,
 		hydrate: hydrateView,

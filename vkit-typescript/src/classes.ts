@@ -50,7 +50,6 @@ export function classes(...args: readonly ClassArgument[]): ClassesTemplate;
 export function classes(): ClassesTemplate {
 	return {
 		args: arguments.length > 1 ? arguments : arguments[0],
-		clientRender: clientRenderClasses,
 		hydrate: clientRenderClasses,
 		serverRender: serverRenderClasses
 	};
