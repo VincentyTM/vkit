@@ -7,9 +7,12 @@ import { Template } from "./Template.js";
 import { text } from "./text.js";
 import { toArray } from "./toArray.js";
 
-export interface ClientRenderer<P> {
+export interface ClientRendererBase<P> {
 	readonly context: P;
 	readonly parentEffect: Effect;
+}
+
+export interface ClientRenderer<P> extends ClientRendererBase<P> {
 	add(node: Node): void;
 	bind(target: P, modifier: Bindings<P>): void;
 }

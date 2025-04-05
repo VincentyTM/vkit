@@ -2,6 +2,7 @@ import { clientRenderView } from "./clientRenderView.js";
 import { Signal } from "./computed.js";
 import { getEffect } from "./contextGuard.js";
 import { Effect } from "./createEffect.js";
+import { hydrateView } from "./hydrateView.js";
 import { isSignal } from "./isSignal.js";
 import { serverRenderView } from "./serverRenderView.js";
 import { CustomTemplate, Template } from "./Template.js";
@@ -44,6 +45,7 @@ export function view<P extends ParentNode, T>(this: Signal<T> | void, getTemplat
 		clientRender: clientRenderView,
 		errorHandler: undefined,
 		getTemplate: getTemplate,
+		hydrate: hydrateView,
 		serverRender: serverRenderView
 	};
 }

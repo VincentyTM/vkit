@@ -1,4 +1,5 @@
 import { clientRenderHTML } from "./clientRenderHTML.js";
+import { hydrateHTML } from "./hydrateHTML.js";
 import { isArray } from "./isArray.js";
 import { serverRenderHTML } from "./serverRenderHTML.js";
 import { CustomTemplate, Template } from "./Template.js";
@@ -58,6 +59,7 @@ export function html<P extends HTMLElement>(
 	return {
 		args: arguments,
 		clientRender: clientRenderHTML,
+		hydrate: hydrateHTML,
 		serverRender: serverRenderHTML
 	};
 }

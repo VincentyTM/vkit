@@ -38,6 +38,7 @@ export function attributes(attributes: Attributes): AttributesTemplate {
 	return {
 		attributes: attributes,
 		clientRender: clientRenderAttributes,
+		hydrate: clientRenderAttributes,
 		serverRender: serverRenderAttributes
 	};
 }

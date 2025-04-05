@@ -2,6 +2,7 @@ import { clientRenderViewList } from "./clientRenderViewList.js";
 import { Signal } from "./computed.js";
 import { getEffect } from "./contextGuard.js";
 import { Effect } from "./createEffect.js";
+import { hydrateViewList } from "./hydrateViewList.js";
 import { serverRenderViewList } from "./serverRenderViewList.js";
 import { CustomTemplate, Template } from "./Template.js";
 
@@ -20,6 +21,7 @@ export function viewList<T, P extends ParentNode>(
 		parentEffect: getEffect(),
 		clientRender: clientRenderViewList,
 		getItemTemplate: getItemTemplate,
+		hydrate: hydrateViewList,
 		serverRender: serverRenderViewList
 	};
 }

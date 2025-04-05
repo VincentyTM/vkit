@@ -38,6 +38,7 @@ export function ref<T = HTMLElement>(): Ref<T> {
 		current: null,
 		effect: getEffect(true),
 		clientRender: clientRenderRef,
+		hydrate: clientRenderRef,
 		serverRender: noop
 	};
 
