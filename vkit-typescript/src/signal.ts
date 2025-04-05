@@ -8,20 +8,20 @@ import { view } from "./view.js";
 import { views } from "./views.js";
 
 export interface WritableSignal<T> extends Signal<T> {
-	/**
-	 * Sets the signal's value and enqueues a notification of its subscribers.
+    /**
+	 * Sets the signal's value and enqueues a notification for its subscribers.
 	 * @example
 	 * const count = signal(10);
-	 * count.subscribe((value) => console.log("The value has changed to: " + value));
+     * effect(() => console.log("Count:", count())); // Logs 10.
 	 * count.set(20);
 	 * // count.get() === 20
-	 * console.log("The subscribers have not been notified yet.");
+	 * // 20 has not yet been logged at this point but logging it has been scheduled.
 	 * 
 	 * @param value The new value of the signal.
 	 */
 	set(value: T): void;
 
-	/**
+    /**
 	 * Sets the signal's current value to the return value of the callback.
 	 * @example
 	 * const count = signal(10);
@@ -31,12 +31,12 @@ export interface WritableSignal<T> extends Signal<T> {
 	 * count.update(toIncrementedBy, 10);
 	 * // count.get() === 30
 	 * 
-	 * @param transform A pure function which takes the old signal value and returns the new one.
+	 * @param reducer A pure function which takes the old signal value and returns the new one.
 	 * Optionally, it can have an extra parameter that has the value of `action`.
-	 * @param action An optional parameter that can be used to pass data to `transform`.
+	 * @param action An optional parameter that can be used to pass data to `reducer`.
 	 */
-	update<A>(transform: (value: T, action: A) => T, action: A): void;
-	update(transform: (state: T) => T): void;
+	update<A>(reducer: (state: T, action: A) => T, action: A): void;
+	update(reducer: (state: T) => T): void;
 }
 
 /**
@@ -137,26 +137,25 @@ export function signal<T>(value: T): WritableSignal<T> {
 		}
 	}
 	
-	use.parentEffect = parentEffect;
 	use.effect = signalEffect;
 	use.get = get;
 	use.isSignal = true;
 	use.map = signalMap;
 	use.set = set;
 	use.subscribe = subscribe;
-	use.toString = signalToString;
-	use.update = updateSignal;
+	use.toString = writableSignalToString;
+	use.update = updateSignalValue;
 	use.view = view;
 	use.views = views;
 	
 	return use as WritableSignal<T>;
 }
 
-export function signalToString(this: WritableSignal<unknown>): string {
+export function writableSignalToString(this: WritableSignal<unknown>): string {
 	return "[object WritableSignal(" + this.get() + ")]";
 }
 
-export function updateSignal<T, A>(
+export function updateSignalValue<T, A>(
 	this: WritableSignal<T>,
 	transform: (state: T, action?: A) => T,
 	action?: A

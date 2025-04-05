@@ -41,16 +41,8 @@ type ElementType = {
  * @param name The name of the property.
  * @param valueSignal The signal that contains the current value for the property.
  */
-export function signalProp<T>(
-	element: ElementType,
-	name: string,
-	valueSignal: Signal<T>
-): void {
-	var effect = getEffect(true);
-	
-	element[name] = valueSignal.get();
-	
-	valueSignal.subscribe(function(value: T) {
+export function signalProp<T>(element: ElementType, name: string, valueSignal: Signal<T>): void {
+	valueSignal.effect(function(value: T): void {
 		element[name] = value;
-	}, valueSignal.parentEffect === effect);
+	});
 }

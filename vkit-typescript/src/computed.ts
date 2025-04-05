@@ -14,6 +14,9 @@ export type ArrayOfMaybeSignals<A extends unknown[]> = unknown[] & {
 };
 
 export interface ComputedSignal<T> extends Signal<T> {
+    /**
+     * Marks the computed signal as to be recalculated before the next read.
+     */
 	invalidate(): void;
 }
 
@@ -21,12 +24,6 @@ type ItemType<T> = T extends (infer ItemType)[] ? ItemType : never;
 
 export interface Signal<T> {
 	(): T;
-
-	/**
-	 * The parent effect in which the signal was created.
-	 * It is null if the signal was created outside the reactivity tree (for example, in an event listener).
-	 */
-	parentEffect: Effect | null;
 
 	/**
 	 * Subscribes a side effect to the signal.
@@ -57,7 +54,7 @@ export interface Signal<T> {
 	/**
 	 * A boolean which is always true. It is used internally to check if a value is a signal.
 	 */
-	isSignal: true;
+	 readonly isSignal: true;
 
 	/**
 	 * Creates and returns a computed signal whose value depends on the current signal.
@@ -156,7 +153,7 @@ export interface Signal<T> {
  * 		"Double count: ", doubleCount
  * 	);
  * }
- * @param getValue A function which returns some value.
+ * @param computeValue A function which returns some value.
  * If other signals are called within the function,
  * the computed signal will depend on them, which means that its value will
  * be recalculated when any of its dependencies change.
@@ -166,17 +163,17 @@ export interface Signal<T> {
  * @returns A computed signal.
  */
 export function computed<F extends () => unknown>(
-	getValue: F,
+	computeValue: F,
 	dependencies?: undefined
 ): ComputedSignal<ReturnType<F>>;
 
 export function computed<F extends (...args: any[]) => unknown>(
-	getValue: F,
+	computeValue: F,
 	dependencies: ArrayOfMaybeSignals<Parameters<F>>
 ): ComputedSignal<ReturnType<F>>;
 
 export function computed<F extends (...args: never[]) => unknown>(
-	getValue: F,
+	computeValue: F,
 	dependencies?: ArrayOfMaybeSignals<Parameters<F>>
 ): ComputedSignal<ReturnType<F>> {
 	type Subscription = {callback: ((value: Value) => void) | null};
@@ -185,7 +182,7 @@ export function computed<F extends (...args: never[]) => unknown>(
 	var parentEffect = getEffect(true);
 	var subscriptions: Subscription[] = [];
 	var value: Value = none as Value;
-	var effectOfSignal = createEffect(parentEffect, getInjector(true), computeValue);
+	var effectOfSignal = createEffect(parentEffect, getInjector(true), updateHandler);
 
 	function invalidate(): void {
 		updateEffect(effectOfSignal);
@@ -203,7 +200,7 @@ export function computed<F extends (...args: never[]) => unknown>(
 		}
 	}
 	
-	function computeValue(): void {
+	function updateHandler(): void {
 		var newValue: Value;
 		
 		if (dependencies) {
@@ -215,9 +212,9 @@ export function computed<F extends (...args: never[]) => unknown>(
 				args[i] = input && typeof input.get === "function" ? input.get() : input;
 			}
 			
-			newValue = getValue.apply(null, args as never[]) as Value;
+			newValue = computeValue.apply(null, args as never[]) as Value;
 		} else {
-			newValue = (getValue as () => Value)();
+			newValue = (computeValue as () => Value)();
 		}
 
 		var oldValue = value;
@@ -290,7 +287,6 @@ export function computed<F extends (...args: never[]) => unknown>(
 		return unsubscribe;
 	}
 	
-	use.parentEffect = parentEffect;
 	use.effect = signalEffect;
 	use.get = get;
 	use.invalidate = invalidate;
@@ -311,6 +307,6 @@ export function signalMap<T, M extends (value: T) => unknown>(
 	return computed(transform as (...values: any[]) => ReturnType<M>, [this]);
 }
 
-function toString(this: Signal<any>): string {
-	return "[object ComputedSignal(" + this.get() + ")]";
+function toString(this: ComputedSignal<unknown>): string {
+    return "[object ComputedSignal(" + this.get() + ")]";
 }
