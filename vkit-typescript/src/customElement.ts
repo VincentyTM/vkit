@@ -1,10 +1,9 @@
-import { append } from "./append.js";
-import { bind } from "./bind.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { createInjector } from "./createInjector.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { empty } from "./empty.js";
 import { WindowService } from "./getWindow.js";
+import { hydrate, HydrationPointer } from "./hydrate.js";
 import { inject } from "./inject.js";
 import { signal, WritableSignal } from "./signal.js";
 import { Template } from "./Template.js";
@@ -90,7 +89,15 @@ export function customElement(
 			var doc = el.ownerDocument;
 			inject(WindowService).window = doc.defaultView || (doc as any).parentWindow;
 			var view = getView.call(el, el.observedAttributes, el);
-			append(el, view, effect, bind);
+
+			var pointer: HydrationPointer<ExtendedHTMLElement> = {
+				context: el,
+				currentNode: null,
+				parentEffect: effect,
+				stopNode: null
+			};
+
+			hydrate(pointer, view);
 		});
 		
 		el.effect = effect;

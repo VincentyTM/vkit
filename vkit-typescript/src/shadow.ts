@@ -1,8 +1,7 @@
-import { append } from "./append.js";
-import { bind } from "./bind.js";
 import { getEffect } from "./contextGuard.js";
 import { directive } from "./directive.js";
 import { empty } from "./empty.js";
+import { hydrate, HydrationPointer } from "./hydrate.js";
 import { Template } from "./Template.js";
 
 /**
@@ -25,6 +24,14 @@ export function shadow(): Template<Element> {
 	return directive(function(element: Element): void {
 		var shadowRoot = element.shadowRoot || element.attachShadow({mode: "open"});
 		empty(shadowRoot);
-		append(shadowRoot, contents, getEffect(), bind);
+
+		var pointer: HydrationPointer<ShadowRoot> = {
+			context: shadowRoot,
+			currentNode: null,
+			parentEffect: getEffect(),
+			stopNode: null
+		};
+
+		hydrate(pointer, contents);
 	});
 }

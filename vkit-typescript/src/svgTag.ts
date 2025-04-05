@@ -4,7 +4,7 @@ import { hydrateSVGElement } from "./hydrateSVGElement.js";
 import { serverRenderSVGElement } from "./serverRenderSVGElement.js";
 import { CustomTemplate, Template } from "./Template.js";
 
-export type Reactive<T> = T | Signal<T> | (() => T);
+type Reactive<T> = T | Signal<T> | (() => T);
 
 type ExtendedEvent<E, T> = E & {
 	readonly currentTarget: T;
