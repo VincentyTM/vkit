@@ -11,6 +11,7 @@ export interface SignalNode<T> extends ReactiveNodeBase {
     readonly parentEffect: Effect | undefined;
     readonly signalEffect: Effect;
     readonly subscriptions: SignalSubscription<T>[];
+    readonly type: ReactiveNodeType.Signal;
     value: unknown;
 	computeValue(...args: unknown[]): T;
     invalidate(): void;

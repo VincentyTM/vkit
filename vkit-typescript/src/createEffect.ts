@@ -7,6 +7,7 @@ export interface Effect extends ReactiveNodeBase {
 	destroyHandlers: (() => void)[] | undefined;
 	readonly injector: Injector | undefined;
 	readonly parent: Effect | undefined;
+	readonly type: ReactiveNodeType.Effect;
     errorHandler: ((error: unknown) => void) | undefined;
 	updateHandler(): void;
 }

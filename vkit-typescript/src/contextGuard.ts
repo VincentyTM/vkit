@@ -1,23 +1,23 @@
 import { Effect } from "./createEffect.js";
 import { Injector } from "./createInjector.js";
+import { ReactiveNode, ReactiveNodeType } from "./ReactiveNode.js";
 
-var currentEffect: Effect | undefined;
-var currentInjector: Injector | undefined;
-var errorMessage = "This function can only be called synchronously from a reactive context";
+var evaluatedNode: ReactiveNode | undefined;
+var evaluatedInjector: Injector | undefined;
 
 export function getEffect(): Effect;
 
 export function getEffect(doNotThrow: true): Effect | undefined;
 
 export function getEffect(doNotThrow?: boolean): Effect | undefined {
-	if (!doNotThrow && !currentEffect) {
-		throw new Error(errorMessage);
-	}
-	return currentEffect;
-}
+    if (evaluatedNode === undefined || evaluatedNode.type !== ReactiveNodeType.Effect) {
+        if (doNotThrow) {
+            return undefined;
+        }
+        throw new Error("This function can only be called synchronously from a reactive effect");
+    }
 
-export function setEffect(effect: Effect | undefined): void {
-	currentEffect = effect;
+    return evaluatedNode;
 }
 
 export function getInjector(): Injector;
@@ -25,12 +25,17 @@ export function getInjector(): Injector;
 export function getInjector(doNotThrow: true): Injector | undefined;
 
 export function getInjector(doNotThrow?: boolean): Injector | undefined {
-	if (!doNotThrow && (!currentEffect || !currentInjector)) {
-		throw new Error(errorMessage);
+	if (!doNotThrow && (evaluatedNode === undefined || evaluatedNode.type !== ReactiveNodeType.Effect)) {
+		throw new Error("This function can only be called synchronously from an injector context");
 	}
-	return currentInjector;
+
+	return evaluatedInjector;
+}
+
+export function setEffect(effect: Effect | undefined): void {
+	evaluatedNode = effect;
 }
 
 export function setInjector(injector: Injector | undefined): void {
-	currentInjector = injector;
+	evaluatedInjector = injector;
 }
