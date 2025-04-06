@@ -1,18 +1,18 @@
 import { computed, ComputedSignal, Signal } from "./computed.js";
 import { Template } from "./Template.js";
 
-export type KeyedSignal<T, K> = ComputedSignal<T> & {
-	key: K;
-};
+export interface KeyedSignal<T, K> extends ComputedSignal<T> {
+	readonly key: K;
+}
 
 interface KeysAndRecords<T> {
-	keys: string[];
-	records: Record<string, T>;
+	readonly keys: string[];
+	readonly records: Record<string, T>;
 }
 
 interface UseKeyHandle<T> {
-	array: Signal<T[]>;
-	records: ComputedSignal<Record<string, T>>;
+	readonly array: Signal<T[]>;
+	readonly records: ComputedSignal<Record<string, T>>;
 	getItem(key: string): T;
 	select(key: string): KeyedSignal<T, string>;
 	select(key: Signal<string>): KeyedSignal<T, Signal<string>>;
@@ -103,7 +103,7 @@ export function useKey<T>(
 	
 	function select<K extends string | Signal<string>>(key: K): KeyedSignal<T, K> {
 		var selected = computed(selectRecord, [keysAndRecordsSignal, key]) as Signal<T> as KeyedSignal<T, K>;
-		selected.key = key;
+		(selected.key as K) = key;
 		return selected;
 	}
 	
