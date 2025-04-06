@@ -1,23 +1,20 @@
-import { SignalSubscription } from "./computed.js";
 import { getEffect, getInjector } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { isSignal } from "./isSignal.js";
 import { ReactiveNodeBase, ReactiveNodeType } from "./ReactiveNode.js";
 import { DIRTY_FLAG } from "./reactiveNodeFlags.js";
+import { INITIAL_SIGNAL_VALUE, signalObserve } from "./signalObserve.js";
 import { updateEffect } from "./updateEffect.js";
 
 export interface SignalNode<T> extends ReactiveNodeBase {
 	readonly dependencies: unknown[] | undefined;
     readonly parentEffect: Effect | undefined;
     readonly signalEffect: Effect;
-    readonly subscriptions: SignalSubscription<T>[];
     readonly type: ReactiveNodeType.Signal;
     value: unknown;
 	computeValue(...args: unknown[]): T;
     invalidate(): void;
 }
-
-export var INITIAL_SIGNAL_VALUE = {} as const;
 
 export function createSignalNode<T>(
     computeValue: (...args: unknown[]) => T,
@@ -30,7 +27,7 @@ export function createSignalNode<T>(
         flags: DIRTY_FLAG,
         parentEffect: parentEffect,
         signalEffect: createEffect(parentEffect, getInjector(true), updateHandler),
-        subscriptions: [],
+        subscribers: [],
         type: ReactiveNodeType.Signal,
         value: INITIAL_SIGNAL_VALUE,
         computeValue: computeValue,
@@ -82,13 +79,16 @@ export function createSignalNode<T>(
             return;
         }
         
-        var subs = node.subscriptions.slice();
+        var subs = node.subscribers.slice();
         var m = subs.length;
         
         for (var i = 0; i < m; ++i) {
             var sub = subs[i];
-            if (sub.callback) {
-                sub.callback(node.value as T);
+            
+            if (sub.type === ReactiveNodeType.Signal) {
+                signalObserve(sub, false);
+            } else {
+                updateEffect(sub);
             }
         }
     }

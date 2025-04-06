@@ -1,3 +1,5 @@
+import { getEffect } from "./contextGuard.js";
+import { createEffect } from "./createEffect.js";
 import { createSignalNode } from "./createSignalNode.js";
 import { signalEffect } from "./signalEffect.js";
 import { signalObserve, signalSubscribe } from "./signalObserve.js";
@@ -17,10 +19,6 @@ export interface ComputedSignal<T> extends Signal<T> {
 }
 
 type ItemType<T> = T extends (infer ItemType)[] ? ItemType : never;
-
-export interface SignalSubscription<T> {
-	callback: ((value: T) => void) | null;
-}
 
 export interface Signal<T> {
 	(): T;
@@ -190,7 +188,15 @@ export function computed<F extends (...args: never[]) => unknown>(
 		callback: (value: ReturnType<F>) => void,
 		persistent?: boolean
 	): () => void {
-		return signalSubscribe(node, callback, !!persistent);
+		var parentEffect = getEffect();
+		
+		return signalSubscribe(
+			node,
+			createEffect(parentEffect, parentEffect.injector, function(): void {
+				callback(signalObserve(node, true));
+			}),
+			!!persistent
+		);
 	}
 	
 	use.effect = signalEffect;

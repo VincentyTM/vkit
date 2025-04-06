@@ -1,8 +1,10 @@
-import { SignalSubscription } from "./computed.js";
 import { getEffect } from "./contextGuard.js";
-import { INITIAL_SIGNAL_VALUE, SignalNode } from "./createSignalNode.js";
+import { SignalNode } from "./createSignalNode.js";
 import { onDestroy } from "./onDestroy.js";
+import { ReactiveNode } from "./ReactiveNode.js";
 import { updateEffect } from "./updateEffect.js";
+
+export var INITIAL_SIGNAL_VALUE = {} as const;
 
 export function signalObserve<T>(node: SignalNode<T>, tracked: boolean): T {
     if (node.value === INITIAL_SIGNAL_VALUE) {
@@ -12,37 +14,32 @@ export function signalObserve<T>(node: SignalNode<T>, tracked: boolean): T {
     var evaluatedNode = getEffect(true);
     
     if (tracked && evaluatedNode !== undefined) {
-        signalSubscribe(node, function(): void {
-            updateEffect(evaluatedNode!);
-        }, false);
+        signalSubscribe(node, evaluatedNode, false);
     }
     
     return node.value as T;
 }
 
 export function signalSubscribe<T>(
-    node: SignalNode<T>,
-    callback: (value: T) => void,
+    source: SignalNode<T>,
+    target: ReactiveNode,
     persistent: boolean
 ): () => void {
-    var subscriptions = node.subscriptions;
+    var subscribers = source.subscribers;
     var effect = getEffect(true);
-    var subscription: SignalSubscription<T> = {callback: callback};
     
-    subscriptions.push(subscription);
+    subscribers.push(target);
     
     function unsubscribe(): void {
-        subscription.callback = null;
-        
-        for (var i = subscriptions.length; i--;) {
-            if (subscriptions[i] === subscription) {
-                subscriptions.splice(i, 1);
+        for (var i = subscribers.length; i--;) {
+            if (subscribers[i] === target) {
+                subscribers.splice(i, 1);
                 break;
             }
         }
     }
     
-    if (effect !== node.parentEffect && !persistent) {
+    if (effect !== source.parentEffect && !persistent) {
         onDestroy(unsubscribe);
     }
     

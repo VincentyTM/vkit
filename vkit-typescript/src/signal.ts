@@ -1,4 +1,4 @@
-import { Signal, signalMap, SignalSubscription } from "./computed.js";
+import { Signal, signalMap } from "./computed.js";
 import { getEffect } from "./contextGuard.js";
 import { onDestroy } from "./onDestroy.js";
 import { signalEffect } from "./signalEffect.js";
@@ -6,6 +6,10 @@ import { enqueueUpdate } from "./update.js";
 import { updateEffect } from "./updateEffect.js";
 import { view } from "./view.js";
 import { views } from "./views.js";
+
+interface SignalSubscription<T> {
+	callback: ((value: T) => void) | null;
+}
 
 export interface WritableSignal<T> extends Signal<T> {
     /**

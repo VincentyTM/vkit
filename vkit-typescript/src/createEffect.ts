@@ -24,6 +24,7 @@ export function createEffect(
 		flags: DIRTY_FLAG,
 		injector: injector,
 		parent: parentEffect,
+		subscribers: [],
 		type: ReactiveNodeType.Effect,
 		errorHandler: errorHandler,
 		updateHandler: updateHandler
