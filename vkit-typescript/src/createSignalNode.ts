@@ -3,7 +3,7 @@ import { createEffect, Effect } from "./createEffect.js";
 import { isSignal } from "./isSignal.js";
 import { ReactiveNodeBase, ReactiveNodeType } from "./ReactiveNode.js";
 import { DIRTY_FLAG } from "./reactiveNodeFlags.js";
-import { INITIAL_SIGNAL_VALUE, signalObserve } from "./signalObserve.js";
+import { INITIAL_SIGNAL_VALUE, updateSignalNode } from "./updateSignalNode.js";
 import { updateEffect } from "./updateEffect.js";
 
 export interface SignalNode<T> extends ReactiveNodeBase {
@@ -86,7 +86,7 @@ export function createSignalNode<T>(
             var sub = subs[i];
             
             if (sub.type === ReactiveNodeType.Signal) {
-                signalObserve(sub, false);
+                updateSignalNode(sub, false);
             } else {
                 updateEffect(sub);
             }

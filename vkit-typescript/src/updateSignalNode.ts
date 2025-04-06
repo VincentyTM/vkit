@@ -6,7 +6,7 @@ import { updateEffect } from "./updateEffect.js";
 
 export var INITIAL_SIGNAL_VALUE = {} as const;
 
-export function signalObserve<T>(node: SignalNode<T>, tracked: boolean): T {
+export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
     if (node.value === INITIAL_SIGNAL_VALUE) {
         updateEffect(node.signalEffect);
     }

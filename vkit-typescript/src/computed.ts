@@ -2,7 +2,7 @@ import { getEffect } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
 import { createSignalNode } from "./createSignalNode.js";
 import { signalEffect } from "./signalEffect.js";
-import { signalObserve, signalSubscribe } from "./signalObserve.js";
+import { signalSubscribe, updateSignalNode } from "./updateSignalNode.js";
 import { Template } from "./Template.js";
 import { view } from "./view.js";
 import { views } from "./views.js";
@@ -177,11 +177,11 @@ export function computed<F extends (...args: never[]) => unknown>(
 	var node = createSignalNode<ReturnType<F>>(computeValue as never, dependencies);
 	
 	function use(): ReturnType<F> {
-		return signalObserve(node, true);
+		return updateSignalNode(node, true);
 	}
 	
 	function get(): ReturnType<F> {
-		return signalObserve(node, false);
+		return updateSignalNode(node, false);
 	}
 	
 	function subscribe(
@@ -193,7 +193,7 @@ export function computed<F extends (...args: never[]) => unknown>(
 		return signalSubscribe(
 			node,
 			createEffect(parentEffect, parentEffect.injector, function(): void {
-				callback(signalObserve(node, true));
+				callback(updateSignalNode(node, true));
 			}),
 			!!persistent
 		);
