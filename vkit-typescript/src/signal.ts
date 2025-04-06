@@ -1,4 +1,4 @@
-import { Signal, signalMap } from "./computed.js";
+import { Signal, signalMap, SignalSubscription } from "./computed.js";
 import { getEffect } from "./contextGuard.js";
 import { onDestroy } from "./onDestroy.js";
 import { signalEffect } from "./signalEffect.js";
@@ -62,12 +62,8 @@ export interface WritableSignal<T> extends Signal<T> {
  * @returns A writable signal.
  */
 export function signal<T>(value: T): WritableSignal<T> {
-	type Subscription = {
-		callback: ((value: T) => void) | null;
-	};
-
 	var parentEffect = getEffect(true);
-	var subscriptions: Subscription[] = [];
+	var subscriptions: SignalSubscription<T>[] = [];
 	var enqueued = false;
 	
 	function use(): T {
@@ -91,7 +87,7 @@ export function signal<T>(value: T): WritableSignal<T> {
 		persistent?: boolean
 	): () => void {
 		var component = getEffect(true);
-		var subscription: Subscription = {callback: callback};
+		var subscription: SignalSubscription<T> = {callback: callback};
 		
 		subscriptions.push(subscription);
 		

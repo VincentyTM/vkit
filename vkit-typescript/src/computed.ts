@@ -1,5 +1,5 @@
 import { getEffect, getInjector } from "./contextGuard.js";
-import { createEffect, Effect } from "./createEffect.js";
+import { createEffect } from "./createEffect.js";
 import { onDestroy } from "./onDestroy.js";
 import { signalEffect } from "./signalEffect.js";
 import { Template } from "./Template.js";
@@ -21,6 +21,10 @@ export interface ComputedSignal<T> extends Signal<T> {
 }
 
 type ItemType<T> = T extends (infer ItemType)[] ? ItemType : never;
+
+export interface SignalSubscription<T> {
+	callback: ((value: T) => void) | null;
+}
 
 export interface Signal<T> {
 	(): T;
@@ -176,12 +180,9 @@ export function computed<F extends (...args: never[]) => unknown>(
 	computeValue: F,
 	dependencies?: ArrayOfMaybeSignals<Parameters<F>>
 ): ComputedSignal<ReturnType<F>> {
-	type Subscription = {callback: ((value: Value) => void) | null};
-	type Value = ReturnType<F>;
-
 	var parentEffect = getEffect(true);
-	var subscriptions: Subscription[] = [];
-	var value: Value = none as Value;
+	var subscriptions: SignalSubscription<ReturnType<F>>[] = [];
+	var value = none as ReturnType<F>;
 	var effectOfSignal = createEffect(parentEffect, getInjector(true), updateHandler);
 
 	function invalidate(): void {
@@ -201,7 +202,7 @@ export function computed<F extends (...args: never[]) => unknown>(
 	}
 	
 	function updateHandler(): void {
-		var newValue: Value;
+		var newValue: ReturnType<F>;
 		
 		if (dependencies) {
 			var n = dependencies.length as number;
@@ -212,9 +213,9 @@ export function computed<F extends (...args: never[]) => unknown>(
 				args[i] = input && typeof input.get === "function" ? input.get() : input;
 			}
 			
-			newValue = computeValue.apply(null, args as never[]) as Value;
+			newValue = computeValue.apply(null, args as never[]) as ReturnType<F>;
 		} else {
-			newValue = (computeValue as () => Value)();
+			newValue = (computeValue as () => ReturnType<F>)();
 		}
 
 		var oldValue = value;
@@ -240,7 +241,7 @@ export function computed<F extends (...args: never[]) => unknown>(
 		}
 	}
 	
-	function use(): Value {
+	function use(): ReturnType<F> {
 		var value = get();
 		var effect = getEffect(true);
 		
@@ -253,7 +254,7 @@ export function computed<F extends (...args: never[]) => unknown>(
 		return value;
 	}
 	
-	function get(): Value {
+	function get(): ReturnType<F> {
 		if (value === none) {
 			invalidate();
 		}
@@ -261,11 +262,11 @@ export function computed<F extends (...args: never[]) => unknown>(
 	}
 	
 	function subscribe(
-		callback: (value: Value) => void,
+		callback: (value: ReturnType<F>) => void,
 		persistent?: boolean
 	): () => void {
 		var effect = getEffect(true);
-		var subscription: Subscription = {callback: callback};
+		var subscription: SignalSubscription<ReturnType<F>> = {callback: callback};
 		
 		subscriptions.push(subscription);
 		
@@ -297,7 +298,7 @@ export function computed<F extends (...args: never[]) => unknown>(
 	use.view = view;
 	use.views = views;
 	
-	return use as ComputedSignal<Value>;
+	return use as ComputedSignal<ReturnType<F>>;
 }
 
 export function signalMap<T, M extends (value: T) => unknown>(
