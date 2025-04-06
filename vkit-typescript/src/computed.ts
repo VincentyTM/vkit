@@ -1,10 +1,7 @@
-import { getEffect } from "./contextGuard.js";
-import { createSignalNode, INITIAL_SIGNAL_VALUE } from "./createSignalNode.js";
-import { onDestroy } from "./onDestroy.js";
+import { createSignalNode } from "./createSignalNode.js";
 import { signalEffect } from "./signalEffect.js";
 import { signalObserve, signalSubscribe } from "./signalObserve.js";
 import { Template } from "./Template.js";
-import { updateEffect } from "./updateEffect.js";
 import { view } from "./view.js";
 import { views } from "./views.js";
 
@@ -180,22 +177,6 @@ export function computed<F extends (...args: never[]) => unknown>(
 	dependencies?: ArrayOfMaybeSignals<Parameters<F>>
 ): ComputedSignal<ReturnType<F>> {
 	var node = createSignalNode<ReturnType<F>>(computeValue as never, dependencies);
-
-	function invalidate(): void {
-		updateEffect(node.signalEffect);
-	}
-	
-	if (dependencies) {
-		var n = dependencies.length as number;
-		
-		for (var i = 0; i < n; ++i) {
-			var input = dependencies[i] as Signal<Parameters<F>[number]>;
-			
-			if (input && typeof input.subscribe === "function") {
-				input.subscribe(invalidate);
-			}
-		}
-	}
 	
 	function use(): ReturnType<F> {
 		return signalObserve(node, true);
@@ -214,7 +195,7 @@ export function computed<F extends (...args: never[]) => unknown>(
 	
 	use.effect = signalEffect;
 	use.get = get;
-	use.invalidate = invalidate;
+	use.invalidate = node.invalidate;
 	use.isSignal = true;
 	use.map = signalMap;
 	use.subscribe = subscribe;

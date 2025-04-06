@@ -2,6 +2,7 @@ import { SignalSubscription } from "./computed.js";
 import { getEffect, getInjector } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { isSignal } from "./isSignal.js";
+import { updateEffect } from "./updateEffect.js";
 
 export interface SignalNode<T> {
 	readonly dependencies: unknown[] | undefined;
@@ -10,6 +11,7 @@ export interface SignalNode<T> {
     readonly subscriptions: SignalSubscription<T>[];
     value: unknown;
 	computeValue(...args: unknown[]): T;
+    invalidate(): void;
 }
 
 export var INITIAL_SIGNAL_VALUE = {} as const;
@@ -26,8 +28,25 @@ export function createSignalNode<T>(
         signalEffect: createEffect(parentEffect, getInjector(true), updateHandler),
         subscriptions: [],
         value: INITIAL_SIGNAL_VALUE,
-        computeValue: computeValue
+        computeValue: computeValue,
+        invalidate: invalidate
     };
+	
+	if (dependencies) {
+		var n = dependencies.length as number;
+		
+		for (var i = 0; i < n; ++i) {
+			var input = dependencies[i];
+			
+			if (isSignal(input)) {
+				input.subscribe(invalidate);
+			}
+		}
+	}
+
+    function invalidate(): void {
+        updateEffect(node.signalEffect);
+    }
 
     function updateHandler(): void {
         var newValue: T;
