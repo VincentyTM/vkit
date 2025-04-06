@@ -1,0 +1,73 @@
+import { SignalSubscription } from "./computed.js";
+import { getEffect, getInjector } from "./contextGuard.js";
+import { createEffect, Effect } from "./createEffect.js";
+import { isSignal } from "./isSignal.js";
+
+export interface SignalNode<T> {
+	readonly dependencies: unknown[] | undefined;
+    readonly parentEffect: Effect | undefined;
+    readonly signalEffect: Effect;
+    readonly subscriptions: SignalSubscription<T>[];
+    value: unknown;
+	computeValue(...args: unknown[]): T;
+}
+
+export var INITIAL_SIGNAL_VALUE = {} as const;
+
+export function createSignalNode<T>(
+    computeValue: (...args: unknown[]) => T,
+    dependencies: unknown[] | undefined
+): SignalNode<T> {
+    var parentEffect = getEffect(true);
+
+    var node: SignalNode<T> = {
+        dependencies: dependencies,
+        parentEffect: parentEffect,
+        signalEffect: createEffect(parentEffect, getInjector(true), updateHandler),
+        subscriptions: [],
+        value: INITIAL_SIGNAL_VALUE,
+        computeValue: computeValue
+    };
+
+    function updateHandler(): void {
+        var newValue: T;
+        
+        if (dependencies) {
+            var n = dependencies.length as number;
+            var args = new Array<unknown>(n);
+            
+            for (var i = 0; i < n; ++i) {
+                var input = dependencies[i];
+                args[i] = isSignal(input) ? input.get() : input;
+            }
+            
+            newValue = computeValue.apply(null, args);
+        } else {
+            newValue = computeValue();
+        }
+    
+        var oldValue = node.value;
+        
+        if (oldValue === newValue) {
+            return;
+        }
+    
+        node.value = newValue;
+    
+        if (oldValue === INITIAL_SIGNAL_VALUE) {
+            return;
+        }
+        
+        var subs = node.subscriptions.slice();
+        var m = subs.length;
+        
+        for (var i = 0; i < m; ++i) {
+            var sub = subs[i];
+            if (sub.callback) {
+                sub.callback(node.value as T);
+            }
+        }
+    }
+
+    return node;
+}
