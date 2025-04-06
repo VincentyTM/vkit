@@ -2,6 +2,7 @@ import { getEffect } from "./contextGuard.js";
 import { createSignalNode, INITIAL_SIGNAL_VALUE } from "./createSignalNode.js";
 import { onDestroy } from "./onDestroy.js";
 import { signalEffect } from "./signalEffect.js";
+import { signalObserve, signalSubscribe } from "./signalObserve.js";
 import { Template } from "./Template.js";
 import { updateEffect } from "./updateEffect.js";
 import { view } from "./view.js";
@@ -197,51 +198,18 @@ export function computed<F extends (...args: never[]) => unknown>(
 	}
 	
 	function use(): ReturnType<F> {
-		var value = get();
-		var effect = getEffect(true);
-		
-		if (effect) {
-			subscribe(function(): void {
-				updateEffect(effect!);
-			});
-		}
-		
-		return value;
+		return signalObserve(node, true);
 	}
 	
 	function get(): ReturnType<F> {
-		if (node.value === INITIAL_SIGNAL_VALUE) {
-			invalidate();
-		}
-		return node.value as ReturnType<F>;
+		return signalObserve(node, false);
 	}
 	
 	function subscribe(
 		callback: (value: ReturnType<F>) => void,
 		persistent?: boolean
 	): () => void {
-		var subscriptions = node.subscriptions;
-		var effect = getEffect(true);
-		var subscription: SignalSubscription<ReturnType<F>> = {callback: callback};
-		
-		subscriptions.push(subscription);
-		
-		function unsubscribe(): void {
-			subscription.callback = null;
-			
-			for (var i = subscriptions.length; i--;) {
-				if (subscriptions[i] === subscription) {
-					subscriptions.splice(i, 1);
-					break;
-				}
-			}
-		}
-		
-		if (effect !== node.parentEffect && !persistent) {
-			onDestroy(unsubscribe);
-		}
-		
-		return unsubscribe;
+		return signalSubscribe(node, callback, !!persistent);
 	}
 	
 	use.effect = signalEffect;
