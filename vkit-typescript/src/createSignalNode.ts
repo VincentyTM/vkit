@@ -3,6 +3,7 @@ import { getEffect, getInjector } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { isSignal } from "./isSignal.js";
 import { ReactiveNodeBase, ReactiveNodeType } from "./ReactiveNode.js";
+import { DIRTY_FLAG } from "./reactiveNodeFlags.js";
 import { updateEffect } from "./updateEffect.js";
 
 export interface SignalNode<T> extends ReactiveNodeBase {
@@ -25,6 +26,7 @@ export function createSignalNode<T>(
 
     var node: SignalNode<T> = {
         dependencies: dependencies,
+        flags: DIRTY_FLAG,
         parentEffect: parentEffect,
         signalEffect: createEffect(parentEffect, getInjector(true), updateHandler),
         subscriptions: [],

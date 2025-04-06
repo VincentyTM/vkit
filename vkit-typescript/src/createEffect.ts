@@ -1,5 +1,6 @@
 import { Injector } from "./createInjector.js";
 import { ReactiveNodeBase, ReactiveNodeType } from "./ReactiveNode.js";
+import { DIRTY_FLAG } from "./reactiveNodeFlags.js";
 
 export interface Effect extends ReactiveNodeBase {
 	children: Effect[] | undefined;
@@ -20,6 +21,7 @@ export function createEffect(
 	return {
 		children: undefined,
 		destroyHandlers: undefined,
+		flags: DIRTY_FLAG,
 		injector: injector,
 		isRendering: false,
 		parent: parentEffect,
