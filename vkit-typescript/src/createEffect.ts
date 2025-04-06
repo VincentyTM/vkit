@@ -1,6 +1,7 @@
 import { Injector } from "./createInjector.js";
+import { ReactiveNodeBase, ReactiveNodeType } from "./ReactiveNode.js";
 
-export interface Effect {
+export interface Effect extends ReactiveNodeBase {
 	children: Effect[] | undefined;
 	destroyHandlers: (() => void)[] | undefined;
 	readonly injector: Injector | undefined;
@@ -22,6 +23,7 @@ export function createEffect(
 		injector: injector,
 		isRendering: false,
 		parent: parentEffect,
+		type: ReactiveNodeType.Effect,
 		errorHandler: errorHandler,
 		updateHandler: updateHandler
 	};

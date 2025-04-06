@@ -2,9 +2,10 @@ import { SignalSubscription } from "./computed.js";
 import { getEffect, getInjector } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { isSignal } from "./isSignal.js";
+import { ReactiveNodeBase, ReactiveNodeType } from "./ReactiveNode.js";
 import { updateEffect } from "./updateEffect.js";
 
-export interface SignalNode<T> {
+export interface SignalNode<T> extends ReactiveNodeBase {
 	readonly dependencies: unknown[] | undefined;
     readonly parentEffect: Effect | undefined;
     readonly signalEffect: Effect;
@@ -27,6 +28,7 @@ export function createSignalNode<T>(
         parentEffect: parentEffect,
         signalEffect: createEffect(parentEffect, getInjector(true), updateHandler),
         subscriptions: [],
+        type: ReactiveNodeType.Signal,
         value: INITIAL_SIGNAL_VALUE,
         computeValue: computeValue,
         invalidate: invalidate
