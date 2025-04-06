@@ -1,18 +1,19 @@
+import { getEffect } from "./contextGuard.js";
+import { Effect } from "./createEffect.js";
 import { createInjectable } from "./createInjectable.js";
-import { getContext } from "./getContext.js";
 import { inject } from "./inject.js";
-import { Template } from "./Template.js";
+import { WindowData } from "./windowData.js";
 
 interface WindowService {
-	context: (getView: () => Template) => any;
-	data: {[key: string]: any} | null;
+	data: Record<string, WindowData<any>> | null;
+	effect: Effect;
 	window: Window & typeof globalThis | null;
 }
 
 export var WindowService = createInjectable(function(): WindowService {
 	return {
-		context: getContext(),
 		data: null,
+		effect: getEffect(),
 		window: null
 	};
 });
