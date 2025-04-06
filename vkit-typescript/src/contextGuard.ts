@@ -32,6 +32,18 @@ export function getInjector(doNotThrow?: boolean): Injector | undefined {
 	return evaluatedInjector;
 }
 
+export function getReactiveNode(): ReactiveNode;
+
+export function getReactiveNode(doNotThrow: true): ReactiveNode | undefined;
+
+export function getReactiveNode(doNotThrow?: boolean): ReactiveNode | undefined {
+	if (!doNotThrow && evaluatedNode === undefined) {
+		throw new Error("This function can only be called synchronously from a reactive context");
+	}
+
+    return evaluatedNode;
+}
+
 export function setInjector(injector: Injector | undefined): void {
 	evaluatedInjector = injector;
 }
