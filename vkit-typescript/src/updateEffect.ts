@@ -1,4 +1,4 @@
-import { getEffect, getInjector, setEffect, setInjector } from "./contextGuard.js";
+import { getEffect, getInjector, setInjector, setReactiveNode } from "./contextGuard.js";
 import { Effect } from "./createEffect.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { COMPUTING_FLAG } from "./reactiveNodeFlags.js";
@@ -15,15 +15,15 @@ export function updateEffect(effect: Effect): void {
 	var previousInjector = getInjector(true);
 	
 	try {
-		setEffect(undefined);
+		setReactiveNode(undefined);
 		destroyEffect(effect);
-		setEffect(effect);
+		setReactiveNode(effect);
 		setInjector(effect.injector);
 		effect.updateHandler();
 	} catch (error) {
 		throwError(error, effect);
 	} finally {
-		setEffect(previousEffect);
+		setReactiveNode(previousEffect);
 		setInjector(previousInjector);
 		effect.flags &= ~COMPUTING_FLAG;
 	}

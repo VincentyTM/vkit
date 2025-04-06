@@ -1,4 +1,4 @@
-import { getEffect, getInjector, setEffect, setInjector } from "./contextGuard.js";
+import { getEffect, getInjector, setInjector, setReactiveNode } from "./contextGuard.js";
 import { Injectable } from "./createInjectable.js";
 import { createProvider, Provider } from "./createProvider.js";
 
@@ -40,7 +40,7 @@ import { createProvider, Provider } from "./createProvider.js";
 				 injector.providers.set(injectable, newProvider);
 				 
 				 try {
-					 setEffect(newProvider.effect);
+					 setReactiveNode(newProvider.effect);
 					 setInjector(newProvider.injector);
  
 					 var instance = injectable.create();
@@ -48,7 +48,7 @@ import { createProvider, Provider } from "./createProvider.js";
 					 newProvider.instance = instance;
 					 return instance;
 				 } finally {
-					 setEffect(parentEffect);
+					 setReactiveNode(parentEffect);
 					 setInjector(parentInjector);
 				 }
 			 }
@@ -64,7 +64,7 @@ import { createProvider, Provider } from "./createProvider.js";
 	 }
  
 	 try {
-		 setEffect(provider.effect);
+		 setReactiveNode(provider.effect);
 		 setInjector(provider.injector);
  
 		 var instance = provider.injectable.create();
@@ -72,7 +72,7 @@ import { createProvider, Provider } from "./createProvider.js";
 		 provider.instance = instance;
 		 return instance as T;
 	 } finally {
-		 setEffect(parentEffect);
+		 setReactiveNode(parentEffect);
 		 setInjector(parentInjector);
 	 }
  }

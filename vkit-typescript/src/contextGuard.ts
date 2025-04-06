@@ -32,10 +32,10 @@ export function getInjector(doNotThrow?: boolean): Injector | undefined {
 	return evaluatedInjector;
 }
 
-export function setEffect(effect: Effect | undefined): void {
-	evaluatedNode = effect;
-}
-
 export function setInjector(injector: Injector | undefined): void {
 	evaluatedInjector = injector;
+}
+
+export function setReactiveNode(node: ReactiveNode | undefined): void {
+    evaluatedNode = node;
 }

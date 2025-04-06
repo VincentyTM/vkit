@@ -1,4 +1,4 @@
-import { getEffect, setEffect } from "./contextGuard.js";
+import { getEffect, setReactiveNode } from "./contextGuard.js";
 
 /**
  * Executes a function outside reactive context.
@@ -27,9 +27,9 @@ export function untracked<T>(callback: () => T): T {
 	}
 	
 	try {
-		setEffect(undefined);
+		setReactiveNode(undefined);
 		return callback();
 	} finally {
-		setEffect(effect);
+		setReactiveNode(effect);
 	}
 }
