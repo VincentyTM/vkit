@@ -13,7 +13,7 @@ export function signalEffect<T>(
 			effect?: Effect | undefined
 		) => void
 	) => void
-): () => void {
+): void {
 	var signal = this;
 	var parentEffect = getEffect(true);
 	
@@ -24,14 +24,14 @@ export function signalEffect<T>(
 
 		updateEffect(effect);
 
-		return signal.subscribe(function(): void {
+		signal.subscribe(function(): void {
 			updateEffect(effect);
 		});
 	}
 
 	callback(signal.get());
 
-	return signal.subscribe(function(value: T): void {
+	signal.subscribe(function(value: T): void {
 		callback(value);
 	});
 }
