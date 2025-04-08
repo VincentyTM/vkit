@@ -77,7 +77,7 @@ function bindTemplate<P>(container: ServerElement, template: Bindings<P>): void 
 		}
 	
 		if (isSignal(value)) {
-			setProperty(container, key, value());
+			setProperty(container, key, value.get());
 			continue;
 		}
 		
