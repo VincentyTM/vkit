@@ -1,14 +1,21 @@
 import { BooleanValue, ClassArgument, ClassesTemplate, NoClass } from "./classes.js";
-import { effect } from "./effect.js";
+import { createEffect, Effect } from "./createEffect.js";
 import { ClientRenderer } from "./hydrate.js";
 import { isArrayLike } from "./isArrayLike.js";
 import { isSignal } from "./isSignal.js";
+import { onDestroy } from "./onDestroy.js";
+import { updateEffect } from "./updateEffect.js";
 
 export function clientRenderClasses<P extends Element>(
 	clientRenderer: ClientRenderer<P>,
 	template: ClassesTemplate
 ): void {
-	bindClasses(clientRenderer.context, template.args);
+	bindClasses(
+		clientRenderer.parentEffect,
+		clientRenderer.context,
+		template.args,
+		false
+	);
 }
 
 function addClass(el: Element, name: string): void {
@@ -27,11 +34,17 @@ function removeClass(el: Element, name: string): void {
 	}
 }
 
-function bindClass(el: Element, name: string, value: BooleanValue): void {
-	if (isSignal(value)) {
-		value.effect(function(v) {
-			v ? addClass(el, name) : removeClass(el, name);
+function bindClass(
+	parentEffect: Effect,
+	el: Element,
+	name: string,
+	value: BooleanValue
+): void {
+	if (isSignal(value) || typeof value === "function") {
+		var effect = createEffect(parentEffect, parentEffect.injector, function() {
+			bindClass(parentEffect, el, name, value());
 		});
+		updateEffect(effect);
 		return;
 	}
 	
@@ -44,51 +57,50 @@ function bindClass(el: Element, name: string, value: BooleanValue): void {
 		removeClass(el, name);
 		return;
 	}
-	
-	if (typeof value === "function") {
-		effect(function() {
-			bindClass(el, name, value());
-		});
-		return;
-	}
 }
 
-function bindClasses(el: Element, arg: ClassArgument): void {
+function bindClasses(
+	parentEffect: Effect,
+	el: Element,
+	arg: ClassArgument,
+	callOnDestroy: boolean
+): void {
 	if (arg === null || arg === undefined || arg === true || arg === false) {
 		return;
 	}
 	
 	if (typeof arg === "string") {
 		addClass(el, arg);
+
+		if (callOnDestroy) {
+			onDestroy(function() {
+				removeClass(el, arg);
+			});
+		}
+
+		return;
+	}
+	
+	if (isSignal(arg) || typeof arg === "function") {
+		var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+			bindClasses(parentEffect, el, arg(), true);
+		});
+		updateEffect(effect);
 		return;
 	}
 	
 	if (isArrayLike(arg)) {
 		var n = arg.length;
 		for (var i = 0; i < n; ++i) {
-			bindClasses(el, arg[i]);
+			bindClasses(parentEffect, el, arg[i], callOnDestroy);
 		}
-		return;
-	}
-	
-	if (isSignal(arg)) {
-		arg.effect(function(value: string | NoClass): void {
-			bindClasses(el, value);
-		});
 		return;
 	}
 	
 	if (typeof arg === "object") {
 		for (var name in arg) {
-			bindClass(el, name, arg[name]);
+			bindClass(parentEffect, el, name, arg[name]);
 		}
-		return;
-	}
-	
-	if (typeof arg === "function") {
-		effect(function(): void {
-			bindClasses(el, arg());
-		});
 		return;
 	}
 }
