@@ -43,6 +43,7 @@ export { onEvent } from "./onEvent.js";
 export { online } from "./online.js";
 export { onUnmount } from "./onUnmount.js";
 export { param } from "./param.js";
+export { path } from "./path.js";
 export { preferredLanguages } from "./preferredLanguages.js";
 export { provide } from "./provide.js";
 export { propertySignal } from "./propertySignal.js";
