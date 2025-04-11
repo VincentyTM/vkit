@@ -9,6 +9,7 @@ export { createInjectable, Injectable } from "./createInjectable.js";
 export { computed, ComputedSignal, Signal } from "./computed.js";
 export { customElement } from "./customElement.js";
 export { deriveSignal } from "./deriveSignal.js";
+export { directive } from "./directive.js";
 export { effect } from "./effect.js";
 export { errorBoundary } from "./errorBoundary.js";
 export { escapeHTML } from "./escapeHTML.js";
