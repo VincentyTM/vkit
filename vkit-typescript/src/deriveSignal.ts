@@ -1,3 +1,5 @@
+import { computed, Signal } from "./computed.js";
+import { isSignal } from "./isSignal.js";
 import { WritableSignal } from "./signal.js";
 import { writable } from "./writable.js";
 
@@ -13,16 +15,18 @@ import { writable } from "./writable.js";
  * const countLastDigit = deriveSignal(count, selectLastDigit, updateLastDigit);
  * 
  * @param parent A writable signal to derive the new value from and handle updates.
- * @param selector A pure function that describes how the signal's latest value is calculated from its parent.
- * @param updater A pure function that describes how the parent signal's value is updated.
+ * @param key A parameter passed to `selectValue` and `updateValue`.
+ * @param selectValue A pure function that describes how the signal's latest value is calculated from its parent.
+ * @param updateValue A pure function that describes how the parent signal's value is updated.
  * @returns A writable signal that contains the transformed value and delegates updates to its parent.
  */
-export function deriveSignal<T, U>(
+ export function deriveSignal<T, K, U>(
 	parent: WritableSignal<T>,
-	selector: (parentValue: T) => U,
-	updater: (parentValue: T, value: U) => T
+	key: K | Signal<K>,
+	selectValue: (parentValue: T, currentKey: K) => U,
+	updateValue: (parentValue: T, currentKey: K, value: U) => T
 ): WritableSignal<U> {
-	return writable(parent.map(selector), function(value: U): void {
-		parent.set(updater(parent.get(), value));
-	});
+	return writable(computed(selectValue, [parent, key]), function(value: U): void {
+        parent.set(updateValue(parent.get(), isSignal(key) ? key.get() : key, value));
+    });
 }
