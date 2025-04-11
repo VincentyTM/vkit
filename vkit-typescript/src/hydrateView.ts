@@ -12,22 +12,25 @@ export function hydrateView<P extends ParentNode>(pointer: HydrationPointer<P>, 
 	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
 		var innerTemplate = view.getTemplate(view.signal ? view.signal.get() : null);
 		var parentNode = pointer.context;
-		var parent = start.parentNode;
+		var parent = end.parentNode;
 		
 		if (parent && start.nextSibling) {
 			for (var el = end.previousSibling; el && el !== start; el = end.previousSibling) {
 				parent.removeChild(el);
 			}
 
-			var innerPointer: HydrationPointer<P> = {
-				context: parentNode,
-				currentNode: end,
+			var fragment = document.createDocumentFragment();
+
+			var fragmentPointer: HydrationPointer<DocumentFragment> = {
+				context: fragment,
+				currentNode: null,
 				isSVG: pointer.isSVG,
 				parentEffect: getEffect(),
-				stopNode: end
+				stopNode: null
 			};
 			
-			hydrate(innerPointer, innerTemplate);
+			hydrate(fragmentPointer, innerTemplate);
+			parent.insertBefore(fragment, end);
 		} else {
 			var innerPointer: HydrationPointer<P> = {
 				context: parentNode,
