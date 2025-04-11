@@ -14,7 +14,7 @@ interface Ref<T> extends CustomTemplate<T> {
 }
 
 /**
- * Creates and returns a reference which can contain any object (usually an HTML element) or null.
+ * Creates and returns a reference which can contain any object (usually an element) or null.
  * You can get its current value with its `current` property.
  * @example
  * function MyComponent() {
@@ -33,7 +33,7 @@ interface Ref<T> extends CustomTemplate<T> {
  * }
  * @returns A function directive which binds an element (or any other object) to the reference until the current reactive context is destroyed.
  */
-export function ref<T = HTMLElement>(): Ref<T> {
+export function ref<T = Element>(): Ref<T> {
 	var reference: MutableRef<T> = {
 		current: null,
 		effect: getEffect(true),
