@@ -92,7 +92,6 @@ export {default as promise} from "./promise.js";
 export {default as propertySignal} from "./propertySignal.js";
 export {default as provide} from "./provide.js";
 export {default as queryParams} from "./queryParams.js";
-export {default as queryParamsState} from "./queryParamsState.js";
 export {default as readOnly} from "./readOnly.js";
 export {default as ref} from "./ref.js";
 export {default as repeat} from "./repeat.js";
