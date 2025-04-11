@@ -86,10 +86,7 @@ export function signal<T>(value: T): WritableSignal<T> {
 		return value;
 	}
 	
-	function subscribe(
-		callback: (value: T) => void,
-		persistent?: boolean
-	): () => void {
+	function subscribe(callback: (value: T) => void): () => void {
 		var component = getEffect(true);
 		var subscription: SignalSubscription<T> = {callback: callback};
 		
@@ -106,7 +103,7 @@ export function signal<T>(value: T): WritableSignal<T> {
 			}
 		}
 		
-		if (component !== parentEffect && !persistent) {
+		if (component !== parentEffect) {
 			onDestroy(unsubscribe);
 		}
 		

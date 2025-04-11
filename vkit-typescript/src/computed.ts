@@ -78,16 +78,10 @@ export interface Signal<T> {
 	 * count.set(1);
 	 * 
 	 * @param callback A function which is called when the value of the signal changes.
-	 * @param persistent If true, there will be no automatic unsubscription based on the current component.
-	 * If you use signals outside components, you might want to set it to true.
-	 * Remember to manually unsubscribe in that case.
 	 * @returns The unsubscribe function. It removes the callback from the signal, so it will
 	 * not be called anymore when its value changes.
 	 */
-	subscribe(
-		callback: (value: T) => void,
-		persistent?: boolean
-	): () => void;
+	subscribe(callback: (value: T) => void): () => void;
 
 	/**
 	 * Returns a string generated from the signal's current value.
@@ -184,18 +178,14 @@ export function computed<F extends (...args: never[]) => unknown>(
 		return updateSignalNode(node, false);
 	}
 	
-	function subscribe(
-		callback: (value: ReturnType<F>) => void,
-		persistent?: boolean
-	): () => void {
+	function subscribe(callback: (value: ReturnType<F>) => void): () => void {
 		var parentEffect = getEffect();
 		
 		return signalSubscribe(
 			node,
 			createEffect(parentEffect, parentEffect.injector, function(): void {
 				callback(updateSignalNode(node, true));
-			}),
-			!!persistent
+			})
 		);
 	}
 	

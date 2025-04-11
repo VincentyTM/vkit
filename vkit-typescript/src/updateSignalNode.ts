@@ -14,7 +14,7 @@ export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
     var evaluatedNode = getEffect(true);
     
     if (tracked && evaluatedNode !== undefined) {
-        signalSubscribe(node, evaluatedNode, false);
+        signalSubscribe(node, evaluatedNode);
     }
     
     return node.value as T;
@@ -22,8 +22,7 @@ export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
 
 export function signalSubscribe<T>(
     source: SignalNode<T>,
-    target: ReactiveNode,
-    persistent: boolean
+    target: ReactiveNode
 ): () => void {
     var subscribers = source.subscribers;
     var effect = getEffect(true);
@@ -39,7 +38,7 @@ export function signalSubscribe<T>(
         }
     }
     
-    if (effect !== source.parentEffect && !persistent) {
+    if (effect !== source.parentEffect) {
         onDestroy(unsubscribe);
     }
     
