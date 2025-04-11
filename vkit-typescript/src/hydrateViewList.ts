@@ -102,18 +102,20 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 				if (block.start.parentNode) {
 					insertRangeBefore(block.start, block.end, end);
 				} else {
-					parentNode.insertBefore(block.start, end);
-					parentNode.insertBefore(block.end, end);
+					var fragment = document.createDocumentFragment();
+					fragment.appendChild(block.start);
 
-					var blockPointer: HydrationPointer<P> = {
-						context: pointer.context,
-						currentNode: block.start.nextSibling,
+					var fragmentPointer: HydrationPointer<DocumentFragment> = {
+						context: fragment,
+						currentNode: null,
 						isSVG: pointer.isSVG,
 						parentEffect: block.effect,
-						stopNode: block.end
+						stopNode: null
 					};
 
-					hydrate(blockPointer, block.currentTemplate);
+					hydrate(fragmentPointer, block.currentTemplate);
+					fragment.appendChild(block.end);
+					parentNode.insertBefore(fragment, end);
 				}
 
 				++i;
@@ -177,20 +179,23 @@ function createBlock<T, P extends ParentNode>(
 	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
 		var innerTemplate = block.currentTemplate = getItemTemplate(model);
 		
-		var parent = start.parentNode;
+		var parent = end.parentNode;
 		
-		if (parent && start.nextSibling) {
+		if (parent) {
 			clearRange(start, end);
+
+			var fragment = document.createDocumentFragment();
 			
-			var innerPointer: HydrationPointer<P> = {
-				context: pointer.context,
-				currentNode: start.nextSibling,
+			var fragmentPointer: HydrationPointer<DocumentFragment> = {
+				context: fragment,
+				currentNode: null,
 				isSVG: pointer.isSVG,
 				parentEffect: effect,
-				stopNode: end
+				stopNode: null
 			};
 
-			hydrate(innerPointer, innerTemplate);
+			hydrate(fragmentPointer, innerTemplate);
+			parent.insertBefore(fragment, end);
 		}
 	});
 	
@@ -207,17 +212,17 @@ function createBlock<T, P extends ParentNode>(
 }
 
 function insertRangeBefore(start: ChildNode, end: ChildNode, anchor: Node): void {
-	if (!start.nextSibling) {
-		throw new Error("Cannot insert detached range");
-	}
-	
 	var parent = anchor.parentNode;
 	
 	if (parent) {
+		var fragment = document.createDocumentFragment();
+
 		for (var el: ChildNode | null = start; el && el !== end; el = next) {
 			var next: ChildNode | null = el.nextSibling;
-			parent.insertBefore(el, anchor);
+			fragment.appendChild(el);
 		}
-		parent.insertBefore(end, anchor);
+
+		fragment.appendChild(end);
+		parent.insertBefore(fragment, anchor);
 	}
 }
