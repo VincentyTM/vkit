@@ -1,15 +1,13 @@
 import { Signal, signalMap } from "./computed.js";
 import { getEffect } from "./contextGuard.js";
-import { onDestroy } from "./onDestroy.js";
+import { createEffect } from "./createEffect.js";
+import { createSignalNode } from "./createSignalNode.js";
+import { invalidateNode } from "./reactiveNodeStack.js";
 import { signalEffect } from "./signalEffect.js";
-import { enqueueUpdate } from "./update.js";
-import { updateEffect } from "./updateEffect.js";
+import { subscribe, unsubscribe } from "./subscribe.js";
+import { updateSignalNode } from "./updateSignalNode.js";
 import { view } from "./view.js";
 import { views } from "./views.js";
-
-interface SignalSubscription<T> {
-	callback: ((value: T) => void) | null;
-}
 
 export interface WritableSignal<T> extends Signal<T> {
     /**
@@ -66,96 +64,63 @@ export interface WritableSignal<T> extends Signal<T> {
  * @returns A writable signal.
  */
 export function signal<T>(value: T): WritableSignal<T> {
-	var parentEffect = getEffect(true);
-	var subscriptions: SignalSubscription<T>[] = [];
-	var enqueued = false;
-	
-	function use(): T {
-		var effect = getEffect(true);
-		
-		if (effect) {
-			subscribe(function(): void {
-				updateEffect(effect!);
-			});
-		}
-		
+    var node = createSignalNode(computeValue, undefined);
+	node.flags = 0;
+	node.value = value;
+
+	function computeValue(): T {
 		return value;
 	}
-	
-	function get(): T {
-		return value;
-	}
-	
-	function subscribe(callback: (value: T) => void): () => void {
-		var component = getEffect(true);
-		var subscription: SignalSubscription<T> = {callback: callback};
-		
-		subscriptions.push(subscription);
-		
-		function unsubscribe(): void {
-			subscription.callback = null;
-			
-			for (var i = subscriptions.length; i--;) {
-				if (subscriptions[i] === subscription) {
-					subscriptions.splice(i, 1);
-					break;
-				}
-			}
-		}
-		
-		if (component !== parentEffect) {
-			onDestroy(unsubscribe);
-		}
-		
-		return unsubscribe;
-	}
-	
-	function set(newValue: T): void {
-		if (value !== newValue) {
-			value = newValue;
-			
-			if (!enqueued) {
-				enqueued = true;
-				enqueueUpdate(notify);
-			}
-		}
-	}
-	
-	function notify(): void {
-		enqueued = false;
-		var subs = subscriptions.slice();
-		var n = subs.length;
-		
-		for (var i = 0; i < n; ++i) {
-			var sub = subs[i];
-			if (sub.callback) {
-				sub.callback(value);
-			}
-		}
-	}
-	
+
+    function use(): T {
+        return updateSignalNode(node, true);
+    }
+
 	use.effect = signalEffect;
-	use.get = get;
-	use.isSignal = true;
+    use.isSignal = true;
+
+    use.get = function(): T {
+        return updateSignalNode(node, false);
+    };
+
 	use.map = signalMap;
-	use.set = set;
-	use.subscribe = subscribe;
-	use.toString = writableSignalToString;
+
+    use.set = function(newValue: T): void {
+		if (value !== newValue) {
+            value = newValue;
+            invalidateNode(node);
+        }
+    };
+	
+	use.subscribe = function(callback: (value: T) => void): () => void {
+		var parentEffect = getEffect();
+		var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+			callback(updateSignalNode(node, true));
+		});
+		
+		subscribe(node, effect);
+
+		return function(): void {
+			unsubscribe(node, effect);
+		};
+	};
+
+    use.toString = writableSignalToString;
 	use.update = updateSignalValue;
 	use.view = view;
 	use.views = views;
-	
-	return use as WritableSignal<T>;
+
+    return use as WritableSignal<T>;
 }
 
 export function writableSignalToString(this: WritableSignal<unknown>): string {
-	return "[object WritableSignal(" + this.get() + ")]";
+    return "[object WritableSignal(" + this.get() + ")]";
 }
 
 export function updateSignalValue<T, A>(
 	this: WritableSignal<T>,
-	transform: (state: T, action?: A) => T,
+	reducer: (state: T, action?: A) => T,
 	action?: A
 ): void {
-	this.set(transform(this.get(), action));
+	this.set(reducer(this.get(), action));
 }

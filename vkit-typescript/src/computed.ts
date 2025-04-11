@@ -1,9 +1,11 @@
 import { getEffect } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
 import { createSignalNode } from "./createSignalNode.js";
+import { invalidateNode } from "./reactiveNodeStack.js";
 import { signalEffect } from "./signalEffect.js";
-import { signalSubscribe, updateSignalNode } from "./updateSignalNode.js";
+import { subscribe, unsubscribe } from "./subscribe.js";
 import { Template } from "./Template.js";
+import { updateSignalNode } from "./updateSignalNode.js";
 import { view } from "./view.js";
 import { views } from "./views.js";
 
@@ -168,38 +170,46 @@ export function computed<F extends (...args: never[]) => unknown>(
 	computeValue: F,
 	dependencies?: ArrayOfMaybeSignals<Parameters<F>>
 ): ComputedSignal<ReturnType<F>> {
-	var node = createSignalNode<ReturnType<F>>(computeValue as never, dependencies);
-	
-	function use(): ReturnType<F> {
-		return updateSignalNode(node, true);
-	}
-	
-	function get(): ReturnType<F> {
-		return updateSignalNode(node, false);
-	}
-	
-	function subscribe(callback: (value: ReturnType<F>) => void): () => void {
-		var parentEffect = getEffect();
-		
-		return signalSubscribe(
-			node,
-			createEffect(parentEffect, parentEffect.injector, function(): void {
-				callback(updateSignalNode(node, true));
-			})
-		);
-	}
-	
+    var node = createSignalNode<ReturnType<F>>(computeValue as never, dependencies);
+
+    function use(): ReturnType<F> {
+        return updateSignalNode(node, true);
+    }
+
 	use.effect = signalEffect;
-	use.get = get;
-	use.invalidate = node.invalidate;
-	use.isSignal = true;
-	use.map = signalMap;
-	use.subscribe = subscribe;
-	use.toString = toString;
-	use.view = view;
-	use.views = views;
+
+    use.get = function(): ReturnType<F> {
+        return updateSignalNode(node, false);
+    };
+
+    use.invalidate = function(): void {
+        invalidateNode(node);
+    };
+
+    use.isSignal = true;
+
+    use.map = signalMap;
 	
-	return use as ComputedSignal<ReturnType<F>>;
+	use.subscribe = function(callback: (value: ReturnType<F>) => void): () => void {
+		var parentEffect = getEffect();
+		var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+			callback(updateSignalNode(node, true));
+		});
+		
+		subscribe(node, effect);
+
+		return function(): void {
+			unsubscribe(node, effect);
+		};
+	};
+
+    use.toString = toString;
+
+	use.view = view;
+	
+	use.views = views;
+
+    return use as ComputedSignal<ReturnType<F>>;
 }
 
 export function signalMap<T, M extends (value: T) => unknown>(

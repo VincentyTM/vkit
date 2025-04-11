@@ -1,8 +1,9 @@
-import { computed, Signal } from "./computed.js";
-import { get } from "./get.js";
+import { Signal, signalMap } from "./computed.js";
+import { createSignalNode, SignalNode } from "./createSignalNode.js";
+import { isSignal } from "./isSignal.js";
 import { objectAssign } from "./objectAssign.js";
-import { WritableSignal } from "./signal.js";
-import { writable } from "./writable.js";
+import { updateSignalValue, writableSignalToString, WritableSignal } from "./signal.js";
+import { updateSignalNode } from "./updateSignalNode.js";
 
 /**
  * Creates and returns a writable signal that reflects and updates a property of the current value of another writable signal.
@@ -29,39 +30,56 @@ import { writable } from "./writable.js";
  * @param defaultValue An optional default value to replace undefined.
  * @returns A writable signal that contains the property's current value.
  */
-export function propertySignal<P, K extends keyof P>(
-	parent: WritableSignal<P>,
+export function propertySignal<T, K extends keyof T>(
+	parent: WritableSignal<T>,
 	key: K | Signal<K>,
-	defaultValue: Exclude<P[K], undefined>
-): WritableSignal<Exclude<P[K], undefined>>;
+	defaultValue: Exclude<T[K], undefined>
+): WritableSignal<Exclude<T[K], undefined>>;
 
-export function propertySignal<P, K extends keyof P>(
-	parent: WritableSignal<P>,
+export function propertySignal<T, K extends keyof T>(
+	parent: WritableSignal<T>,
 	key: K | Signal<K>,
-): WritableSignal<P[K]>;
+): WritableSignal<T[K]>;
 
-export function propertySignal<P, K extends keyof P>(
-	parent: WritableSignal<P>,
+export function propertySignal<T, K extends keyof T>(
+	parent: WritableSignal<T>,
 	key: K | Signal<K>,
-	defaultValue?: P[K]
-): WritableSignal<P[K] | undefined> {
-	function selectValue(state: P, key: K): P[K] | undefined {
+	defaultValue?: T[K]
+): WritableSignal<T[K] | undefined> {
+    var node: SignalNode<T[K] | undefined> = createSignalNode(selectValue, [parent, key]);
+
+	function selectValue(state: T, key: K): T[K] | undefined {
 		var current = state[key];
 		return current === undefined ? defaultValue : current;
 	}
 
-	function set(value: P[K]): void {
-		var oldState = parent.get();
-		var currentKey = get(key);
-		var current = selectValue(oldState, currentKey);
+    function use(): T[K] | undefined {
+        return updateSignalNode(node, true);
+    }
 
-		if (current !== value) {
-			var newState = objectAssign({}, oldState);
-			newState[currentKey] = value;
-			parent.set(newState);
+    use.isSignal = true;
+
+    use.get = function(): T[K] | undefined {
+        return updateSignalNode(node, false);
+    };
+
+    use.map = signalMap;
+
+    use.set = function(this: WritableSignal<T[K] | undefined>, newValue: T[K]): void {
+        var parentValue = parent.get();
+        var currentKey = isSignal(key) ? key.get() : key;
+        var value = selectValue(parentValue, currentKey);
+
+		if (value !== newValue) {
+            var newParentValue = objectAssign({}, parentValue);
+            newParentValue[currentKey] = newValue;
+            parent.set(newParentValue);
+			parent.get();
 		}
-	}
+    };
 
-	var result = computed(selectValue, [parent, key]);
-	return writable(result, set);
+    use.toString = writableSignalToString;
+	use.update = updateSignalValue;
+
+    return use as WritableSignal<T[K] | undefined>;
 }

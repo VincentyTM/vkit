@@ -1,22 +1,25 @@
 import { getInjector, getReactiveNode, setInjector, setReactiveNode } from "./contextGuard.js";
 import { Effect } from "./createEffect.js";
 import { destroyEffect } from "./destroyEffect.js";
-import { COMPUTING_FLAG } from "./reactiveNodeFlags.js";
+import { COMPUTING_FLAG, DIRTY_FLAG } from "./reactiveNodeFlags.js";
 import { throwError } from "./throwError.js";
 
 export function updateEffect(effect: Effect): void {
+	if (!(effect.flags & DIRTY_FLAG)) {
+		return;
+	}
+	
 	if (effect.flags & COMPUTING_FLAG) {
-		throwError(new Error("Circular dependency detected"), effect.parent);
+		return;
 	}
 
 	effect.flags |= COMPUTING_FLAG;
+	destroyEffect(effect);
 	
 	var evaluatedNode = getReactiveNode(true);
 	var evaluatedInjector = getInjector(true);
 	
 	try {
-		setReactiveNode(undefined);
-		destroyEffect(effect);
 		setReactiveNode(effect);
 		setInjector(effect.injector);
 		effect.updateHandler();
@@ -25,6 +28,6 @@ export function updateEffect(effect: Effect): void {
 	} finally {
 		setReactiveNode(evaluatedNode);
 		setInjector(evaluatedInjector);
-		effect.flags &= ~COMPUTING_FLAG;
+		effect.flags &= ~(COMPUTING_FLAG | DIRTY_FLAG);
 	}
 }

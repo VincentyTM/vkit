@@ -1,46 +1,73 @@
-import { getEffect } from "./contextGuard.js";
+import { getReactiveNode, setReactiveNode } from "./contextGuard.js";
 import { SignalNode } from "./createSignalNode.js";
-import { onDestroy } from "./onDestroy.js";
-import { ReactiveNode } from "./ReactiveNode.js";
-import { updateEffect } from "./updateEffect.js";
-
-export var INITIAL_SIGNAL_VALUE = {} as const;
+import { isSignal } from "./isSignal.js";
+import { COMPUTING_FLAG, DIRTY_FLAG, FAILED_FLAG } from "./reactiveNodeFlags.js";
+import { subscribe } from "./subscribe.js";
 
 export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
-    if (node.value === INITIAL_SIGNAL_VALUE) {
-        updateEffect(node.signalEffect);
-    }
+    var evaluatedNode = getReactiveNode(true);
 
-    var evaluatedNode = getEffect(true);
-    
     if (tracked && evaluatedNode !== undefined) {
-        signalSubscribe(node, evaluatedNode);
+        subscribe(node, evaluatedNode);
     }
-    
-    return node.value as T;
-}
 
-export function signalSubscribe<T>(
-    source: SignalNode<T>,
-    target: ReactiveNode
-): () => void {
-    var subscribers = source.subscribers;
-    var effect = getEffect(true);
+    if (node.flags & DIRTY_FLAG) {
+        if (node.flags & COMPUTING_FLAG) {
+            throw new Error("Cycle detected");
+        }
+
+        node.flags |= COMPUTING_FLAG;
+        
+		var subscribers = node.subscribers;
+
+        try {
+            setReactiveNode(node);
+
+			var dependencies = node.dependencies;
+			var newValue: T;
+			
+			if (dependencies) {
+				var n = dependencies.length;
+				var resolvedDependencies = Array.prototype.slice.call(dependencies);
+				
+				for (var i = 0; i < n; ++i) {
+					var dependency = dependencies[i];
+					resolvedDependencies[i] = isSignal(dependency) ? dependency() : dependency;
+				}
     
-    subscribers.push(target);
-    
-    function unsubscribe(): void {
-        for (var i = subscribers.length; i--;) {
-            if (subscribers[i] === target) {
-                subscribers.splice(i, 1);
-                break;
-            }
+				newValue = node.computeValue.apply(node, resolvedDependencies as never[]);
+			} else {
+				newValue = node.computeValue();
+			}
+
+			var oldValue = node.value;
+            
+            if (newValue !== oldValue) {
+				node.value = newValue;
+				
+				var n = subscribers.length;
+
+				for (var i = 0; i < n; ++i) {
+					subscribers[i].flags |= DIRTY_FLAG;
+				}
+			} else {
+				node.subscribers = subscribers;
+			}
+
+            node.flags &= ~FAILED_FLAG;
+        } catch (error) {
+            node.value = error;
+            node.flags |= FAILED_FLAG;
+            node.subscribers = subscribers;
+        } finally {
+            node.flags &= ~(COMPUTING_FLAG | DIRTY_FLAG);
+            setReactiveNode(evaluatedNode);
         }
     }
-    
-    if (effect !== source.parentEffect) {
-        onDestroy(unsubscribe);
+
+    if (node.flags & FAILED_FLAG) {
+        throw node.value;
     }
-    
-    return unsubscribe;
+
+    return node.value as T;
 }

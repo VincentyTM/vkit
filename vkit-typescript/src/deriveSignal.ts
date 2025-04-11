@@ -1,7 +1,8 @@
-import { computed, Signal } from "./computed.js";
+import { Signal, signalMap } from "./computed.js";
+import { createSignalNode, SignalNode } from "./createSignalNode.js";
 import { isSignal } from "./isSignal.js";
-import { WritableSignal } from "./signal.js";
-import { writable } from "./writable.js";
+import { updateSignalValue, WritableSignal, writableSignalToString } from "./signal.js";
+import { updateSignalNode } from "./updateSignalNode.js";
 
 /**
  * Creates and returns a writable signal derived from another writable signal.
@@ -20,13 +21,40 @@ import { writable } from "./writable.js";
  * @param updateValue A pure function that describes how the parent signal's value is updated.
  * @returns A writable signal that contains the transformed value and delegates updates to its parent.
  */
- export function deriveSignal<T, K, U>(
+export function deriveSignal<T, K, U>(
 	parent: WritableSignal<T>,
 	key: K | Signal<K>,
 	selectValue: (parentValue: T, currentKey: K) => U,
 	updateValue: (parentValue: T, currentKey: K, value: U) => T
 ): WritableSignal<U> {
-	return writable(computed(selectValue, [parent, key]), function(value: U): void {
-        parent.set(updateValue(parent.get(), isSignal(key) ? key.get() : key, value));
-    });
+	var node: SignalNode<U> = createSignalNode(selectValue, [parent, key]);
+
+    function use(): U {
+        return updateSignalNode(node, true);
+    }
+
+    use.isSignal = true;
+
+    use.get = function(): U {
+        return updateSignalNode(node, false);
+    };
+
+    use.map = signalMap;
+
+    use.set = function(this: WritableSignal<U>, newValue: U): void {
+        var parentValue = parent.get();
+        var currentKey = isSignal(key) ? key.get() : key;
+        var value = selectValue(parentValue, currentKey);
+
+		if (value !== newValue) {
+            var newParentValue = updateValue(parentValue, currentKey, newValue);
+            parent.set(newParentValue);
+			parent.get();
+		}
+    };
+
+    use.toString = writableSignalToString;
+	use.update = updateSignalValue;
+
+    return use as WritableSignal<U>;
 }

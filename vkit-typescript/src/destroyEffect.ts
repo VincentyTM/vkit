@@ -1,6 +1,13 @@
 import { Effect } from "./createEffect.js";
+import { destroySubscribers } from "./destroySubscribers.js";
+import { PERSISTENT_SUBSCRIBERS_FLAG } from "./reactiveNodeFlags.js";
 
 export function destroyEffect(effect: Effect): void {
+	if (!(effect.flags & PERSISTENT_SUBSCRIBERS_FLAG)) {
+		destroySubscribers(effect);
+		effect.subscribers = [];
+	}
+	
 	var children = effect.children;
 
 	if (children) {

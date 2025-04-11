@@ -3,6 +3,8 @@ import { destroyEffect } from "./destroyEffect.js";
 import { hashCode } from "./hashCode.js";
 import { hydrate, HydrationPointer } from "./hydrate.js";
 import { isArray } from "./isArray.js";
+import { PERSISTENT_SUBSCRIBERS_FLAG } from "./reactiveNodeFlags.js";
+import { subscribe } from "./subscribe.js";
 import { Template } from "./template.js";
 import { toArray } from "./toArray.js";
 import { updateEffect } from "./updateEffect.js";
@@ -48,7 +50,8 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 				pointer,
 				model,
 				template.getItemTemplate,
-				parentEffect
+				parentEffect,
+				listEffect
 			);
 		}
 		
@@ -150,6 +153,7 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 		blockArray = newBlockArray;
 	});
 
+	listEffect.flags |= PERSISTENT_SUBSCRIBERS_FLAG;
 	updateEffect(listEffect);
 }
 
@@ -171,7 +175,8 @@ function createBlock<T, P extends ParentNode>(
 	pointer: HydrationPointer<P>,
 	model: T,
 	getItemTemplate: (value: T) => Template,
-	parentEffect: Effect
+	parentEffect: Effect,
+	listEffect: Effect
 ): Block {
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
@@ -198,6 +203,8 @@ function createBlock<T, P extends ParentNode>(
 			parent.insertBefore(fragment, end);
 		}
 	});
+	
+	subscribe(listEffect, effect);
 	
 	var block: Block = {
 		currentTemplate: undefined,
