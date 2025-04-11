@@ -84,7 +84,6 @@ export {default as objectURL} from "./objectURL.js";
 export {default as observable} from "./observable.js";
 export {default as of} from "./of.js";
 export {default as param} from "./param.js";
-export {default as params} from "./params.js";
 export {default as path} from "./path.js";
 export {default as persistentStorage} from "./persistentStorage.js";
 export {default as preferredLanguages} from "./preferredLanguages.js";
