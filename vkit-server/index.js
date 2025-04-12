@@ -97,7 +97,6 @@ export {default as ref} from "./ref.js";
 export {default as repeat} from "./repeat.js";
 export {default as server} from "./server.js";
 export {default as style} from "./style.js";
-export {default as styleSelector} from "./styleSelector.js";
 export {default as text} from "./text.js";
 export {default as theme} from "./theme.js";
 export {default as thenable} from "./thenable.js";
