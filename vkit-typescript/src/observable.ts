@@ -6,7 +6,7 @@ export type Observable<T> = {
 	subscribe(callback: (value: T) => void): () => void;
 };
 
-export function observable<T>(): Observable<T> {
+export function observable<T = void>(): Observable<T> {
 	var callbacks: ((value: T) => void)[] = [];
 	var n = 0;
 	
