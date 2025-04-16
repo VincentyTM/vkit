@@ -10,6 +10,7 @@ export { classes } from "./classes.js";
 export { concat } from "./concat.js";
 export { createInjectable, Injectable } from "./createInjectable.js";
 export { computed, ComputedSignal, Signal } from "./computed.js";
+export { cookies } from "./cookies.js";
 export { customElement } from "./customElement.js";
 export { deriveSignal } from "./deriveSignal.js";
 export { directive } from "./directive.js";
