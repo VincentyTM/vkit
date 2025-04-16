@@ -20,6 +20,7 @@ export { escapeHTML } from "./escapeHTML.js";
 export { frameContent } from "./frameContent.js";
 export { get } from "./get.js";
 export { getDocument } from "./getDocument.js";
+export { getRootNode } from "./getRootNode.js";
 export { getWindow } from "./getWindow.js";
 export { history } from "./history.js";
 export { href } from "./href.js";
