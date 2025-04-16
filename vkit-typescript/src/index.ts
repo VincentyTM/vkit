@@ -37,6 +37,7 @@ export { is } from "./is.js";
 export { isSignal } from "./isSignal.js";
 export { isWindowFocused } from "./isWindowFocused.js";
 export { isWritableSignal } from "./isWritableSignal.js";
+export { latestValue } from "./latestValue.js";
 export { lazyArray } from "./lazyArray.js";
 export { map } from "./map.js";
 export { mapObject } from "./mapObject.js";
