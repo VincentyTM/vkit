@@ -2,7 +2,7 @@ import { callTicks } from "./tick.js";
 
 var queue: (() => void)[] = [];
 
-var queueMt = queueMicrotask || (typeof Promise === "function" && typeof Promise.resolve === "function"
+var queueMt = typeof queueMicrotask === "function" ? queueMicrotask : (typeof Promise === "function" && typeof Promise.resolve === "function"
 	? function(callback: () => void) { Promise.resolve().then(callback); }
 	: function(callback: () => void) { setTimeout(callback, 0); }
 );
