@@ -1,8 +1,10 @@
 import { createInjectable } from "./createInjectable.js";
 
 export interface RenderConfig {
+    cookies: Record<string, {suffix: string; value: string;}>;
     doRunEffects: boolean;
     request: ServerRequest | undefined;
+    response: ServerResponse | undefined;
 }
 
 interface ServerRequest {
@@ -10,9 +12,16 @@ interface ServerRequest {
     url: string;
 }
 
+interface ServerResponse {
+    setHeader(name: string, value: string): void;
+    setHeader(name: string, value: string[]): void;
+}
+
 export var RenderConfigService = createInjectable(function(): RenderConfig {
     return {
+        cookies: {},
         doRunEffects: true,
-        request: undefined
+        request: undefined,
+        response: undefined
     };
 });
