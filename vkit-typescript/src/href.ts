@@ -1,6 +1,6 @@
 import { Signal } from "./computed.js";
 import { getWindow } from "./getWindow.js";
-import { isSignal } from "./isSignal.js";
+import { navigate } from "./navigate.js";
 import { Template } from "./Template.js";
 
 /**
@@ -29,29 +29,7 @@ export function href(
 		href: url,
 		onclick: function(e: Event): void {
 			e.preventDefault();
-
-            if (win === null) {
-				return;
-			}
-			
-			var currentURL = (
-				isSignal(url) ? url.get() :
-				typeof url === "function" ? url() :
-				url
-			);
-			
-			var history = win.history;
-
-			if (!history.pushState || typeof PopStateEvent !== "function") {
-				win.location.assign(currentURL);
-				return;
-			}
-
-			history.pushState(null, "", currentURL);
-
-			var event = new PopStateEvent("popstate", {state: null});
-			win.dispatchEvent(event);
-			win.scrollTo(0, 0);
+			navigate(win, url);
 		}
 	};
 }
