@@ -2,7 +2,11 @@ import { Signal, signalMap } from "./computed.js";
 import { createSignalNode, SignalNode } from "./createSignalNode.js";
 import { isSignal } from "./isSignal.js";
 import { updateSignalValue, WritableSignal, writableSignalToString } from "./signal.js";
+import { signalEffect } from "./signalEffect.js";
+import { signalSubscribe } from "./signalSubscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
+import { view } from "./view.js";
+import { views } from "./views.js";
 
 /**
  * Creates and returns a writable signal derived from another writable signal.
@@ -29,32 +33,39 @@ export function deriveSignal<T, K, U>(
 ): WritableSignal<U> {
 	var node: SignalNode<U> = createSignalNode(selectValue, [parent, key]);
 
-    function use(): U {
-        return updateSignalNode(node, true);
-    }
+	function use(): U {
+		return updateSignalNode(node, true);
+	}
 
-    use.isSignal = true;
+	use.effect = signalEffect;
+	use.isSignal = true;
 
-    use.get = function(): U {
-        return updateSignalNode(node, false);
-    };
+	use.get = function(): U {
+		return updateSignalNode(node, false);
+	};
 
-    use.map = signalMap;
+	use.map = signalMap;
 
-    use.set = function(this: WritableSignal<U>, newValue: U): void {
-        var parentValue = parent.get();
-        var currentKey = isSignal(key) ? key.get() : key;
-        var value = selectValue(parentValue, currentKey);
+	use.set = function(this: WritableSignal<U>, newValue: U): void {
+		var parentValue = parent.get();
+		var currentKey = isSignal(key) ? key.get() : key;
+		var value = selectValue(parentValue, currentKey);
 
 		if (value !== newValue) {
-            var newParentValue = updateValue(parentValue, currentKey, newValue);
-            parent.set(newParentValue);
+			var newParentValue = updateValue(parentValue, currentKey, newValue);
+			parent.set(newParentValue);
 			parent.get();
 		}
-    };
+	};
+	
+	use.subscribe = function(callback: (value: U) => void): () => void {
+		return signalSubscribe(node, callback);
+	};
 
-    use.toString = writableSignalToString;
+	use.toString = writableSignalToString;
 	use.update = updateSignalValue;
+	use.view = view;
+	use.views = views;
 
-    return use as WritableSignal<U>;
+	return use as WritableSignal<U>;
 }
