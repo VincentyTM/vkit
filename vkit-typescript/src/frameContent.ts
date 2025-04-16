@@ -5,7 +5,7 @@ import { onEvent } from "./onEvent.js";
 import { render } from "./render.js";
 import { Template } from "./Template.js";
 
-export function frameContent(getView: (() => Template<HTMLBodyElement>) | Signal<() => Template<HTMLBodyElement>>): Template<HTMLIFrameElement> {
+export function frameContent(getView: (() => Template<HTMLElement>) | Signal<() => Template<HTMLElement>>): Template<HTMLIFrameElement> {
 	var props = {
 		onload: function(this: HTMLIFrameElement): void {
 			var win = this.contentWindow;
@@ -14,7 +14,7 @@ export function frameContent(getView: (() => Template<HTMLBodyElement>) | Signal
                 throw new Error("Content window is null");
             }
 			
-			var root = render(function(): Template<HTMLBodyElement> {
+			var root = render(function(): Template<HTMLElement> {
                 if (!win) {
                     throw new Error("Content window is null");
                 }
@@ -24,7 +24,7 @@ export function frameContent(getView: (() => Template<HTMLBodyElement>) | Signal
 				});
 
 				return (isSignal(getView) ? getView.get() : getView)();
-			}, win.document.body as HTMLBodyElement);
+			}, win.document.body);
 		}
 	};
 	
