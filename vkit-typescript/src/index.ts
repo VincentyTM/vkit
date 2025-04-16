@@ -1,3 +1,4 @@
+export { assets } from "./assets.js";
 export { attributes } from "./attributes.js";
 export { bind } from "./bind.js";
 export { bindChecked } from "./bindChecked.js";
