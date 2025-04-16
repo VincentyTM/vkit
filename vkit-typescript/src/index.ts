@@ -49,7 +49,7 @@ export { preferredLanguages } from "./preferredLanguages.js";
 export { provide } from "./provide.js";
 export { propertySignal } from "./propertySignal.js";
 export { readOnly } from "./readOnly.js";
-export { ref } from "./ref.js";
+export { ref, Ref } from "./ref.js";
 export { render } from "./render.js";
 export { renderToStream } from "./renderToStream.js";
 export { renderToString } from "./renderToString.js";

@@ -9,7 +9,7 @@ export interface MutableRef<T> extends CustomTemplate<T> {
 	readonly effect: Effect | undefined;
 }
 
-interface Ref<T> extends CustomTemplate<T> {
+export interface Ref<T> extends CustomTemplate<T> {
 	readonly current: T | null;
 }
 
