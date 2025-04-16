@@ -14,6 +14,7 @@ export { cookies } from "./cookies.js";
 export { customElement } from "./customElement.js";
 export { deriveSignal } from "./deriveSignal.js";
 export { directive } from "./directive.js";
+export { draggable } from "./draggable.js";
 export { effect } from "./effect.js";
 export { errorBoundary } from "./errorBoundary.js";
 export { escapeHTML } from "./escapeHTML.js";
