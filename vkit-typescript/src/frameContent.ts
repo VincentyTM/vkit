@@ -5,7 +5,7 @@ import { onEvent } from "./onEvent.js";
 import { render } from "./render.js";
 import { Template } from "./Template.js";
 
-export function frameContent(getView: (() => Template<HTMLElement>) | Signal<() => Template<HTMLElement>>): Template<HTMLIFrameElement> {
+export function frameContent(getTemplate: (() => Template<HTMLElement>) | Signal<() => Template<HTMLElement>>): Template<HTMLIFrameElement> {
 	var props = {
 		onload: function(this: HTMLIFrameElement): void {
 			var win = this.contentWindow;
@@ -23,12 +23,12 @@ export function frameContent(getView: (() => Template<HTMLElement>) | Signal<() 
 					root.destroy();
 				});
 
-				return (isSignal(getView) ? getView.get() : getView)();
+				return (isSignal(getTemplate) ? getTemplate.get() : getTemplate)();
 			}, win.document.body);
 		}
 	};
 	
-	if (!isSignal(getView)) {
+	if (!isSignal(getTemplate)) {
 		return props;
 	}
 	
@@ -36,7 +36,7 @@ export function frameContent(getView: (() => Template<HTMLElement>) | Signal<() 
 		props,
 		
 		directive(function(iframe: HTMLIFrameElement): void {
-			getView.subscribe(function(): void {
+			getTemplate.subscribe(function(): void {
 				iframe.src = "";
 			});
 		})
