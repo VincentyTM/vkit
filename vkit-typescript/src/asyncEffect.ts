@@ -38,8 +38,8 @@ interface Thenable<T> {
 
 var PENDING: AsyncResult<never> = {status: AsyncStatus.Pending};
 
-function isThenable(value: unknown): value is Thenable<unknown> {
-	return !!(value && typeof value === "function");
+function isThenable(value: any): value is Thenable<unknown> {
+	return !!(value && typeof value.then === "function");
 }
 
 export function asyncEffect<T>(asyncCallback: Thenable<T> | (() => Thenable<T> | T)): Signal<AsyncResult<T>> {
