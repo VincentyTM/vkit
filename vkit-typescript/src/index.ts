@@ -5,6 +5,7 @@ export { bindNumber } from "./bindNumber.js";
 export { bindSelect } from "./bindSelect.js";
 export { bindText } from "./bindText.js";
 export { classes } from "./classes.js";
+export { concat } from "./concat.js";
 export { createInjectable, Injectable } from "./createInjectable.js";
 export { computed, ComputedSignal, Signal } from "./computed.js";
 export { customElement } from "./customElement.js";
