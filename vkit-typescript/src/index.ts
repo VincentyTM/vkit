@@ -77,3 +77,4 @@ export { view } from "./view.js";
 export { viewList } from "./viewList.js";
 export { visibilityState } from "./visibilityState.js";
 export { webSocket } from "./webSocket.js";
+export { windowContent } from "./windowContent.js";
