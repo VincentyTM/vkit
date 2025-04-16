@@ -78,6 +78,7 @@ export { unsavedGuard } from "./unsavedGuard.js";
 export { untracked } from "./untracked.js";
 export { update } from "./update.js";
 export { useKey, KeyedSignal } from "./useKey.js";
+export { userMedia } from "./userMedia.js";
 export { view } from "./view.js";
 export { viewList } from "./viewList.js";
 export { visibilityState } from "./visibilityState.js";
