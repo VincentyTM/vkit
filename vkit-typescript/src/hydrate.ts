@@ -157,13 +157,13 @@ function hydrateBinding<P, K extends string & keyof Bindings<P>>(
 			var element = pointer.context;
 
 			if (!(element && (element as any).nodeType === 1)) {
-				throw new Error("Event listener can only be attached to an element");
+				throw new TypeError("Event listener can only be attached to an element");
 			}
 
 			onEvent(
 				element as unknown as Element,
 				key.substring(2),
-				value as EventListenerType
+				value as EventListenerType<Event>
 			);
 		} else {
 			hydrateFunctionBinding(pointer, key, value as () => P[keyof P]);

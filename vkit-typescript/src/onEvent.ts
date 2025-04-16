@@ -1,25 +1,19 @@
-export type EventListenerType = (this: unknown, event: EventType) => unknown;
+export type EventListenerType<E extends Event> = (this: unknown, event: E) => unknown;
 
-export interface EventTargetType {
-	addEventListener: (type: string, listener: EventListenerType, options?: boolean | AddEventListenerOptions | undefined) => void;
-	removeEventListener: (type: string, listener: EventListenerType, options?: boolean | AddEventListenerOptions | undefined) => void;
-	attachEvent?: (type: string, listener: EventListenerType) => void;
-	detachEvent?: (type: string, listener: EventListenerType) => void;
+interface EventTargetType<E extends Event> {
+	addEventListener: (type: string, listener: EventListenerType<E>, options?: boolean | AddEventListenerOptions | undefined) => void;
+	removeEventListener: (type: string, listener: EventListenerType<E>, options?: boolean | AddEventListenerOptions | undefined) => void;
+	attachEvent?: (type: string, listener: EventListenerType<E>) => void;
+	detachEvent?: (type: string, listener: EventListenerType<E>) => void;
 }
 
-export interface EventType {
-	returnValue?: boolean;
-	cancelBubble?: boolean;
-	currentTarget?: EventTargetType;
-	preventDefault?: () => void;
-	stopPropagation?: () => void;
+type EventType<K> = K extends keyof GlobalEventHandlersEventMap ? GlobalEventHandlersEventMap[K] : Event;
+
+function preventDefault(this: Event): void {
+	(this as any).returnValue = false;
 }
 
-function preventDefault(this: EventType): void {
-	this.returnValue = false;
-}
-
-function stopPropagation(this: EventType): void {
+function stopPropagation(this: Event): void {
 	this.cancelBubble = true;
 }
 
@@ -29,7 +23,7 @@ function stopPropagation(this: EventType): void {
  * @example
  * // This will remove the event listener when the current component unmounts
  * onDestroy(
- * 	onEvent(document, "click", () => console.log("Clicked!"))
+ *     onEvent(document, "click", () => console.log("Clicked!"))
  * );
  * 
  * @param target The event target.
@@ -37,12 +31,12 @@ function stopPropagation(this: EventType): void {
  * @param listener The event listener function.
  * @returns A function that removes the event listener from the event target.
  */
-export function onEvent(
-	target: EventTargetType,
-	type: string,
-	listener: EventListenerType
+export function onEvent<K extends string>(
+	target: EventTargetType<EventType<K>>,
+	type: K,
+	listener: EventListenerType<EventType<K>>
 ): () => void {
-	function eventListener(e: EventType): ReturnType<EventListenerType> {
+	function eventListener(e: EventType<K>): ReturnType<EventListenerType<EventType<K>>> {
 		if (!e.preventDefault) {
 			e.preventDefault = preventDefault;
 		}
@@ -52,7 +46,7 @@ export function onEvent(
 		}
 
 		if (!e.currentTarget) {
-			e.currentTarget = target;
+			(e as any).currentTarget = target;
 		}
 		
 		return listener.call(target, e);
@@ -65,11 +59,11 @@ export function onEvent(
 			target.removeEventListener!(type, eventListener, false);
 		};
 	} else if (target.attachEvent) {
-		type = "on" + type;
-		target.attachEvent(type, eventListener);
+		var extendedType = "on" + type;
+		target.attachEvent(extendedType, eventListener);
 		
 		return function(): void {
-			target.detachEvent!(type, eventListener);
+			target.detachEvent!(extendedType, eventListener);
 		};
 	}
 	
