@@ -1,10 +1,8 @@
 import { Signal, signalMap } from "./computed.js";
-import { getEffect } from "./contextGuard.js";
-import { createEffect } from "./createEffect.js";
 import { createSignalNode } from "./createSignalNode.js";
 import { invalidateNode } from "./reactiveNodeStack.js";
 import { signalEffect } from "./signalEffect.js";
-import { subscribe, unsubscribe } from "./subscribe.js";
+import { signalSubscribe } from "./signalSubscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
 import { view } from "./view.js";
 import { views } from "./views.js";
@@ -93,16 +91,7 @@ export function signal<T>(value: T): WritableSignal<T> {
     };
 	
 	use.subscribe = function(callback: (value: T) => void): () => void {
-		var parentEffect = getEffect();
-		var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
-			callback(updateSignalNode(node, true));
-		});
-		
-		subscribe(node, effect);
-
-		return function(): void {
-			unsubscribe(node, effect);
-		};
+		return signalSubscribe(node, callback);
 	};
 
     use.toString = writableSignalToString;
