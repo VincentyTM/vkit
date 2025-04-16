@@ -3,7 +3,11 @@ import { createSignalNode, SignalNode } from "./createSignalNode.js";
 import { isSignal } from "./isSignal.js";
 import { objectAssign } from "./objectAssign.js";
 import { updateSignalValue, writableSignalToString, WritableSignal } from "./signal.js";
+import { signalEffect } from "./signalEffect.js";
+import { signalSubscribe } from "./signalSubscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
+import { view } from "./view.js";
+import { views } from "./views.js";
 
 /**
  * Creates and returns a writable signal that reflects and updates a property of the current value of another writable signal.
@@ -46,40 +50,47 @@ export function propertySignal<T, K extends keyof T>(
 	key: K | Signal<K>,
 	defaultValue?: T[K]
 ): WritableSignal<T[K] | undefined> {
-    var node: SignalNode<T[K] | undefined> = createSignalNode(selectValue, [parent, key]);
+	var node: SignalNode<T[K] | undefined> = createSignalNode(selectValue, [parent, key]);
 
 	function selectValue(state: T, key: K): T[K] | undefined {
 		var current = state[key];
 		return current === undefined ? defaultValue : current;
 	}
 
-    function use(): T[K] | undefined {
-        return updateSignalNode(node, true);
-    }
+	function use(): T[K] | undefined {
+		return updateSignalNode(node, true);
+	}
 
-    use.isSignal = true;
+	use.effect = signalEffect;
+	use.isSignal = true;
 
-    use.get = function(): T[K] | undefined {
-        return updateSignalNode(node, false);
-    };
+	use.get = function(): T[K] | undefined {
+		return updateSignalNode(node, false);
+	};
 
-    use.map = signalMap;
+	use.map = signalMap;
 
-    use.set = function(this: WritableSignal<T[K] | undefined>, newValue: T[K]): void {
-        var parentValue = parent.get();
-        var currentKey = isSignal(key) ? key.get() : key;
-        var value = selectValue(parentValue, currentKey);
+	use.set = function(this: WritableSignal<T[K] | undefined>, newValue: T[K]): void {
+		var parentValue = parent.get();
+		var currentKey = isSignal(key) ? key.get() : key;
+		var value = selectValue(parentValue, currentKey);
 
 		if (value !== newValue) {
-            var newParentValue = objectAssign({}, parentValue);
-            newParentValue[currentKey] = newValue;
-            parent.set(newParentValue);
+			var newParentValue = objectAssign({}, parentValue);
+			newParentValue[currentKey] = newValue;
+			parent.set(newParentValue);
 			parent.get();
 		}
-    };
+	};
+	
+	use.subscribe = function(callback: (value: T[K] | undefined) => void): () => void {
+		return signalSubscribe(node, callback);
+	};
 
-    use.toString = writableSignalToString;
+	use.toString = writableSignalToString;
 	use.update = updateSignalValue;
-
-    return use as WritableSignal<T[K] | undefined>;
+	use.view = view;
+	use.views = views;
+	
+	return use as WritableSignal<T[K] | undefined>;
 }
