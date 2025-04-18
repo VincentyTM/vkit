@@ -12,9 +12,9 @@ export type ArrayOfMaybeSignals<A extends unknown[]> = unknown[] & {
 };
 
 export interface ComputedSignal<T> extends Signal<T> {
-    /**
-     * Marks the computed signal as to be recalculated before the next read.
-     */
+	/**
+	 * Marks the computed signal as to be recalculated before the next read.
+	 */
 	invalidate(): void;
 }
 
@@ -168,37 +168,37 @@ export function computed<F extends (...args: never[]) => unknown>(
 	computeValue: F,
 	dependencies?: ArrayOfMaybeSignals<Parameters<F>>
 ): ComputedSignal<ReturnType<F>> {
-    var node = createSignalNode<ReturnType<F>>(computeValue as never, dependencies);
+	var node = createSignalNode<ReturnType<F>>(computeValue as never, dependencies);
 
-    function use(): ReturnType<F> {
-        return updateSignalNode(node, true);
-    }
+	function use(): ReturnType<F> {
+		return updateSignalNode(node, true);
+	}
 
 	use.effect = signalEffect;
 
-    use.get = function(): ReturnType<F> {
-        return updateSignalNode(node, false);
-    };
+	use.get = function(): ReturnType<F> {
+		return updateSignalNode(node, false);
+	};
 
-    use.invalidate = function(): void {
-        invalidateNode(node);
-    };
+	use.invalidate = function(): void {
+		invalidateNode(node);
+	};
 
-    use.isSignal = true;
+	use.isSignal = true;
 
-    use.map = signalMap;
+	use.map = signalMap;
 	
 	use.subscribe = function(callback: (value: ReturnType<F>) => void): () => void {
 		return signalSubscribe(node, callback);
 	};
 
-    use.toString = toString;
+	use.toString = toString;
 
 	use.view = view;
 	
 	use.views = views;
 
-    return use as ComputedSignal<ReturnType<F>>;
+	return use as ComputedSignal<ReturnType<F>>;
 }
 
 export function signalMap<T, M extends (value: T) => unknown>(
@@ -209,5 +209,5 @@ export function signalMap<T, M extends (value: T) => unknown>(
 }
 
 function toString(this: ComputedSignal<unknown>): string {
-    return "[object ComputedSignal(" + this.get() + ")]";
+	return "[object ComputedSignal(" + this.get() + ")]";
 }

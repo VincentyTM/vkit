@@ -8,11 +8,11 @@ import { view } from "./view.js";
 import { views } from "./views.js";
 
 export interface WritableSignal<T> extends Signal<T> {
-    /**
+	/**
 	 * Sets the signal's value and enqueues a notification for its subscribers.
 	 * @example
 	 * const count = signal(10);
-     * effect(() => console.log("Count:", count())); // Logs 10.
+	 * effect(() => console.log("Count:", count())); // Logs 10.
 	 * count.set(20);
 	 * // count.get() === 20
 	 * // 20 has not yet been logged at this point but logging it has been scheduled.
@@ -21,7 +21,7 @@ export interface WritableSignal<T> extends Signal<T> {
 	 */
 	set(value: T): void;
 
-    /**
+	/**
 	 * Sets the signal's current value to the return value of the callback.
 	 * @example
 	 * const count = signal(10);
@@ -62,7 +62,7 @@ export interface WritableSignal<T> extends Signal<T> {
  * @returns A writable signal.
  */
 export function signal<T>(value: T): WritableSignal<T> {
-    var node = createSignalNode(computeValue, undefined);
+	var node = createSignalNode(computeValue, undefined);
 	node.flags = 0;
 	node.value = value;
 
@@ -70,40 +70,40 @@ export function signal<T>(value: T): WritableSignal<T> {
 		return value;
 	}
 
-    function use(): T {
-        return updateSignalNode(node, true);
-    }
+	function use(): T {
+		return updateSignalNode(node, true);
+	}
 
 	use.effect = signalEffect;
-    use.isSignal = true;
+	use.isSignal = true;
 
-    use.get = function(): T {
-        return updateSignalNode(node, false);
-    };
+	use.get = function(): T {
+		return updateSignalNode(node, false);
+	};
 
 	use.map = signalMap;
 
-    use.set = function(newValue: T): void {
+	use.set = function(newValue: T): void {
 		if (value !== newValue) {
-            value = newValue;
-            invalidateNode(node);
-        }
-    };
+			value = newValue;
+			invalidateNode(node);
+		}
+	};
 	
 	use.subscribe = function(callback: (value: T) => void): () => void {
 		return signalSubscribe(node, callback);
 	};
 
-    use.toString = writableSignalToString;
+	use.toString = writableSignalToString;
 	use.update = updateSignalValue;
 	use.view = view;
 	use.views = views;
 
-    return use as WritableSignal<T>;
+	return use as WritableSignal<T>;
 }
 
 export function writableSignalToString(this: WritableSignal<unknown>): string {
-    return "[object WritableSignal(" + this.get() + ")]";
+	return "[object WritableSignal(" + this.get() + ")]";
 }
 
 export function updateSignalValue<T, A>(
