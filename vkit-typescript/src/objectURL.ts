@@ -12,7 +12,7 @@ type URLSource = string | Blob | MediaSource;
 
 declare var mozURL: URLType;
 
-var URLWithFallback: URLType = (
+export var URLWithFallback: URLType = (
     typeof URL === "function" ? URL :
     typeof webkitURL === "function" ? webkitURL :
     typeof mozURL === "function" ? mozURL :
