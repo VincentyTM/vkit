@@ -33,6 +33,7 @@ export { htmlTag } from "./htmlTag.js";
 export { htmlTags } from "./htmlTags.js";
 export { http, HttpProgress, HttpRequest, HttpResponse } from "./http.js";
 export { inject } from "./inject.js";
+export { installPrompt } from "./installPrompt.js";
 export { interval } from "./interval.js";
 export { is } from "./is.js";
 export { isSignal } from "./isSignal.js";
