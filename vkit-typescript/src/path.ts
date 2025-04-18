@@ -3,7 +3,7 @@ import { getWindow } from "./getWindow.js";
 import { inject } from "./inject.js";
 import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
-import { RenderConfigService } from "./RenderConfigService";
+import { RenderConfigService } from "./RenderConfigService.js";
 
 function selectRequestPath(url: string): string {
     var i = url.indexOf("?");

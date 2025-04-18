@@ -1,4 +1,4 @@
-import { AsyncResult, AsyncStatus } from "./asyncEffect";
+import { AsyncResult, AsyncStatus } from "./asyncEffect.js";
 import { Signal } from "./computed.js";
 import { getWindow } from "./getWindow.js";
 import { onDestroy } from "./onDestroy.js";

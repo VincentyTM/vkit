@@ -1,4 +1,4 @@
-import { getEffect } from "./contextGuard";
+import { getEffect } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
 import { hydrate, HydrationPointer } from "./hydrate.js";
 import { updateEffect } from "./updateEffect.js";
