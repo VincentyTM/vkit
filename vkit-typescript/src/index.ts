@@ -21,6 +21,7 @@ export { effect } from "./effect.js";
 export { errorBoundary } from "./errorBoundary.js";
 export { escapeHTML } from "./escapeHTML.js";
 export { frameContent } from "./frameContent.js";
+export { fullScreen } from "./fullScreen.js";
 export { get } from "./get.js";
 export { getDocument } from "./getDocument.js";
 export { getRootNode } from "./getRootNode.js";
