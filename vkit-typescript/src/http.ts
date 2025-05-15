@@ -1,4 +1,5 @@
-import { computed, Signal } from "./computed.js";
+import { Signal } from "./computed.js";
+import { effect } from "./effect.js";
 import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 import { signal } from "./signal.js";
@@ -97,12 +98,10 @@ var INIITIAL_PROGRESS: HttpProgress = {
  * 		return `Successful! Response: ${JSON.stringify(res.body)}`;
  * 	});
  * }
- * @param request The HTTP request as a string URL or object. It can optionally be wrapped in a signal or a function.
+ * @param request The HTTP request as a string URL or object. It can optionally be wrapped in a signal.
  * @returns A computed signal containing the HTTP response object.
  */
-export function http<T = unknown>(
-	request: HttpRequest | Signal<HttpRequest> | (() => HttpRequest)
-): Signal<HttpResponse<T>> {
+export function http<T = unknown>(request: HttpRequest | Signal<HttpRequest>): Signal<HttpResponse<T>> {
 	var response = signal<HttpResponse<T>>(UNSENT);
 
 	function setRequest(req: HttpRequest): void {
@@ -201,11 +200,9 @@ export function http<T = unknown>(
 		});
 	}
 
-	if (typeof request === "function") {
-		(isSignal(request) ? request : computed(request)).effect(setRequest);
-	} else {
-		setRequest(request);
-	}
+	effect(function() {
+		setRequest(isSignal(request) ? request() : request);
+	});
 	
 	return response;
 }
