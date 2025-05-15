@@ -70,10 +70,20 @@ export function useKey<T>(
 ): UseKeyHandle<T>;
 
 export function useKey<T>(
-	arraySignal: Signal<T[]>,
+	arraySignal: Signal<ArrayLike<T>>,
+	getKey: keyof T
+): UseKeyHandle<T>;
+
+export function useKey<T>(
+	arraySignal: Signal<ArrayLike<T>>,
+	getKey: ((value: T) => string)
+): UseKeyHandle<T>;
+
+export function useKey<T>(
+	arraySignal: Signal<ArrayLike<T>>,
 	getKey: keyof T | ((value: T) => string)
 ): UseKeyHandle<T> {
-	var keysAndRecordsSignal = computed(function(array: T[]) {
+	var keysAndRecordsSignal = computed(function(array: ArrayLike<T>) {
 		var records: Record<string, T> = {};
 		var n = array.length;
 		var keys = new Array<string>(n);
