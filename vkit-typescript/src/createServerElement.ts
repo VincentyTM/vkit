@@ -67,7 +67,7 @@ export function appendChild(element: ServerElement, child: ServerNode): void {
 	}
 }
 
-function getAttribute(element: ServerElement, name: string): string | null {
+export function getAttribute(element: ServerElement, name: string): string | null {
 	var attributes = element.attributes;
 
 	return name in attributes ? attributes[name] : null;
@@ -102,6 +102,18 @@ export function getInnerText(element: ServerElement): string {
 
 export function getProperty(element: ServerElement, name: string): string | null {
 	return getAttribute(element, propToAttr(name));
+}
+
+export function hasAttribute(element: ServerElement, name: string): boolean {
+	return name in element.attributes;
+}
+
+export function removeAttribute(element: ServerElement, name: string): void {
+	delete element.attributes[name];
+}
+
+export function setAttribute(element: ServerElement, name: string, value: string): void {
+	element.attributes[name] = value;
 }
 
 export function setProperty(element: ServerElement, name: string, value: unknown): void {

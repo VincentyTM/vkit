@@ -1,5 +1,5 @@
-import { BooleanValue, ClassArgument, ClassesTemplate, NoClass } from "./classes.js";
-import { ServerElement } from "./createServerElement.js";
+import { BooleanValue, ClassArgument, ClassesTemplate } from "./classes.js";
+import { getAttribute, removeAttribute, ServerElement, setAttribute } from "./createServerElement.js";
 import { isArrayLike } from "./isArrayLike.js";
 import { isSignal } from "./isSignal.js";
 
@@ -8,28 +8,30 @@ export function serverRenderClasses(serverElement: ServerElement, template: Clas
 }
 
 function addClass(el: ServerElement, name: string): void {
-    var attributes = el.attributes;
+    var existingClassName = getAttribute(el, "class");
 
-    if (attributes.className) {
-        attributes.className += " " + name;
-    } else {
-        attributes.className = name;
-    }
+	setAttribute(el, "class", existingClassName ? existingClassName + " " + name : name);
 }
 
 function removeClass(el: ServerElement, name: string): void {
-    var attributes = el.attributes;
-    var className = attributes.className;
+    var existingClassName = getAttribute(el, "class");
 
-    if (className === name) {
-        delete attributes.className;
-    } else {
-        attributes.className = className.replace(" " + name, "");
+	if (existingClassName === null) {
+		return;
+	}
 
-        if (className.indexOf(name + " ") === 0) {
-            attributes.className = attributes.className.substring(name.length + 1);
-        }
+    if (existingClassName === name) {
+		removeAttribute(el, "class");
+		return;
     }
+
+	var newClassName = existingClassName.replace(" " + name, "");
+
+	if (existingClassName.indexOf(name + " ") === 0) {
+		newClassName = newClassName.substring(name.length + 1);
+	}
+
+	setAttribute(el, "class", newClassName);
 }
 
 function bindClass(el: ServerElement, name: string, value: BooleanValue): void {
