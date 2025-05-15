@@ -9,7 +9,7 @@ export interface RenderConfig {
 
 interface ServerRequest {
     headers: Record<string, string | string[] | undefined>;
-    url: string;
+    url?: string;
 }
 
 interface ServerResponse {

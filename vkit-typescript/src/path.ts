@@ -32,5 +32,5 @@ export function path(): Signal<string> {
 	}
 
     var request = inject(RenderConfigService).request;
-    return computed(selectRequestPath, [request ? request.url : ""]);
+    return computed(selectRequestPath, [request && request.url || ""]);
 }

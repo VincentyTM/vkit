@@ -87,7 +87,7 @@ function historyOnServer(): HistoryHandle {
 	var request = renderConfig.request;
 
 	function selectURLFromServer() {
-		var url = request ? request.url : "";
+		var url = request && request.url || "";
 		
 		return computed(function() {
 			return url;

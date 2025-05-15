@@ -44,7 +44,7 @@ export function param(paramName: string | Signal<string>): Signal<string> {
 	}
 
     var request = inject(RenderConfigService).request;
-    return computed(selectSearchParam, [request ? request.url : "", paramName]);
+    return computed(selectSearchParam, [request && request.url || "", paramName]);
 }
 
 function selectSearchParam(url: string, paramName: string): string {
