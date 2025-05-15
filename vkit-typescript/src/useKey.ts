@@ -1,5 +1,6 @@
 import { computed, ComputedSignal, Signal } from "./computed.js";
 import { Template } from "./Template.js";
+import { viewList } from "./viewList.js";
 
 export interface KeyedSignal<T, K> extends ComputedSignal<T> {
 	readonly key: K;
@@ -117,8 +118,8 @@ export function useKey<T>(
 		return selected;
 	}
 	
-	function views<V extends Template<P>, P>(getItemView: (item: KeyedSignal<T, string>) => V): Template<P> {
-		return keysSignal.views(function(key): V {
+	function views<V extends Template<P>, P extends ParentNode>(getItemView: (item: KeyedSignal<T, string>) => V): Template<P> {
+		return viewList(keysSignal, function(key): V {
 			return getItemView(select(key));
 		});
 	}
