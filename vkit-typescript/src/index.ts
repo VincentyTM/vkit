@@ -26,6 +26,7 @@ export { get } from "./get.js";
 export { getDocument } from "./getDocument.js";
 export { getRootNode } from "./getRootNode.js";
 export { getWindow } from "./getWindow.js";
+export { getTextSelection } from "./getTextSelection.js";
 export { geolocationPosition } from "./geolocationPosition.js";
 export { hash } from "./hash.js";
 export { history } from "./history.js";
