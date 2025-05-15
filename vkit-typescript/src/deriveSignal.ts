@@ -20,16 +20,29 @@ import { views } from "./views.js";
  * const countLastDigit = deriveSignal(count, selectLastDigit, updateLastDigit);
  * 
  * @param parent A writable signal to derive the new value from and handle updates.
- * @param key A parameter passed to `selectValue` and `updateValue`.
  * @param selectValue A pure function that describes how the signal's latest value is calculated from its parent.
  * @param updateValue A pure function that describes how the parent signal's value is updated.
+ * @param key An optional parameter passed to `selectValue` and `updateValue`.
  * @returns A writable signal that contains the transformed value and delegates updates to its parent.
  */
 export function deriveSignal<T, K, U>(
 	parent: WritableSignal<T>,
-	key: K | Signal<K>,
 	selectValue: (parentValue: T, currentKey: K) => U,
-	updateValue: (parentValue: T, currentKey: K, value: U) => T
+	updateValue: (parentValue: T, value: U, currentKey: K) => T,
+	key: K | Signal<K>
+): WritableSignal<U>;
+
+export function deriveSignal<T, U>(
+	parent: WritableSignal<T>,
+	selectValue: (parentValue: T) => U,
+	updateValue: (parentValue: T, value: U) => T
+): WritableSignal<U>;
+
+export function deriveSignal<T, K, U>(
+	parent: WritableSignal<T>,
+	selectValue: (parentValue: T, currentKey?: K) => U,
+	updateValue: (parentValue: T, value: U, currentKey?: K) => T,
+	key?: K | Signal<K>
 ): WritableSignal<U> {
 	var node: SignalNode<U> = createSignalNode(selectValue, [parent, key]);
 
@@ -52,7 +65,7 @@ export function deriveSignal<T, K, U>(
 		var value = selectValue(parentValue, currentKey);
 
 		if (value !== newValue) {
-			var newParentValue = updateValue(parentValue, currentKey, newValue);
+			var newParentValue = updateValue(parentValue, newValue, currentKey);
 			parent.set(newParentValue);
 			parent.get();
 		}
