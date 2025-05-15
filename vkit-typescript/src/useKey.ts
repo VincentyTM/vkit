@@ -17,7 +17,7 @@ interface UseKeyHandle<T> {
 	getItem(key: string): T;
 	select(key: string): KeyedSignal<T, string>;
 	select(key: Signal<string>): KeyedSignal<T, Signal<string>>;
-	views<ViewT extends Template<ContextT>, ContextT>(getItemView: (item: KeyedSignal<T, string>) => ViewT): Template<ContextT>;
+	viewList<V extends Template<P>, P>(getItemTemplate: (item: KeyedSignal<T, string>) => V): Template<P>;
 }
 
 function getKeys<T>(result: KeysAndRecords<T>): string[] {
@@ -118,9 +118,9 @@ export function useKey<T>(
 		return selected;
 	}
 	
-	function views<V extends Template<P>, P extends ParentNode>(getItemView: (item: KeyedSignal<T, string>) => V): Template<P> {
+	function useKeyViewList<V extends Template<P>, P extends ParentNode>(getItemTemplate: (item: KeyedSignal<T, string>) => V): Template<P> {
 		return viewList(keysSignal, function(key): V {
-			return getItemView(select(key));
+			return getItemTemplate(select(key));
 		});
 	}
 	
@@ -133,6 +133,6 @@ export function useKey<T>(
 		getItem: getItem,
 		records: computed(getRecords, [keysAndRecordsSignal]),
 		select: select,
-		views: views
+		viewList: useKeyViewList
 	} as UseKeyHandle<T>;
 }
