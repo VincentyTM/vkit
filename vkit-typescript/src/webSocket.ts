@@ -154,9 +154,9 @@ export function webSocket<T extends WebSocketMessage>(params: WebSocketParams<T>
 			throw new Error("Cannot connect, WebSocket is destroyed");
 		}
 
-		if (!webSocket && currentURL !== null) {
-			if (!win || typeof win.WebSocket !== "function") {
-				throw new ReferenceError("WebSocket is not supported in this context");
+		if (!webSocket && currentURL !== null && win) {
+			if (typeof win.WebSocket !== "function") {
+				throw new ReferenceError("WebSocket is not supported");
 			}
 			
 			var ws = new win.WebSocket(currentURL);
