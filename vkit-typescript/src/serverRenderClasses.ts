@@ -66,16 +66,16 @@ function bindClasses(el: ServerElement, arg: ClassArgument): void {
 		return;
 	}
 	
+	if (isSignal(arg) || typeof arg === "function") {
+		bindClasses(el, arg());
+		return;
+	}
+	
 	if (isArrayLike(arg)) {
 		var n = arg.length;
 		for (var i = 0; i < n; ++i) {
 			bindClasses(el, arg[i]);
 		}
-		return;
-	}
-	
-	if (isSignal(arg) || typeof arg === "function") {
-		bindClasses(el, arg());
 		return;
 	}
 	
