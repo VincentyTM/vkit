@@ -71,6 +71,7 @@ export { render } from "./render.js";
 export { renderToStream } from "./renderToStream.js";
 export { renderToString } from "./renderToString.js";
 export { repeat } from "./repeat.js";
+export { replaceScript } from "./replaceScript.js";
 export { saveFile } from "./saveFile.js";
 export { selectText } from "./selectText.js";
 export { serializeForm } from "./serializeForm.js";
