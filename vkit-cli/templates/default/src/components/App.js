@@ -1,5 +1,6 @@
 function App() {
 	const count = $.signal(0);
+	const isCountAtLeast3 = $.computed(() => count() >= 3);
 	
 	return [
 		H1("Hello world"),
@@ -23,7 +24,7 @@ function App() {
 		P(
 			Button("Increment click count", {
 				onclick() {
-					count.add(1);
+					count.update(x => x + 1);
 				}
 			}),
 			
@@ -42,13 +43,13 @@ function App() {
 		),
 		
 		$.view(() => {
-			if (!$.is(() => count() >= 3)) {
+			if (!isCountAtLeast3()) {
 				return null;
 			}
 			
 			console.log("The secret text has appeared!");
 			
-			$.onUnmount(() => {
+			$.onDestroy(() => {
 				console.log("The secret text has disappeared!");
 			});
 			
