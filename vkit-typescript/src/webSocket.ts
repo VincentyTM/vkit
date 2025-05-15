@@ -171,7 +171,7 @@ export function webSocket<T extends WebSocketMessage>(params: WebSocketParams<T>
 	
 	function send(message: WebSocketMessage): void {
 		if (isDestroyed) {
-			throw new Error("Cannot send messsage, WebSocket is destroyed");
+			throw new Error("Cannot send message, WebSocket is destroyed");
 		}
 
 		if (isOpen.get() && webSocket && webSocket.readyState === 1) {
