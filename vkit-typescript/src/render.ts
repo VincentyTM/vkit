@@ -9,6 +9,11 @@ import { Template } from "./Template.js";
 import { update } from "./update.js";
 import { updateEffect } from "./updateEffect.js";
 
+interface RenderOptions {
+	endNode?: Node | null;
+	startNode?: Node | null;
+}
+
 export interface RenderRoot {
 	destroy(): void;
 }
@@ -32,9 +37,16 @@ export interface RenderRoot {
  * @param container A container DOM node in which the application is rendered.
  * @returns An object that can be used to destroy the rendered effects.
  */
-export function render<P extends HTMLElement>(getTemplate: () => Template<P>, container: P): RenderRoot {
+export function render<P extends HTMLElement>(
+	getTemplate: () => Template<P>,
+	container: P,
+	options?: RenderOptions
+): RenderRoot {
 	var doc = container.ownerDocument;
 	var win: (Window & typeof globalThis) | null = doc && doc.defaultView || (doc as any).parentWindow || null;
+	var currentNodeOption = options && options.startNode;
+	var currentNode = currentNodeOption === undefined ? container.firstChild : currentNodeOption;
+	var stopNode = options && options.endNode || null;
 
 	var rootInjector = createInjector(undefined, true);
 	var rootEffect = createEffect(undefined, rootInjector, function(): void {
@@ -42,10 +54,10 @@ export function render<P extends HTMLElement>(getTemplate: () => Template<P>, co
 
 		var pointer: HydrationPointer<P> = {
 			context: container,
-			currentNode: container.firstChild,
+			currentNode: currentNode,
 			isSVG: false,
 			parentEffect: rootEffect,
-			stopNode: null
+			stopNode: stopNode
 		};
 
 		hydrate(pointer, getTemplate());
