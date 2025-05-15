@@ -86,6 +86,7 @@ export { untracked } from "./untracked.js";
 export { update } from "./update.js";
 export { useKey, KeyedSignal } from "./useKey.js";
 export { userMedia } from "./userMedia.js";
+export { isValid, validate, ValidationError, Schema } from "./validate.js";
 export { view } from "./view.js";
 export { viewList } from "./viewList.js";
 export { visibilityState } from "./visibilityState.js";
