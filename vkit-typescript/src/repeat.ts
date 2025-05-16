@@ -20,40 +20,51 @@ function createRangeArray(length: number): number[] {
 }
 
 /**
- * Returns repeated views.
+ * Returns repeated view templates, each generated with a different index.
  * @example
- * const repeated1 = repeat(100, (i) => P(`Line ${i + 1}!`));
- * const repeated2 = repeat(signal(100), (i) => P(`Line ${i + 1}!`));
+ * function Lines() {
+ * 	const lineCount = signal(10);
+ * 	
+ * 	return [
+ * 		Button("Clear", {
+ * 			onclick: () => lineCount.set(0)
+ * 		}),
+ * 		Button("Add line", {
+ * 			onclick: () => lineCount.update(x => x + 1)
+ * 		}),
+ * 		repeat(lineCount, (i) => P(`Line ${i + 1}!`))
+ * 	];
+ * }
  * 
- * @param count The number of repetitions. It can be wrapped in a signal to make it dynamic.
- * @param getView The function that returns the view for a specific index. The index starts from 0.
+ * @param count The template count. If it is a signal, the number of rendered templates may change dynamically based on the signal's current value.
+ * @param getTemplate The function that returns the template for a specific index. The index starts from 0.
  * @returns A dynamic view list.
  */
 export function repeat<T>(
 	count: number,
-	getView: (index: number) => T
+	getTemplate: (index: number) => T
 ): T[];
 
-export function repeat<ViewT extends Template<ContextT>, ContextT>(
+export function repeat<V extends Template<P>, P>(
 	count: Signal<number>,
-	getView: (index: number) => ViewT
-): Template<ContextT>;
+	getTemplate: (index: number) => V
+): Template<P>;
 
 export function repeat(
 	count: Signal<number> | number,
-	getView: (index: number) => unknown
+	getTemplate: (index: number) => unknown
 ): unknown {
 	if (isSignal(count)) {
 		var arrayState = count.map(createRangeArray);
-		return arrayState.views(getView as (index: number) => Template<unknown>);
+		return arrayState.views(getTemplate as (index: number) => Template<unknown>);
 	}
 	
-	count = getNumber(count as number);
+	count = getNumber(count);
 	
 	var array: unknown[] = new Array(count);
 	
 	for (var i = 0; i < count; ++i) {
-		array[i] = getView(i);
+		array[i] = getTemplate(i);
 	}
 	
 	return array;
