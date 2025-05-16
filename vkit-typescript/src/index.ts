@@ -17,6 +17,7 @@ export { customElement } from "./customElement.js";
 export { debounce } from "./debounce.js";
 export { deriveSignal } from "./deriveSignal.js";
 export { directive } from "./directive.js";
+export { displayMedia } from "./displayMedia.js";
 export { draggable } from "./draggable.js";
 export { effect } from "./effect.js";
 export { errorBoundary } from "./errorBoundary.js";
