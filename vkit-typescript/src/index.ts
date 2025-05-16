@@ -14,6 +14,7 @@ export { createInjectable, Injectable } from "./createInjectable.js";
 export { computed, ComputedSignal, Signal } from "./computed.js";
 export { cookies } from "./cookies.js";
 export { customElement } from "./customElement.js";
+export { debounce } from "./debounce.js";
 export { deriveSignal } from "./deriveSignal.js";
 export { directive } from "./directive.js";
 export { draggable } from "./draggable.js";
