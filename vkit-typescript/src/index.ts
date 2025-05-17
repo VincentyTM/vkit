@@ -13,6 +13,7 @@ export { computed, ComputedSignal, Signal } from "./computed.js";
 export { concat } from "./concat.js";
 export { cookies } from "./cookies.js";
 export { createInjectable, Injectable } from "./createInjectable.js";
+export { createWebRTCPeer, isWebRTCSupported, WebRTCPeer } from "./createWebRTCPeer.js";
 export { customElement } from "./customElement.js";
 export { debounce } from "./debounce.js";
 export { deriveSignal } from "./deriveSignal.js";
