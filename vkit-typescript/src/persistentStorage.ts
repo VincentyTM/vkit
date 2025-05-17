@@ -1,25 +1,26 @@
-(function($) {
+import { computed, Signal } from "./computed.js";
+import { getWindow } from "./getWindow.js";
+import { noop } from "./noop.js";
+import { permission, PermissionPrompt } from "./permission.js";
+import { signal } from "./signal.js";
 
-var computed = $.computed;
-var getWindow = $.getWindow;
-var noop = $.noop;
-var permission = $.permission;
-var readOnly = $.readOnly;
-var signal = $.signal;
-var update = $.update;
+interface PersistentStorage {
+	permission: Signal<PermissionPrompt>;
+	persisted: Signal<boolean>;
+}
 
-function persistentStorage() {
+export function persistentStorage(): PersistentStorage {
 	var win = getWindow();
 	
-	if (!win) {
+	if (win === null) {
 		return {
-			permission: computed(function() {
+			permission: computed(function(): PermissionPrompt {
 				return {
 					state: "default"
 				};
 			}),
 			
-			persisted: computed(function() {
+			persisted: computed(function(): boolean {
 				return false;
 			})
 		};
@@ -27,16 +28,12 @@ function persistentStorage() {
 	
 	var nav = win.navigator;
 	
-	function requestPermission(grant, deny) {
+	function requestPermission(grant: () => void, deny: () => void): void {
 		if (isSupported) {
 			nav.storage.persist().then(function(value) {
 				value ? grant() : deny();
 				persisted.set(value);
-				update();
-			}, function() {
-				deny();
-				update();
-			});
+			}, deny);
 		}
 	}
 	
@@ -46,16 +43,11 @@ function persistentStorage() {
 	if (isSupported && typeof nav.storage.persisted === "function") {
 		nav.storage.persisted().then(function(p) {
 			persisted.set(p);
-			update();
 		}, noop);
 	}
 	
 	return {
 		permission: permission("persistent-storage", requestPermission),
-		persisted: readOnly(persisted)
+		persisted: persisted
 	};
 }
-
-$.persistentStorage = persistentStorage;
-
-})($);

@@ -67,6 +67,7 @@ export { onUnmount } from "./onUnmount.js";
 export { param } from "./param.js";
 export { path } from "./path.js";
 export { permission } from "./permission.js";
+export { persistentStorage } from "./persistentStorage.js";
 export { preferredLanguages } from "./preferredLanguages.js";
 export { propertySignal } from "./propertySignal.js";
 export { provide } from "./provide.js";
