@@ -5,23 +5,23 @@ import { COMPUTING_FLAG, DIRTY_FLAG, FAILED_FLAG } from "./reactiveNodeFlags.js"
 import { subscribe } from "./subscribe.js";
 
 export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
-    var evaluatedNode = getReactiveNode(true);
+	var evaluatedNode = getReactiveNode(true);
 
-    if (tracked && evaluatedNode !== undefined) {
-        subscribe(node, evaluatedNode);
-    }
+	if (tracked && evaluatedNode !== undefined) {
+		subscribe(node, evaluatedNode);
+	}
 
-    if (node.flags & DIRTY_FLAG) {
-        if (node.flags & COMPUTING_FLAG) {
-            throw new Error("Cycle detected");
-        }
+	if (node.flags & DIRTY_FLAG) {
+		if (node.flags & COMPUTING_FLAG) {
+			throw new Error("Cycle detected");
+		}
 
-        node.flags |= COMPUTING_FLAG;
-        
+		node.flags |= COMPUTING_FLAG;
+		
 		var subscribers = node.subscribers;
 
-        try {
-            setReactiveNode(node);
+		try {
+			setReactiveNode(node);
 
 			var dependencies = node.dependencies;
 			var newValue: T;
@@ -34,15 +34,15 @@ export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
 					var dependency = dependencies[i];
 					resolvedDependencies[i] = isSignal(dependency) ? dependency() : dependency;
 				}
-    
+	
 				newValue = node.computeValue.apply(node, resolvedDependencies as never[]);
 			} else {
 				newValue = node.computeValue();
 			}
 
 			var oldValue = node.value;
-            
-            if (newValue !== oldValue) {
+			
+			if (newValue !== oldValue) {
 				node.value = newValue;
 				
 				var n = subscribers.length;
@@ -54,20 +54,20 @@ export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
 				node.subscribers = subscribers;
 			}
 
-            node.flags &= ~FAILED_FLAG;
-        } catch (error) {
-            node.value = error;
-            node.flags |= FAILED_FLAG;
-            node.subscribers = subscribers;
-        } finally {
-            node.flags &= ~(COMPUTING_FLAG | DIRTY_FLAG);
-            setReactiveNode(evaluatedNode);
-        }
-    }
+			node.flags &= ~FAILED_FLAG;
+		} catch (error) {
+			node.value = error;
+			node.flags |= FAILED_FLAG;
+			node.subscribers = subscribers;
+		} finally {
+			node.flags &= ~(COMPUTING_FLAG | DIRTY_FLAG);
+			setReactiveNode(evaluatedNode);
+		}
+	}
 
-    if (node.flags & FAILED_FLAG) {
-        throw node.value;
-    }
+	if (node.flags & FAILED_FLAG) {
+		throw node.value;
+	}
 
-    return node.value as T;
+	return node.value as T;
 }

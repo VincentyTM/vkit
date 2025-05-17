@@ -7,24 +7,24 @@ export function subscribe(source: ReactiveNode, target: ReactiveNode): void {
 		flush();
 	}
 
-    var subscribers = source.subscribers;
+	var subscribers = source.subscribers;
 
-    for (var i = subscribers.length; i--;) {
-        if (subscribers[i] === target) {
-            return;
-        }
-    }
+	for (var i = subscribers.length; i--;) {
+		if (subscribers[i] === target) {
+			return;
+		}
+	}
 
-    subscribers.push(target);
+	subscribers.push(target);
 }
 
 export function unsubscribe(source: ReactiveNode, target: ReactiveNode): void {
-    var subscribers = source.subscribers;
+	var subscribers = source.subscribers;
 
-    for (var i = subscribers.length; i--;) {
-        if (subscribers[i] === target) {
-            subscribers.splice(i, 1);
-            return;
-        }
-    }
+	for (var i = subscribers.length; i--;) {
+		if (subscribers[i] === target) {
+			subscribers.splice(i, 1);
+			return;
+		}
+	}
 }

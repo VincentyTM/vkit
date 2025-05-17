@@ -99,7 +99,7 @@ function writeSelectChildren(
 		
 		if (typeof child === "string") {
 			writeEscapedText(res, child);
-        } else if (child) {
+		} else if (child) {
 			if ("tagName" in child) {
 				if (
 					"value" in attributes &&

@@ -28,8 +28,8 @@ interface GrantedPermissionPrompt {
 interface PromptPermissionPrompt {
 	prompt: true;
 	state: "prompt";
-    request(): void;
-    dismiss(): void;
+	request(): void;
+	dismiss(): void;
 }
 
 export function permission(

@@ -10,7 +10,7 @@ export interface Effect extends ReactiveNodeBase {
 	readonly injector: Injector | undefined;
 	readonly parent: Effect | undefined;
 	readonly type: ReactiveNodeType.Effect;
-    errorHandler: ((error: unknown) => void) | undefined;
+	errorHandler: ((error: unknown) => void) | undefined;
 	updateHandler(): void;
 }
 
@@ -18,7 +18,7 @@ export function createEffect(
 	parentEffect: Effect | undefined,
 	injector: Injector | undefined,
 	updateHandler: () => void,
-    errorHandler?: ((error: unknown) => void) | undefined
+	errorHandler?: ((error: unknown) => void) | undefined
 ) : Effect {
 	var effect: Effect = {
 		children: undefined,
@@ -33,9 +33,9 @@ export function createEffect(
 		updateHandler: updateHandler
 	};
 
-    if (parentEffect !== undefined) {
-        subscribe(parentEffect, effect);
-    }
+	if (parentEffect !== undefined) {
+		subscribe(parentEffect, effect);
+	}
 
 	return effect;
 }

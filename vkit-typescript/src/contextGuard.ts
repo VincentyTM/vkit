@@ -10,14 +10,14 @@ export function getEffect(): Effect;
 export function getEffect(doNotThrow: true): Effect | undefined;
 
 export function getEffect(doNotThrow?: boolean): Effect | undefined {
-    if (evaluatedNode === undefined || evaluatedNode.type !== ReactiveNodeType.Effect) {
-        if (doNotThrow) {
-            return undefined;
-        }
-        throw new Error("This function can only be called synchronously from a reactive effect");
-    }
+	if (evaluatedNode === undefined || evaluatedNode.type !== ReactiveNodeType.Effect) {
+		if (doNotThrow) {
+			return undefined;
+		}
+		throw new Error("This function can only be called synchronously from a reactive effect");
+	}
 
-    return evaluatedNode;
+	return evaluatedNode;
 }
 
 export function getInjector(): Injector;
@@ -41,7 +41,7 @@ export function getReactiveNode(doNotThrow?: boolean): ReactiveNode | undefined 
 		throw new Error("This function can only be called synchronously from a reactive context");
 	}
 
-    return evaluatedNode;
+	return evaluatedNode;
 }
 
 export function setInjector(injector: Injector | undefined): void {
@@ -49,5 +49,5 @@ export function setInjector(injector: Injector | undefined): void {
 }
 
 export function setReactiveNode(node: ReactiveNode | undefined): void {
-    evaluatedNode = node;
+	evaluatedNode = node;
 }

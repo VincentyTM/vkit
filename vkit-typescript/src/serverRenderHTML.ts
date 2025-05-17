@@ -12,10 +12,10 @@ export function serverRenderHTML(element: ServerElement, template: HTMLTemplate<
 
 			if (typeof arg === "string") {
 				element.children.push({
-                    text: arg
-                });
+					text: arg
+				});
 			} else {
-                serverRender(element, arg);
+				serverRender(element, arg);
 			}
 		}
 	}

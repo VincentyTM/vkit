@@ -13,11 +13,11 @@ import { computed, Signal } from "./computed.js";
 export function concat(...substrings: readonly (string | number | bigint | Signal<string | number | bigint>)[]): Signal<string>;
 
 export function concat(): Signal<string> {
-    return computed(getResult, arguments as ArrayLike<string | Signal<string>> as (string | Signal<string>)[]);
+	return computed(getResult, arguments as ArrayLike<string | Signal<string>> as (string | Signal<string>)[]);
 }
 
 function getResult(...substrings: string[]): string;
 
 function getResult(): string {
-    return Array.prototype.join.call(arguments, "");
+	return Array.prototype.join.call(arguments, "");
 }

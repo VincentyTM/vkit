@@ -24,14 +24,14 @@ export function frameContent(getTemplate: (() => Template<HTMLElement>) | Signal
 		onload: function(this: HTMLIFrameElement): void {
 			var win = this.contentWindow;
 
-            if (!win) {
-                throw new Error("Content window is null");
-            }
+			if (!win) {
+				throw new Error("Content window is null");
+			}
 			
 			var root = render(function(): Template<HTMLElement> {
-                if (!win) {
-                    throw new Error("Content window is null");
-                }
+				if (!win) {
+					throw new Error("Content window is null");
+				}
 
 				onEvent(win, "unload", function(): void {
 					root.destroy();

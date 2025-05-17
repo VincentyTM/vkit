@@ -47,7 +47,7 @@ export function provide<R>(
 		for (var i = 0; i < n; ++i) {
 			var config = configs[i];
 			var provider = createProvider(config, parentEffect, injector);
-            injector.providers.set(config, provider);
+			injector.providers.set(config, provider);
 		}
 	}
 

@@ -20,11 +20,11 @@ export function flush(): void {
 		for (var i = n - 1; i >= 0; --i) {
 			var node = currentStack[i];
 
-            if (node.flags & DESTROYED_FLAG) {
-                destroySubscribers(node);
-            } else {
+			if (node.flags & DESTROYED_FLAG) {
+				destroySubscribers(node);
+			} else {
 				node.update(node, false);
-            }
+			}
 		}
 	}
 }

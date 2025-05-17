@@ -23,7 +23,7 @@ function stopPropagation(this: Event): void {
  * @example
  * // This will remove the event listener when the current component unmounts
  * onDestroy(
- *     onEvent(document, "click", () => console.log("Clicked!"))
+ * 	onEvent(document, "click", () => console.log("Clicked!"))
  * );
  * 
  * @param target The event target.

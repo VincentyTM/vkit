@@ -22,27 +22,27 @@ export function preferredLanguages(): Signal<readonly string[]> {
 	var win = getWindow();
 
 	if (!win) {
-        var request = inject(RenderConfigService).request;
-    
-        if (request === undefined) {
-            return computed(getEmptyArray);
-        }
-        
-        var header = request.headers["accept-language"];
-        var langs = typeof header === "string" ? header.replace(/\s+/g, "").split(",") : [];
-        
-        for (var i = langs.length; i--;) {
-            var l = langs[i];
-            var p = l.indexOf(";");
-            
-            if (p !== -1) {
-                langs[i] = l.substring(0, p);
-            }
-        }
-        
-        return computed(function(): readonly string[] {
-            return langs;
-        });
+		var request = inject(RenderConfigService).request;
+	
+		if (request === undefined) {
+			return computed(getEmptyArray);
+		}
+		
+		var header = request.headers["accept-language"];
+		var langs = typeof header === "string" ? header.replace(/\s+/g, "").split(",") : [];
+		
+		for (var i = langs.length; i--;) {
+			var l = langs[i];
+			var p = l.indexOf(";");
+			
+			if (p !== -1) {
+				langs[i] = l.substring(0, p);
+			}
+		}
+		
+		return computed(function(): readonly string[] {
+			return langs;
+		});
 	}
 
 	var nav = win.navigator;

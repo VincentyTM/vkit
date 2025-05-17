@@ -1,9 +1,9 @@
 export interface Injectable<T> {
-    create(): T;
+	create(): T;
 }
 
 export function createInjectable<T>(create: () => T): Injectable<T> {
-    return {
-        create: create
-    };
+	return {
+		create: create
+	};
 }

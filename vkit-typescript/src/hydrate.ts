@@ -20,8 +20,8 @@ export interface HydrationPointer<P> extends ClientRenderer<P> {
 }
 
 interface ParentNodeCore {
-    addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLParagraphElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+	addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLParagraphElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+	addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
 	insertBefore<T extends ParentNodeCore>(node: T, child: ParentNodeCore | null): T;
 	insertBefore<T extends Node>(node: T, child: Node | null): T;
 }
@@ -46,10 +46,10 @@ export function hydrate<P extends ParentNodeCore>(pointer: HydrationPointer<P>, 
 		return;
 	}
 
-    if ("hydrate" in template) {
+	if ("hydrate" in template) {
 		template.hydrate(pointer, template);
 		return;
-    }
+	}
 	
 	if ("nodeType" in template) {
 		pointer.context.insertBefore(template, pointer.currentNode);
@@ -66,16 +66,16 @@ export function hydrate<P extends ParentNodeCore>(pointer: HydrationPointer<P>, 
 		return;
 	}
 	
-    if ("next" in template) {
-        var x: IteratorResult<Template<P>, Template<P>>;
+	if ("next" in template) {
+		var x: IteratorResult<Template<P>, Template<P>>;
 
-        do {
-            x = template.next();
-            hydrate(pointer, x.value);
-        } while (!x.done);
+		do {
+			x = template.next();
+			hydrate(pointer, x.value);
+		} while (!x.done);
 
-        return;
-    }
+		return;
+	}
 	
 	hydrateBindings(pointer, template);
 }

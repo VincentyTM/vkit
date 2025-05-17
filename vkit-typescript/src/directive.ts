@@ -29,10 +29,10 @@ function clientRenderDirective<P>(
  * - Directives are evaluated in the browser only.
  * @example
  * function ElementLogger() {
- *     return Div(
- *         "Hello world",
- *         directive(div => console.log(div))
- *     );
+ * 	return Div(
+ * 		"Hello world",
+ * 		directive(div => console.log(div))
+ * 	);
  * }
  * @param callback The function that is called with the element as a parameter.
  * @returns The directive.

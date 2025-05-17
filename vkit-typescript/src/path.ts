@@ -6,12 +6,12 @@ import { onEvent } from "./onEvent.js";
 import { RenderConfigService } from "./RenderConfigService.js";
 
 function selectRequestPath(url: string): string {
-    var i = url.indexOf("?");
-    return i === -1 ? url : url.substring(0, i);
+	var i = url.indexOf("?");
+	return i === -1 ? url : url.substring(0, i);
 }
 
 function selectPath(win: Window): string {
-    return win.location.pathname;
+	return win.location.pathname;
 }
 
 /**
@@ -25,12 +25,12 @@ export function path(): Signal<string> {
 		var path = computed(selectPath, [win]);
 
 		onDestroy(onEvent(win, "popstate", function(): void {
-            path.invalidate();
-        }));
+			path.invalidate();
+		}));
 
-        return path;
+		return path;
 	}
 
-    var request = inject(RenderConfigService).request;
-    return computed(selectRequestPath, [request && request.url || ""]);
+	var request = inject(RenderConfigService).request;
+	return computed(selectRequestPath, [request && request.url || ""]);
 }

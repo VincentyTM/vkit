@@ -4,8 +4,8 @@ import { onDestroy } from "./onDestroy.js";
 import { signal } from "./signal.js";
 
 interface URLType {
-    createObjectURL(obj: Blob | MediaSource): string;
-    revokeObjectURL(url: string): void;
+	createObjectURL(obj: Blob | MediaSource): string;
+	revokeObjectURL(url: string): void;
 }
 
 type URLSource = string | Blob | MediaSource;
@@ -13,13 +13,13 @@ type URLSource = string | Blob | MediaSource;
 declare var mozURL: URLType;
 
 export var URLWithFallback: URLType = (
-    typeof URL === "function" ? URL :
-    typeof webkitURL === "function" ? webkitURL :
-    typeof mozURL === "function" ? mozURL :
-    {
-        createObjectURL: function() { return ""; },
-        revokeObjectURL: function() {}
-    }
+	typeof URL === "function" ? URL :
+	typeof webkitURL === "function" ? webkitURL :
+	typeof mozURL === "function" ? mozURL :
+	{
+		createObjectURL: function() { return ""; },
+		revokeObjectURL: function() {}
+	}
 );
 
 export function objectURL(file: URLSource): string;

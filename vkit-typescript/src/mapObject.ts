@@ -9,9 +9,9 @@ import { signal, WritableSignal } from "./signal.js";
 import { updateEffect } from "./updateEffect.js";
 
 export function mapObject<T, U, V>(
-    objectSignal: Record<string, T> | Signal<Record<string, T>> | (() => Record<string, T>),
-    mapKey: (key: string, objectSignal: Record<string, T> | Signal<Record<string, T>> | (() => Record<string, T>), data: U) => V,
-    data: U
+	objectSignal: Record<string, T> | Signal<Record<string, T>> | (() => Record<string, T>),
+	mapKey: (key: string, objectSignal: Record<string, T> | Signal<Record<string, T>> | (() => Record<string, T>), data: U) => V,
+	data: U
 ): Signal<Record<string, V>> {
 	var parentEffect = getEffect();
 	var effects: Record<string, Effect> = {};
@@ -31,14 +31,14 @@ export function mapObject<T, U, V>(
 			if (key in effects) {
 				next[key] = effects[key];
 			} else {
-                var instanceEffect = createInstanceEffect(
-                    parentEffect,
-                    values,
-                    key,
-                    mapKey,
-                    objectSignal,
-                    data
-                );
+				var instanceEffect = createInstanceEffect(
+					parentEffect,
+					values,
+					key,
+					mapKey,
+					objectSignal,
+					data
+				);
 				next[key] = instanceEffect;
 				updateEffect(instanceEffect);
 			}
@@ -59,14 +59,14 @@ export function mapObject<T, U, V>(
 }
 
 function createInstanceEffect<K extends string, T, U, V>(
-    parentEffect: Effect,
-    values: WritableSignal<Record<string, V>>,
-    key: K,
-    mapKey: (key: K, objectSignal: Record<string, T> | Signal<Record<string, T>> | (() => Record<string, T>), data: U) => V,
-    objectSignal: Record<string, T> | Signal<Record<string, T>> | (() => Record<string, T>),
-    data: U
+	parentEffect: Effect,
+	values: WritableSignal<Record<string, V>>,
+	key: K,
+	mapKey: (key: K, objectSignal: Record<string, T> | Signal<Record<string, T>> | (() => Record<string, T>), data: U) => V,
+	objectSignal: Record<string, T> | Signal<Record<string, T>> | (() => Record<string, T>),
+	data: U
 ): Effect {
-    return createEffect(parentEffect, parentEffect.injector, function(): void {
+	return createEffect(parentEffect, parentEffect.injector, function(): void {
 		var extended = objectAssign({}, values.get());
 		extended[key] = mapKey(key, objectSignal, data);
 		values.set(extended);

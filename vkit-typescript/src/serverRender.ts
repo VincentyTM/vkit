@@ -10,7 +10,7 @@ export function serverRender<P extends ParentNode>(container: ServerElement, tem
 	}
 	
 	if (typeof template === "string" || typeof template === "number" || typeof template === "bigint") {
-        appendChild(container, String(template));
+		appendChild(container, String(template));
 		return;
 	}
 	
@@ -34,21 +34,21 @@ export function serverRender<P extends ParentNode>(container: ServerElement, tem
 		return;
 	}
 	
-    if ("next" in template) {
-        var x: IteratorResult<Template<P>, Template<P>>;
+	if ("next" in template) {
+		var x: IteratorResult<Template<P>, Template<P>>;
 
-        do {
-            x = template.next();
-            serverRender(container, x.value);
-        } while (!x.done);
+		do {
+			x = template.next();
+			serverRender(container, x.value);
+		} while (!x.done);
 
-        return;
-    }
+		return;
+	}
 
-    if ("serverRender" in template) {
+	if ("serverRender" in template) {
 		template.serverRender(container, template);
 		return;
-    }
+	}
 
 	bindTemplate(container, template as Exclude<Bindings<P>, Node>);
 }

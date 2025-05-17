@@ -24,7 +24,7 @@ import { updateEffect } from "./updateEffect.js";
  * In order to clean up side effects, call onDestroy within the callback.
  */
 export function effect(updateHandler: () => void): void {
-    if (inject(RenderConfigService).doRunEffects) {
+	if (inject(RenderConfigService).doRunEffects) {
 		var parentEffect = getEffect();
 		
 		updateEffect(

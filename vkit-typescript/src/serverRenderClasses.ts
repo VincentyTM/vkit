@@ -8,22 +8,22 @@ export function serverRenderClasses(serverElement: ServerElement, template: Clas
 }
 
 function addClass(el: ServerElement, name: string): void {
-    var existingClassName = getAttribute(el, "class");
+	var existingClassName = getAttribute(el, "class");
 
 	setAttribute(el, "class", existingClassName ? existingClassName + " " + name : name);
 }
 
 function removeClass(el: ServerElement, name: string): void {
-    var existingClassName = getAttribute(el, "class");
+	var existingClassName = getAttribute(el, "class");
 
 	if (existingClassName === null) {
 		return;
 	}
 
-    if (existingClassName === name) {
+	if (existingClassName === name) {
 		removeAttribute(el, "class");
 		return;
-    }
+	}
 
 	var newClassName = existingClassName.replace(" " + name, "");
 
