@@ -4,7 +4,7 @@
  * @param start The start caret position of the selection, inclusive.
  * @param end The end caret position of the selection, exclusive.
  */
-export function selectText(
+export function selectTextRange(
 	element: HTMLInputElement & HTMLTextAreaElement,
 	start: number,
 	end: number
