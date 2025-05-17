@@ -25,6 +25,7 @@ export { effect } from "./effect.js";
 export { errorBoundary } from "./errorBoundary.js";
 export { escapeHTML } from "./escapeHTML.js";
 export { fileReader } from "./fileReader.js";
+export { formatText } from "./formatText.js";
 export { frameContent } from "./frameContent.js";
 export { fullScreen } from "./fullScreen.js";
 export { geolocationPosition } from "./geolocationPosition.js";
