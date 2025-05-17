@@ -16,6 +16,7 @@ export type AsyncResult<T> = (
 );
 
 interface PendingAsyncResult {
+	progress?: Signal<Progress>;
 	status: AsyncStatus.Pending;
 }
 
@@ -27,6 +28,12 @@ interface RejectedAsyncResult {
 interface ResolvedAsyncResult<T> {
 	status: AsyncStatus.Resolved;
 	value: T;
+}
+
+export interface Progress {
+	lengthComputable: boolean;
+	loaded: number;
+	total: number;
 }
 
 interface Thenable<T> {

@@ -22,6 +22,7 @@ export { draggable } from "./draggable.js";
 export { effect } from "./effect.js";
 export { errorBoundary } from "./errorBoundary.js";
 export { escapeHTML } from "./escapeHTML.js";
+export { fileReader } from "./fileReader.js";
 export { frameContent } from "./frameContent.js";
 export { fullScreen } from "./fullScreen.js";
 export { get } from "./get.js";
