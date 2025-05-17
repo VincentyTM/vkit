@@ -1,6 +1,6 @@
 export { assets } from "./assets.js";
 export { assetState } from "./assetState.js";
-export { asyncEffect } from "./asyncEffect.js";
+export { asyncEffect, AsyncResult } from "./asyncEffect.js";
 export { attributes } from "./attributes.js";
 export { awaitResult } from "./awaitResult.js";
 export { bind } from "./bind.js";
