@@ -11,7 +11,7 @@
 Example app using the TypeScript module:
 
 ```javascript
-import {htmlTags, signal, render} from "vkit-js";
+import { htmlTags, signal, render } from "vkit-js";
 
 const {Br, Button} = htmlTags;
 
@@ -67,7 +67,7 @@ You can add vKit to your existing TypeScript web project:
 2. Import the methods you wish to use
 
 You can import the dependencies by name:
-`import {htmlTags, render, signal} from "vkit-js";`
+`import { htmlTags, render, signal } from "vkit-js";`
 
 Or as a single object:
 `import * as $ from "vkit-js";`
@@ -84,67 +84,99 @@ Use the `export` command to create a standalone `html` or `js` file.
 
 ### Use on the server
 
-There is also a limited version of vKit that can be run on a NodeJS server. It includes templating, styling and routing but no reactivity.
+vKit supports universal JavaScript, allowing you to run it seamlessly on a Node.js server. For client-side interactivity, you need to include a script element to load the necessary JavaScript.
 
 You can install the vKit module with this command:
 `npm i vkit-js`
 
 An example server app:
 ```javascript
-import http from "http";
-import {href, html, htmlTags, meta, param, path, router, server, styledHtmlTag, title} from "vkit-js/server";
+// App.js (universal code)
 
-const {A, Li, Main, Nav, Ul} = htmlTags;
+import { classes, href, htmlTags, param, path } from "vkit-js";
 
-const RedH1 = styledHtmlTag("h1", `::this{color: red;}`);
+const {A, Body, Li, H1, Head, Main, Nav, Ul} = htmlTags;
 
-const App = () => [
-    title("Example App"),
-    meta("description", "This is an example application."),
-    RedH1("Hello, you are on page ", path()),
-    Nav(
-        Ul(
-            Li(A("Home", href("?"))),
-            Li(A("About", href("?page=about")))
+export function App() {
+    const page = param("page");
+
+    return [
+        H1(classes("red"), "Hello, you are on page ", path()),
+        Nav(
+            Ul(
+                Li(A("Home", href("?"))),
+                Li(A("About", href("?page=about")))
+            )
+        ),
+        Main(
+            view(() => {
+                switch (page()) {
+                    case "": return "Home";
+                    case "about": return "About";
+                    default: return "Not Found";
+                }
+            })
         )
-    ),
-    Main(
-        router(param("page"), [
-            {
-                path: "",
-                component: () => [
-                    title((t) => `Home | ${t}`),
-                    "Home"
-                ]
-            },
-            {
-                path: "about",
-                component: () => [
-                    title((t) => `About | ${t}`),
-                    "About"
-                ]
-            }
-        ])
-    )
-];
+    ];
+}
 
-const requestListener = server.view((server) => html`<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        ${server.meta()}
-        <title>${server.title()}</title>
-        <style>${server.style()}</style>
-    </head>
-    <body>
-        ${App()}
-    </body>
-</html>`);
+
+// server.js (server-only code)
+
+import http from "http";
+import { html, htmlTags, renderToStream } from "vkit-js";
+import { App } from "./App.js";
+
+const {Body, Head, Html, Script, Style, Title} = htmlTags;
+
+function Document() {
+    // The App component can modify the server template, enabling the configuration
+    // of html, head and body elements through services. Therefore, it is recommended
+    // to instantiate App before constructing the server template.
+    const app = App();
+
+    return [
+        html("<!DOCTYPE html>"),
+        Html(
+            Head(
+                Title("Example App"),
+                Style(".red { color: red; }")
+            ),
+            Body(
+                app,
+                Script({
+                    src: "/bundle.js" // Required for interactivity (use your own URL).
+                })
+            )
+        )
+    ];
+}
+
+async function requestListener(req, res) {
+    // Optionally perform asynchronous operations here, such as fetching data.
+
+    res.setHeader("content-type", "text/html; charset=utf-8");
+
+    renderToStream(res, Document, {
+        cookies: {},
+        doRunEffects: false,
+        request: req,
+        response: res
+    });
+
+    res.end();
+}
 
 http.createServer(requestListener).listen(1234);
-```
 
-You can configure the CLI to produce different `js` files for the client and the server in order to enable server side rendering.
+
+// bundle.js (client-only code)
+
+import { render } from "vkit-js";
+import { App } from "./App.js";
+
+render(App, document.body);
+```
 
 ## Components and Views
 
