@@ -18,8 +18,7 @@
 		".": {
 			"default": "./vkit-typescript/dist/index.js",
 			"types": "./vkit-typescript/dist/index.d.ts"
-		},
-		"./server": "./vkit-server/index.js"
+		}
 	},
 	"homepage": "https://github.com/VincentyTM/vkit#readme",
 	"keywords": [
