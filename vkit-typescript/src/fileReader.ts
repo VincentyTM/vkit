@@ -1,7 +1,7 @@
 import { AsyncResult, AsyncStatus, Progress } from "./asyncEffect.js";
 import { Signal } from "./computed.js";
 import { effect } from "./effect.js";
-import { isSignal } from "./isSignal";
+import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 import { signal, WritableSignal } from "./signal.js";
 
