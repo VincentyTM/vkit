@@ -99,6 +99,7 @@ export { Template } from "./Template.js";
 export { text } from "./text.js";
 export { tick } from "./tick.js";
 export { timeout } from "./timeout.js";
+export { unpackFiles } from "./unpackFiles.js";
 export { unsavedGuard } from "./unsavedGuard.js";
 export { untracked } from "./untracked.js";
 export { update } from "./update.js";
