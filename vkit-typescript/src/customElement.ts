@@ -2,7 +2,7 @@ import { createEffect, Effect } from "./createEffect.js";
 import { createInjector } from "./createInjector.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { empty } from "./empty.js";
-import { WindowService } from "./getWindow.js";
+import { getWindow, WindowService } from "./getWindow.js";
 import { hydrate, HydrationPointer } from "./hydrate.js";
 import { inject } from "./inject.js";
 import { signal, WritableSignal } from "./signal.js";
@@ -47,7 +47,7 @@ function attrToPropName(attrName: string): string {
 }
 
 /**
- * Registers a custom element with the specified name.
+ * Registers a custom element in the current window with the specified name.
  * The custom element is like a component but independent from the main tree.
  * The component is created when the element is added to the DOM.
  * The `onDestroy` callbacks are called when the element is removed from the DOM.
@@ -70,7 +70,6 @@ function attrToPropName(attrName: string): string {
  * @param options An optional configuration object with the following options:
  *  - adoptedCallback: A function that is called when the element is adopted.
  *  - observedAttributes: An array of reactive attribute names that appear in the first parameter as string-signal pairs.
- *  - window: The window in which the custom element is registered.
  * @returns The `getView` function.
  */
 export function customElement<T extends CustomElementGetTemplate>(
@@ -79,6 +78,10 @@ export function customElement<T extends CustomElementGetTemplate>(
 	options?: CustomElementOptions
 ): T {
 	function CustomElement(): ExtendedHTMLElement {
+		if (win === null) {
+			throw new TypeError("Window is not available");
+		}
+
 		var el: ExtendedHTMLElement = Reflect.construct(
 			win.HTMLElement,
 			[],
@@ -116,7 +119,11 @@ export function customElement<T extends CustomElementGetTemplate>(
 	}
 	
 	var proto = CustomElement.prototype;
-	var win = window;
+	var win = getWindow() || (typeof window === "object" ? window : null);
+
+	if (win === null) {
+		return getTemplate;
+	}
 	
 	proto.connectedCallback = function(this: ExtendedHTMLElement): void {
 		if (!rendered) {
@@ -151,10 +158,6 @@ export function customElement<T extends CustomElementGetTemplate>(
 	};
 	
 	if (options) {
-		if (options.window) {
-			win = options.window;
-		}
-		
 		if (options.adoptedCallback) {
 			proto.adoptedCallback = options.adoptedCallback;
 		}
