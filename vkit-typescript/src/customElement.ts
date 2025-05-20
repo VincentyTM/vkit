@@ -10,7 +10,7 @@ import { Template } from "./Template.js";
 import { tick } from "./tick.js";
 import { updateEffect } from "./updateEffect.js";
 
-type CustomElementGetView = (
+type CustomElementGetTemplate = (
 	this: HTMLElement,
 	observedAttributes: {
 		[key: string]: WritableSignal<string | null>;
@@ -64,18 +64,20 @@ function attrToPropName(attrName: string): string {
  * });
  * 
  * @param name The name of the custom element. It must contain a hyphen like `my-element`.
- * @param getView A component that returns a view. It is displayed when the custom element is present in the DOM.
+ * @param getTemplate A function that returns a template.
+ * The template is created and rendered when the custom element appears in the DOM.
+ * When the element is removed, the component is destroyed with its side effects.
  * @param options An optional configuration object with the following options:
  *  - adoptedCallback: A function that is called when the element is adopted.
  *  - observedAttributes: An array of reactive attribute names that appear in the first parameter as string-signal pairs.
  *  - window: The window in which the custom element is registered.
- * @returns The `getView` function so that it can be used as a regular component too.
+ * @returns The `getView` function.
  */
-export function customElement(
+export function customElement<T extends CustomElementGetTemplate>(
 	name: string,
-	getView: CustomElementGetView,
+	getTemplate: T,
 	options?: CustomElementOptions
-) {
+): T {
 	function CustomElement(): ExtendedHTMLElement {
 		var el: ExtendedHTMLElement = Reflect.construct(
 			win.HTMLElement,
@@ -88,7 +90,7 @@ export function customElement(
 		var effect = createEffect(undefined, injector, function(): void {
 			var doc = el.ownerDocument;
 			inject(WindowService).window = doc.defaultView || (doc as any).parentWindow;
-			var view = getView.call(el, el.observedAttributes, el);
+			var view = getTemplate.call(el, el.observedAttributes, el);
 
 			var pointer: HydrationPointer<ExtendedHTMLElement> = {
 				context: el,
@@ -179,5 +181,5 @@ export function customElement(
 	
 	win.customElements.define(name, CustomElement as unknown as CustomElementConstructor);
 	
-	return getView;
+	return getTemplate;
 }
