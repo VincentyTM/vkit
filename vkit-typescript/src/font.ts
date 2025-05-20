@@ -12,13 +12,13 @@ export function font(
 	
 	return asyncEffect(function(): Promise<FontFace> {
 		if (win === null) {
-			throw new Error("Window is not available");
+			throw new TypeError("Window is not available");
 		}
 
 		var doc = win.document;
 
 		if (!(doc.fonts && typeof FontFace === "function")) {
-			throw new Error("FontFace API is not supported");
+			throw new TypeError("FontFace API is not supported");
 		}
 
 		var currentURL = typeof url === "function" || isSignal(url) ? url() : url;

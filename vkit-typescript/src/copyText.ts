@@ -18,7 +18,7 @@
  */
 export function copyText(text: string, window: Window | null): void {
 	if (window === null) {
-		throw new Error("Window is not available");
+		throw new TypeError("Window is not available");
 	}
 
 	var doc = window.document;

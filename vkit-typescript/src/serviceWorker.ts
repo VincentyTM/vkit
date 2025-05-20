@@ -7,13 +7,13 @@ export function serviceWorker(src: string, options?: RegistrationOptions): Signa
 
 	return asyncEffect(function() {
 		if (win === null) {
-			throw new Error("Window is not available");
+			throw new TypeError("Window is not available");
 		}
 
 		var nav = win.navigator;
 		
 		if (!(nav.serviceWorker && typeof nav.serviceWorker.register === "function")) {
-			throw new Error("ServiceWorker API is not supported");
+			throw new TypeError("ServiceWorker API is not supported");
 		}
 
 		return nav.serviceWorker.register(src, options);
