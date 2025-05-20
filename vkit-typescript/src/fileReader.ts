@@ -1,6 +1,7 @@
 import { AsyncResult, AsyncStatus, Progress } from "./asyncEffect.js";
 import { Signal } from "./computed.js";
 import { effect } from "./effect.js";
+import { getWindow } from "./getWindow.js";
 import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 import { signal, WritableSignal } from "./signal.js";
@@ -21,6 +22,7 @@ export function fileReader<T extends FileReaderResultType>(
 	file: Blob | null | Signal<Blob | null> | (() => Blob | null),
 	options?: FileReaderOptions<T>
 ): Signal<AsyncResult<FileReaderResult<T>>> {
+	var win = getWindow();
 	var result = signal<AsyncResult<FileReaderResult<T>>>({status: AsyncStatus.Pending});
 	var progress = signal<Progress>({
 		lengthComputable: false,
@@ -30,7 +32,15 @@ export function fileReader<T extends FileReaderResultType>(
 	var as = options && options.as;
 	
 	effect(function(): void {
-		var reader = new FileReader();
+		if (win === null) {
+			throw new TypeError("Window is not available");
+		}
+
+		if (typeof win.FileReader !== "function") {
+			throw new TypeError("FileReader API is not supported");
+		}
+
+		var reader = new win.FileReader();
 		
 		reader.onerror = function(): void {
 			result.set({
