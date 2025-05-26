@@ -93,6 +93,7 @@ export { serviceWorker } from "./serviceWorker.js";
 export { shadow } from "./shadow.js";
 export { signal, WritableSignal } from "./signal.js";
 export { style } from "./style.js";
+export { styledHtmlTag } from "./styledHtmlTag.js";
 export { svgTag, SVGView } from "./svgTag.js";
 export { svgTags } from "./svgTags.js";
 export { Template } from "./Template.js";
