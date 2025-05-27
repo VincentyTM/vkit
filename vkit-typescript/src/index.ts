@@ -71,6 +71,7 @@ export { online } from "./online.js";
 export { onUnmount } from "./onUnmount.js";
 export { packFiles } from "./packFiles.js";
 export { param } from "./param.js";
+export { parse } from "./parse.js";
 export { path } from "./path.js";
 export { permission } from "./permission.js";
 export { persistentStorage } from "./persistentStorage.js";
