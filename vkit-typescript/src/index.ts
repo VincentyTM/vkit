@@ -53,6 +53,7 @@ export { isWindowFocused } from "./isWindowFocused.js";
 export { isWritableSignal } from "./isWritableSignal.js";
 export { latestValue } from "./latestValue.js";
 export { lazyArray } from "./lazyArray.js";
+export { lexer } from "./lexer.js";
 export { map } from "./map.js";
 export { mapObject } from "./mapObject.js";
 export { mediaDevices } from "./mediaDevices.js";
