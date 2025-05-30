@@ -79,6 +79,7 @@ export { persistentStorage } from "./persistentStorage.js";
 export { preferredLanguages } from "./preferredLanguages.js";
 export { propertySignal } from "./propertySignal.js";
 export { provide } from "./provide.js";
+export { reactive } from "./reactive.js";
 export { flush } from "./reactiveNodeStack.js";
 export { readOnly } from "./readOnly.js";
 export { ref, Ref } from "./ref.js";
