@@ -11,16 +11,17 @@
 Example app using the TypeScript module:
 
 ```javascript
-import { htmlTags, signal, render } from "vkit-js";
+import { htmlTag, signal, render } from "vkit-js";
 
-const {Br, Button} = htmlTags;
+const Br = htmlTag("br");
+const Button = htmlTag("button");
 
 function CounterApp() {
     const count = signal(0);
     
     return [
         Button("Increment", {
-            onclick: () => count.add(1)
+            onclick: () => count.update(x => x + 1)
         }),
         Button("Reset counter", {
             disabled: () => count() === 0,
@@ -36,25 +37,15 @@ render(CounterApp, document.body);
 
 ## Table of Contents
   * [Getting Started](#getting-started)
-  * [Components and Views](#components-and-views)
+  * [Components and Templates](#components-and-templates)
   * [Styles](#styles)
   * [Signals](#signals)
   * [View Blocks](#view-blocks)
   * [View List Blocks](#view-list-blocks)
   * [Component Lifecycle](#component-lifecycle)
   * [Dependency Injection](#dependency-injection)
-  * [Observables and Subscription](#observables-and-subscription)
-  * [Routing](#routing)
   * [References](#references)
-  * [Serializing a Form](#serializing-a-form)
   * [Custom Elements](#custom-elements)
-  * [Windows and Components](#windows-and-components)
-  * [Cookies](#cookies)
-  * [Dragging Elements](#dragging-elements)
-  * [Text Selection](#text-selection)
-  * [Lexical Scanner](#lexical-scanner)
-  * [Syntactic Parser](#syntactic-parser)
-  * [Recording Audio](#recording-audio)
 
 ## Getting Started
 
@@ -69,16 +60,13 @@ You can add vKit to your existing TypeScript web project:
 You can import the dependencies by name:
 `import { htmlTags, render, signal } from "vkit-js";`
 
-Or as a single object:
-`import * as $ from "vkit-js";`
-
 ### Use the CLI
 
 You can also use the vKit CLI if you do not want to use any other build tools and you prefer simple JavaScript:
 1. Run `npm i -g vkit-js` to install vKit globally
 2. Run `vkit` to create/open a project in the current directory
 
-If you edit your `js` and `css` files inside the generated `src` directory, you can immediately see the changes in your browser.
+If you edit your `js` and `css` files inside the generated `src` directory, you can immediately see the changes in your browser. The `$` object will contain vKit's methods.
 
 Use the `export` command to create a standalone `html` or `js` file.
 
@@ -178,91 +166,102 @@ import { App } from "./App.js";
 render(App, document.body);
 ```
 
-## Components and Views
+## Components and Templates
 
-The fundamental building block of a vKit application is a view. It is most commonly a DOM node, a text or an array but many other types are also allowed. You can create a DOM node list with the `$.html` function:
+The fundamental building block of a vKit application is a component, which is a function that returns a template. This is a component:
 
 ```javascript
-const myView = $.html(
-    '<h1>Hello world</h1>',
-    '<p>This is a <code>hello world</code> application.</p>'
-);
+const App = () => "Hello world";
 ```
 
-Or you can create DOM elements with the `$.htmlTags` proxy object:
+As you can see, even a simple string can be a template. It can be used to render a text node. There are templates available for rendering HTML and SVG elements as well.
 
 ```javascript
-const {Code, H1, P} = $.htmlTags;
+import { htmlTag } from "vkit-js";
 
-const myView = [
-    H1("Hello world"),
-    P("This is a ", Code("hello world"), "application.")
-];
+const H1 = htmlTag("h1");
+
+const App = () => H1("Hello world");
 ```
 
-In vKit, a component is a function that returns a view:
+The same HTML tags will be used in many components, so it is worth moving them to a separate file and import them from there.
 
 ```javascript
-const HelloComponent = name => $.html('<h1>Hello ', [name], '</h1>');
+export const Button = htmlTag("button");
+export const Div = htmlTag("div");
+export const H1 = htmlTag("h1");
+export const Input = htmlTag("input");
+export const P = htmlTag("p");
 ```
 
-As you can see, you can wrap any text in an array to safely insert it in HTML. Alternatively, you can use tagged template literals.
+An element's properties can be modified with objects. These objects are templates themselves.
 
 ```javascript
-const HelloComponent = name => $.html`<h1>Hello ${name}</h1>`;
+function App() {
+    return Input({value: "Hello world"});
+}
 ```
 
-To render a component in `document.body`, just call `render` on it. This is what a typical application root looks like.
+Using the `style` key, you can set inline CSS properties.
 
 ```javascript
-const App = () => HelloComponent("world");
+function App() {
+    return H1("Hello world", {
+        style: {
+            color: "red"
+        }
+    });
+}
+```
 
-$.render(App, document.body);
+The elements can have any number of parameters, each one being a template. They can easily be nested:
+
+```javascript
+function App() {
+    return Div(
+        H1("Hello world"),
+        Input({value: "Hello world"})
+    );
+}
+```
+
+It is also possible to render multiple elements without having to define a container for them. For this, you can simply wrap them in an array.
+
+```javascript
+function App() {
+    return [
+        H1("Hello world"),
+        Input({value: "Hello world"})
+    ];
+}
+```
+
+A template serves as a blueprint and describes what should be rendered when `render` is called. Once a template is rendered, the corresponding DOM nodes are created (or even existing DOM nodes may be reused in a process called hydration).
+
+To render a component in `<body>` (or any other container element), just call `render`. This is what a typical application root looks like:
+
+```javascript
+render(App, document.body);
 ```
 
 As you have more components, you can build a tree of them:
 
 ```javascript
-const {Footer, Header, Main} = $.htmlTags;
+import { Footer, H1, Header, Main } from "./htmlTags.js";
+
+function Hello(name) {
+    return H1("Hello ", name);
+}
 
 function App() {
     return [
-        Header(
-            HelloComponent("A"),
-        ),
-        Main(
-            HelloComponent("B")
-        ),
-        Footer(
-            HelloComponent("C")
-        )
+        Header(Hello("A")),
+        Main(Hello("B")),
+        Footer(Hello("C")),
     ]
 }
 
-$.render(App, document.body);
-```
-
-The arguments of element factory functions can be a mix of child nodes to be appended, function directives and property binding objects.
-```javascript
-Div(
-    {
-        className: "box",
-        style: {
-            color: "red"
-        }
-    },
-    H1("Element node"),
-    "Text node",
-    [
-        "Arrays can also be used for grouping",
-        {
-            style: {
-                color: "blue"
-            }
-        }
-    ],
-    (div) => console.log("Color:", div.style.color)
-)
+render(App, document.body);
 ```
 
 ## Event Listeners
@@ -270,8 +269,6 @@ Div(
 You can bind a property named `on*` to attach an event listener to a DOM element.
 
 ```javascript
-const {Button} = $.htmlTags;
-
 function ClickableButton() {
     return Button("Click me", {
         onclick(event) {
@@ -281,48 +278,24 @@ function ClickableButton() {
 }
 ```
 
-A global event listener can be attached with `bind`. It will be detached when the current component is destroyed.
-
-```javascript
-$.bind(document, {
-    onclick(event) {
-        console.log("Clicked.", event);
-    }
-});
-```
-
 ## Styles
 
-The `$.style` method can be used with the special `::this` selector to apply CSS rules to DOM elements easily.
+The `style` method can be used to apply CSS rules to DOM elements easily.
 
 ```javascript
-const SpecialButtonStyle = $.style(`
-    ::this{
-        border: 0;
-        background-color: #ffffff;
-        color: #000000;
-        cursor: pointer;
-    }
-`);
+import { style } from "vkit-js";
+import { Button } from "./htmlTags.js";
 
-function SpecialButton(...args) {
-    return $.htmlTags.Button(SpecialButtonStyle, args);
+export function SpecialButton(...args) {
+    return Button(SpecialButtonStyle, args);
 }
-```
 
-In many cases, an element and its style can be defined as a component. The `$.styledHtmlTag` method is more useful in this case.
-
-```javascript
-const SpecialButton = $.styledHtmlTag("button", `
-    ::this{
-        border: 0;
-        background-color: #ffffff;
-        color: #000000;
-        cursor: pointer;
-    }
-`);
-
-const myButton = SpecialButton("Some label");
+const SpecialButtonStyle = style({
+    backgroundColor: "#ffffff",
+    border: "0",
+    color: "#000000",
+    cursor: "pointer"
+});
 ```
 
 ## Signals
@@ -331,10 +304,10 @@ A signal is a container object whose value may change over time. There are two t
 
 ### Writable Signals
 
-A writable signal can be created with `$.signal`.
+A writable signal can be created with `signal`.
 
 ```javascript
-const count = $.signal(42);
+const count = signal(42);
 ```
 
 Its value can be written with `set` and read with `get`.
@@ -344,38 +317,32 @@ count.set(50);
 console.log(count.get()); // 50
 ```
 
-It is also possible to `add` a value, similarly to the `+=` operator.
+It is also possible to `update` a value using a function.
 
 ```javascript
-count.add(12); // equivalent to count.set(count.get() + 12);
-```
-
-The `toggle` method is useful if the signal contains a boolean value. It transforms `true` into `false` and vice versa.
-
-```javascript
-const show = $.signal(false);
-show.toggle(); // equivalent to count.set(!count.get());
+count.update(x => x + 12); // equivalent to count.set(count.get() + 12);
+count.update((x, y) => x + y, 12); // an extra parameter may be used to pass data to the function
 ```
 
 ### Computed Signals
 
-A computed (or read-only) signal can be created with `$.computed`. Read-only signals do not have `add`, `set` and `toggle` methods.
+A computed (or read-only) signal can be created with `computed`. Read-only signals do not have `set` and `update` methods.
 
 ```javascript
-const myText = $.computed(() => "Hello world");
+const myText = computed(() => "Hello world");
 ```
 
-You can use the `()` operator on any signal inside the callback function of `$.computed`. It automatically updates the computed signal when an input signal changes.
+You can use the `()` operator on any signal inside the callback function of `computed`. It automatically updates the computed signal when an input signal changes.
 
 ```javascript
-const name = $.signal("world");
-const myText = $.computed(() => "Hello " + name());
+const name = signal("world");
+const myText = computed(() => `Hello ${name()}`);
 ```
 
 A computed signal is lazy, which means that its value is not calculated until it is needed somewhere (in the DOM or in a side effect).
 
 ```javascript
-const notUsedAnywhere = $.computed(() => (
+const notUsedAnywhere = computed(() => (
     "This will never be calculated"
 ));
 ```
@@ -383,28 +350,28 @@ const notUsedAnywhere = $.computed(() => (
 A computed signal caches its value, so unless at least one of its inputs change, the value is not recalculated.
 
 ```javascript
-const array = $.signal([]);
-const query = $.signal("");
-const filtered = $.computed(() => (
+const array = signal([]);
+const query = signal("");
+const filtered = computed(() => (
     array().filter((item) => (
         item.name.contains(query())
     ))
 ));
 ```
 
-Computed signals are not immediately updated. The updates are added to a queue instead. To make sure all computed signals are up to date, you can call `$.update`.
+Computed signals are not immediately updated. The updates are added to a queue instead. To make sure all computed signals are up to date, you can call `update`.
 
 ```javascript
-const a = $.signal(3);
-const b = $.signal(5);
+const a = signal(3);
+const b = signal(5);
 
-const aPlusB = $.computed(() => a() + b());
+const aPlusB = computed(() => a() + b());
 console.log(aPlusB.get()); // 8
 
 a.set(13);
 console.log(aPlusB.get()); // 8
 
-$.update();
+update();
 console.log(aPlusB.get()); // 18
 ```
 
@@ -413,7 +380,7 @@ console.log(aPlusB.get()); // 18
 A signal can be simply used as a dynamic text in the DOM.
 
 ```javascript
-const name = $.signal("world");
+const name = signal("world");
 
 return P("Hello ", name);
 ```
@@ -421,8 +388,8 @@ return P("Hello ", name);
 It can also be used as a dynamic property of a DOM element.
 
 ```javascript
-const name = $.signal("world");
-const color = $.signal("#ff0000");
+const name = signal("world");
+const color = signal("#ff0000");
 
 return Input({
     value: name,
@@ -436,7 +403,7 @@ Attributes can be dynamic too, not just properties.
 
 ```javascript
 return Div(
-    $.attributes({
+    attributes({
         "my-attribute": () => name() + "!"
     })
 );
@@ -446,7 +413,7 @@ Or classes.
 
 ```javascript
 return Div(
-    $.classes({
+    classes({
         "my-class": () => isMyClassTrue()
     })
 );
@@ -455,62 +422,18 @@ return Div(
 Side effects can also be created that run when the value of an input signal changes.
 
 ```javascript
-$.effect(() => {
+effect(() => {
     console.log(`Hello ${name()}`);
     
-    $.onDestroy(() => {
+    onDestroy(() => {
         console.log("Optional cleanup function");
     });
 });
 ```
 
-A dynamic text node can also be created without a computed signal.
-
-```javascript
-$.text(() => `Hello ${name()}`)
-```
-
-### Reactivity of Nested Objects
-
-If you have a nested object, it could be difficult to detect deep changes.
-
-```javascript
-const object = {
-    count: 0
-};
-
-++object.count;
-```
-
-Unfortunately, computed signals are not updated.
-
-```javascript
-const count = $.computed(() => object.count);
-```
-
-To fix this, you can use `$.of`. It is recommended to always put it in a `$.computed` block.
-
-```javascript
-const count = $.computed(() => $.of(object).count);
-```
-
 ### Mapping Signals
 
-The `$.map` method can be used to create a reusable function that maps input signals to an output signal. Its only parameter is a pure function that returns the output signal's current value.
-
-```javascript
-const sum = $.map((x, y) => x + y);
-```
-
-It can be used to combine multiple signals into a new (computed) one.
-
-```javascript
-const a = $.signal(3);
-const b = $.signal(5);
-const aPlusB = sum(a, b);
-```
-
-If you need to transform a single signal, you can just simply call `map` on it.
+In many cases, a computed signal only has a single input. In that case, the mapping can be simplified. Just simply call `map` on the input signal.
 
 ```javascript
 const doubleCount = count.map(x => x * 2);
@@ -519,7 +442,7 @@ const doubleCount = count.map(x => x * 2);
 This means the same as:
 
 ```javascript
-const doubleCount = $.computed(() => count() * 2);
+const doubleCount = computed(() => count() * 2);
 ```
 
 ## View Blocks
@@ -527,30 +450,20 @@ const doubleCount = $.computed(() => count() * 2);
 Sometimes, modifying existing DOM nodes is not enough. You may want to insert new nodes and remove old ones. A view block is a part of the DOM tree which is destroyed and re-created every time a value changes.
 
 ```javascript
-$.view(() => show() && Div("This text is shown now!"));
+view(() => show() && Div("This text is shown now!"));
 ```
 
 Note that unwanted DOM updates may occur if you use a non-boolean signal as a condition.
 
 ```javascript
-$.view(() => count() > 3 && Div("This text is shown now!"));
+view(() => count() > 3 && Div("This text is shown now!"));
 ```
 
-If you wrap condition expressions in `$.is(() => ...)`, many unwanted DOM updates can be avoided.
+If you wrap condition expressions in `is(() => ...)`, many unwanted DOM updates can be avoided.
 
 ```javascript
-$.view(() => {
-    if ($.is(() => count() > 3)) {
-        return Div("This text is shown now!");
-    }
-});
-```
-
-You can also use the alternative syntax if the view is generated from a single signal.
-
-```javascript
-show.view((doShow) => {
-    if (doShow) {
+view(() => {
+    if (is(() => count() > 3)) {
         return Div("This text is shown now!");
     }
 });
@@ -561,27 +474,27 @@ show.view((doShow) => {
 A view list block can be used to render a dynamic list of views (most commonly list items or table rows) efficiently. First, you need a signal that contains an array.
 
 ```javascript
-const items = $.signal([
+const items = signal([
     {
         value: "Hello world"
     }
 ]);
 ```
 
-Then you can use its `views` method to create the list items.
+Then you can use `viewList` to create the list items.
 
 ```javascript
 return Ul(
-    items.views((item) => (
+    viewList(items, (item) => (
         Li(item.value)
     ))
 );
 ```
 
-In some cases you might need to identify array items by a key (a string or a number) instead of their value. You can do this with the `$.useKey` method.
+In some cases you might need to identify array items by a key (a string or a number) instead of their value. You can do this with the `useKey` method.
 
 ```javascript
-const BooksTable = (books) => $.html`
+const BooksTable = (books) => html`
     <table>
         <thead>
             <tr>
@@ -591,12 +504,12 @@ const BooksTable = (books) => $.html`
             </tr>
         </thead>
         <tbody>${
-            $.useKey(books, "id").views(BookRow)
+            useKey(books, "id").views(BookRow)
         }</tbody>
     </table>'
 `;
 
-const BookRow = (bookSignal) => $.html`
+const BookRow = (bookSignal) => html`
     <tr>
        <td>${() => bookSignal().title}</td>
        <td>${() => bookSignal().author}</td>
@@ -607,34 +520,32 @@ const BookRow = (bookSignal) => $.html`
 
 ## Component Lifecycle
 
-Components can disappear from the tree when the value of `$.view` changes or the corresponding item is no longer in the array used in `$.views`. When this happens, all side effects caused by creating the component must be reverted. This includes all timeouts, AJAX requests, external state changes initiated by the component.
+Components can disappear from the tree when the value of `view` changes or the corresponding item is no longer in the array used in `viewList`. When this happens, all side effects caused by creating the component must be reverted. This includes all timeouts, AJAX requests, external state changes initiated by the component.
 
-Fortunately, the `$.onDestroy` function can be used here.
+Fortunately, the `onDestroy` function can be used here.
 
 ```javascript
 function Clock() {
-    const date = $.signal(new Date());
+    const date = signal(new Date());
     
     const interval = setInterval(() => {
         date.set(new Date());
     }, 1000);
     
-    $.onDestroy(() => {
+    onDestroy(() => {
         clearInterval(interval);
     });
     
-    return $.computed(() => date().toLocaleString());
+    return computed(() => date().toLocaleString());
 }
 ```
 
-You can enqueue a function to be called after the current render cycle using `$.tick`. This is useful for interacting with the DOM after it has been rendered (e.g. when playing videos, scrolling, measuring CSS properties of elements, auto-focusing).
+You can enqueue a function to be called after the current render cycle using `tick`. This is useful for interacting with the DOM after it has been rendered (e.g. when playing videos, scrolling, measuring CSS properties of elements, auto-focusing).
 
 ```javascript
-const AutoFocus = $.directive((element) => {
-    $.tick(() => element.focus());
+const AutoFocus = directive((element) => {
+    tick(() => element.focus());
 });
-
-const {Input} = $.htmlTags;
 
 function AutoFocusedInput() {
     return Input(AutoFocus);
@@ -643,172 +554,40 @@ function AutoFocusedInput() {
 
 ## Dependency Injection
 
-There are two ways a component can get data: from function parameters and from injected services. The difference is that in the latter case, intermediary components do not need to handle data that does not belong to them. By default, service instances are singletons lazily constructed and injected with `$.inject`.
+There are two ways a component can get data: from function parameters and from injected services. The difference is that in the latter case, intermediary components do not need to handle data that does not belong to them. By default, service instances are singletons lazily constructed and injected with `inject`.
 
 ```javascript
-const {P} = $.htmlTags;
-
 function MyComponent() {
-    const myService = $.inject(MyService);
+    const myService = inject(MyService);
     
     return P(myService.getText());
 }
 
-const MyService = $.createInjectable(() => ({
-    anotherService: $.inject(AnotherService),
+const MyService = createInjectable(() => ({
+    anotherService: inject(AnotherService),
     
     getText() {
         return this.anotherService.text;
     }
 }));
 
-const AnotherService = $.createInjectable(() => ({
+const AnotherService = createInjectable(() => ({
     text: "Hello world"
 }));
 ```
 
-As your application grows, you might need to limit the scope of these services. You can do this easily with `$.provide`.
+As your application grows, you might need to limit the scope of these services. You can do this easily with `provide`.
 
 ```javascript
 function ProviderComponent() {
-    return $.provide([
+    return provide([
         MyService,
         AnotherService
     ], MyComponent);
 }
 ```
 
-This means that in the scope of `$.provide` you can access the same instance of the service class, but a different instance outside.
-
-## Observables and Subscription
-
-An observable in vKit is a simple function whose behavior is not yet defined during creation.
-
-```javascript
-const saveFile = $.observable();
-```
-
-You can later subscribe to an observable with `subscribe`.
-
-```javascript
-const unsubscribe = saveFile.subscribe((file) => {
-    // Save the file somehow
-});
-```
-
-And when you no longer need to be subscribed, be sure to unsubscribe. Not doing so may lead to memory leaks.
-
-```javascript
-$.onDestroy(unsubscribe);
-```
-
-An observable can be called like any function. When this happens, all of its subscribers are called with the same arguments. The observable has no return value.
-```javascript
-saveFile(file);
-```
-
-You can also unsubscribe all subscribers with the `clear` method.
-
-```javascript
-saveFile.clear();
-```
-
-## Routing
-
-Any signal can be used to provide the current path of the application. For instance, vKit has a `$.hash` factory function which can be used for hash based routing. Since its return value is a signal, you can create a view from it.
-
-```javascript
-$.hash().view((path) => {
-    switch(path) {
-        case "": return HomeComponent();
-        case "about": return AboutComponent();
-        default: return NotFoundComponent();
-    }
-});
-```
-
-vKit provides a `router` function to implement more sophisticated routing.
-
-```javascript
-function App() {
-    const router = $.router($.hash(), [
-        {
-            path: "",
-            component: HomeComponent
-        },
-        {
-            path: "about",
-            component: AboutComponent,
-            exact: false
-        },
-        {
-            component: NotFoundComponent
-        }
-    ]);
-    
-    return [
-        MenuComponent(router),
-        router
-    ]);
-}
-
-const {A, Li, Ul} = $.htmlTags;
-
-function MenuComponent(router) {
-    const menuItems = [
-        {
-            title: "Home",
-            path: ""
-        },
-        {
-            title: "About",
-            path: "about"
-        }
-    ];
-    
-    return Ul(
-        menuItems.map(({title, path}) => Li(
-            A(
-                title,
-                $.href("#" + path),
-                {
-                    className: $.classNames({
-                        "menu-button": true,
-                        "menu-button-selected": router.isActive(path)
-                    })
-                }
-            )
-        ))
-    );
-}
-```
-
-A dynamic query parameter can be accessed with `$.param`. It can be useful for routing.
-
-```javascript
-const {A, Li, Ul} = $.htmlTags;
-
-function App() {
-    const router = $.router($.param("page"), [
-        {
-            path: "a",
-            component: () => "Page A"
-        },
-        {
-            path: "b",
-            component: () => "Page B"
-        }
-    ]);
-    
-    return [
-        Ul(
-            Li(A("Page A", $.href("?page=a"))),
-            Li(A("Page B", $.href("?page=b")))
-        ),
-        router
-    ]);
-}
-```
+This means that in the scope of `provide` you can access the same instance of the service class, but a different instance outside.
 
 ## References
 
@@ -816,361 +595,13 @@ Although element (or other) references can be set with simple functions, there i
 
 ```javascript
 function InputFocusComponent() {
-    const inputRef = $.ref();
+    const inputRef = ref();
     
-    return $.html(
+    return html(
         '<input>', inputRef,
         '<input type="button" value="Focus">', {
             onclick: () => inputRef.current.focus()
         }
     );
-}
-```
-
-## Serializing a Form
-
-In order to serialize a form the way you want, you can use `$.serialize`. It iterates over all name-value pairs of the form, just as if it was parsed on the server side.
-
-```javascript
-const {Button, Form, Input, Label} = $.htmlTags;
-
-function FormComponent() {
-    function onsubmit(e) {
-        e.preventDefault();
-        const data = {};
-        $.serialize(this, (name, value) => data[name] = value);
-        sendRequest(data);
-    }
-    
-    return Form(
-        {onsubmit},
-        Label("Name: ", Input({name: "name"})),
-        Button("Submit")
-    );
-}
-```
-
-## Custom Elements
-
-Custom elements can be registered with `$.customElement` to encapsulate some functionality. They have their own component tree and can be used by non-vKit applications.
-
-```javascript
-const {Div, H1} = $.htmlTags;
-
-$.customElement("hello-element", function({name}) {
-    name = $.defaultValue(name, "world");
-    
-    console.log("The <hello-element> is connected!");
-    
-    $.onDestroy(() => {
-        console.log("The <hello-element> is disconnected!");
-    });
-    
-    return $.shadow(
-        H1("Hello ", name),
-        Div(this.childNodes)
-    );
-}, {
-    observedAttributes: ["name"]
-});
-
-const {Hello_Element, P} = $.htmlTags;
-
-const App = () => Hello_Element(
-    $.attributes({
-        name: "world"
-    }),
-    P("Some contents")
-);
-
-$.render(App, document.body);
-```
-
-## Windows and Components
-
-Creating a component in another window (e.g. a tab or an iframe) is difficult because it might get unloaded before your app does and the side effects remain. To avoid this, you should use `windowContent` or `frameContent`.
-
-```javascript
-const {Br, Button, H1, Iframe} = $.htmlTags;
-
-const NewWindowContent = $.windowContent((window) => {
-    return [
-        H1("This is a new window!"),
-        Button("Close it", {
-            onclick: () => window.close()
-        })
-    ];
-});
-
-function NewWindowOpener() {
-    return [
-        Button("Open new window", {
-            onclick: () => NewWindowContent(window.open())
-        }),
-        Br(),
-        Iframe($.frameContent(() => [
-            H1("This is the content of an iframe!")
-        ]))
-    ];
-}
-```
-
-## Cookies
-
-There is no easy way to get or set cookies natively. `$.cookies` provides a powerful interface for this purpose which also works on the server.
-
-```javascript
-function CookieComponent() {
-    const cookies = $.cookies();
-    
-    cookies.forEach((name, value) => {
-        console.log("Cookie:", name, value);
-    });
-    
-    const cookieName = "MyCookie";
-    
-    return [
-        Input({
-            value: cookies.getCookie(cookieName),
-            oninput() {
-                const expiry = Date.now() + 1000 * 60 * 30; // null for session cookie
-                
-                const options = {
-                    httpOnly: false,
-                    path: "/",
-                    sameSite: "Strict",
-                    secure: true
-                };
-                
-                cookies.setCookie(
-                    cookieName,
-                    this.value,
-                    expiry,
-                    options
-                );
-            }
-        }),
-        Button("Delete", {
-            onclick() {
-                cookies.deleteCookie(cookieName);
-            }
-        })
-    ];
-}
-```
-
-## Dragging Elements
-
-You can turn elements to be draggable with both touch and mouse events, move other elements or even perform a custom action.
-
-```javascript
-const {Div} = $.htmlTags;
-
-function DragTest(){
-    const dragZone = $.dragZone($.document());
-    
-    Div("Movable", dragZone.draggable(), {
-        style: {
-            position: "absolute",
-            cursor: "move"
-        }
-    });
-}
-```
-
-## Text Selection
-
-A cross-browser implementation of selection in input fields and textareas. It can be used for rich text editors, for example.
-
-```javascript
-const {Br, Button, Textarea} = $.htmlTags;
-
-function EditorComponent() {
-    let textarea;
-    
-    return $.html(
-        Button("Insert tab", {
-            onclick() {
-                $.insertText(textarea, "\t");
-            }
-        }),
-        Button("Select first character", {
-            onclick() {
-                $.selectText(textarea, 0, 1);
-            }
-        }),
-        Button("Show selected text", {
-            onclick() {
-                const {start, end} = $.textSelection(textarea);
-                
-                console.log(
-                    textarea.value.substring(start, end)
-                );
-            }
-        }),
-        Br(),
-        Textarea((el) => textarea = el)
-    );
-}
-```
-
-## Lexical Scanner
-
-To implement a syntax highlighter or parser, you might need a lexical scanner. vKit has a built-in function for that purpose: `$.lexer`.
-
-```javascript
-const rules = {
-    "identifier": /[a-zA-Z][a-zA-Z0-9]*/,
-    "whitespace": /\s+/,
-    "illegal": /[^]/
-};
-const lexer = $.lexer(rules);
-```
-
-You can use it to scan your text input and generate tokens.
-
-```javascript
-for (const token of lexer.scan("Hello world")) {
-    if (token.type === "whitespace") {
-        continue;
-    }
-    
-    console.log(token);
-}
-```
-
-## Syntactic Parser
-
-vKit is capable of building a parse tree based on the specified syntactic rules. To see how it works, take a look at this snippet from an equation solver application.
-
-```javascript
-const input = "x^2 + 1 = 2*x";
-const parseTree = $.parseTree(operators);
-const outputMessage = $.parse(
-    // Lexer instance
-    $.lexer(rules, input),
-    
-    // Top-level syntax
-    ["EXPR", "=", "EXPR"],
-    
-    // Syntactic rules
-    syntax,
-    
-    // How to apply a rule (optional)
-    function(expect, node, replacement) {
-        if (expect === "EXPR") {
-            if (node.type === "-") {
-                node.type = "negation";
-            }
-        }
-        parseTree.add(node);
-    },
-    
-    // Which tokens to skip (optional)
-    node => node.type === "whitespace"
-);
-
-console.log( parseTree.root.toString() );
-```
-
-Syntactic rules can be given in the following form.
-
-```javascript
-const syntax = {
-    "EXPR": {
-        "number": ["EXPR_AFTER"],
-        "(": ["EXPR", ")", "EXPR_AFTER"],
-        "x": ["EXPR_AFTER"],
-        "function": ["(", "ARGS)", "EXPR_AFTER"],
-        "+": ["EXPR", "EXPR_AFTER"],
-        "-": ["EXPR", "EXPR_AFTER"]
-    },
-    "EXPR_AFTER": {
-        "+": ["EXPR"],
-        "-": ["EXPR"],
-        "*": ["EXPR"],
-        "/": ["EXPR"],
-        "^": ["EXPR"],
-        "composition": ["EXPR"],
-        "iteration": ["EXPR"],
-        "": []
-    },
-    "ARGS)": {
-        ")": [],
-        "": ["EXPR", "COMMA_EXPR", ")"]
-    },
-    "COMMA_EXPR": {
-        ",": ["EXPR", "COMMA_EXPR"],
-        "": []
-    }
-};
-```
-
-Operators can be configured such as:
-
-```javascript
-const operators = {
-    "^": {
-        "precedence": 11
-    },
-    "*": {
-        "precedence": 10,
-        "left": true
-    },
-    "/": {
-        "precedence": 10,
-        "left": true
-    },
-    "+": {
-        "precedence": 9,
-        "left": true
-    },
-    "-": {
-        "precedence": 9,
-        "left": true
-    },
-    "negation": {
-        "unary": true,
-        "precedence": 9,
-        "left": true
-    },
-    "=": {
-        "precedence": 6
-    },
-    ",": {
-        "precedence": 5
-    },
-    "(": {
-        "parenthesis": "opening"
-    },
-    ")": {
-        "parenthesis": "closing"
-    }
-};
-```
-
-## Recording Audio
-
-Since the built-in `MediaRecorder` API has some problems, vKit provides an alternative for audio recording. `$.audioRecorder` can be efficiently used with the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API). Its output is a WAV file.
-
-```javascript
-const ctx = new AudioContext();
-
-async function recordMicrophone() {
-    const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true
-    });
-    const source = ctx.createMediaStreamSource(stream);
-
-    const rec = $.audioRecorder(source);
-    rec.start();
-
-    return async function() {
-        for (const track of stream.getTracks()) {
-            track.stop();
-        }
-        rec.stop();
-        return await rec.exportWAV();
-    };
 }
 ```
