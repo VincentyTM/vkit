@@ -8,16 +8,16 @@ import { objectAssign } from "./objectAssign.js";
 import { signal, WritableSignal } from "./signal.js";
 import { updateEffect } from "./updateEffect.js";
 
-export function mapObject<T, U, V>(
-	objectSignal: Record<string, T> | Signal<Record<string, T>> | (() => Record<string, T>),
-	mapKey: (key: string, objectSignal: Record<string, T> | Signal<Record<string, T>> | (() => Record<string, T>), data: U) => V,
+export function mapObject<K extends string, T, U, V>(
+	objectSignal: Signal<Record<K, T>>,
+	mapKey: (key: K, objectSignal: Signal<Record<K, T>>, data: U) => V,
 	data: U
-): Signal<Record<string, V>> {
+): Signal<Record<K, V>> {
 	var parentEffect = getEffect();
 	var effects: Record<string, Effect> = {};
 	var values = signal<Record<string, V>>({});
 	
-	function setObject(object: Record<string, T>): void {
+	function setObject(object: Record<K, T>): void {
 		for (var key in effects) {
 			if (!(key in object)) {
 				destroyEffect(effects[key]);
@@ -27,19 +27,19 @@ export function mapObject<T, U, V>(
 		
 		var next: Record<string, Effect> = {};
 		
-		for (var key in object) {
-			if (key in effects) {
-				next[key] = effects[key];
+		for (var key2 in object) {
+			if (key2 in effects) {
+				next[key2] = effects[key2];
 			} else {
 				var instanceEffect = createInstanceEffect(
 					parentEffect,
 					values,
-					key,
+					key2,
 					mapKey,
 					objectSignal,
 					data
 				);
-				next[key] = instanceEffect;
+				next[key2] = instanceEffect;
 				updateEffect(instanceEffect);
 			}
 		}
@@ -60,10 +60,10 @@ export function mapObject<T, U, V>(
 
 function createInstanceEffect<K extends string, T, U, V>(
 	parentEffect: Effect,
-	values: WritableSignal<Record<string, V>>,
+	values: WritableSignal<Record<K, V>>,
 	key: K,
-	mapKey: (key: K, objectSignal: Record<string, T> | Signal<Record<string, T>> | (() => Record<string, T>), data: U) => V,
-	objectSignal: Record<string, T> | Signal<Record<string, T>> | (() => Record<string, T>),
+	mapKey: (key: K, objectSignal: Signal<Record<K, T>>, data: U) => V,
+	objectSignal: Signal<Record<K, T>>,
 	data: U
 ): Effect {
 	return createEffect(parentEffect, parentEffect.injector, function(): void {
