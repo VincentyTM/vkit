@@ -80,6 +80,10 @@ export function propertySignal<T, K extends keyof T>(
 			newParentValue[currentKey] = newValue;
 			parent.set(newParentValue);
 			parent.get();
+			
+			if (isSignal(key)) {
+				key.get();
+			}
 		}
 	};
 	
