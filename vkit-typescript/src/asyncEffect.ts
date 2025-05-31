@@ -49,6 +49,8 @@ function isThenable(value: any): value is Thenable<unknown> {
 	return !!(value && typeof value.then === "function");
 }
 
+export var Suspend = {};
+
 export function asyncEffect<T>(asyncCallback: Thenable<T> | (() => Thenable<T> | T)): Signal<AsyncResult<T>> {
 	var result = signal<AsyncResult<T>>(PENDING);
 	var latestThenable: Thenable<T> | undefined;
@@ -82,12 +84,21 @@ export function asyncEffect<T>(asyncCallback: Thenable<T> | (() => Thenable<T> |
 		}
 
 		function reject(error: unknown): void {
-			if (latestThenable === returnValue) {
-				result.set({
-					status: AsyncStatus.Rejected,
-					error: error
-				});
+			if (latestThenable !== returnValue) {
+				return;
 			}
+
+			if (error === Suspend) {
+				result.set({
+					status: AsyncStatus.Pending
+				});
+				return;
+			}
+
+			result.set({
+				status: AsyncStatus.Rejected,
+				error: error
+			});
 		}
 	});
 
