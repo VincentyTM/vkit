@@ -1,10 +1,10 @@
 interface ScriptParams {
-    document: Document;
-    crossOrigin?: string;
-    integrity?: string;
-    nonce?: string;
-    referrerPolicy?: string;
-    url: string;
+	document: Document;
+	crossOrigin?: string;
+	integrity?: string;
+	nonce?: string;
+	referrerPolicy?: string;
+	url: string;
 	onError?(error: unknown): void;
 	onLoad?(): void;
 }
@@ -15,7 +15,7 @@ interface HTMLScriptElementExtension extends HTMLScriptElement {
 }
 
 export function createScript<T>(params: ScriptParams): void {
-    var url = params.url;
+	var url = params.url;
 	var d = params.document;
 	var t = d.getElementsByTagName("script")[0];
 	var s = d.createElement("script") as HTMLScriptElementExtension;
