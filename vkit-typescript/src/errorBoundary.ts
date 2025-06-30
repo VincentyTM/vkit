@@ -66,7 +66,6 @@ export function errorBoundary<P extends Element>(
 
 	return {
 		parentEffect: getEffect(),
-		signal: null,
 		errorHandler: errorHandler,
 		getTemplate: getOuterTemplate,
 		hydrate: hydrateView,

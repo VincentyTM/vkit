@@ -1,14 +1,11 @@
-import { Signal } from "./computed.js";
 import { getEffect } from "./contextGuard.js";
 import { Effect } from "./createEffect.js";
 import { hydrateView } from "./hydrateView.js";
-import { isSignal } from "./isSignal.js";
 import { serverRenderView } from "./serverRenderView.js";
 import { CustomTemplate, Template } from "./Template.js";
 
 export interface ViewTemplate<P, T> extends CustomTemplate<P> {
 	readonly parentEffect: Effect;
-	readonly signal: Signal<T> | null;
 	errorHandler: ((error: unknown) => void) | undefined;
 	getTemplate(): Template<P>;
 }
@@ -33,14 +30,9 @@ export interface ViewTemplate<P, T> extends CustomTemplate<P> {
  * @param getTemplate A function that returns the current template.
  * @returns A template that represents a dynamic view hierarchy.
  */
-export function view<P extends ParentNode>(getTemplate: () => Template<P>): ViewTemplate<P, unknown>;
-
-export function view<P extends ParentNode, T>(this: Signal<T>, getTemplate: () => Template<P>): ViewTemplate<P, T>;
-
-export function view<P extends ParentNode, T>(this: Signal<T> | void, getTemplate: () => Template<P>): ViewTemplate<P, T> {
+export function view<P extends ParentNode>(getTemplate: () => Template<P>): ViewTemplate<P, unknown> {
 	return {
 		parentEffect: getEffect(),
-		signal: isSignal(this) ? this : null,
 		errorHandler: undefined,
 		getTemplate: getTemplate,
 		hydrate: hydrateView,
