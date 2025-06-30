@@ -23,7 +23,7 @@ function getFalse(): false {
 	return false;
 }
 
-export function wakeLock(controller?: Signal<boolean> | (() => boolean)): Signal<boolean> {
+export function wakeLock(condition?: Signal<boolean> | (() => boolean)): Signal<boolean> {
 	var win = getWindow();
 
 	if (!win) {
@@ -70,14 +70,12 @@ export function wakeLock(controller?: Signal<boolean> | (() => boolean)): Signal
 		}
 	}
 	
-	if (isSignal(controller)) {
-		var doLock = computed(Boolean, [controller]);
-
+	if (isSignal(condition)) {
 		effect(function(): void {
-			doLock() ? lock() : unlock();
+			condition() ? lock() : unlock();
 		});
-	} else if (typeof controller === "function") {
-		var doLock = computed(controller);
+	} else if (typeof condition === "function") {
+		var doLock = computed(condition);
 
 		effect(function(): void {
 			doLock() ? lock() : unlock();
