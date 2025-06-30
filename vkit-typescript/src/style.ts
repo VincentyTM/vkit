@@ -1,6 +1,7 @@
 import { Signal } from "./computed.js";
 import { createStyleContainer, StyleContainer, StyleController } from "./createStyleContainer.js";
 import { directive, DirectiveTemplate } from "./directive.js";
+import { CSSProperties, generateCSS } from "./generateCSS.js";
 import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 import { tick } from "./tick.js";
@@ -9,33 +10,14 @@ type WithStyleContainer = {
 	__styleContainer?: StyleContainer
 };
 
-type CSSTextOrDeclaration = string | Partial<CSSStyleDeclaration>;
+type CSSTextOrDeclaration = string | CSSProperties;
 
 var map = typeof WeakMap === "function" ? new WeakMap() : null;
 var styleCount = 0;
 
-function prependHyphen(text: string): string {
-	return "-" + text;
-}
-
 function prepareCSS(css: CSSTextOrDeclaration, selector: string): string {
-	if (typeof css === "string") {
-		return css.replace(/::?this\b/ig, selector);
-	}
-	
-	var a: string[] = [selector, "{"];
-	
-	for (var prop in css) {
-		var val = css[prop];
-		
-		if (val) {
-			prop = prop.replace(/[A-Z]/g, prependHyphen).toLowerCase();
-			a.push(prop, ":", val, ";");
-		}
-	}
-	
-	a.push("}");
-	return a.join("");
+	var cssText = typeof css === "string" ? css : generateCSS(css);
+	return cssText.replace(/::?this\b/ig, selector);
 }
 
 function getRootNode(el: Node): Node {
