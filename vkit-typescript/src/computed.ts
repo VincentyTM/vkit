@@ -2,9 +2,7 @@ import { createSignalNode } from "./createSignalNode.js";
 import { invalidateNode } from "./reactiveNodeStack.js";
 import { signalEffect } from "./signalEffect.js";
 import { signalSubscribe } from "./signalSubscribe.js";
-import { Template } from "./Template.js";
 import { updateSignalNode } from "./updateSignalNode.js";
-import { view } from "./view.js";
 
 export type ArrayOfMaybeSignals<A extends unknown[]> = unknown[] & {
 	[I in keyof A]: A[I] | Signal<A[I]>;
@@ -89,23 +87,6 @@ export interface Signal<T> {
 	 * @returns A string for debugging purposes.
 	 */
 	toString(): string;
-
-	/**
-	 * Creates a dynamic view (a part of the DOM) which is rerendered when the value of the signal changes.
-	 * Note that other signals may trigger a rerender too.
-	 * @example
-	 * function MyComponent() {
-	 * 	const count = signal(0);
-	 * 	
-	 * 	return count.view((c) => {
-	 * 		return ["Count is: ", c];
-	 * 	});
-	 * }
-	 * 
-	 * @param getCurrentView A function that returns the current view.
-	 * @returns The initial view.
-	 */
-	view<V extends Template<P>, P>(getCurrentView: (value: T) => V): Template<P>;
 }
 
 /**
@@ -167,8 +148,6 @@ export function computed<F extends (...args: never[]) => unknown>(
 	};
 
 	use.toString = toString;
-
-	use.view = view;
 
 	return use as ComputedSignal<ReturnType<F>>;
 }

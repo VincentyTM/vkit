@@ -4,7 +4,6 @@ import { invalidateNode } from "./reactiveNodeStack.js";
 import { signalEffect } from "./signalEffect.js";
 import { signalSubscribe } from "./signalSubscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
-import { view } from "./view.js";
 
 export interface WritableSignal<T> extends Signal<T> {
 	/**
@@ -95,7 +94,6 @@ export function signal<T>(value: T): WritableSignal<T> {
 
 	use.toString = writableSignalToString;
 	use.update = updateSignalValue;
-	use.view = view;
 
 	return use as WritableSignal<T>;
 }

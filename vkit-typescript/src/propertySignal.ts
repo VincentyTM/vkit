@@ -6,7 +6,6 @@ import { updateSignalValue, writableSignalToString, WritableSignal } from "./sig
 import { signalEffect } from "./signalEffect.js";
 import { signalSubscribe } from "./signalSubscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
-import { view } from "./view.js";
 
 /**
  * Creates and returns a writable signal that reflects and updates a property of the current value of another writable signal.
@@ -92,7 +91,6 @@ export function propertySignal<T, K extends keyof T>(
 
 	use.toString = writableSignalToString;
 	use.update = updateSignalValue;
-	use.view = view;
 	
 	return use as WritableSignal<T[K] | undefined>;
 }
