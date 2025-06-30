@@ -291,7 +291,13 @@ export function SpecialButton(...args) {
 }
 
 const SpecialButtonStyle = style({
-    backgroundColor: "#ffffff",
+    backgroundColor: [
+        {value: "#ffffff"},
+        {on: ":hover", value: "#00ff00"}
+    ],
+    display: [
+        {media: "screen and (max-width: 30em)", value: "block"}
+    ],
     border: "0",
     color: "#000000",
     cursor: "pointer"
@@ -403,9 +409,7 @@ Attributes can be dynamic too, not just properties.
 
 ```javascript
 return Div(
-    attributes({
-        "my-attribute": () => name() + "!"
-    })
+    attribute("my-attribute", () => name() + "!")
 );
 ```
 
@@ -504,7 +508,7 @@ const BooksTable = (books) => html`
             </tr>
         </thead>
         <tbody>${
-            useKey(books, "id").views(BookRow)
+            useKey(books, "id").viewList(BookRow)
         }</tbody>
     </table>'
 `;
