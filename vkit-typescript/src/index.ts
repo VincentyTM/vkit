@@ -104,7 +104,6 @@ export { styledHtmlTag } from "./styledHtmlTag.js";
 export { svgTag, SVGView } from "./svgTag.js";
 export { svgTags } from "./svgTags.js";
 export { Template } from "./Template.js";
-export { text } from "./text.js";
 export { tick } from "./tick.js";
 export { timeout } from "./timeout.js";
 export { unpackFiles } from "./unpackFiles.js";
