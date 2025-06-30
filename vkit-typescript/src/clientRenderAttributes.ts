@@ -38,16 +38,9 @@ function setAttribute(el: Element, name: string, value: AttributeValue, isSVG: b
 }
 
 function addAttribute(el: Element, name: string, value: ReactiveAttributeValue, isSVG: boolean): void {
-	if (isSignal(value)) {
-		value.effect(function(val) {
-			setAttribute(el, name, val, isSVG);
-		});
-		return;
-	}
-	
-	if (typeof value === "function") {
+	if (isSignal(value) || typeof value === "function") {
 		effect(function() {
-			setAttribute(el, name, (value as () => AttributeValue)(), isSVG);
+			setAttribute(el, name, value(), isSVG);
 		});
 		return;
 	}
