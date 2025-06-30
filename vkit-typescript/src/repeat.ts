@@ -1,6 +1,7 @@
 import { Signal } from "./computed.js";
 import { isSignal } from "./isSignal.js";
 import { Template } from "./Template.js";
+import { viewList } from "./viewList.js";
 
 var MAX_COUNT = 9007199254740991;
 
@@ -56,7 +57,7 @@ export function repeat(
 ): unknown {
 	if (isSignal(count)) {
 		var arrayState = count.map(createRangeArray);
-		return arrayState.views(getTemplate as (index: number) => Template<unknown>);
+		return viewList(arrayState, getTemplate as (index: number) => Template<unknown>);
 	}
 	
 	count = getNumber(count);
