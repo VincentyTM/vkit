@@ -1,7 +1,7 @@
 export { assets } from "./assets.js";
 export { assetState } from "./assetState.js";
 export { asyncEffect, AsyncResult } from "./asyncEffect.js";
-export { attributes } from "./attributes.js";
+export { attribute } from "./attribute.js";
 export { awaitResult } from "./awaitResult.js";
 export { bind } from "./bind.js";
 export { bindChecked } from "./bindChecked.js";
