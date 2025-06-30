@@ -5,7 +5,6 @@ import { signalSubscribe } from "./signalSubscribe.js";
 import { Template } from "./Template.js";
 import { updateSignalNode } from "./updateSignalNode.js";
 import { view } from "./view.js";
-import { views } from "./views.js";
 
 export type ArrayOfMaybeSignals<A extends unknown[]> = unknown[] & {
 	[I in keyof A]: A[I] | Signal<A[I]>;
@@ -107,31 +106,6 @@ export interface Signal<T> {
 	 * @returns The initial view.
 	 */
 	view<V extends Template<P>, P>(getCurrentView: (value: T) => V): Template<P>;
-
-	/**
-	 * Creates a dynamic view with a subview for each element in the array contained in the signal.
-	 * 
-	 * When the value of the signal changes, the items of the old and the new arrays are compared and the changes are reflected in the DOM.
-	 * If an item is not removed during the change, its corresponding subview is preserved.
-	 * @example
-	 * function MyComponent() {
-	 * 	const list = signal([
-	 * 		{text: "A"},
-	 * 		{text: "B"},
-	 * 		{text: "C"}
-	 * 	]);
-	 * 	
-	 * 	return Ul(
-	 * 		list.views((item) => {
-	 * 			return Li(item.text);
-	 * 		})
-	 * 	);
-	 * }
-	 * 
-	 * @param getItemView The function that returns a subview for an array item.
-	 * @returns The initial view containing the subviews for all items in the array.
-	 */
-	views<V extends Template<P>, P>(getItemView: (value: ItemType<T>) => V): Template<P>;
 }
 
 /**
@@ -195,8 +169,6 @@ export function computed<F extends (...args: never[]) => unknown>(
 	use.toString = toString;
 
 	use.view = view;
-	
-	use.views = views;
 
 	return use as ComputedSignal<ReturnType<F>>;
 }

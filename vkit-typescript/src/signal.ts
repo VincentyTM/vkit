@@ -5,7 +5,6 @@ import { signalEffect } from "./signalEffect.js";
 import { signalSubscribe } from "./signalSubscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
 import { view } from "./view.js";
-import { views } from "./views.js";
 
 export interface WritableSignal<T> extends Signal<T> {
 	/**
@@ -97,7 +96,6 @@ export function signal<T>(value: T): WritableSignal<T> {
 	use.toString = writableSignalToString;
 	use.update = updateSignalValue;
 	use.view = view;
-	use.views = views;
 
 	return use as WritableSignal<T>;
 }

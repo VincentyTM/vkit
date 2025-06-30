@@ -6,7 +6,6 @@ import { signalEffect } from "./signalEffect.js";
 import { signalSubscribe } from "./signalSubscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
 import { view } from "./view.js";
-import { views } from "./views.js";
 
 /**
  * Creates and returns a writable signal derived from another writable signal.
@@ -78,7 +77,6 @@ export function deriveSignal<T, K, U>(
 	use.toString = writableSignalToString;
 	use.update = updateSignalValue;
 	use.view = view;
-	use.views = views;
 
 	return use as WritableSignal<U>;
 }
