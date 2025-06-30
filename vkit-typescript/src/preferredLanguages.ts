@@ -5,16 +5,22 @@ import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
 import { RenderConfigService } from "./RenderConfigService.js";
 
+interface NavigatorExtension extends Navigator {
+	readonly browserLanguage: string;
+	readonly systemLanguage: string;
+	readonly userLanguage: string;
+}
+
 function getEmptyArray(): [] {
 	return [];
 }
 
-function getPreferredLanguages(nav: Navigator): readonly string[] {
+function getPreferredLanguages(nav: NavigatorExtension): readonly string[] {
 	return nav.languages || [
 		nav.language ||
-		(nav as any).browserLanguage ||
-		(nav as any).systemLanguage ||
-		(nav as any).userLanguage
+		nav.browserLanguage ||
+		nav.systemLanguage ||
+		nav.userLanguage
 	];
 }
 
@@ -45,7 +51,7 @@ export function preferredLanguages(): Signal<readonly string[]> {
 		});
 	}
 
-	var nav = win.navigator;
+	var nav = win.navigator as NavigatorExtension;
 	
 	var clientLangs = computed(function(): readonly string[] {
 		return getPreferredLanguages(nav);
