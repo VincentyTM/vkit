@@ -11,7 +11,7 @@ export type ClassArgument = (
 	| Signal<string | NoClass>
 	| (() => string | NoClass)
 	| ArrayLike<ClassArgument>
-	| {[className: string]: BooleanValue}
+	| Record<string, BooleanValue | undefined>
 );
 
 export type NoClass = null | undefined | boolean;

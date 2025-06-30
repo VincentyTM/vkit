@@ -1,4 +1,4 @@
-import { BooleanValue, ClassArgument, ClassesTemplate, NoClass } from "./classes.js";
+import { BooleanValue, ClassArgument, ClassesTemplate } from "./classes.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { ClientRenderer } from "./hydrate.js";
 import { isArrayLike } from "./isArrayLike.js";
@@ -99,7 +99,7 @@ function bindClasses(
 	
 	if (typeof arg === "object") {
 		for (var name in arg) {
-			bindClass(parentEffect, el, name, arg[name]);
+			bindClass(parentEffect, el, name, arg[name] || false);
 		}
 		return;
 	}

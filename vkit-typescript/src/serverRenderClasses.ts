@@ -81,7 +81,7 @@ function bindClasses(el: ServerElement, arg: ClassArgument): void {
 	
 	if (typeof arg === "object") {
 		for (var name in arg) {
-			bindClass(el, name, arg[name]);
+			bindClass(el, name, arg[name] || false);
 		}
 		return;
 	}
