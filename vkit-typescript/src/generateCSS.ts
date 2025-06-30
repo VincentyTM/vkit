@@ -1,3 +1,5 @@
+import { toKebabCase } from "./toKebabCase.js";
+
 interface ConditionalValue<K extends keyof CSSStyleDeclaration> {
 	readonly media?: string;
 	readonly on?: string;
@@ -7,20 +9,12 @@ interface ConditionalValue<K extends keyof CSSStyleDeclaration> {
 type CSSValue<K extends keyof CSSStyleDeclaration> = CSSStyleDeclaration[K] | ConditionalValue<K>[];
 
 export type CSSProperties = object & {
-    [K in keyof Partial<CSSStyleDeclaration>]: CSSValue<K>;
+	[K in keyof Partial<CSSStyleDeclaration>]: CSSValue<K>;
 };
 
 type MediaQueries = Record<string, Rules>;
 
 type Rules = Record<string, Partial<CSSStyleDeclaration>>;
-
-function toKebabCase(text: string): string {
-    return text.replace(/[A-Z]/g, replaceUpperCase);
-}
-
-function replaceUpperCase(letter: string): string {
-	return "-" + letter.toLowerCase();
-}
 
 function setConditionalValues<K extends keyof CSSStyleDeclaration & string>(
 	baseSelector: string,
