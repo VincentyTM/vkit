@@ -8,7 +8,7 @@ type HttpRequestHeaders = {
 	[name: string]: string;
 };
 
-export type HttpRequest = string | null | {
+export interface HttpRequest {
 	async?: boolean;
 	body?: Document | XMLHttpRequestBodyInit | null | undefined;
 	headers?: HttpRequestHeaders;
@@ -19,7 +19,7 @@ export type HttpRequest = string | null | {
 	password?: string | null | undefined;
 	responseType?: XMLHttpRequestResponseType;
 	withCredentials?: boolean;
-};
+}
 
 export type HttpResponse<T> = {
 	readonly ok: false;
@@ -42,11 +42,11 @@ export type HttpResponse<T> = {
 	getResponseHeader(name: string): string | null;
 };
 
-export type HttpProgress = {
+export interface HttpProgress {
 	readonly lengthComputable: boolean;
 	readonly loaded: number;
 	readonly total: number;
-};
+}
 
 var UNSENT: HttpResponse<never> = {
 	ok: false,
@@ -101,10 +101,10 @@ var INIITIAL_PROGRESS: HttpProgress = {
  * @param request The HTTP request as a string URL or object. It can optionally be wrapped in a signal.
  * @returns A computed signal containing the HTTP response object.
  */
-export function http<T = unknown>(request: HttpRequest | Signal<HttpRequest>): Signal<HttpResponse<T>> {
+export function http<T = unknown>(request: HttpRequest | string | null | Signal<HttpRequest | string | null>): Signal<HttpResponse<T>> {
 	var response = signal<HttpResponse<T>>(UNSENT);
 
-	function setRequest(req: HttpRequest): void {
+	function setRequest(req: HttpRequest | string | null): void {
 		if (req === null) {
 			response.set(UNSENT);
 			return;
