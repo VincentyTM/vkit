@@ -1,7 +1,6 @@
 import { Signal, signalMap } from "./computed.js";
 import { createSignalNode } from "./createSignalNode.js";
 import { invalidateNode } from "./reactiveNodeStack.js";
-import { signalEffect } from "./signalEffect.js";
 import { signalSubscribe } from "./signalSubscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
 
@@ -72,7 +71,6 @@ export function signal<T>(value: T): WritableSignal<T> {
 		return updateSignalNode(node, true);
 	}
 
-	use.effect = signalEffect;
 	use.isSignal = true;
 
 	use.get = function(): T {

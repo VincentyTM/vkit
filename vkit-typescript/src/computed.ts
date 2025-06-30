@@ -1,6 +1,5 @@
 import { createSignalNode } from "./createSignalNode.js";
 import { invalidateNode } from "./reactiveNodeStack.js";
-import { signalEffect } from "./signalEffect.js";
 import { signalSubscribe } from "./signalSubscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
 
@@ -19,27 +18,6 @@ type ItemType<T> = T extends (infer ItemType)[] ? ItemType : never;
 
 export interface Signal<T> {
 	(): T;
-
-	/**
-	 * Subscribes a side effect to the signal.
-	 * @example
-	 * const delay = signal(1000);
-	 * 
-	 * delay.effect((currentDelay) => {
-	 * 	console.log("The delay is", currentDelay);
-	 * 
-	 * 	const interval = setInterval(() => {
-	 * 		console.log("Hello world");
-	 * 	}, currentDelay);
-	 * 
-	 * 	onDestroy(() => clearInterval(interval));
-	 * });
-	 * 
-	 * @param callback A function containing the side effect.
-	 * It is called everytime the signal's value changes.
-	 * Remember to call onDestroy in it to clean up the side effect.
-	 */
-	effect(callback: (value: T) => void): void;
 
 	/**
 	 * @returns The current value of the signal.
@@ -128,8 +106,6 @@ export function computed<F extends (...args: never[]) => unknown>(
 	function use(): ReturnType<F> {
 		return updateSignalNode(node, true);
 	}
-
-	use.effect = signalEffect;
 
 	use.get = function(): ReturnType<F> {
 		return updateSignalNode(node, false);

@@ -3,7 +3,6 @@ import { createSignalNode, SignalNode } from "./createSignalNode.js";
 import { isSignal } from "./isSignal.js";
 import { objectAssign } from "./objectAssign.js";
 import { updateSignalValue, writableSignalToString, WritableSignal } from "./signal.js";
-import { signalEffect } from "./signalEffect.js";
 import { signalSubscribe } from "./signalSubscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
 
@@ -59,7 +58,6 @@ export function propertySignal<T, K extends keyof T>(
 		return updateSignalNode(node, true);
 	}
 
-	use.effect = signalEffect;
 	use.isSignal = true;
 
 	use.get = function(): T[K] | undefined {
