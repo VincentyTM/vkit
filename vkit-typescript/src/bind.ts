@@ -2,7 +2,6 @@ import { Signal } from "./computed.js";
 import { effect } from "./effect.js";
 import { isSignal } from "./isSignal.js";
 import { onEvent } from "./onEvent.js";
-import { signalProp } from "./signalProp.js";
 
 type HTMLSelfClosingElement = (
 	| HTMLAreaElement
@@ -83,7 +82,7 @@ export function bind<T>(target: T, bindings: Bindings<T>): void {
 				if (!value) {
 					target[name] = value as never;
 				} else if (isSignal(value)) {
-					signalProp(target, name, value);
+					prop(target, name, value as never);
 				} else {
 					var obj = target[name];
 					
