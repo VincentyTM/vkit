@@ -9,7 +9,7 @@ export function serverRenderView(container: ServerElement, view: ViewTemplate<un
 	var parentEffect = getEffect();
 
 	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
-		serverRender(container, view.getTemplate(view.signal ? view.signal.get() : null));
+		serverRender(container, view.getTemplate());
 	});
 
 	updateEffect(effect);

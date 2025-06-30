@@ -10,7 +10,7 @@ export function hydrateView<P extends ParentNode>(pointer: HydrationPointer<P>, 
 	var parentEffect = view.parentEffect;
 	
 	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
-		var innerTemplate = view.getTemplate(view.signal ? view.signal.get() : null);
+		var innerTemplate = view.getTemplate();
 		var parentNode = pointer.context;
 		var parent = end.parentNode;
 		

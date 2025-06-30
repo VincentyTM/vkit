@@ -10,7 +10,7 @@ export interface ViewTemplate<P, T> extends CustomTemplate<P> {
 	readonly parentEffect: Effect;
 	readonly signal: Signal<T> | null;
 	errorHandler: ((error: unknown) => void) | undefined;
-	getTemplate(value: T | null): Template<P>;
+	getTemplate(): Template<P>;
 }
 
 /**
@@ -35,9 +35,9 @@ export interface ViewTemplate<P, T> extends CustomTemplate<P> {
  */
 export function view<P extends ParentNode>(getTemplate: () => Template<P>): ViewTemplate<P, unknown>;
 
-export function view<P extends ParentNode, T>(this: Signal<T>, getTemplate: (value: T) => Template<P>): ViewTemplate<P, T>;
+export function view<P extends ParentNode, T>(this: Signal<T>, getTemplate: () => Template<P>): ViewTemplate<P, T>;
 
-export function view<P extends ParentNode, T>(this: Signal<T> | void, getTemplate: (value: T) => Template<P>): ViewTemplate<P, T> {
+export function view<P extends ParentNode, T>(this: Signal<T> | void, getTemplate: () => Template<P>): ViewTemplate<P, T> {
 	return {
 		parentEffect: getEffect(),
 		signal: isSignal(this) ? this : null,
