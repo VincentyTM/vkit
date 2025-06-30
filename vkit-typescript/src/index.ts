@@ -97,6 +97,7 @@ export { serializeForm } from "./serializeForm.js";
 export { serviceWorker } from "./serviceWorker.js";
 export { shadow } from "./shadow.js";
 export { signal, WritableSignal } from "./signal.js";
+export { skipHydration } from "./skipHydration.js";
 export { localStorage, sessionStorage } from "./storage.js";
 export { style } from "./style.js";
 export { styledHtmlTag } from "./styledHtmlTag.js";
