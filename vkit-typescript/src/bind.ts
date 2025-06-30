@@ -36,12 +36,12 @@ type ExtendedEvent<E, T> = E & {
 	) : EventTarget;
 };
 
+type Binding<T, K extends keyof T> = T[K] extends ((this: GlobalEventHandlers, ev: infer EventType) => any) | null
+	? (this: T, ev: ExtendedEvent<EventType, T>) => void
+	: (T[K] | (() => T[K]) | Signal<T[K]> | Bindings<T[K]>);
+
 export type Bindings<T> = {
-	[K in keyof T]?: (
-		T[K] extends ((this: GlobalEventHandlers, ev: infer EventType) => any) | null
-		? (this: T, ev: ExtendedEvent<EventType, T>) => void
-		: (T[K] | (() => T[K]) | Signal<T[K]> | Bindings<T[K]>)
-	)
+	[K in keyof T]?: Binding<T, K>;
 };
 
 function prop<T>(
