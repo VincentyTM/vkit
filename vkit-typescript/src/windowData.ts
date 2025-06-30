@@ -1,5 +1,6 @@
 import { ComputedSignal, Signal } from "./computed.js";
 import { createEffect } from "./createEffect.js";
+import { effect } from "./effect.js";
 import { WindowService } from "./getWindow.js";
 import { inject } from "./inject.js";
 import { isSignal } from "./isSignal.js";
@@ -56,7 +57,7 @@ function getData<T extends WindowDataValue>(key: string, init: InitFunction<T>):
 	var result: WindowData<T> | undefined;
 	
 	var parentEffect = windowService.effect;
-	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+	var currentEffect = createEffect(parentEffect, parentEffect.injector, function(): void {
 		var parts = signal<WindowDataPart<T>[]>([]);
 		var initialValue: T;
 		var callEffect = noop;
@@ -72,7 +73,10 @@ function getData<T extends WindowDataValue>(key: string, init: InitFunction<T>):
 			return getValue(parts, initialValue);
 		});
 		
-		valueSignal.effect(callEffect);
+		effect(function() {
+			valueSignal();
+			callEffect();
+		});
 		
 		result = {
 			parts: parts,
@@ -84,7 +88,7 @@ function getData<T extends WindowDataValue>(key: string, init: InitFunction<T>):
 		}
 	});
 
-	updateEffect(effect);
+	updateEffect(currentEffect);
 
 	if (result === undefined) {
 		throw new Error("Data is not set");
