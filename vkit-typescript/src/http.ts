@@ -80,7 +80,9 @@ var INIITIAL_PROGRESS: HttpProgress = {
  * 		responseType: "json"
  * 	});
  * 	
- * 	return response.view((res) => {
+ * 	return view(() => {
+ * 		const res = response();
+ * 		
  * 		if (res.unsent) {
  * 			return "The request is null!";
  * 		}
