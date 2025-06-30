@@ -71,7 +71,6 @@ export { of } from "./of.js";
 export { onDestroy } from "./onDestroy.js";
 export { onEvent } from "./onEvent.js";
 export { online } from "./online.js";
-export { onUnmount } from "./onUnmount.js";
 export { packFiles } from "./packFiles.js";
 export { param } from "./param.js";
 export { parse } from "./parse.js";
