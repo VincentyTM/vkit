@@ -37,7 +37,6 @@ export { getRootNode } from "./getRootNode.js";
 export { getTextSelection } from "./getTextSelection.js";
 export { getWindow } from "./getWindow.js";
 export { hash } from "./hash.js";
-export { history } from "./history.js";
 export { href } from "./href.js";
 export { html } from "./html.js";
 export { htmlTag } from "./htmlTag.js";
