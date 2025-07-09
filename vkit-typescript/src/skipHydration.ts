@@ -5,7 +5,7 @@ import { serverRender } from "./serverRender.js";
 import { SVGElementTemplate } from "./svgTag.js";
 import { CustomTemplate, Template } from "./Template.js";
 
-export interface HydrationSkipper<P> extends CustomTemplate<P> {
+export interface SkipHydrationTemplate<P> extends CustomTemplate<P> {
 	readonly template: Template<P>;
 }
 
@@ -29,21 +29,21 @@ export interface HydrationSkipper<P> extends CustomTemplate<P> {
  * @param content The HTML or SVG element template. It cannot be any other template.
  * @returns A template that gets rendered on the server but skipped on the client.
  */
-export function skipHydration(content: HTMLElementTemplate<keyof HTMLElementTagNameMap>): HydrationSkipper<unknown>;
+export function skipHydration(content: HTMLElementTemplate<keyof HTMLElementTagNameMap>): SkipHydrationTemplate<unknown>;
 
-export function skipHydration(content: SVGElementTemplate<keyof SVGElementTagNameMap>): HydrationSkipper<unknown>;
+export function skipHydration(content: SVGElementTemplate<keyof SVGElementTagNameMap>): SkipHydrationTemplate<unknown>;
 
-export function skipHydration<P extends ParentNode>(content: Template<P>): HydrationSkipper<P> {
+export function skipHydration<P extends ParentNode>(content: Template<P>): SkipHydrationTemplate<P> {
 	return {
 		template: content,
-		hydrate: hydrateHydrationSkipper,
-		serverRender: serverRenderHydrationSkipper
+		hydrate: hydrateSkipHydration,
+		serverRender: serverRenderSkipHydration
 	};
 }
 
-function hydrateHydrationSkipper<P extends ParentNode>(
+function hydrateSkipHydration<P extends ParentNode>(
 	hydrationPointer: HydrationPointer<P>,
-	template: HydrationSkipper<unknown>
+	template: SkipHydrationTemplate<unknown>
 ): void {
 	if (hydrationPointer.currentNode === null) {
 		hydrate(hydrationPointer, template.template);
@@ -55,9 +55,9 @@ function hydrateHydrationSkipper<P extends ParentNode>(
 	}
 }
 
-function serverRenderHydrationSkipper(
+function serverRenderSkipHydration(
 	serverElement: ServerElement,
-	template: HydrationSkipper<unknown>
+	template: SkipHydrationTemplate<unknown>
 ): void {
 	serverRender(serverElement, template.template);
 }
