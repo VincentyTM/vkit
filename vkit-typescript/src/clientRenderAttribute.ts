@@ -1,7 +1,8 @@
 import { AttributeTemplate, AttributeValue, ReactiveAttributeValue } from "./attribute.js";
-import { effect } from "./effect.js";
+import { createEffect } from "./createEffect.js";
 import { ClientRenderer } from "./hydrate.js";
 import { isSignal } from "./isSignal.js";
+import { updateEffect } from "./updateEffect.js";
 
 export function clientRenderAttribute<P extends Element>(
 	clientRenderer: ClientRenderer<P>,
@@ -9,9 +10,8 @@ export function clientRenderAttribute<P extends Element>(
 ): void {
 	var name = template.name;
 	var value = template.value;
-	var isSVG = clientRenderer.isSVG;
 
-	addAttribute(clientRenderer.context, name, value, isSVG);
+	addAttribute(clientRenderer, name, value);
 }
 
 function setAttribute(el: Element, name: string, value: AttributeValue, isSVG: boolean): void {
@@ -36,11 +36,18 @@ function setAttribute(el: Element, name: string, value: AttributeValue, isSVG: b
 	}
 }
 
-function addAttribute(el: Element, name: string, value: ReactiveAttributeValue, isSVG: boolean): void {
+function addAttribute(clientRenderer: ClientRenderer<Element>, name: string, value: ReactiveAttributeValue): void {
+	var el = clientRenderer.context;
+	var isSVG = clientRenderer.isSVG;
+
 	if (isSignal(value) || typeof value === "function") {
-		effect(function() {
+		var parentEffect = clientRenderer.parentEffect;
+
+		var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
 			setAttribute(el, name, value(), isSVG);
 		});
+
+		updateEffect(effect);
 		return;
 	}
 
