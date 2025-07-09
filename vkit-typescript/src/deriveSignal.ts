@@ -64,6 +64,10 @@ export function deriveSignal<T, K, U>(
 			var newParentValue = updateValue(parentValue, newValue, currentKey);
 			parent.set(newParentValue);
 			parent.get();
+
+			if (isSignal(key)) {
+				key.get();
+			}
 		}
 	};
 	
