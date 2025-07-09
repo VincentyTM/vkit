@@ -1,6 +1,6 @@
 import { ServerElement } from "./createServerElement.js";
 import { HTMLElementTemplate } from "./htmlTag.js";
-import { HydrationPointer } from "./hydrate.js";
+import { hydrate, HydrationPointer } from "./hydrate.js";
 import { serverRender } from "./serverRender.js";
 import { SVGElementTemplate } from "./svgTag.js";
 import { CustomTemplate, Template } from "./Template.js";
@@ -10,10 +10,10 @@ export interface HydrationSkipper<P> extends CustomTemplate<P> {
 }
 
 /**
- * Skips hydration and client side rendering of an HTML or SVG element.
+ * Skips hydration of an HTML or SVG element.
  * It still renders the element on the server.
- * Note that it also skips client rendering later, so once the element
- * disappears, it will not appear again.
+ * It also renders the element on the client if there is nothing to hydrate.
+ * It can be used to avoid overwriting server-rendered content.
  * 
  * @example
  * function MyApp() {
@@ -33,7 +33,7 @@ export function skipHydration(content: HTMLElementTemplate<keyof HTMLElementTagN
 
 export function skipHydration(content: SVGElementTemplate<keyof SVGElementTagNameMap>): HydrationSkipper<unknown>;
 
-export function skipHydration<P>(content: Template<P>): HydrationSkipper<P> {
+export function skipHydration<P extends ParentNode>(content: Template<P>): HydrationSkipper<P> {
 	return {
 		template: content,
 		hydrate: hydrateHydrationSkipper,
@@ -41,10 +41,16 @@ export function skipHydration<P>(content: Template<P>): HydrationSkipper<P> {
 	};
 }
 
-function hydrateHydrationSkipper<P>(
-	hydrationPointer: HydrationPointer<P>
+function hydrateHydrationSkipper<P extends ParentNode>(
+	hydrationPointer: HydrationPointer<P>,
+	template: HydrationSkipper<unknown>
 ): void {
-	if (hydrationPointer.currentNode !== null && hydrationPointer.currentNode !== hydrationPointer.stopNode) {
+	if (hydrationPointer.currentNode === null) {
+		hydrate(hydrationPointer, template.template);
+		return;
+	}
+	
+	if (hydrationPointer.currentNode !== hydrationPointer.stopNode) {
 		hydrationPointer.currentNode = hydrationPointer.currentNode.nextSibling;
 	}
 }
