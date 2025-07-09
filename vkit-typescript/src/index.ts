@@ -14,6 +14,7 @@ export { computed, ComputedSignal, Signal } from "./computed.js";
 export { concat } from "./concat.js";
 export { cookies } from "./cookies.js";
 export { copyText } from "./copyText.js";
+export { createEffectSpawner } from "./createEffectSpawner.js";
 export { createInjectable, Injectable } from "./createInjectable.js";
 export { createScript } from "./createScript.js";
 export { createWebRTCPeer, isWebRTCSupported, WebRTCPeer } from "./createWebRTCPeer.js";
