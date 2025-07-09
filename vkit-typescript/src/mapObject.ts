@@ -8,10 +8,21 @@ import { objectAssign } from "./objectAssign.js";
 import { signal, WritableSignal } from "./signal.js";
 import { updateEffect } from "./updateEffect.js";
 
+export function mapObject<K extends string, T, U>(
+	objectSignal: Signal<Record<K, T>>,
+	mapKey: (key: K, objectSignal: Signal<Record<K, T>>) => U
+): Signal<Record<K, U>>;
+
 export function mapObject<K extends string, T, U, V>(
 	objectSignal: Signal<Record<K, T>>,
 	mapKey: (key: K, objectSignal: Signal<Record<K, T>>, data: U) => V,
 	data: U
+): Signal<Record<K, V>>;
+
+export function mapObject<K extends string, T, U, V>(
+	objectSignal: Signal<Record<K, T>>,
+	mapKey: (key: K, objectSignal: Signal<Record<K, T>>, data?: U) => V,
+	data?: U
 ): Signal<Record<K, V>> {
 	var parentEffect = getEffect();
 	var effects: Record<string, Effect> = {};
