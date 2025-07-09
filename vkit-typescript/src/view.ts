@@ -4,7 +4,7 @@ import { hydrateView } from "./hydrateView.js";
 import { serverRenderView } from "./serverRenderView.js";
 import { CustomTemplate, Template } from "./Template.js";
 
-export interface ViewTemplate<P, T> extends CustomTemplate<P> {
+export interface ViewTemplate<P> extends CustomTemplate<P> {
 	readonly parentEffect: Effect;
 	errorHandler: ((error: unknown) => void) | undefined;
 	getTemplate(): Template<P>;
@@ -30,7 +30,7 @@ export interface ViewTemplate<P, T> extends CustomTemplate<P> {
  * @param getTemplate A function that returns the current template.
  * @returns A template that represents a dynamic view hierarchy.
  */
-export function view<P extends ParentNode>(getTemplate: () => Template<P>): ViewTemplate<P, unknown> {
+export function view<P extends ParentNode>(getTemplate: () => Template<P>): ViewTemplate<P> {
 	return {
 		parentEffect: getEffect(),
 		errorHandler: undefined,

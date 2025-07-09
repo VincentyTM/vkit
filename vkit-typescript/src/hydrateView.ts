@@ -4,7 +4,7 @@ import { hydrate, HydrationPointer } from "./hydrate.js";
 import { updateEffect } from "./updateEffect.js";
 import { ViewTemplate } from "./view.js";
 
-export function hydrateView<P extends ParentNode>(pointer: HydrationPointer<P>, view: ViewTemplate<unknown, P>): void {
+export function hydrateView<P extends ParentNode>(pointer: HydrationPointer<P>, view: ViewTemplate<unknown>): void {
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
 	var parentEffect = view.parentEffect;

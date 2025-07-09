@@ -38,7 +38,7 @@ import { ViewTemplate } from "./view.js";
 export function errorBoundary<P extends Element>(
 	getTemplate: () => Template<P>,
 	getFallbackTemplate: (error: unknown, retry: () => void) => Template<P>
-): ViewTemplate<P, void> {
+): ViewTemplate<P> {
 	var error: unknown;
 	var isFailed = signal(false);
 	

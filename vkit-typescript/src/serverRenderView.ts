@@ -5,7 +5,7 @@ import { serverRender } from "./serverRender.js";
 import { updateEffect } from "./updateEffect.js";
 import { ViewTemplate } from "./view.js";
 
-export function serverRenderView(container: ServerElement, view: ViewTemplate<unknown, unknown>): void {	
+export function serverRenderView(container: ServerElement, view: ViewTemplate<unknown>): void {	
 	var parentEffect = getEffect();
 
 	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
