@@ -102,10 +102,6 @@ export function style(css: CSSTextOrDeclaration): DirectiveTemplate<Element | Sh
 		var container: StyleContainer | null = null;
 		var controller: StyleController | null = null;
 		
-		if (!element || !element.nodeType) {
-			throw new Error("Style can only be added to a DOM node");
-		}
-		
 		tick(function(): void {
 			container = getStyleContainer(element);
 			controller = container.add(selector);
@@ -140,7 +136,7 @@ export function style(css: CSSTextOrDeclaration): DirectiveTemplate<Element | Sh
 					}
 				}
 			}
-		});	
+		});
 	}
 	
 	return directive(bind);
