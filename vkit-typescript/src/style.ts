@@ -13,7 +13,7 @@ type StylableNode = Element | ShadowRoot;
 
 export interface StyleTemplate extends CustomTemplate<StylableNode> {
 	readonly className: string;
-	readonly css: CSSTextOrDeclaration;
+	readonly css: string;
 }
 
 type WithStyleContainer = {
@@ -23,12 +23,6 @@ type WithStyleContainer = {
 type CSSTextOrDeclaration = string | CSSProperties;
 
 var map = typeof WeakMap === "function" ? new WeakMap() : null;
-var styleCount = 0;
-
-function prepareCSS(css: CSSTextOrDeclaration, selector: string): string {
-	var cssText = typeof css === "string" ? css : generateCSS(css);
-	return cssText.replace(/::?this\b/ig, selector);
-}
 
 function getRootNode(el: Node): Node {
 	if (el.getRootNode) {
@@ -100,12 +94,28 @@ function getStyleContainer(el: StylableNode): StyleContainer {
  * @returns A style template that can be added to a DOM element or a shadow root to apply the stylesheet.
  */
 export function style(css: CSSTextOrDeclaration): StyleTemplate {
+	var generatedCSS = typeof css === "string" ? css : generateCSS(css);
+	var className = "v" + hashGeneratedCSS(generatedCSS);
+
 	return {
-		className: "vkit-" + (++styleCount),
-		css: css,
+		className: className,
+		css: generatedCSS,
 		hydrate: clientRenderStyle,
 		serverRender: serverRenderStyle
 	};
+}
+
+function hashGeneratedCSS(generatedCSS: string): string {
+    var hash = 1540483477;
+    var n = generatedCSS.length;
+
+    for (var i = 0; i < n; ++i) {
+        hash ^= generatedCSS.charCodeAt(i);
+        hash *= 1540483477;
+        hash ^= hash >>> 24;
+    }
+
+    return (hash >>> 0).toString(36);
 }
 
 function isInElementContext(clientRenderer: ClientRenderer<Element | ShadowRoot>): clientRenderer is ClientRenderer<Element> {
@@ -117,8 +127,8 @@ function clientRenderStyle(
 	template: StyleTemplate
 ): void {
 	var element = clientRenderer.context;
+	var generatedCSS = template.css;
 	var className = template.className;
-	var css = template.css;
 	var selector = "." + className;
 	var container: StyleContainer | null = null;
 	var controller: StyleController | null = null;
@@ -127,7 +137,7 @@ function clientRenderStyle(
 		container = getStyleContainer(element);
 		controller = container.add(selector);
 		controller.setValue(
-			prepareCSS(css, selector)
+			generatedCSS.replace(/::?this\b/ig, selector)
 		);
 	});
 
