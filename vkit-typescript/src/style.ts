@@ -1,8 +1,6 @@
-import { Signal } from "./computed.js";
 import { createStyleContainer, StyleContainer, StyleController } from "./createStyleContainer.js";
 import { directive, DirectiveTemplate } from "./directive.js";
 import { CSSProperties, generateCSS } from "./generateCSS.js";
-import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 import { tick } from "./tick.js";
 
@@ -91,7 +89,7 @@ function getStyleContainer(el: Node): StyleContainer {
  * @returns A function which can be used as a directive on a DOM element to apply the stylesheet.
  */
 export function style(
-	css: CSSTextOrDeclaration | Signal<CSSTextOrDeclaration>,
+	css: CSSTextOrDeclaration,
 	attribute?: string
 ): DirectiveTemplate<Node> {
 	if (!attribute) {
@@ -119,20 +117,9 @@ export function style(
 			container = getStyleContainer(element);
 			controller = container.add(selector);
 			controller.setValue(
-				prepareCSS(
-					isSignal(css) ? css.get() : css,
-					selector
-				)
+				prepareCSS(css, selector)
 			);
 		});
-		
-		if (isSignal(css)) {
-			css.subscribe(function(value: CSSTextOrDeclaration): void {
-				if (controller) {
-					controller.setValue(prepareCSS(value, selector));
-				}
-			});
-		}
 		
 		if ((element as Element).setAttribute) {
 			(element as Element).setAttribute(attribute!, "");
