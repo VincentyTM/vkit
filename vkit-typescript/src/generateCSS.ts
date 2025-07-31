@@ -1,3 +1,4 @@
+import { isArray } from "./isArray.js";
 import { toKebabCase } from "./toKebabCase.js";
 
 interface ConditionalValue<K extends keyof CSSStyleDeclaration> {
@@ -23,7 +24,7 @@ function setConditionalValues<K extends keyof CSSStyleDeclaration & string>(
 	propName: K,
 	conditionalValues: CSSValue<K>
 ): void {
-	if (!Array.isArray(conditionalValues)) {
+	if (!isArray(conditionalValues)) {
 		var mediaQuery = mediaQueries[mediaQueryName] || (mediaQueries[mediaQueryName] = {});
 		var rule = mediaQuery[baseSelector] || (mediaQuery[baseSelector] = {});
 		rule[propName] = conditionalValues;
