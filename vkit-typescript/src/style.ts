@@ -30,7 +30,7 @@ function getRootNode(el: Node): Node {
 	return el;
 }
 
-function getStyleContainer(el: Node): StyleContainer {
+function getStyleContainer(el: Element | ShadowRoot): StyleContainer {
 	var docOrShadow = getRootNode(el);
 	var parent: Node | undefined = (docOrShadow as Document).head;
 	
@@ -42,7 +42,7 @@ function getStyleContainer(el: Node): StyleContainer {
 		parent = docOrShadow;
 	}
 	
-	var container: StyleContainer = map ? map.get(parent) : (parent as unknown as WithStyleContainer).__styleContainer;
+	var container: StyleContainer = map !== null ? map.get(parent) : (parent as unknown as WithStyleContainer).__styleContainer;
 	
 	if (container) {
 		return container;
@@ -87,7 +87,7 @@ function getStyleContainer(el: Node): StyleContainer {
  * Instead of a string, an object containing CSS properties is also allowed but in that case the selector cannot be specified.
  * @returns A function which can be used as a directive on a DOM element to apply the stylesheet.
  */
-export function style(css: CSSTextOrDeclaration): DirectiveTemplate<Node> {
+export function style(css: CSSTextOrDeclaration): DirectiveTemplate<Element | ShadowRoot> {
 	var attribute = "vkit-" + (++styleCount);
 	var selector = "[" + attribute + "]";
 	
@@ -98,7 +98,7 @@ export function style(css: CSSTextOrDeclaration): DirectiveTemplate<Node> {
 	 * @param element The DOM element to which the attribute is added.
 	 * The `::this` selector in the stylesheet selects this element.
 	 */
-	function bind(element: Node): void {
+	function bind(element: Element | ShadowRoot): void {
 		var container: StyleContainer | null = null;
 		var controller: StyleController | null = null;
 		
@@ -114,26 +114,26 @@ export function style(css: CSSTextOrDeclaration): DirectiveTemplate<Node> {
 			);
 		});
 		
-		if ((element as Element).setAttribute) {
-			(element as Element).setAttribute(attribute!, "");
+		if ("setAttribute" in element) {
+			element.setAttribute(attribute, "");
 		}
 		
 		onDestroy(function(): void {
-			if ((element as Element).removeAttribute) {
-				(element as Element).removeAttribute(attribute!);
+			if ("removeAttribute" in element) {
+				element.removeAttribute(attribute);
 			}
 			
 			if (container && container.remove(selector)) {
-				var parent: Node | null | undefined = container.element.parentNode;
+				var parent: Node | null = container.element.parentNode;
 				
-				if (parent) {
+				if (parent !== null) {
 					parent.removeChild(container.element);
 				}
 				
 				parent = container.parent;
 				
-				if (parent) {
-					if (map) {
+				if (parent !== null) {
+					if (map !== null) {
 						map["delete"](parent);
 					} else {
 						delete (parent as WithStyleContainer).__styleContainer;
