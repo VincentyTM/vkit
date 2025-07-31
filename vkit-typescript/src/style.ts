@@ -85,17 +85,10 @@ function getStyleContainer(el: Node): StyleContainer {
  * @param css A string containing the CSS. The special `::this` selector in it refers to all DOM elements that use the stylesheet.
  * A signal containing a string is also accepted, which is useful for creating a dynamic stylesheet.
  * Instead of a string, an object containing CSS properties is also allowed but in that case the selector cannot be specified.
- * @param attribute The attribute used as a CSS selector. If not specified, a unique attribute is generated for the stylesheet.
  * @returns A function which can be used as a directive on a DOM element to apply the stylesheet.
  */
-export function style(
-	css: CSSTextOrDeclaration,
-	attribute?: string
-): DirectiveTemplate<Node> {
-	if (!attribute) {
-		attribute = "vkit-" + (++styleCount);
-	}
-	
+export function style(css: CSSTextOrDeclaration): DirectiveTemplate<Node> {
+	var attribute = "vkit-" + (++styleCount);
 	var selector = "[" + attribute + "]";
 	
 	/**
