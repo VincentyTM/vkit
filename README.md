@@ -146,8 +146,6 @@ async function requestListener(req, res) {
     res.setHeader("content-type", "text/html; charset=utf-8");
 
     renderToStream(res, Document, {
-        cookies: {},
-        doRunEffects: false,
         request: req,
         response: res
     });
