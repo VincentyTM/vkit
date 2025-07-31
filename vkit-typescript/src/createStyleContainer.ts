@@ -1,6 +1,6 @@
 export interface StyleContainer {
 	readonly element: HTMLStyleElement;
-	parent?: Node;
+	parent: Node | null;
 	add(name: string): StyleController;
 	remove(name: string): boolean;
 }
@@ -121,6 +121,7 @@ export function createStyleContainer(): StyleContainer {
 	
 	return {
 		element: style.element,
+		parent: null,
 		add: add,
 		remove: remove
 	};
