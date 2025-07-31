@@ -1,13 +1,18 @@
+import { classes } from "./classes.js";
+import { clientRenderClasses } from "./clientRenderClasses.js";
+import { ServerElement } from "./createServerElement.js";
 import { createStyleContainer, StyleContainer, StyleController } from "./createStyleContainer.js";
 import { CSSProperties, generateCSS } from "./generateCSS.js";
 import { ClientRenderer } from "./hydrate.js";
-import { noop } from "./noop.js";
 import { onDestroy } from "./onDestroy.js";
+import { serverRenderClasses } from "./serverRenderClasses.js";
 import { CustomTemplate } from "./Template.js";
 import { tick } from "./tick.js";
 
-export interface StyleTemplate extends CustomTemplate<Element | ShadowRoot> {
-	readonly attribute: string;
+type StylableNode = Element | ShadowRoot;
+
+export interface StyleTemplate extends CustomTemplate<StylableNode> {
+	readonly className: string;
 	readonly css: CSSTextOrDeclaration;
 }
 
@@ -37,7 +42,7 @@ function getRootNode(el: Node): Node {
 	return el;
 }
 
-function getStyleContainer(el: Element | ShadowRoot): StyleContainer {
+function getStyleContainer(el: StylableNode): StyleContainer {
 	var docOrShadow = getRootNode(el);
 	var parent: Node | undefined = (docOrShadow as Document).head;
 	
@@ -96,21 +101,25 @@ function getStyleContainer(el: Element | ShadowRoot): StyleContainer {
  */
 export function style(css: CSSTextOrDeclaration): StyleTemplate {
 	return {
-		attribute: "vkit-" + (++styleCount),
+		className: "vkit-" + (++styleCount),
 		css: css,
 		hydrate: clientRenderStyle,
-		serverRender: noop
+		serverRender: serverRenderStyle
 	};
 }
 
-function clientRenderStyle<P extends Element | ShadowRoot>(
-	clientRenderer: ClientRenderer<P>,
+function isInElementContext(clientRenderer: ClientRenderer<Element | ShadowRoot>): clientRenderer is ClientRenderer<Element> {
+	return !("slotAssignment" in clientRenderer.context);
+}
+
+function clientRenderStyle(
+	clientRenderer: ClientRenderer<StylableNode>,
 	template: StyleTemplate
 ): void {
 	var element = clientRenderer.context;
-	var attribute = template.attribute;
+	var className = template.className;
 	var css = template.css;
-	var selector = "[" + attribute + "]";
+	var selector = "." + className;
 	var container: StyleContainer | null = null;
 	var controller: StyleController | null = null;
 	
@@ -121,16 +130,12 @@ function clientRenderStyle<P extends Element | ShadowRoot>(
 			prepareCSS(css, selector)
 		);
 	});
-	
-	if ("setAttribute" in element) {
-		element.setAttribute(attribute, "");
+
+	if (isInElementContext(clientRenderer)) {
+		clientRenderClasses(clientRenderer, classes(className));
 	}
 	
 	onDestroy(function(): void {
-		if ("removeAttribute" in element) {
-			element.removeAttribute(attribute);
-		}
-		
 		if (container && container.remove(selector)) {
 			var parent: Node | null = container.element.parentNode;
 			
@@ -149,4 +154,11 @@ function clientRenderStyle<P extends Element | ShadowRoot>(
 			}
 		}
 	});
+}
+
+function serverRenderStyle(
+	serverElement: ServerElement,
+	template: StyleTemplate
+): void {
+	serverRenderClasses(serverElement, classes(template.className));
 }
