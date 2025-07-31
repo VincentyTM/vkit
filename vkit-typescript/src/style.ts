@@ -1,8 +1,15 @@
 import { createStyleContainer, StyleContainer, StyleController } from "./createStyleContainer.js";
-import { directive, DirectiveTemplate } from "./directive.js";
 import { CSSProperties, generateCSS } from "./generateCSS.js";
+import { ClientRenderer } from "./hydrate.js";
+import { noop } from "./noop.js";
 import { onDestroy } from "./onDestroy.js";
+import { CustomTemplate } from "./Template.js";
 import { tick } from "./tick.js";
+
+export interface StyleTemplate extends CustomTemplate<Element | ShadowRoot> {
+	readonly attribute: string;
+	readonly css: CSSTextOrDeclaration;
+}
 
 type WithStyleContainer = {
 	__styleContainer?: StyleContainer
@@ -85,59 +92,61 @@ function getStyleContainer(el: Element | ShadowRoot): StyleContainer {
  * @param css A string containing the CSS. The special `::this` selector in it refers to all DOM elements that use the stylesheet.
  * A signal containing a string is also accepted, which is useful for creating a dynamic stylesheet.
  * Instead of a string, an object containing CSS properties is also allowed but in that case the selector cannot be specified.
- * @returns A function which can be used as a directive on a DOM element to apply the stylesheet.
+ * @returns A style template that can be added to a DOM element or a shadow root to apply the stylesheet.
  */
-export function style(css: CSSTextOrDeclaration): DirectiveTemplate<Element | ShadowRoot> {
-	var attribute = "vkit-" + (++styleCount);
+export function style(css: CSSTextOrDeclaration): StyleTemplate {
+	return {
+		attribute: "vkit-" + (++styleCount),
+		css: css,
+		hydrate: clientRenderStyle,
+		serverRender: noop
+	};
+}
+
+function clientRenderStyle<P extends Element | ShadowRoot>(
+	clientRenderer: ClientRenderer<P>,
+	template: StyleTemplate
+): void {
+	var element = clientRenderer.context;
+	var attribute = template.attribute;
+	var css = template.css;
 	var selector = "[" + attribute + "]";
+	var container: StyleContainer | null = null;
+	var controller: StyleController | null = null;
 	
-	/**
-	 * Adds the stylesheet's selector attribute to a DOM element and keeps a reference to that element.
-	 * The attribute is removed when the current reactive context (the context in which the `bind` function was called) is destroyed.
-	 * 
-	 * @param element The DOM element to which the attribute is added.
-	 * The `::this` selector in the stylesheet selects this element.
-	 */
-	function bind(element: Element | ShadowRoot): void {
-		var container: StyleContainer | null = null;
-		var controller: StyleController | null = null;
-		
-		tick(function(): void {
-			container = getStyleContainer(element);
-			controller = container.add(selector);
-			controller.setValue(
-				prepareCSS(css, selector)
-			);
-		});
-		
-		if ("setAttribute" in element) {
-			element.setAttribute(attribute, "");
-		}
-		
-		onDestroy(function(): void {
-			if ("removeAttribute" in element) {
-				element.removeAttribute(attribute);
-			}
-			
-			if (container && container.remove(selector)) {
-				var parent: Node | null = container.element.parentNode;
-				
-				if (parent !== null) {
-					parent.removeChild(container.element);
-				}
-				
-				parent = container.parent;
-				
-				if (parent !== null) {
-					if (map !== null) {
-						map["delete"](parent);
-					} else {
-						delete (parent as WithStyleContainer).__styleContainer;
-					}
-				}
-			}
-		});
+	tick(function(): void {
+		container = getStyleContainer(element);
+		controller = container.add(selector);
+		controller.setValue(
+			prepareCSS(css, selector)
+		);
+	});
+	
+	if ("setAttribute" in element) {
+		element.setAttribute(attribute, "");
 	}
 	
-	return directive(bind);
+	onDestroy(function(): void {
+		if ("removeAttribute" in element) {
+			element.removeAttribute(attribute);
+		}
+		
+		if (container && container.remove(selector)) {
+			var parent: Node | null = container.element.parentNode;
+			
+			if (parent !== null) {
+				parent.removeChild(container.element);
+			}
+			
+			parent = container.parent;
+			
+			if (parent !== null) {
+				if (map !== null) {
+					map["delete"](parent);
+				} else {
+					delete (parent as WithStyleContainer).__styleContainer;
+				}
+			}
+		}
+	});
 }
