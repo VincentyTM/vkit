@@ -50,8 +50,8 @@ function setConditionalValues<K extends keyof CSSStyleDeclaration & string>(
 	}
 }
 
-export function generateCSS(props: CSSProperties): string {
-	var baseSelector = "::this";
+export function generateCSS(props: CSSProperties, pseudoElement: string | undefined): string {
+	var baseSelector = "::this" + (pseudoElement !== undefined ? "::" + pseudoElement : "");
 	var mediaQueries: MediaQueries = {};
 	
 	for (var propName in props) {

@@ -11,6 +11,10 @@ import { tick } from "./tick.js";
 
 type StylableNode = Element | ShadowRoot;
 
+interface StyleOptions {
+	pseudoElement?: string;
+}
+
 export interface StyleTemplate extends CustomTemplate<StylableNode> {
 	readonly className: string;
 	readonly css: string;
@@ -91,10 +95,12 @@ function getStyleContainer(el: StylableNode): StyleContainer {
  * @param css A string containing the CSS. The special `::this` selector in it refers to all DOM elements that use the stylesheet.
  * A signal containing a string is also accepted, which is useful for creating a dynamic stylesheet.
  * Instead of a string, an object containing CSS properties is also allowed but in that case the selector cannot be specified.
+ * @param options An optional object for style configuration.
+ * The pseudo-element selector can be set as a property of this object, without `::`.
  * @returns A style template that can be added to a DOM element or a shadow root to apply the stylesheet.
  */
-export function style(css: CSSTextOrDeclaration): StyleTemplate {
-	var generatedCSS = typeof css === "string" ? css : generateCSS(css);
+export function style(css: CSSTextOrDeclaration, options?: StyleOptions): StyleTemplate {
+	var generatedCSS = typeof css === "string" ? css : generateCSS(css, options && options.pseudoElement);
 	var className = "v" + hashGeneratedCSS(generatedCSS);
 
 	return {
@@ -106,16 +112,16 @@ export function style(css: CSSTextOrDeclaration): StyleTemplate {
 }
 
 function hashGeneratedCSS(generatedCSS: string): string {
-    var hash = 1540483477;
-    var n = generatedCSS.length;
+	var hash = 1540483477;
+	var n = generatedCSS.length;
 
-    for (var i = 0; i < n; ++i) {
-        hash ^= generatedCSS.charCodeAt(i);
-        hash *= 1540483477;
-        hash ^= hash >>> 24;
-    }
+	for (var i = 0; i < n; ++i) {
+		hash ^= generatedCSS.charCodeAt(i);
+		hash *= 1540483477;
+		hash ^= hash >>> 24;
+	}
 
-    return (hash >>> 0).toString(36);
+	return (hash >>> 0).toString(36);
 }
 
 function isInElementContext(clientRenderer: ClientRenderer<Element | ShadowRoot>): clientRenderer is ClientRenderer<Element> {
