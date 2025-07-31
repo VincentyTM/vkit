@@ -1,10 +1,9 @@
-import { RenderConfig } from "./RenderConfigService.js";
-import { renderToStream } from "./renderToStream.js";
+import { RenderOptions, renderToStream } from "./renderToStream.js";
 import { Template } from "./Template.js";
 
 export function renderToString(
 	getTemplate: () => Template<ParentNode>,
-	renderConfig: RenderConfig
+	renderConfig?: RenderOptions
 ): string {
 	var values: string[] = [];
 	var stream = {

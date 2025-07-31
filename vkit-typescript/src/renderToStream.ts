@@ -3,8 +3,7 @@ import { createInjector } from "./createInjector.js";
 import { createServerElement } from "./createServerElement.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { inject } from "./inject.js";
-import { objectAssign } from "./objectAssign.js";
-import { RenderConfig, RenderConfigService } from "./RenderConfigService.js";
+import { RenderConfigService, ServerRequest, ServerResponse } from "./RenderConfigService.js";
 import { serverRender } from "./serverRender.js";
 import { StreamWriter } from "./StreamWriter.js";
 import { Template } from "./Template.js";
@@ -12,10 +11,16 @@ import { update } from "./update.js";
 import { updateEffect } from "./updateEffect.js";
 import { writeServerNode } from "./writeServerNode.js";
 
+export interface RenderOptions {
+	doRunEffects?: boolean;
+	request: ServerRequest | undefined;
+	response: ServerResponse | undefined;
+}
+
 export function renderToStream(
 	stream: StreamWriter,
 	getTemplate: () => Template<ParentNode>,
-	renderConfig: RenderConfig
+	renderOptions?: RenderOptions
 ): void {
 	var injector = createInjector(undefined, true);
 
@@ -24,7 +29,11 @@ export function renderToStream(
 		var children = root.children;
 
 		var renderConfigService = inject(RenderConfigService);
-		objectAssign(renderConfigService, renderConfig);
+
+		renderConfigService.doRunEffects = Boolean(renderOptions && renderOptions.doRunEffects);
+		renderConfigService.request = renderOptions && renderOptions.request;
+		renderConfigService.response = renderOptions && renderOptions.response;
+
 		serverRender(root, getTemplate());
 
 		if (children) {

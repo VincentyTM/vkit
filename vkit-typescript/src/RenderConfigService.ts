@@ -7,12 +7,12 @@ export interface RenderConfig {
 	response: ServerResponse | undefined;
 }
 
-interface ServerRequest {
+export interface ServerRequest {
 	headers: Record<string, string | string[] | undefined>;
 	url?: string;
 }
 
-interface ServerResponse {
+export interface ServerResponse {
 	setHeader(name: string, value: string): void;
 	setHeader(name: string, value: string[]): void;
 }
