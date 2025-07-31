@@ -102,7 +102,6 @@ export { signal, WritableSignal } from "./signal.js";
 export { skipHydration } from "./skipHydration.js";
 export { localStorage, sessionStorage } from "./storage.js";
 export { style } from "./style.js";
-export { styledHtmlTag } from "./styledHtmlTag.js";
 export { svgTag, SVGView } from "./svgTag.js";
 export { svgTags } from "./svgTags.js";
 export { Template } from "./Template.js";
