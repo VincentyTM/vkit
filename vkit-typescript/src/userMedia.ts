@@ -10,7 +10,7 @@ function stopTrack(track: MediaStreamTrack): void {
 }
 
 export function userMedia(
-	constraints: DisplayMediaStreamConstraints | null | Signal<DisplayMediaStreamConstraints | null> | (() => DisplayMediaStreamConstraints | null),
+	constraints: MediaStreamConstraints | null | Signal<MediaStreamConstraints | null> | (() => MediaStreamConstraints | null),
 	displayMedia?: boolean
 ): Signal<AsyncResult<MediaStream | null>> {
 	var latestStream = asyncEffect<MediaStream | null>(function() {
