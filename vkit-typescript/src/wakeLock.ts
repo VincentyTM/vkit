@@ -5,9 +5,9 @@ import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 import { signal } from "./signal.js";
 
-interface NavigatorExtension extends Navigator {
+type NavigatorExtension = Navigator & {
 	wakeLock: WakeLock;
-}
+};
 
 interface WakeLock {
 	request(type: "screen"): Promise<WakeLockSentinel>;
