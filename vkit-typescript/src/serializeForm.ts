@@ -12,22 +12,24 @@ export function serializeForm(
 	var n = form.elements.length;
 
 	for (var i = 0; i < n; ++i) {
-		var input = form.elements[i] as HTMLInputElement & HTMLSelectElement;
+		var formControl = form.elements[i] as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
-		if (!input.name || input.disabled) {
+		if (!formControl.name || formControl.disabled) {
 			continue;
 		}
 
-		switch (input.type) {
+		switch (formControl.type) {
 			case "submit": case "image":
-				if (input === submitButton) {
-					callback(input.name, input.value);
+				if (formControl === submitButton) {
+					callback(formControl.name, formControl.value);
 				}
 
 				break;
 			case "button": case "reset":
 				break;
 			case "file":
+				var input = formControl as HTMLInputElement;
+
 				if (input.files) {
 					var n = input.files.length;
 
@@ -44,22 +46,25 @@ export function serializeForm(
 
 				break;
 			case "checkbox": case "radio":
+				var input = formControl as HTMLInputElement;
+
 				if (input.checked) {
 					callback(input.name, input.value);
 				}
 
 				break;
 			case "select-multiple":
-				var m = input.options.length;
+				var select = formControl as HTMLSelectElement;
+				var m = select.options.length;
 
 				for (var j = 0; j < m; ++j) {
-					var option = input.options[j];
-					option.selected && callback(input.name, option.value);
+					var option = select.options[j];
+					option.selected && callback(select.name, option.value);
 				}
 
 				break;
 			default:
-				callback(input.name, input.value);
+				callback(formControl.name, formControl.value);
 		}
 	}
 }
