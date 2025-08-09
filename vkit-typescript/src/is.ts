@@ -1,5 +1,5 @@
 import { getEffect } from "./contextGuard.js";
-import { effect } from "./effect.js";
+import { createEffect } from "./createEffect.js";
 import { updateEffect } from "./updateEffect.js";
 
 /**
@@ -23,17 +23,23 @@ import { updateEffect } from "./updateEffect.js";
  * @returns The return value of the `condition` function.
  */
 export function is(condition: () => boolean): boolean {
-	var parent = getEffect();
+	var parentEffect = getEffect();
 	var value: boolean | undefined;
 	
-	effect(function() {
+	var effect = createEffect(parentEffect, parentEffect.injector, function() {
 		var oldValue = value;
 		value = condition();
 		
 		if (oldValue !== value && oldValue !== undefined) {
-			updateEffect(parent);
+			updateEffect(parentEffect);
 		}
 	});
+
+	updateEffect(effect);
+
+	if (value === undefined) {
+		throw new TypeError("Value has not been calculated");
+	}
 	
-	return value as boolean;
+	return value;
 }
