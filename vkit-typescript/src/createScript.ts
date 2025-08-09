@@ -14,7 +14,7 @@ interface HTMLScriptElementExtension extends HTMLScriptElement {
 	onreadystatechange?: (() => void) | null;
 }
 
-export function createScript<T>(params: ScriptParams): void {
+export function createScript(params: ScriptParams): void {
 	var url = params.url;
 	var d = params.document;
 	var t = d.getElementsByTagName("script")[0];
@@ -61,7 +61,7 @@ export function createScript<T>(params: ScriptParams): void {
 	
 	s.onerror = fail;
 	
-	if ("onload" in s) {
+	if (s.onload !== undefined) {
 		s.onload = loadHandler;
 	} else {
 		s.onreadystatechange = loadHandler;
