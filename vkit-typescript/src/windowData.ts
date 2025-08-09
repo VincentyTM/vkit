@@ -16,30 +16,32 @@ export interface WindowData<T> {
 
 type WindowDataPart<T> = T | Signal<T> | ((part: T) => T);
 
-type WindowDataValue = string | object;
+type WindowDataValue = string | Record<string, unknown>;
 
 type InitFunction<T> = (
 	window: Window,
 	callback: (value: T, callEffect: () => void) => void
 ) => void;
 
+function resolvePart<T extends WindowDataValue>(value: T, part: T | Signal<T> | ((part: T) => T)): T {
+	if (isSignal(part)) {
+		return part.get();
+	}
+
+	if (typeof part === "function") {
+		return part(value);
+	}
+
+	return part;
+}
+
 function getValue<T extends WindowDataValue>(parts: WindowDataPart<T>[], value: T): T {
 	var n = parts.length;
-	
+
 	for (var i = 0; i < n; ++i) {
-		var part = parts[i];
-		
-		if (isSignal(part)) {
-			part = part.get();
-		}
-		
-		if (typeof part === "function") {
-			value = part(value);
-		} else {
-			value = part;
-		}
+		value = resolvePart(value, parts[i]);
 	}
-	
+
 	return value;
 }
 
