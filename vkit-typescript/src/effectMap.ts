@@ -84,7 +84,7 @@ function createInstanceEffect<K extends string, T, U, V>(
 	});
 }
 
-function removeKey<T>(object: T, key: keyof T): T {
+function removeKey<T extends object>(object: T, key: keyof T): T {
 	if (!(key in object)) {
 		return object;
 	}
