@@ -5,7 +5,7 @@ import { hydrate, HydrationPointer } from "./hydrate.js";
 import { isArray } from "./isArray.js";
 import { PERSISTENT_SUBSCRIBERS_FLAG } from "./reactiveNodeFlags.js";
 import { subscribe } from "./subscribe.js";
-import { Template } from "./template.js";
+import { Template } from "./Template.js";
 import { toArray } from "./toArray.js";
 import { updateEffect } from "./updateEffect.js";
 import { ViewListTemplate } from "./viewList.js";
