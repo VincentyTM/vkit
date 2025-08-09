@@ -474,7 +474,7 @@ export function validate<T>(value: any, schema: Schema<T>): ValidationError | nu
 
 		for (var keyFromSchema in properties) {
 			if (keyFromSchema in value) {
-				var propertyError = validate(value[keyFromSchema], properties[keyFromSchema]);
+				var propertyError = validate(value[keyFromSchema], properties[keyFromSchema as keyof T]);
 
 				if (propertyError !== null) {
 					return {
