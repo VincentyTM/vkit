@@ -170,8 +170,8 @@ function hydrateBinding<P, K extends string & keyof Bindings<P>>(
 		}
 		return;
 	}
-	
-	hydrateStaticBinding(pointer, key, value as P[K]);
+
+	pointer.context[key] = value as P[K];
 }
 
 function hydrateFunctionBinding<P, K extends keyof P>(
@@ -195,17 +195,6 @@ function hydrateSignalBinding<P, K extends keyof P>(pointer: HydrationPointer<P>
 
 	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
 		element[key] = value();
-	});
-
-	updateEffect(effect);
-}
-
-function hydrateStaticBinding<P, K extends keyof P>(pointer: HydrationPointer<P>, key: K, value: P[K]): void {
-	var element = pointer.context;
-	var parentEffect = pointer.parentEffect;
-
-	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
-		element[key] = value;
 	});
 
 	updateEffect(effect);
