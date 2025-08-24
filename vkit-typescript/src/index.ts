@@ -33,6 +33,7 @@ export { font } from "./font.js";
 export { formatText } from "./formatText.js";
 export { frameContent } from "./frameContent.js";
 export { fullScreen } from "./fullScreen.js";
+export { CSSProperties } from "./generateCSS.js";
 export { geolocationPosition } from "./geolocationPosition.js";
 export { get } from "./get.js";
 export { getDocument } from "./getDocument.js";
