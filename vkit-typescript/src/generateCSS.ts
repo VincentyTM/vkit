@@ -6,6 +6,7 @@ interface ConditionalValue<K extends keyof CSSStyleDeclaration> {
 	readonly on?: string;
 	readonly prefixes?: string[];
 	readonly value: CSSValue<K>;
+	readonly within?: string;
 }
 
 type CSSValue<K extends keyof CSSStyleDeclaration> = CSSStyleDeclaration[K] | ConditionalValue<K>[];
@@ -49,7 +50,8 @@ function setConditionalValues<K extends keyof CSSStyleDeclaration & string>(
 		var mediaQueryName = conditionalValue.media || "";
 		var mediaQuery = mediaQueries[mediaQueryName] || (mediaQueries[mediaQueryName] = {});
 		var on = conditionalValue.on;
-		var selector = on ? baseSelector + on : baseSelector;
+		var within = conditionalValue.within;
+		var selector = (within ? within + " " : "") + baseSelector + (on || "");
 
 		setConditionalValues(
 			selector,
