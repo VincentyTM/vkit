@@ -4,6 +4,7 @@ import { toKebabCase } from "./toKebabCase.js";
 interface ConditionalValue<K extends keyof CSSStyleDeclaration> {
 	readonly media?: string;
 	readonly on?: string;
+	readonly prefixes?: string[];
 	readonly value: CSSValue<K>;
 }
 
@@ -22,11 +23,21 @@ function setConditionalValues<K extends keyof CSSStyleDeclaration & string>(
 	mediaQueries: MediaQueries,
 	mediaQueryName: string,
 	propName: K,
-	conditionalValues: CSSValue<K>
+	conditionalValues: CSSValue<K>,
+	prefixes: string[] | undefined
 ): void {
 	if (!isArray(conditionalValues)) {
 		var mediaQuery = mediaQueries[mediaQueryName] || (mediaQueries[mediaQueryName] = {});
 		var rule = mediaQuery[baseSelector] || (mediaQuery[baseSelector] = {});
+
+		if (prefixes !== undefined) {
+			var n = prefixes.length;
+
+			for (var i = 0; i < n; ++i) {
+				rule[prefixes[i] + propName as K] = conditionalValues;
+			}
+		}
+		
 		rule[propName] = conditionalValues;
 		return;
 	}
@@ -45,7 +56,8 @@ function setConditionalValues<K extends keyof CSSStyleDeclaration & string>(
 			mediaQueries,
 			mediaQueryName,
 			propName,
-			conditionalValue.value
+			conditionalValue.value,
+			conditionalValue.prefixes
 		);
 	}
 }
@@ -63,7 +75,8 @@ export function generateCSS(props: CSSProperties, pseudoElement: string | undefi
 				mediaQueries,
 				"",
 				propName as keyof CSSStyleDeclaration & string,
-				cssValue
+				cssValue,
+				undefined
 			);
 		}
 	}
