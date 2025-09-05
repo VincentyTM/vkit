@@ -82,6 +82,7 @@ export { persistentStorage } from "./persistentStorage.js";
 export { preferredLanguages } from "./preferredLanguages.js";
 export { propertySignal } from "./propertySignal.js";
 export { provide } from "./provide.js";
+export { DataQuery, DataQueryResult, DataSet, queryData } from "./queryData.js";
 export { reactive } from "./reactive.js";
 export { flush } from "./reactiveNodeStack.js";
 export { readOnly } from "./readOnly.js";
