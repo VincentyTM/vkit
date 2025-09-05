@@ -105,6 +105,8 @@ export function customElement<T extends CustomElementGetTemplate>(
 
 			hydrate(pointer, view);
 		});
+
+		injector.effect = effect;
 		
 		el.effect = effect;
 		el.observedAttributes = {};

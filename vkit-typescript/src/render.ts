@@ -64,6 +64,8 @@ export function render<P extends HTMLElement>(
 		removeRemainingNodes(pointer);
 	});
 
+	rootInjector.effect = rootEffect;
+
 	updateEffect(rootEffect);
 	update();
 	

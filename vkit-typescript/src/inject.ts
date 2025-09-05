@@ -36,7 +36,11 @@ export function inject<T>(injectable: Injectable<T>): T {
 
 		if (!parent) {
 			if (injector.allowMissingProvider) {
-				var newProvider = createProvider(injectable, parentEffect, parentInjector);
+				if (parentInjector.effect === undefined) {
+					throw new Error("Injector has no effect");
+				}
+
+				var newProvider = createProvider(injectable, parentInjector.effect, parentInjector);
 				injector.providers.set(injectable, newProvider);
 				
 				try {

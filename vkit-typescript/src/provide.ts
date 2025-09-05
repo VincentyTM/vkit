@@ -41,6 +41,8 @@ export function provide<R>(
 	var parentEffect = getEffect();
 	var injector = createInjector(parentEffect.injector, configs === null);
 
+	injector.effect = parentEffect;
+
 	if (configs !== null) {
 		var n = configs.length;
 

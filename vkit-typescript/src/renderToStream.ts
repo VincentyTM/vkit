@@ -45,6 +45,8 @@ export function renderToStream(
 		}
 	});
 
+	injector.effect = effect;
+
 	updateEffect(effect);
 	update();
 	destroyEffect(effect);

@@ -6,6 +6,9 @@ import { update } from "./update.js";
 export function reactive(app: () => void): void {
 	var rootInjector = createInjector(undefined, true);
 	var rootEffect = createEffect(undefined, rootInjector, app);
+
+	rootInjector.effect = rootEffect;
+	
 	updateEffect(rootEffect);
 	update();
 }
