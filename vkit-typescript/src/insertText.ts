@@ -5,7 +5,7 @@
  * @param value The new text value or a function that transforms the old value to the new value.
  */
 export function insertText(
-	element: HTMLInputElement & HTMLTextAreaElement,
+	element: HTMLInputElement | HTMLTextAreaElement,
 	value: string | ((oldValue: string) => string)
 ): void {
 	var doc = element.ownerDocument;
@@ -24,8 +24,8 @@ export function insertText(
 		range.moveStart("character", pos);
 		range.select();
 	} else if ("selectionStart" in element) {
-		var s = element.selectionStart;
-		var e = element.selectionEnd;
+		var s = element.selectionStart || 0;
+		var e = element.selectionEnd || 0;
 		
 		if (typeof value === "function") {
 			value = value(element.value.substring(s, e));
