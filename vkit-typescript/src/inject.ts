@@ -25,55 +25,54 @@ import { createProvider, Provider } from "./createProvider.js";
  * @param injectable Used as a key to find a provider of the service.
  * @returns An instance of the injectable service.
  */
- export function inject<T>(injectable: Injectable<T>): T {
-	 var parentInjector = getInjector();
-	 var parentEffect = getEffect();
-	 var injector = parentInjector;
-	 var provider: Provider<T> | undefined;
- 
-	 while (!(provider = injector.providers.get(injectable) as Provider<T>)) {
-		 var parent = injector.parent;
- 
-		 if (!parent) {
-			 if (injector.allowMissingProvider) {
-				 var newProvider = createProvider(injectable, parentEffect, parentInjector);
-				 injector.providers.set(injectable, newProvider);
-				 
-				 try {
-					 setReactiveNode(newProvider.effect);
-					 setInjector(newProvider.injector);
- 
-					 var instance = injectable.create();
-					 newProvider.isCreated = true;
-					 newProvider.instance = instance;
-					 return instance;
-				 } finally {
-					 setReactiveNode(parentEffect);
-					 setInjector(parentInjector);
-				 }
-			 }
- 
-			 throw new Error("No injector contains a provider for this injectable");
-		 }
- 
-		 injector = parent;
-	 }
- 
-	 if (provider.isCreated) {
-		 return provider.instance as T;
-	 }
- 
-	 try {
-		 setReactiveNode(provider.effect);
-		 setInjector(provider.injector);
- 
-		 var instance = provider.injectable.create();
-		 provider.isCreated = true;
-		 provider.instance = instance;
-		 return instance as T;
-	 } finally {
-		 setReactiveNode(parentEffect);
-		 setInjector(parentInjector);
-	 }
- }
- 
+export function inject<T>(injectable: Injectable<T>): T {
+	var parentInjector = getInjector();
+	var parentEffect = getEffect();
+	var injector = parentInjector;
+	var provider: Provider<T> | undefined;
+
+	while (!(provider = injector.providers.get(injectable) as Provider<T>)) {
+		var parent = injector.parent;
+
+		if (!parent) {
+			if (injector.allowMissingProvider) {
+				var newProvider = createProvider(injectable, parentEffect, parentInjector);
+				injector.providers.set(injectable, newProvider);
+				
+				try {
+					setReactiveNode(newProvider.effect);
+					setInjector(newProvider.injector);
+
+					var instance = injectable.create();
+					newProvider.isCreated = true;
+					newProvider.instance = instance;
+					return instance;
+				} finally {
+					setReactiveNode(parentEffect);
+					setInjector(parentInjector);
+				}
+			}
+
+			throw new Error("No injector contains a provider for this injectable");
+		}
+
+		injector = parent;
+	}
+
+	if (provider.isCreated) {
+		return provider.instance as T;
+	}
+
+	try {
+		setReactiveNode(provider.effect);
+		setInjector(provider.injector);
+
+		var instance = provider.injectable.create();
+		provider.isCreated = true;
+		provider.instance = instance;
+		return instance as T;
+	} finally {
+		setReactiveNode(parentEffect);
+		setInjector(parentInjector);
+	}
+}
