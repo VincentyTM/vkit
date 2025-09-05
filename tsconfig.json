@@ -1,0 +1,13 @@
+{
+	"files": [
+		"./vkit-typescript/src/index.ts"
+	],
+	"compilerOptions": {
+		"target": "esnext",
+		"declaration": true,
+		"sourceMap": true,
+		"outDir": "./vkit-typescript/dist/",
+		"forceConsistentCasingInFileNames": true,
+		"strict": true
+	}
+}
