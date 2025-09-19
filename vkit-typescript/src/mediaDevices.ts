@@ -4,7 +4,7 @@ import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
 import { signal } from "./signal.js";
 
-enum AsyncStatus {
+const enum AsyncStatus {
 	Rejected,
 	Resolved,
 }

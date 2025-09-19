@@ -10,7 +10,7 @@ export interface ReactiveNodeBase {
 	update(node: ReactiveNode, tracked: boolean): void;
 }
 
-export enum ReactiveNodeType {
+export const enum ReactiveNodeType {
 	Effect,
 	Signal,
 }

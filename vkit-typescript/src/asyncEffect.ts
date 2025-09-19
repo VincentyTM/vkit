@@ -3,7 +3,7 @@ import { effect } from "./effect.js";
 import { onDestroy } from "./onDestroy.js";
 import { signal } from "./signal.js";
 
-export enum AsyncStatus {
+export const enum AsyncStatus {
 	Pending,
 	Rejected,
 	Resolved,

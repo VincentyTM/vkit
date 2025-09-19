@@ -56,7 +56,7 @@ interface AssetRefsInternals<T> extends AssetRefs<T> {
 	readonly refs: Record<string, AssetInternals<T>>;
 }
 
-enum AssetStatus {
+const enum AssetStatus {
 	Pending,
 	Fulfilled,
 	Rejected,
