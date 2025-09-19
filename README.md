@@ -452,23 +452,21 @@ const doubleCount = computed(() => count() * 2);
 Sometimes, modifying existing DOM nodes is not enough. You may want to insert new nodes and remove old ones. A view block is a part of the DOM tree which is destroyed and re-created every time a value changes.
 
 ```javascript
-view(() => show() && Div("This text is shown now!"));
+return view(() => show() && Div("This text is shown now!"));
 ```
 
 Note that unwanted DOM updates may occur if you use a non-boolean signal as a condition.
 
 ```javascript
-view(() => count() > 3 && Div("This text is shown now!"));
+return view(() => count() > 3 && Div("Do not do this"));
 ```
 
-If you wrap condition expressions in `is(() => ...)`, many unwanted DOM updates can be avoided.
+If you first create a boolean computed signal outside the view block and call it inside, these unwanted DOM updates can be avoided.
 
 ```javascript
-view(() => {
-    if (is(() => count() > 3)) {
-        return Div("This text is shown now!");
-    }
-});
+const show = computed(() => count() > 3);
+
+return view(() => show() && Div("Do this instead"));
 ```
 
 ## View List Blocks
