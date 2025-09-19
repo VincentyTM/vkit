@@ -1,6 +1,6 @@
 import { destroySubscribers } from "./destroySubscribers.js";
 import { ReactiveNode } from "./ReactiveNode.js";
-import { DESTROYED_FLAG, DIRTY_FLAG, VISITED_FLAG } from "./reactiveNodeFlags.js";
+import { DESTROYED_FLAG, DIRTY_FLAG, TO_BE_EVALUATED_FLAG, VISITED_FLAG } from "./reactiveNodeFlags.js";
 import { enqueueUpdate } from "./update.js";
 
 var stack: ReactiveNode[] = [];
@@ -14,11 +14,14 @@ export function flush(): void {
 		stack = [];
 		
 		for (var i = n - 1; i >= 0; --i) {
-			currentStack[i].flags &= ~VISITED_FLAG;
+			var node = currentStack[i];
+			node.flags = (node.flags & ~VISITED_FLAG) | TO_BE_EVALUATED_FLAG;
 		}
 	
 		for (var i = n - 1; i >= 0; --i) {
 			var node = currentStack[i];
+
+			node.flags &= ~TO_BE_EVALUATED_FLAG;
 
 			if (node.flags & DESTROYED_FLAG) {
 				destroySubscribers(node);

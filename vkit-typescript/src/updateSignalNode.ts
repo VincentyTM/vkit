@@ -1,7 +1,7 @@
 import { getReactiveNode, setReactiveNode } from "./contextGuard.js";
 import { SignalNode } from "./createSignalNode.js";
 import { isSignal } from "./isSignal.js";
-import { COMPUTING_FLAG, DIRTY_FLAG, FAILED_FLAG } from "./reactiveNodeFlags.js";
+import { COMPUTING_FLAG, DIRTY_FLAG, FAILED_FLAG, TO_BE_EVALUATED_FLAG } from "./reactiveNodeFlags.js";
 import { subscribe } from "./subscribe.js";
 
 export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
@@ -11,7 +11,7 @@ export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
 		subscribe(node, evaluatedNode);
 	}
 
-	if (node.flags & DIRTY_FLAG) {
+	if (node.flags & (DIRTY_FLAG | TO_BE_EVALUATED_FLAG)) {
 		if (node.flags & COMPUTING_FLAG) {
 			throw new Error("Cycle detected");
 		}
