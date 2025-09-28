@@ -1,6 +1,6 @@
 import { Signal } from "./computed.js";
 import { effect } from "./effect.js";
-import { get } from "./get.js";
+import { getSnapshot } from "./getSnapshot.js";
 import { isSignal } from "./isSignal.js";
 import { observe } from "./observe.js";
 import { onDestroy } from "./onDestroy.js";
@@ -27,10 +27,10 @@ export function objectProperty<T, K extends keyof T>(
 	property: K | Signal<K>,
 	getDefaultValue?: () => T[K]
 ): WritableSignal<T[K]> {
-	var value = signal<T[K]>(get(object)[get(property)]);
+	var value = signal<T[K]>(getSnapshot(object)[getSnapshot(property)]);
 	
 	value.subscribe(function(v: T[K]) {
-		get(object)[get(property)] = v;
+		getSnapshot(object)[getSnapshot(property)] = v;
 	});
 	
 	effect(function() {
