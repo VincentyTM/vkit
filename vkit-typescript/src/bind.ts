@@ -71,7 +71,6 @@ function prop<T>(
  * @param bindings The properties given as key-value pairs.
  * For dynamic bindings, signals and functions can also be used as values.
  * If the key starts with "on", the value is attached as an event listener instead.
- * @param persistent If true, the attached event listeners are not removed when the current reactive context is destroyed.
  */
 export function bind<T>(target: T, bindings: Bindings<T>): void {
 	for (var name in bindings) {
