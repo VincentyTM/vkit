@@ -1,6 +1,7 @@
 import { Signal } from "./computed.js";
 import { effect } from "./effect.js";
 import { isSignal } from "./isSignal.js";
+import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
 
 type HTMLSelfClosingElement = (
@@ -94,7 +95,7 @@ export function bind<T>(target: T, bindings: Bindings<T>): void {
 				break;
 			case "function":
 				if (name.indexOf("on") === 0) {
-					onEvent(target as never, name.substring(2), value as never);
+					onDestroy(onEvent(target as never, name.substring(2), value as never));
 				} else {
 					prop(target, name, value as never);
 				}
