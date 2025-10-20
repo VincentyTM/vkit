@@ -93,7 +93,7 @@ export { renderToString } from "./renderToString.js";
 export { repeat } from "./repeat.js";
 export { replaceScript } from "./replaceScript.js";
 export { saveFile } from "./saveFile.js";
-export { scrollState } from "./scrollState.js";
+export { ScrollData, scrollState, ScrollState } from "./scrollState.js";
 export { selectText } from "./selectText.js";
 export { selectTextRange } from "./selectTextRange.js";
 export { serializeForm } from "./serializeForm.js";

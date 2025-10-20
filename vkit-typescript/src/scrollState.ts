@@ -5,14 +5,14 @@ import { onEvent } from "./onEvent.js";
 import { signal, WritableSignal } from "./signal.js";
 import { tick } from "./tick.js";
 
-interface ScrollData {
+export interface ScrollData {
 	height: number;
 	width: number;
 	x: number;
 	y: number;
 }
 
-interface ScrollState {
+export interface ScrollState {
 	data: WritableSignal<ScrollData>;
 	x: WritableSignal<number>;
 	y: WritableSignal<number>;
