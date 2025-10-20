@@ -7,6 +7,7 @@ export { awaitResult } from "./awaitResult.js";
 export { bind } from "./bind.js";
 export { bindChecked } from "./bindChecked.js";
 export { bindNumber } from "./bindNumber.js";
+export { bindRadioGroup, RadioGroupBinding } from "./bindRadioGroup.js";
 export { bindSelect } from "./bindSelect.js";
 export { bindText } from "./bindText.js";
 export { classes } from "./classes.js";
