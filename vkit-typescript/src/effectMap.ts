@@ -7,20 +7,20 @@ import { objectAssign } from "./objectAssign.js";
 import { signal, WritableSignal } from "./signal.js";
 import { updateEffect } from "./updateEffect.js";
 
-export function effectMap<K extends string, T, U>(
-	objectSignal: Signal<Record<K, T>>,
-	mapKey: (key: K, objectSignal: Signal<Record<K, T>>) => U
+export function effectMap<K extends string, T, U, W extends Signal<Record<K, T>>>(
+	objectSignal: W,
+	mapKey: (key: K, objectSignal: W) => U
 ): Signal<Record<K, U>>;
 
-export function effectMap<K extends string, T, U, V>(
-	objectSignal: Signal<Record<K, T>>,
-	mapKey: (key: K, objectSignal: Signal<Record<K, T>>, data: U) => V,
+export function effectMap<K extends string, T, U, V, W extends Signal<Record<K, T>>>(
+	objectSignal: W,
+	mapKey: (key: K, objectSignal: W, data: U) => V,
 	data: U
 ): Signal<Record<K, V>>;
 
-export function effectMap<K extends string, T, U, V>(
-	objectSignal: Signal<Record<K, T>>,
-	mapKey: (key: K, objectSignal: Signal<Record<K, T>>, data?: U) => V,
+export function effectMap<K extends string, T, U, V, W extends Signal<Record<K, T>>>(
+	objectSignal: W,
+	mapKey: (key: K, objectSignal: W, data?: U) => V,
 	data?: U
 ): Signal<Record<K, V>> {
 	var parentEffect = getEffect();
@@ -64,12 +64,12 @@ export function effectMap<K extends string, T, U, V>(
 	return values;
 }
 
-function createInstanceEffect<K extends string, T, U, V>(
+function createInstanceEffect<K extends string, T, U, V, W extends Signal<Record<K, T>>>(
 	parentEffect: Effect,
 	values: WritableSignal<Record<K, V>>,
 	key: K,
-	mapKey: (key: K, objectSignal: Signal<Record<K, T>>, data: U) => V,
-	objectSignal: Signal<Record<K, T>>,
+	mapKey: (key: K, objectSignal: W, data: U) => V,
+	objectSignal: W,
 	data: U
 ): Effect {
 	return createEffect(parentEffect, parentEffect.injector, function(): void {
