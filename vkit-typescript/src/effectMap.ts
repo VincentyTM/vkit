@@ -3,7 +3,6 @@ import { getEffect } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { effect } from "./effect.js";
-import { isSignal } from "./isSignal.js";
 import { objectAssign } from "./objectAssign.js";
 import { signal, WritableSignal } from "./signal.js";
 import { updateEffect } from "./updateEffect.js";
@@ -58,13 +57,9 @@ export function effectMap<K extends string, T, U, V>(
 		effects = next;
 	}
 	
-	if (isSignal(objectSignal) || typeof objectSignal === "function") {
-		effect(function() {
-			setObject(objectSignal());
-		});
-	} else {
-		setObject(objectSignal);
-	}
+	effect(function() {
+		setObject(objectSignal());
+	});
 	
 	return values;
 }
