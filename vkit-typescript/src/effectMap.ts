@@ -2,9 +2,12 @@ import { Signal } from "./computed.js";
 import { getEffect } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { destroyEffect } from "./destroyEffect.js";
-import { effect } from "./effect.js";
+import { inject } from "./inject.js";
 import { objectAssign } from "./objectAssign.js";
+import { PERSISTENT_SUBSCRIBERS_FLAG } from "./reactiveNodeFlags.js";
+import { RenderConfigService } from "./RenderConfigService.js";
 import { signal, WritableSignal } from "./signal.js";
+import { subscribe } from "./subscribe.js";
 import { updateEffect } from "./updateEffect.js";
 
 export function effectMap<K extends string, T, U, W extends Signal<Record<K, T>>>(
@@ -23,11 +26,17 @@ export function effectMap<K extends string, T, U, V, W extends Signal<Record<K, 
 	mapKey: (key: K, objectSignal: W, data?: U) => V,
 	data?: U
 ): Signal<Record<K, V>> {
-	var parentEffect = getEffect();
-	var effects: Record<string, Effect> = {};
 	var values = signal<Record<string, V>>({});
 	
-	function setObject(object: Record<K, T>): void {
+	if (!inject(RenderConfigService).doRunEffects) {
+		return values;
+	}
+
+	var parentEffect = getEffect();
+	var effects: Record<string, Effect> = {};
+	var groupEffect = createEffect(parentEffect, parentEffect.injector, function() {
+		var object = objectSignal();
+
 		for (var key in effects) {
 			if (!(key in object)) {
 				destroyEffect(effects[key]);
@@ -50,16 +59,16 @@ export function effectMap<K extends string, T, U, V, W extends Signal<Record<K, 
 					data
 				);
 				next[key2] = instanceEffect;
+				subscribe(groupEffect, instanceEffect);
 				updateEffect(instanceEffect);
 			}
 		}
 		
 		effects = next;
-	}
-	
-	effect(function() {
-		setObject(objectSignal());
 	});
+	
+	groupEffect.flags |= PERSISTENT_SUBSCRIBERS_FLAG;
+	updateEffect(groupEffect);
 	
 	return values;
 }
