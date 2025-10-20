@@ -16,7 +16,7 @@ interface ScrollState {
 	data: WritableSignal<ScrollData>;
 	x: WritableSignal<number>;
 	y: WritableSignal<number>;
-	bindElement(scrollable: Element | Window): void;
+	bindElement(scrollable: Element): void;
 	bindWindow(scrollable: Window): void;
 }
 
