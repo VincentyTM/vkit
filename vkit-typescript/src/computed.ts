@@ -13,8 +13,6 @@ export interface ComputedSignal<T> extends Signal<T> {
 	invalidate(): void;
 }
 
-type ItemType<T> = T extends (infer ItemType)[] ? ItemType : never;
-
 export interface Signal<T> {
 	(): T;
 
