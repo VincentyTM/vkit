@@ -24,7 +24,7 @@ import { Template } from "./Template.js";
  * @param signal The writable signal containing a number that is always synchronized with the element's value.
  * @param defaultValue An optional default value. When the input's value is cleared, the signal is set to this value.
  * If there is no default value given, the signal's value is not set in that case.
- * @returns A directive which can be used on an input element (or even multiple elements) to create the binding(s).
+ * @returns A template that can be used in an input element to create a binding.
  */
 export function bindNumber(signal: WritableSignal<number>, defaultValue?: number): Template<HTMLInputElement> {
 	function set(this: HTMLInputElement): void {

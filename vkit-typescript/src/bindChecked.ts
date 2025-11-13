@@ -19,7 +19,7 @@ import { Template } from "./Template.js";
  * }
  * 
  * @param signal The writable signal containing a boolean value which is always true if the checkbox is checked and false otherwise.
- * @returns A directive which can be used on a checkbox input element (or even multiple elements) to create the binding(s).
+ * @returns A template that can be used in a checkbox input element to create a binding.
  */
 export function bindChecked(signal: WritableSignal<boolean>): Template<HTMLInputElement> {
 	return {

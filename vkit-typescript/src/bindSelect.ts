@@ -19,7 +19,7 @@ import { tick } from "./tick.js";
  * }
  * 
  * @param signal A signal that can be read from and written to.
- * @returns A directive that can be applied on a <select> element.
+ * @returns A template that can be used in a select element to create a binding.
  */
 export function bindSelect(signal: WritableSignal<string>): Template<HTMLSelectElement> {
 	return [

@@ -18,7 +18,7 @@ import { Template } from "./Template.js";
  * }
  * 
  * @param signal The writable signal containing a string that is always synchronized with the element's value.
- * @returns A directive which can be used on an input or textarea element (or even multiple elements) to create the binding(s).
+ * @returns A template that can be used in an input or textarea element to create a binding.
  */
 export function bindText<P extends HTMLInputElement | HTMLTextAreaElement>(signal: WritableSignal<string>): Template<P>;
 
