@@ -48,6 +48,10 @@ function propToAttr(name: string): string {
 		return "class";
 	}
 
+	if (name === "defaultValue") {
+		return "value";
+	}
+
 	if (name === "htmlFor") {
 		return "for";
 	}
