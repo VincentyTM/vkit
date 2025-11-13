@@ -12,22 +12,22 @@ export type PermissionPrompt = (
 );
 
 interface DefaultPermissionPrompt {
-	state: "default";
+	readonly state: "default";
 }
 
 interface DeniedPermissionPrompt {
-	denied: true;
-	state: "denied";
+	readonly denied: true;
+	readonly state: "denied";
 }
 
 interface GrantedPermissionPrompt {
-	granted: true;
-	state: "granted";
+	readonly granted: true;
+	readonly state: "granted";
 }
 
 interface PromptPermissionPrompt {
-	prompt: true;
-	state: "prompt";
+	readonly prompt: true;
+	readonly state: "prompt";
 	request(): void;
 	dismiss(): void;
 }

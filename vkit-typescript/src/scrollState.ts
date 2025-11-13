@@ -13,9 +13,9 @@ export interface ScrollData {
 }
 
 export interface ScrollState {
-	data: WritableSignal<ScrollData>;
-	x: WritableSignal<number>;
-	y: WritableSignal<number>;
+	readonly data: WritableSignal<ScrollData>;
+	readonly x: WritableSignal<number>;
+	readonly y: WritableSignal<number>;
 	bindElement(scrollable: Element): void;
 	bindWindow(scrollable: Window): void;
 }

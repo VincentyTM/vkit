@@ -5,8 +5,8 @@ import { permission, PermissionPrompt } from "./permission.js";
 import { signal } from "./signal.js";
 
 interface PersistentStorage {
-	permission: Signal<PermissionPrompt>;
-	persisted: Signal<boolean>;
+	readonly permission: Signal<PermissionPrompt>;
+	readonly persisted: Signal<boolean>;
 }
 
 export function persistentStorage(): PersistentStorage {

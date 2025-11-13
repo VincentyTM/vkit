@@ -6,7 +6,7 @@ import { onEvent } from "./onEvent.js";
 import { signal } from "./signal.js";
 
 interface NotificationManager {
-	permission: Signal<NotificationPermissionState>;
+	readonly permission: Signal<NotificationPermissionState>;
 	dismiss(): void;
 	granted(): boolean;
 	requestPermission(): void;
