@@ -18,24 +18,27 @@ interface DraggableOptions<T> {
 	 * @param element The element being moved. It might be different from the draggable element.
 	 * @param x The horizontal pointer coordinate from the left side of the viewport.
 	 * @param y The vertical pointer coordinate from the top of the viewport.
+	 * @param position An event or touch object for extracting the position data.
 	 */
-	onDragEnd?(element: T, x: number, y: number): void;
+	onDragEnd?(element: T, x: number, y: number, position: MouseEvent | Touch): void;
 
 	/**
 	 * An event listener that runs when the draggable element is being moved.
 	 * @param element The element being moved. It might be different from the draggable element.
 	 * @param x The horizontal pointer coordinate from the left side of the viewport.
 	 * @param y The vertical pointer coordinate from the top of the viewport.
+	 * @param position An event or touch object for extracting the position data.
 	 */
-	onDragMove?(element: T, x: number, y: number): void;
+	onDragMove?(element: T, x: number, y: number, position: MouseEvent | Touch): void;
 
 	/**
 	 * An event listener that runs when the pointer is pressed and the dragging starts.
 	 * @param element The element being moved. It might be different from the draggable element.
 	 * @param x The horizontal pointer coordinate from the left side of the viewport.
 	 * @param y The vertical pointer coordinate from the top of the viewport.
+	 * @param position An event or touch object for extracting the position data.
 	 */
-	onDragStart?(element: T, x: number, y: number): void;
+	onDragStart?(element: T, x: number, y: number, position: MouseEvent | Touch): void;
 }
 
 /**
@@ -86,14 +89,16 @@ export function draggable(options?: DraggableOptions<DraggableElement>): Templat
 			dragStart(
 				elNode,
 				elStartLeft,
-				elStartTop
+				elStartTop,
+				mouseDownEvent
 			);
 			
 			function dragMoveListener(mouseMoveEvent: MouseEvent): void {
 				dragMove(
 					elNode,
 					elStartLeft + getMouseX(mouseMoveEvent, elNode) - startX,
-					elStartTop + getMouseY(mouseMoveEvent, elNode) - startY
+					elStartTop + getMouseY(mouseMoveEvent, elNode) - startY,
+					mouseMoveEvent
 				);
 			}
 			
@@ -105,7 +110,8 @@ export function draggable(options?: DraggableOptions<DraggableElement>): Templat
 				dragEnd(
 					elNode,
 					elStartLeft + getMouseX(mouseUpEvent, elNode) - startX,
-					elStartTop + getMouseY(mouseUpEvent, elNode) - startY
+					elStartTop + getMouseY(mouseUpEvent, elNode) - startY,
+					mouseUpEvent
 				);
 			}
 			
@@ -133,7 +139,8 @@ export function draggable(options?: DraggableOptions<DraggableElement>): Templat
 			dragStart(
 				elNode,
 				elStartLeft,
-				elStartTop
+				elStartTop,
+				touchStartEvent.touches[0]
 			);
 			
 			function dragMoveListener(touchMoveEvent: TouchEvent): void {
@@ -143,7 +150,8 @@ export function draggable(options?: DraggableOptions<DraggableElement>): Templat
 				dragMove(
 					elNode,
 					elStartLeft + getTouchX(touchMoveEvent) - startX,
-					elStartTop + getTouchY(touchMoveEvent) - startY
+					elStartTop + getTouchY(touchMoveEvent) - startY,
+					touchMoveEvent.touches[0]
 				);
 			}
 			
@@ -155,7 +163,8 @@ export function draggable(options?: DraggableOptions<DraggableElement>): Templat
 				dragEnd(
 					elNode,
 					elStartLeft + getTouchX(touchEndEvent) - startX,
-					elStartTop + getTouchY(touchEndEvent) - startY
+					elStartTop + getTouchY(touchEndEvent) - startY,
+					touchEndEvent.touches[0]
 				);
 			}
 			
