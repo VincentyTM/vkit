@@ -1,5 +1,5 @@
 import { destroySubscribers } from "./destroySubscribers.js";
-import { ReactiveNode } from "./ReactiveNode.js";
+import { ReactiveNode, ReactiveNodeType } from "./ReactiveNode.js";
 import { DESTROYED_FLAG, DIRTY_FLAG, TO_BE_EVALUATED_FLAG, VISITED_FLAG } from "./reactiveNodeFlags.js";
 import { enqueueUpdate } from "./update.js";
 
@@ -25,9 +25,14 @@ export function flush(): void {
 
 			if (node.flags & DESTROYED_FLAG) {
 				destroySubscribers(node);
-			} else {
-				node.update(node, false);
+				continue;
 			}
+			
+			if (node.type === ReactiveNodeType.Signal && node.subscribers.length === 0) {
+				continue;
+			}
+			
+			node.update(node, false);
 		}
 	}
 }
