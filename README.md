@@ -45,7 +45,6 @@ render(CounterApp, document.body);
   * [Component Lifecycle](#component-lifecycle)
   * [Dependency Injection](#dependency-injection)
   * [References](#references)
-  * [Custom Elements](#custom-elements)
 
 ## Getting Started
 
