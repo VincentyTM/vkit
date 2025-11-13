@@ -33,7 +33,7 @@ export interface Ref<T> extends CustomTemplate<T> {
  * }
  * @returns A function directive which binds an element (or any other object) to the reference until the current reactive context is destroyed.
  */
-export function ref<T = Element>(): Ref<T> {
+export function ref<T = HTMLElement | SVGElement>(): Ref<T> {
 	var reference: MutableRef<T> = {
 		current: null,
 		effect: getEffect(true),
