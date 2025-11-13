@@ -27,7 +27,7 @@ export interface Signal<T> {
 	/**
 	 * A boolean which is always true. It is used internally to check if a value is a signal.
 	 */
-	 readonly isSignal: true;
+	readonly isSignal: true;
 
 	/**
 	 * Creates and returns a computed signal whose value depends on the current signal.

@@ -178,16 +178,16 @@ function compareData<T>(a: DataWithContext<T>, b: DataWithContext<T>): number {
 }
 
 function map<T, U>(array: T[], transform: (value: T, index: number, array: T[]) => U): U[] {
-    if (typeof array.map === "function") {
-        return array.map(transform);
-    }
+	if (typeof array.map === "function") {
+		return array.map(transform);
+	}
 
-    var n = array.length;
-    var newArray = new Array<U>(n);
+	var n = array.length;
+	var newArray = new Array<U>(n);
 
-    for (var i = 0; i < n; ++i) {
-        newArray[i] = transform(array[i], i, array);
-    }
+	for (var i = 0; i < n; ++i) {
+		newArray[i] = transform(array[i], i, array);
+	}
 
-    return newArray;
+	return newArray;
 }

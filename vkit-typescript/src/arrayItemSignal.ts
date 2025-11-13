@@ -17,27 +17,27 @@ import { WritableSignal } from "./signal.js";
  * @returns A writable signal that contains the array item's current value.
  */
 export function arrayItemSignal<T>(parent: WritableSignal<T[]>, index: number | Signal<number>): WritableSignal<T> {
-    return deriveSignal(parent, selectValue, updateValue, index);
+	return deriveSignal(parent, selectValue, updateValue, index);
 }
 
 function selectValue<T>(state: T[], index: number): T {
-    if (!(index in state)) {
-        throw new RangeError("Index " + index + " is out of range");
-    }
+	if (!(index in state)) {
+		throw new RangeError("Index " + index + " is out of range");
+	}
 
-    return state[index];
+	return state[index];
 }
 
 function updateValue<T>(state: T[], newValue: T, index: number): T[] {
-    if (!(index in state)) {
-        throw new RangeError("Index " + index + " is out of range");
-    }
+	if (!(index in state)) {
+		throw new RangeError("Index " + index + " is out of range");
+	}
 
-    if (state[index] === newValue) {
-        return state;
-    }
+	if (state[index] === newValue) {
+		return state;
+	}
 
-    var newState = state.slice();
-    newState[index] = newValue;
-    return newState;
+	var newState = state.slice();
+	newState[index] = newValue;
+	return newState;
 }

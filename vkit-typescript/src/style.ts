@@ -32,45 +32,45 @@ function getRootNode(el: Node): Node {
 	if (el.getRootNode) {
 		return el.getRootNode();
 	}
-	
+
 	while (el.parentNode) {
 		el = el.parentNode;
 	}
-	
+
 	return el;
 }
 
 function getStyleContainer(el: StylableNode): StyleContainer {
 	var docOrShadow = getRootNode(el);
 	var parent: Node | undefined = (docOrShadow as Document).head;
-	
+
 	if (!parent && (docOrShadow as Document).getElementsByTagName) {
 		parent = (docOrShadow as Document).getElementsByTagName("head")[0];
 	}
-	
+
 	if (!parent) {
 		parent = docOrShadow;
 	}
-	
+
 	var container: StyleContainer = map !== null ? map.get(parent) : (parent as unknown as WithStyleContainer).__styleContainer;
-	
+
 	if (container) {
 		return container;
 	}
-	
+
 	container = createStyleContainer();
 	var styleEl = container.element;
-	
+
 	if (map) {
 		map.set(parent, container);
 	} else {
 		(parent as unknown as WithStyleContainer).__styleContainer = container;
 	}
-	
+
 	parent.appendChild(styleEl);
-	
+
 	container.parent = parent;
-	
+
 	return container;
 }
 
@@ -138,7 +138,7 @@ function clientRenderStyle(
 	var selector = "." + className;
 	var container: StyleContainer | null = null;
 	var controller: StyleController | null = null;
-	
+
 	tick(function(): void {
 		container = getStyleContainer(element);
 		controller = container.add(selector);
@@ -150,17 +150,17 @@ function clientRenderStyle(
 	if (isInElementContext(clientRenderer)) {
 		clientRenderClasses(clientRenderer, classes(className));
 	}
-	
+
 	onDestroy(function(): void {
 		if (container && container.remove(selector)) {
 			var parent: Node | null = container.element.parentNode;
-			
+
 			if (parent !== null) {
 				parent.removeChild(container.element);
 			}
-			
+
 			parent = container.parent;
-			
+
 			if (parent !== null) {
 				if (map !== null) {
 					map["delete"](parent);
