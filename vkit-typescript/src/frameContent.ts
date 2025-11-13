@@ -50,9 +50,8 @@ export function frameContent(getTemplate: (() => Template<HTMLElement>) | Signal
 		props,
 		
 		directive(function(iframe: HTMLIFrameElement): void {
-			getTemplate.subscribe(function(): void {
-				iframe.src = "";
-			});
+			getTemplate();
+			iframe.src = "";
 		})
 	];
 }

@@ -29,8 +29,8 @@ export function objectProperty<T, K extends keyof T>(
 ): WritableSignal<T[K]> {
 	var value = signal<T[K]>(getSnapshot(object)[getSnapshot(property)]);
 	
-	value.subscribe(function(v: T[K]) {
-		getSnapshot(object)[getSnapshot(property)] = v;
+	effect(function() {
+		getSnapshot(object)[getSnapshot(property)] = value();
 	});
 	
 	effect(function() {

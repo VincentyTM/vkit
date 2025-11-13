@@ -5,6 +5,7 @@ import { WindowService } from "./getWindow.js";
 import { inject } from "./inject.js";
 import { isSignal } from "./isSignal.js";
 import { noop } from "./noop.js";
+import { onChange } from "./onChange.js";
 import { onDestroy } from "./onDestroy.js";
 import { signal, WritableSignal } from "./signal.js";
 import { updateEffect } from "./updateEffect.js";
@@ -114,7 +115,7 @@ export function windowData<T extends WindowDataValue>(key: string, init: InitFun
 		var parts = data.parts;
 		
 		if (isSignal(part)) {
-			part.subscribe(data.signal.invalidate);
+			onChange(part, data.signal.invalidate);
 		}
 		
 		parts.set(parts.get().concat([part]));
