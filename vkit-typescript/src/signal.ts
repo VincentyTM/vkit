@@ -1,7 +1,6 @@
 import { Signal, signalMap } from "./computed.js";
 import { createSignalNode } from "./createSignalNode.js";
 import { invalidateNode } from "./reactiveNodeStack.js";
-import { signalSubscribe } from "./signalSubscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
 
 export interface WritableSignal<T> extends Signal<T> {
@@ -84,10 +83,6 @@ export function signal<T>(value: T): WritableSignal<T> {
 			value = newValue;
 			invalidateNode(node);
 		}
-	};
-	
-	use.subscribe = function(callback: (value: T) => void): () => void {
-		return signalSubscribe(node, callback);
 	};
 
 	use.toString = writableSignalToString;

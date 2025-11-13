@@ -1,6 +1,5 @@
 import { createSignalNode } from "./createSignalNode.js";
 import { invalidateNode } from "./reactiveNodeStack.js";
-import { signalSubscribe } from "./signalSubscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
 
 export type ArrayOfMaybeSignals<A extends unknown[]> = unknown[] & {
@@ -118,10 +117,6 @@ export function computed<F extends (...args: never[]) => unknown>(
 	use.isSignal = true;
 
 	use.map = signalMap;
-	
-	use.subscribe = function(callback: (value: ReturnType<F>) => void): () => void {
-		return signalSubscribe(node, callback);
-	};
 
 	use.toString = toString;
 

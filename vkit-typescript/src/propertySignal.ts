@@ -3,7 +3,6 @@ import { createSignalNode, SignalNode } from "./createSignalNode.js";
 import { isSignal } from "./isSignal.js";
 import { objectAssign } from "./objectAssign.js";
 import { updateSignalValue, writableSignalToString, WritableSignal } from "./signal.js";
-import { signalSubscribe } from "./signalSubscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
 
 /**
@@ -81,10 +80,6 @@ export function propertySignal<T, K extends keyof T>(
 				key.get();
 			}
 		}
-	};
-	
-	use.subscribe = function(callback: (value: T[K] | undefined) => void): () => void {
-		return signalSubscribe(node, callback);
 	};
 
 	use.toString = writableSignalToString;

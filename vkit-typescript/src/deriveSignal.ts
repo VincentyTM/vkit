@@ -2,7 +2,6 @@ import { Signal, signalMap } from "./computed.js";
 import { createSignalNode, SignalNode } from "./createSignalNode.js";
 import { isSignal } from "./isSignal.js";
 import { updateSignalValue, WritableSignal, writableSignalToString } from "./signal.js";
-import { signalSubscribe } from "./signalSubscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
 
 /**
@@ -69,10 +68,6 @@ export function deriveSignal<T, K, U>(
 				key.get();
 			}
 		}
-	};
-	
-	use.subscribe = function(callback: (value: U) => void): () => void {
-		return signalSubscribe(node, callback);
 	};
 
 	use.toString = writableSignalToString;
