@@ -1,8 +1,7 @@
 import { Bindings } from "./bind.js";
 import { Signal } from "./computed.js";
 import { createEffect, Effect } from "./createEffect.js";
-import { hydrateInlineStyle } from "./hydrateInlineStyle.js";
-import { InlineStyleInput } from "./inlineStyle.js";
+import { hydrateInlineStyle, InlineStyleInput } from "./hydrateInlineStyle.js";
 import { isSignal } from "./isSignal.js";
 import { onEvent, EventListenerType } from "./onEvent.js";
 import { Template } from "./Template.js";
