@@ -1,12 +1,6 @@
 import { ReactiveNode } from "./ReactiveNode.js";
-import { DIRTY_FLAG } from "./reactiveNodeFlags.js";
-import { flush } from "./reactiveNodeStack.js";
 
 export function subscribe(source: ReactiveNode, target: ReactiveNode): void {
-	if (source.flags & DIRTY_FLAG) {
-		flush();
-	}
-
 	var subscribers = source.subscribers;
 
 	for (var i = subscribers.length; i--;) {
