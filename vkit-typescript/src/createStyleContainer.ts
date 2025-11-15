@@ -30,8 +30,10 @@ function createStyleSheet(): StyleSheetWrapper {
 	}
 	
 	function setCSS(value: string): void {
-		if (textNode) {
+		if (textNode !== null) {
 			textNode.nodeValue = value;
+		} else if ((style as any).styleSheet !== undefined) {
+			(style as any).styleSheet.cssText = value;
 		} else {
 			style.innerText = value;
 		}
