@@ -1,4 +1,3 @@
-import { getEffect } from "./contextGuard.js";
 import { ClientRenderer } from "./hydrate.js";
 import { onDestroy } from "./onDestroy.js";
 import { MutableRef } from "./ref.js";
@@ -13,7 +12,7 @@ export function clientRenderRef<P>(
 
 	ref.current = clientRenderer.context;
 
-	if (getEffect() !== ref.effect) {
+	if (clientRenderer.parentEffect !== ref.effect) {
 		onDestroy(function(): void {
 			ref.current = null;
 		});
