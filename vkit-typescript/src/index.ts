@@ -19,6 +19,7 @@ export { copyText } from "./copyText.js";
 export { createEffectSpawner } from "./createEffectSpawner.js";
 export { createInjectable, Injectable } from "./createInjectable.js";
 export { createScript } from "./createScript.js";
+export { createTranslator, TranslationSet, TranslatorConfig } from "./createTranslator.js";
 export { createWebRTCPeer, isWebRTCSupported, WebRTCPeer } from "./createWebRTCPeer.js";
 export { customElement } from "./customElement.js";
 export { debounce } from "./debounce.js";
