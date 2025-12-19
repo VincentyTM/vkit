@@ -97,7 +97,7 @@ function hydrateDynamicText(pointer: HydrationPointer<ParentNodeCore>, template:
 	var node: Text | undefined;
 	var parentEffect = pointer.parentEffect;
 
-	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+	var effect = createEffect(parentEffect, function(): void {
 		if (node) {
 			node.nodeValue = String(template());
 		} else {
@@ -112,7 +112,7 @@ function hydrateDynamicSignalText(pointer: HydrationPointer<ParentNodeCore>, tem
 	var node: Text | undefined;
 	var parentEffect = pointer.parentEffect;
 
-	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+	var effect = createEffect(parentEffect, function(): void {
 		if (node) {
 			node.nodeValue = String(template());
 		} else {
@@ -181,7 +181,7 @@ function hydrateFunctionBinding<P, K extends keyof P>(
 	var element = pointer.context;
 	var parentEffect = pointer.parentEffect;
 
-	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+	var effect = createEffect(parentEffect, function(): void {
 		element[key] = value();
 	});
 
@@ -192,7 +192,7 @@ function hydrateSignalBinding<P, K extends keyof P>(pointer: HydrationPointer<P>
 	var element = pointer.context;
 	var parentEffect = pointer.parentEffect;
 
-	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+	var effect = createEffect(parentEffect, function(): void {
 		element[key] = value();
 	});
 

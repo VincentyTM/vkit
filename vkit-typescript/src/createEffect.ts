@@ -7,7 +7,7 @@ import { updateEffect } from "./updateEffect.js";
 export interface Effect extends ReactiveNodeBase {
 	children: Effect[] | undefined;
 	destroyHandlers: (() => void)[] | undefined;
-	readonly injector: Injector | undefined;
+	readonly injector: Injector;
 	readonly parent: Effect | undefined;
 	readonly type: ReactiveNodeType.Effect;
 	errorHandler: ((error: unknown) => void) | undefined;
@@ -16,10 +16,17 @@ export interface Effect extends ReactiveNodeBase {
 
 export function createEffect(
 	parentEffect: Effect | undefined,
-	injector: Injector | undefined,
 	updateHandler: () => void,
-	errorHandler?: ((error: unknown) => void) | undefined
+	errorHandler?: ((error: unknown) => void) | undefined,
+	injector?: Injector
 ) : Effect {
+	if (injector === undefined) {
+		if (parentEffect === undefined) {
+			throw new Error("Parent effect or injector must be defined");
+		}
+		injector = parentEffect.injector;
+	}
+
 	var effect: Effect = {
 		children: undefined,
 		destroyHandlers: undefined,

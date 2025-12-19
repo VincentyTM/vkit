@@ -43,7 +43,7 @@ function addAttribute(clientRenderer: ClientRenderer<Element>, name: string, val
 	if (isSignal(value) || typeof value === "function") {
 		var parentEffect = clientRenderer.parentEffect;
 
-		var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+		var effect = createEffect(parentEffect, function(): void {
 			setAttribute(el, name, value(), isSVG);
 		});
 

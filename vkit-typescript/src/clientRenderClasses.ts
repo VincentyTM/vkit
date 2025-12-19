@@ -41,7 +41,7 @@ function bindClass(
 	value: BooleanValue
 ): void {
 	if (isSignal(value) || typeof value === "function") {
-		var effect = createEffect(parentEffect, parentEffect.injector, function() {
+		var effect = createEffect(parentEffect, function() {
 			bindClass(parentEffect, el, name, value());
 		});
 		updateEffect(effect);
@@ -82,7 +82,7 @@ function bindClasses(
 	}
 	
 	if (isSignal(arg) || typeof arg === "function") {
-		var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+		var effect = createEffect(parentEffect, function(): void {
 			bindClasses(parentEffect, el, arg(), true);
 		});
 		updateEffect(effect);

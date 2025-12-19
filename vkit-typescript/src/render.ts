@@ -49,7 +49,7 @@ export function render<P extends HTMLElement>(
 	var stopNode = options && options.endNode || null;
 
 	var rootInjector = createInjector(undefined, true);
-	var rootEffect = createEffect(undefined, rootInjector, function(): void {
+	var rootEffect = createEffect(undefined, function(): void {
 		inject(WindowService).window = win;
 
 		var pointer: HydrationPointer<P> = {
@@ -62,13 +62,13 @@ export function render<P extends HTMLElement>(
 
 		hydrate(pointer, getTemplate());
 		removeRemainingNodes(pointer);
-	});
+	}, undefined, rootInjector);
 
 	rootInjector.effect = rootEffect;
 
 	updateEffect(rootEffect);
 	update();
-	
+
 	return {
 		destroy: function(): void {
 			destroyEffect(rootEffect);

@@ -24,7 +24,7 @@ function serverRenderViewListBlock<T, P extends ParentNode>(
 	listTemplate: ViewListTemplate<T, P>,
 	model: T
 ): void {
-	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+	var effect = createEffect(parentEffect, function(): void {
 		serverRender(element, listTemplate.getItemTemplate(model));
 	});
 	updateEffect(effect);

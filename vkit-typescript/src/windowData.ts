@@ -60,7 +60,7 @@ function getData<T extends WindowDataValue>(key: string, init: InitFunction<T>):
 	var result: WindowData<T> | undefined;
 	
 	var parentEffect = windowService.effect;
-	var currentEffect = createEffect(parentEffect, parentEffect.injector, function(): void {
+	var currentEffect = createEffect(parentEffect, function(): void {
 		var parts = signal<WindowDataPart<T>[]>([]);
 		var initialValue: T;
 		var callEffect = noop;

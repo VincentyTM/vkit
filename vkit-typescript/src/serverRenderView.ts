@@ -8,7 +8,7 @@ import { ViewTemplate } from "./view.js";
 export function serverRenderView(container: ServerElement, view: ViewTemplate<unknown>): void {	
 	var parentEffect = getEffect();
 
-	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+	var effect = createEffect(parentEffect, function(): void {
 		serverRender(container, view.getTemplate());
 	});
 

@@ -48,7 +48,7 @@ function hydrateDynamicStyleProperty<K extends keyof CSSStyleDeclaration>(
 	key: K,
 	value: Signal<CSSStyleDeclaration[K]> | (() => CSSStyleDeclaration[K])
 ): void {
-	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+	var effect = createEffect(parentEffect, function(): void {
 		style[key] = value();
 	});
 	updateEffect(effect);

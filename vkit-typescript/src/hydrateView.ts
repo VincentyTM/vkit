@@ -9,7 +9,7 @@ export function hydrateView<P extends ParentNode>(pointer: HydrationPointer<P>, 
 	var end = document.createTextNode("");
 	var parentEffect = view.parentEffect;
 	
-	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+	var effect = createEffect(parentEffect, function(): void {
 		var innerTemplate = view.getTemplate();
 		var parentNode = pointer.context;
 		var parent = end.parentNode;

@@ -24,7 +24,7 @@ export function renderToStream(
 ): void {
 	var injector = createInjector(undefined, true);
 
-	var effect = createEffect(undefined, injector, function() {
+	var effect = createEffect(undefined, function() {
 		var root = createServerElement("document");
 		var children = root.children;
 
@@ -43,7 +43,7 @@ export function renderToStream(
 				writeServerNode(stream, children[i]);
 			}
 		}
-	});
+	}, undefined, injector);
 
 	injector.effect = effect;
 

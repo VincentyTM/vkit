@@ -25,7 +25,7 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 	var parentNode = pointer.context;
 	var parentEffect = template.parentEffect;
 
-	var listEffect = createEffect(parentEffect, parentEffect.injector, function(): void {
+	var listEffect = createEffect(parentEffect, function(): void {
 		var models = template.models();
 		var n = models.length;
 		
@@ -181,7 +181,7 @@ function createBlock<T, P extends ParentNode>(
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
 	
-	var effect = createEffect(parentEffect, parentEffect.injector, function(): void {
+	var effect = createEffect(parentEffect, function(): void {
 		var innerTemplate = block.currentTemplate = getItemTemplate(model);
 		
 		var parent = end.parentNode;

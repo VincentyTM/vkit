@@ -34,7 +34,7 @@ export function effectMap<K extends string, T, U, V, W extends Signal<Record<K, 
 
 	var parentEffect = getEffect();
 	var effects: Record<string, Effect> = {};
-	var groupEffect = createEffect(parentEffect, parentEffect.injector, function() {
+	var groupEffect = createEffect(parentEffect, function() {
 		var object = objectSignal();
 
 		for (var key in effects) {
@@ -81,7 +81,7 @@ function createInstanceEffect<K extends string, T, U, V, W extends Signal<Record
 	objectSignal: W,
 	data: U
 ): Effect {
-	return createEffect(parentEffect, parentEffect.injector, function(): void {
+	return createEffect(parentEffect, function(): void {
 		var extended = objectAssign({}, values.get());
 		extended[key] = mapKey(key, objectSignal, data);
 		values.set(extended);

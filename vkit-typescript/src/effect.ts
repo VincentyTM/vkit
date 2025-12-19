@@ -28,7 +28,7 @@ export function effect(updateHandler: () => void): void {
 		var parentEffect = getEffect();
 		
 		updateEffect(
-			createEffect(parentEffect, parentEffect.injector, updateHandler)
+			createEffect(parentEffect, updateHandler)
 		);
 	}
 }

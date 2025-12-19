@@ -38,14 +38,14 @@ export function createEffectSpawner<T>(
 	onCreate: (destroy: () => void, data: T) => void
 ): EffectSpawner<T> {
 	var parentEffect = getEffect();
-	
+
 	return {
 		spawn: function(data: T): void {
-			var childEffect = createEffect(parentEffect, parentEffect.injector, function(): void {
+			var childEffect = createEffect(parentEffect, function(): void {
 				onCreate(destroy, data);
 			});
 			updateEffect(childEffect);
-			
+
 			function destroy(): void {
 				destroyEffect(childEffect);
 			}

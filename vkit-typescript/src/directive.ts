@@ -14,7 +14,7 @@ function clientRenderDirective<P>(
 ): void {
 	var context = clientRenderer.context;
 	var parentEffect = clientRenderer.parentEffect;
-	var effect = createEffect(parentEffect, parentEffect.injector, function() {
+	var effect = createEffect(parentEffect, function() {
 		template.callback(context);
 	});
 	updateEffect(effect);
