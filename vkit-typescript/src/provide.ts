@@ -1,7 +1,9 @@
-import { getEffect, setInjector } from "./contextGuard.js";
+import { getEffect, setReactiveNode } from "./contextGuard.js";
+import { createEffect } from "./createEffect.js";
 import { Injectable } from "./createInjectable.js";
 import { createInjector } from "./createInjector.js";
 import { createProvider } from "./createProvider.js";
+import { noop } from "./noop.js";
 
 /**
  * Creates a scope in which the specified services can be instantiated with the same instance.
@@ -40,23 +42,24 @@ export function provide<R>(
 ): R {
 	var parentEffect = getEffect();
 	var injector = createInjector(parentEffect.injector, configs === null);
+	var effect = createEffect(parentEffect, noop, undefined, injector);
 
-	injector.effect = parentEffect;
+	injector.effect = effect;
 
 	if (configs !== null) {
 		var n = configs.length;
 
 		for (var i = 0; i < n; ++i) {
 			var config = configs[i];
-			var provider = createProvider(config, parentEffect, injector);
+			var provider = createProvider(config, effect, injector);
 			injector.providers.set(config, provider);
 		}
 	}
 
 	try {
-		setInjector(injector);
+		setReactiveNode(effect);
 		return getContent();
 	} finally {
-		setInjector(parentEffect.injector);
+		setReactiveNode(parentEffect);
 	}
 }
