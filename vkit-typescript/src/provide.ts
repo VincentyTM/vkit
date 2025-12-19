@@ -51,7 +51,7 @@ export function provide<R>(
 
 		for (var i = 0; i < n; ++i) {
 			var config = configs[i];
-			var provider = createProvider(config, effect, injector);
+			var provider = createProvider(config, effect);
 			injector.providers.set(config, provider);
 		}
 	}

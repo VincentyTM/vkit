@@ -40,7 +40,7 @@ export function inject<T>(injectable: Injectable<T>): T {
 					throw new Error("Injector has no effect");
 				}
 
-				var newProvider = createProvider(injectable, parentInjector.effect, parentInjector);
+				var newProvider = createProvider(injectable, parentInjector.effect);
 				injector.providers.set(injectable, newProvider);
 				
 				try {
