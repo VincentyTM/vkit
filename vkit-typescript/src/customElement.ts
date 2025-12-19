@@ -88,7 +88,7 @@ export function customElement<T extends CustomElementGetTemplate>(
 			CustomElement
 		);
 
-		var injector = createInjector(undefined, true);
+		var injector = createInjector(true);
 		
 		var effect = createEffect(undefined, function(): void {
 			var doc = el.ownerDocument;
@@ -105,8 +105,6 @@ export function customElement<T extends CustomElementGetTemplate>(
 
 			hydrate(pointer, view);
 		}, undefined, injector);
-
-		injector.effect = effect;
 		
 		el.effect = effect;
 		el.observedAttributes = {};

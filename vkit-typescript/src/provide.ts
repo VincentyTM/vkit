@@ -41,10 +41,8 @@ export function provide<R>(
 	getContent: () => R
 ): R {
 	var parentEffect = getEffect();
-	var injector = createInjector(parentEffect.injector, configs === null);
+	var injector = createInjector(configs === null);
 	var effect = createEffect(parentEffect, noop, undefined, injector);
-
-	injector.effect = effect;
 
 	if (configs !== null) {
 		var n = configs.length;

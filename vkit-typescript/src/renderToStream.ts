@@ -22,7 +22,7 @@ export function renderToStream(
 	getTemplate: () => Template<ParentNode>,
 	renderOptions?: RenderOptions
 ): void {
-	var injector = createInjector(undefined, true);
+	var injector = createInjector(true);
 
 	var effect = createEffect(undefined, function() {
 		var root = createServerElement("document");
@@ -44,8 +44,6 @@ export function renderToStream(
 			}
 		}
 	}, undefined, injector);
-
-	injector.effect = effect;
 
 	updateEffect(effect);
 	update();

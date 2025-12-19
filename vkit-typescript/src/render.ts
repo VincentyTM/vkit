@@ -48,7 +48,7 @@ export function render<P extends HTMLElement>(
 	var currentNode = currentNodeOption === undefined ? container.firstChild : currentNodeOption;
 	var stopNode = options && options.endNode || null;
 
-	var rootInjector = createInjector(undefined, true);
+	var rootInjector = createInjector(true);
 	var rootEffect = createEffect(undefined, function(): void {
 		inject(WindowService).window = win;
 
@@ -63,8 +63,6 @@ export function render<P extends HTMLElement>(
 		hydrate(pointer, getTemplate());
 		removeRemainingNodes(pointer);
 	}, undefined, rootInjector);
-
-	rootInjector.effect = rootEffect;
 
 	updateEffect(rootEffect);
 	update();
