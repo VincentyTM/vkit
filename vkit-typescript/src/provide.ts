@@ -8,28 +8,31 @@ import { noop } from "./noop.js";
 /**
  * Creates a scope in which the specified services can be instantiated with the same instance.
  * @example
- * const AuthService = createInjectable(() => ({
- * 	isLoggedIn: false
- * }));
+ * const LanguageService = createInjectable(() => signal("en"));
  * 
- * const LanguageService = createInjectable(() => ({
- * 	language: "en"
- * }));
+ * const ThemeService = createInjectable(() => signal("light"));
  * 
  * function MyComponent() {
- * 	return provide([AuthService, LanguageService], () => {
+ * 	return provide([
+ * 		LanguageService,
+ * 		ThemeService.override(() => signal("dark"))
+ * 	], () => {
  * 		return [
- * 			P("Print the same language twice"),
- * 			Language(),
- * 			Language()
+ * 			P("Display the same values twice:"),
+ * 			Display(),
+ * 			Display()
  * 		];
  * 	});
  * }
  * 
- * function Language() {
- * 	const languageService = inject(LanguageService);
+ * function Display() {
+ * 	const language = inject(LanguageService);
+ * 	const theme = inject(ThemeService);
  * 	
- * 	return P("Provided language: ", languageService.language);
+ * 	return [
+ * 		P("Provided language: ", language),
+ * 		P("Provided theme: ", theme)
+ * 	];
  * }
  * @param configs An array of injectable services.
  * @param getContent A callback function with no parameters.
@@ -50,7 +53,7 @@ export function provide<R>(
 		for (var i = 0; i < n; ++i) {
 			var config = configs[i];
 			var provider = createProvider(config, effect);
-			injector.providers.set(config, provider);
+			injector.providers.set(config.token, provider);
 		}
 	}
 

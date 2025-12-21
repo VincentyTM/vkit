@@ -38,7 +38,7 @@ export function inject<T>(injectable: Injectable<T>): T {
 			continue;
 		}
 
-		var provider = injector.providers.get(injectable);
+		var provider = injector.providers.get(injectable.token);
 
 		if (provider !== undefined) {
 			if (provider.isCreated) {
@@ -59,7 +59,7 @@ export function inject<T>(injectable: Injectable<T>): T {
 
 		if (injector.allowMissingProvider) {
 			var newProvider = createProvider(injectable, effect);
-			injector.providers.set(injectable, newProvider);
+			injector.providers.set(injectable.token, newProvider);
 
 			try {
 				setReactiveNode(newProvider.effect);
