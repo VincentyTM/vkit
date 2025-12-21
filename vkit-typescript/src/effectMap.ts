@@ -10,6 +10,57 @@ import { signal, WritableSignal } from "./signal.js";
 import { subscribe } from "./subscribe.js";
 import { updateEffect } from "./updateEffect.js";
 
+/**
+ * Maps each key in a source object to another value within a reactive context.
+ * 
+ * For each key in the source object, a reactive context is created.
+ * If a key is no longer present, its reactive context is destroyed.
+ * Note that simply replacing a key's value does not destroy or recreate its reactive context.
+ * 
+ * Use this function to declare side effects and collect transformed values
+ * based on the provided mapping function.
+ * 
+ * @example
+ * function UserContainer() {
+ * 	// This signal object specifies which users to load
+ * 	const requestedUsers = signal({
+ * 		me: true
+ * 	});
+ * 
+ * 	const users = effectMap(requestedUsers, (userId) => {
+ * 		const request = computed(() => ({
+ * 			responseType: "json",
+ * 			url: `/api/users/${userId}`
+ * 		}));
+ * 		const response = http(request);
+ * 
+ * 		// Error handling is omitted for simplicity
+ * 		return response.map(
+ * 			res => res.ok ? res.body : undefined
+ * 		);
+ * 	});
+ * 
+ * 	return {
+ * 		// This can be called in a reactive context
+ * 		// (e.g. computed or effect) and will automatically
+ * 		// update it when the user is loaded
+ * 		select: (userId) => users()[userId]?.()
+ * 	};
+ * }
+ * 
+ * // Create an instance of UserContainer
+ * const userContainer = UserContainer();
+ * 
+ * // Signal that contains undefined or the user object
+ * // once it is loaded
+ * const myUser = computed(() => userContainer.select("me"));
+ * 
+ * @param objectSignal The input signal containing the source object.
+ * @param mapKey A function that maps each key from the source object to a new value.
+ * @returns A signal that contains the output object.
+ * The output object retains the same keys as the input object,
+ * but its values are calculated by the mapping function.
+ */
 export function effectMap<K extends string, T, U, W extends Signal<Record<K, T>>>(
 	objectSignal: W,
 	mapKey: (key: K, objectSignal: W) => U
