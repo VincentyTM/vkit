@@ -17,7 +17,7 @@ export type ClassArgument = (
 export type NoClass = null | undefined | boolean;
 
 export interface ClassesTemplate extends CustomTemplate<Element> {
-	args: ClassArgument;
+	readonly args: ClassArgument;
 }
 
 /**
