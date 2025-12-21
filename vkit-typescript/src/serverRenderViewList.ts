@@ -1,4 +1,3 @@
-import { getEffect } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { ServerElement } from "./createServerElement.js";
 import { serverRender } from "./serverRender.js";
@@ -9,7 +8,7 @@ export function serverRenderViewList<T, P extends ParentNode>(
 	element: ServerElement,
 	listTemplate: ViewListTemplate<T, P>
 ): void {
-	var parentEffect = getEffect();
+	var parentEffect = listTemplate.parentEffect;
 	var list = listTemplate.models.get();
 	var n = list.length;
 
