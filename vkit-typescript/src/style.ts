@@ -77,27 +77,40 @@ function getStyleContainer(el: StylableNode): StyleContainer {
 /**
  * Creates a style which can be applied to one or more DOM elements.
  * 
- * The style is added to an element with an attribute which is removed when the current reactive context (the context in which the style was added to the element) is destroyed.
+ * The style is added to the relevant stylesheet and a generated class name
+ * is added to the element.
  * 
- * The stylesheet is removed from the document or shadow root when no DOM elements use it anymore.
- * A style can be used in multiple documents/shadow DOMs, each having their own independent stylesheet.
+ * The style is removed from the stylesheet when no DOM elements use it anymore.
+ * A style can be used in multiple documents/shadow DOMs, each having its own independent stylesheet.
  * @example
- * const MyStyle = $.style(`
- * 	::this {
- * 		color: red;
+ * function MyComponent() {
+ * 	return H1("Hello world", MyComponentStyle);
+ * }
+ * 
+ * const MyComponentStyle = style({
+ * 	backgroundColor: "yellow",
+ * 	color: [
+ * 		{value: "red"},
+ * 		{on: ":hover", value: "blue"}
  * 	}
- * `);
+ * });
  * 
- * const MyComponent = () => {
- * 	return H1("Hello world", MyStyle);
- * };
+ * @param css An object or string containing the CSS.
  * 
- * @param css A string containing the CSS. The special `::this` selector in it refers to all DOM elements that use the stylesheet.
- * A signal containing a string is also accepted, which is useful for creating a dynamic stylesheet.
- * Instead of a string, an object containing CSS properties is also allowed but in that case the selector cannot be specified.
+ * If it is a string, the special `::this` selector can be used to refer to
+ * all DOM elements that use the style.
+ * 
+ * If it is an object, its keys are the CSS property names and the values are
+ * the CSS property values.
+ * 
+ * It is possible to use arrays of variant objects instead of string CSS property values.
+ * A variant must have a `value` property which can be a string or another array of variants, recursively.
+ * A variant can also have an `on` property which extends the selector,
+ * e.g. with a class name or a pseudo-class like `:hover`.
  * @param options An optional object for style configuration.
- * The pseudo-element selector can be set as a property of this object, without `::`.
- * @returns A style template that can be added to a DOM element or a shadow root to apply the stylesheet.
+ * The pseudo-element selector can be set with the `pseudoElement` property of this object.
+ * The pseudo-element selector must be specified without the leading `::` symbols.
+ * @returns A style template that can be added to a DOM element or a shadow root to apply the style.
  */
 export function style(css: CSSTextOrDeclaration, options?: StyleOptions): StyleTemplate {
 	var generatedCSS = typeof css === "string" ? css : generateCSS(css, options && options.pseudoElement);
