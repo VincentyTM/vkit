@@ -1,18 +1,20 @@
 import { isArray } from "./isArray.js";
 import { toKebabCase } from "./toKebabCase.js";
 
-interface ConditionalValue<K extends keyof CSSStyleDeclaration> {
+interface ConditionalValue<T, K extends keyof T> {
 	readonly media?: string;
 	readonly on?: string;
 	readonly prefixes?: string[];
-	readonly value: CSSValue<K>;
+	readonly value: CSSValue<T, K>;
 	readonly within?: string;
 }
 
-type CSSValue<K extends keyof CSSStyleDeclaration> = CSSStyleDeclaration[K] | ConditionalValue<K>[];
+type CSSValue<T, K extends keyof T> = T[K] | ConditionalValue<T, K>[];
 
 export type CSSProperties = object & {
-	[K in keyof Partial<CSSStyleDeclaration>]: CSSValue<K>;
+    [K in keyof Partial<CSSStyleDeclaration>]: CSSValue<CSSStyleDeclaration, K>;
+} & {
+	[K: string]: CSSValue<Record<string, string>, string>;
 };
 
 type MediaQueries = Record<string, Rules>;
@@ -24,7 +26,7 @@ function setConditionalValues<K extends keyof CSSStyleDeclaration & string>(
 	mediaQueries: MediaQueries,
 	mediaQueryName: string,
 	propName: K,
-	conditionalValues: CSSValue<K>,
+	conditionalValues: CSSValue<CSSStyleDeclaration, K>,
 	prefixes: string[] | undefined
 ): void {
 	if (!isArray(conditionalValues)) {
@@ -77,7 +79,7 @@ export function generateCSS(props: CSSProperties, pseudoElement: string | undefi
 				mediaQueries,
 				"",
 				propName as keyof CSSStyleDeclaration & string,
-				cssValue,
+				cssValue as string,
 				undefined
 			);
 		}
