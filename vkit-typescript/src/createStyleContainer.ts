@@ -18,8 +18,7 @@ interface StyleSheetWrapper {
 	setCSS(value: string): void;
 }
 
-function createStyleSheet(): StyleSheetWrapper {
-	var style = document.createElement("style");
+function createStyleSheet(style: HTMLStyleElement): StyleSheetWrapper {
 	var textNode: Text | null = null;
 	
 	try {
@@ -77,8 +76,8 @@ function createStyleController(name: string, updateStyle: () => void): StyleCont
 	};
 }
 
-export function createStyleContainer(): StyleContainer {
-	var style = createStyleSheet();
+export function createStyleContainer(styleElement: HTMLStyleElement): StyleContainer {
+	var style = createStyleSheet(styleElement);
 	var controllers: {[key: string]: StyleController} = {};
 	var controllersArray: StyleController[] = [];
 	

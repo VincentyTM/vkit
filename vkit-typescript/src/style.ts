@@ -58,7 +58,7 @@ function getStyleContainer(el: StylableNode): StyleContainer {
 		return container;
 	}
 
-	container = createStyleContainer();
+	container = createStyleContainer(document.createElement("style"));
 	var styleEl = container.element;
 
 	if (map) {
