@@ -34,6 +34,8 @@ type WithStyleContainer = {
 
 type CSSTextOrDeclaration = string | CSSProperties;
 
+var THIS_SELECTOR = /::?this\b/ig;
+
 var map = typeof WeakMap === "function" ? new WeakMap() : null;
 
 export var StyleService = createInjectable(function(): StyleService {
@@ -199,7 +201,7 @@ function clientRenderStyle(
 		container = getStyleContainer(element, styleService.styleElement);
 		controller = container.add(selector);
 		controller.setValue(
-			generatedCSS.replace(/::?this\b/ig, selector)
+			generatedCSS.replace(THIS_SELECTOR, selector)
 		);
 	});
 
@@ -235,7 +237,7 @@ function serverRenderStyle(
 	var className = template.className;
 	var selector = "." + className;
 	var styleService = inject(StyleService);
-	styleService.styles[selector] = template.css.replace(/::?this\b/ig, selector);
+	styleService.styles[selector] = template.css.replace(THIS_SELECTOR, selector);
 
 	if (styleService.updateCSS !== undefined) {
 		styleService.updateCSS();
