@@ -1,9 +1,11 @@
 import { classes } from "./classes.js";
 import { clientRenderClasses } from "./clientRenderClasses.js";
+import { createInjectable } from "./createInjectable.js";
 import { ServerElement } from "./createServerElement.js";
 import { createStyleContainer, StyleContainer, StyleController } from "./createStyleContainer.js";
 import { CSSProperties, generateCSS } from "./generateCSS.js";
 import { ClientRenderer } from "./hydrate.js";
+import { inject } from "./inject.js";
 import { onDestroy } from "./onDestroy.js";
 import { serverRenderClasses } from "./serverRenderClasses.js";
 import { CustomTemplate } from "./Template.js";
@@ -13,6 +15,12 @@ type StylableNode = Element | ShadowRoot;
 
 interface StyleOptions {
 	pseudoElement?: string;
+}
+
+interface StyleService {
+	styleElement: HTMLStyleElement | undefined;
+	styles: Record<string, string | undefined>;
+	updateCSS?(): void;
 }
 
 export interface StyleTemplate extends CustomTemplate<StylableNode> {
@@ -28,6 +36,23 @@ type CSSTextOrDeclaration = string | CSSProperties;
 
 var map = typeof WeakMap === "function" ? new WeakMap() : null;
 
+export var StyleService = createInjectable(function(): StyleService {
+	return {
+		styleElement: undefined,
+		styles: {}
+	};
+});
+
+function clearStyle(style: HTMLStyleElement): void {
+	if (style.firstChild !== null) {
+		style.removeChild(style.firstChild);
+	} else if ((style as any).styleSheet !== undefined) {
+		(style as any).styleSheet.cssText = "";
+	} else {
+		style.innerText = "";
+	}
+}
+
 function getRootNode(el: Node): Node {
 	if (el.getRootNode) {
 		return el.getRootNode();
@@ -40,7 +65,7 @@ function getRootNode(el: Node): Node {
 	return el;
 }
 
-function getStyleContainer(el: StylableNode): StyleContainer {
+function getStyleContainer(el: StylableNode, styleElement: HTMLStyleElement | undefined): StyleContainer {
 	var docOrShadow = getRootNode(el);
 	var parent: Node | undefined = (docOrShadow as Document).head;
 
@@ -58,7 +83,22 @@ function getStyleContainer(el: StylableNode): StyleContainer {
 		return container;
 	}
 
-	container = createStyleContainer(document.createElement("style"));
+	if (styleElement === undefined) {
+		var existingStyle = (parent as Element).getElementsByTagName
+			? (parent as Element).getElementsByTagName("style")[0]
+			: undefined
+		;
+
+		if (existingStyle !== undefined) {
+			clearStyle(existingStyle);
+		}
+
+		styleElement = existingStyle || document.createElement("style");
+	} else if (docOrShadow.nodeType !== 9) {
+		styleElement = document.createElement("style");
+	}
+
+	container = createStyleContainer(styleElement);
 	var styleEl = container.element;
 
 	if (map) {
@@ -67,7 +107,9 @@ function getStyleContainer(el: StylableNode): StyleContainer {
 		(parent as unknown as WithStyleContainer).__styleContainer = container;
 	}
 
-	parent.appendChild(styleEl);
+	if (styleEl.parentNode === null) {
+		parent.appendChild(styleEl);
+	}
 
 	container.parent = parent;
 
@@ -151,9 +193,10 @@ function clientRenderStyle(
 	var selector = "." + className;
 	var container: StyleContainer | null = null;
 	var controller: StyleController | null = null;
+	var styleService = inject(StyleService);
 
 	tick(function(): void {
-		container = getStyleContainer(element);
+		container = getStyleContainer(element, styleService.styleElement);
 		controller = container.add(selector);
 		controller.setValue(
 			generatedCSS.replace(/::?this\b/ig, selector)
@@ -189,5 +232,14 @@ function serverRenderStyle(
 	serverElement: ServerElement,
 	template: StyleTemplate
 ): void {
-	serverRenderClasses(serverElement, classes(template.className));
+	var className = template.className;
+	var selector = "." + className;
+	var styleService = inject(StyleService);
+	styleService.styles[selector] = template.css.replace(/::?this\b/ig, selector);
+
+	if (styleService.updateCSS !== undefined) {
+		styleService.updateCSS();
+	}
+
+	serverRenderClasses(serverElement, classes(className));
 }
