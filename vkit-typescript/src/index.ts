@@ -100,6 +100,7 @@ export { selectText } from "./selectText.js";
 export { selectTextRange } from "./selectTextRange.js";
 export { serializeForm } from "./serializeForm.js";
 export { serviceWorker } from "./serviceWorker.js";
+export { setStyleElement } from "./setStyleElement.js";
 export { shadow } from "./shadow.js";
 export { signal, WritableSignal } from "./signal.js";
 export { skipHydration } from "./skipHydration.js";
