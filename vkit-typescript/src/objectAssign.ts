@@ -2,6 +2,6 @@ export var objectAssign: <T>(a: Partial<T>, b: T) => T = Object.assign || functi
 	for (var k in b) {
 		a[k] = b[k];
 	}
-	
+
 	return a as T;
 };

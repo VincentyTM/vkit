@@ -14,7 +14,7 @@ export function timeout(callback: () => void, delay: number): void {
 	effect(function(): void {
 		var global = getGlobalContext();
 		var timeout = global.setTimeout(callback, delay);
-		
+
 		onDestroy(function(): void {
 			global.clearTimeout(timeout);
 		});

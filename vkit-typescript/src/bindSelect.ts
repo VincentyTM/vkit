@@ -9,7 +9,7 @@ import { tick } from "./tick.js";
  * @example
  * function SelectBinding() {
  * 	const value = signal("banana");
- * 	
+ * 
  * 	return Select(
  * 		bindSelect(value),
  * 		Option({value: "apple", label: "Apple"}),
@@ -30,7 +30,7 @@ export function bindSelect(signal: WritableSignal<string>): Template<HTMLSelectE
 				el.value = value;
 			});
 		}),
-		
+
 		{
 			value: signal,
 			onchange: function(this: HTMLSelectElement): void {

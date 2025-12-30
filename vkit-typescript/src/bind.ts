@@ -76,7 +76,7 @@ function prop<T>(
 export function bind<T>(target: T, bindings: Bindings<T>): void {
 	for (var name in bindings) {
 		var value = bindings[name];
-		
+
 		switch (typeof value) {
 			case "object":
 				if (!value) {
@@ -85,7 +85,7 @@ export function bind<T>(target: T, bindings: Bindings<T>): void {
 					prop(target, name, value as never);
 				} else {
 					var obj = target[name];
-					
+
 					if (obj) {
 						bind(obj, value as never);
 					} else {

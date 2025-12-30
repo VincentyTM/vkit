@@ -20,7 +20,7 @@ export function shadow(...contents: readonly Template<ShadowRoot>[]): Template<E
 
 export function shadow(): Template<Element> {
 	var contents: Template<ShadowRoot> = arguments;
-	
+
 	return directive(function(element: Element): void {
 		var shadowRoot = element.shadowRoot || element.attachShadow({mode: "open"});
 		empty(shadowRoot);

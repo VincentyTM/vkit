@@ -89,7 +89,7 @@ export function customElement<T extends CustomElementGetTemplate>(
 		);
 
 		var injector = createInjector(true);
-		
+
 		var effect = createEffect(undefined, function(): void {
 			var doc = el.ownerDocument;
 			inject(WindowService).window = doc.defaultView || (doc as any).parentWindow;
@@ -105,66 +105,66 @@ export function customElement<T extends CustomElementGetTemplate>(
 
 			hydrate(pointer, view);
 		}, undefined, injector);
-		
+
 		el.effect = effect;
 		el.observedAttributes = {};
-		
+
 		if (CustomElement.observedAttributes) {
 			CustomElement.observedAttributes.forEach(function(attrName) {
 				el.observedAttributes[attrToPropName(attrName)] = signal(el.getAttribute(attrName));
 			});
 		}
-		
+
 		return el;
 	}
-	
+
 	var proto = CustomElement.prototype;
 	var win = getWindow() || (typeof window === "object" ? window : null);
 
 	if (win === null) {
 		return getTemplate;
 	}
-	
+
 	proto.connectedCallback = function(this: ExtendedHTMLElement): void {
 		if (!rendered) {
 			return;
 		}
-		
+
 		var el: ParentNode = this;
-		
+
 		while (el.parentNode !== null) {
 			el = el.parentNode;
 		}
-		
+
 		if (el.nodeType !== 9 && el.nodeType !== 11) {
 			return;
 		}
-		
+
 		var effect = this.effect;
 		updateEffect(effect);
 	};
-	
+
 	proto.disconnectedCallback = function(this: ExtendedHTMLElement): void {
 		if (!rendered) {
 			return;
 		}
-		
+
 		if (this.shadowRoot) {
 			empty(this.shadowRoot);
 		}
-		
+
 		empty(this);
 		destroyEffect(this.effect);
 	};
-	
+
 	if (options) {
 		if (options.adoptedCallback) {
 			proto.adoptedCallback = options.adoptedCallback;
 		}
-		
+
 		if (options.observedAttributes) {
 			CustomElement.observedAttributes = options.observedAttributes;
-			
+
 			proto.attributeChangedCallback = function(
 				attrName: string,
 				_oldValue: string | null,
@@ -173,16 +173,16 @@ export function customElement<T extends CustomElementGetTemplate>(
 				if (!rendered) {
 					return;
 				}
-				
+
 				this.observedAttributes[attrToPropName(attrName)].set(newValue);
 			};
 		}
 	}
-	
+
 	setPrototypeOf(proto, win.HTMLElement.prototype);
 	setPrototypeOf(CustomElement, win.HTMLElement);
-	
+
 	win.customElements.define(name, CustomElement as unknown as CustomElementConstructor);
-	
+
 	return getTemplate;
 }

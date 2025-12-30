@@ -78,7 +78,7 @@ export function effectMap<K extends string, T, U, V, W extends Signal<Record<K, 
 	data?: U
 ): Signal<Record<K, V>> {
 	var values = signal<Record<string, V>>({});
-	
+
 	if (!inject(RenderConfigService).doRunEffects) {
 		return values;
 	}
@@ -94,9 +94,9 @@ export function effectMap<K extends string, T, U, V, W extends Signal<Record<K, 
 				values.update(removeKey, key);
 			}
 		}
-		
+
 		var next: Record<string, Effect> = {};
-		
+
 		for (var key2 in object) {
 			if (key2 in effects) {
 				next[key2] = effects[key2];
@@ -114,13 +114,13 @@ export function effectMap<K extends string, T, U, V, W extends Signal<Record<K, 
 				updateEffect(instanceEffect);
 			}
 		}
-		
+
 		effects = next;
 	});
-	
+
 	groupEffect.flags |= PERSISTENT_SUBSCRIBERS_FLAG;
 	updateEffect(groupEffect);
-	
+
 	return values;
 }
 
@@ -143,14 +143,14 @@ function removeKey<T extends object>(object: T, key: keyof T): T {
 	if (!(key in object)) {
 		return object;
 	}
-	
+
 	var newObject: Partial<T> = {};
-	
+
 	for (var k in object) {
 		if (k !== key) {
 			newObject[k] = object[k];
 		}
 	}
-	
+
 	return newObject as T;
 }

@@ -37,7 +37,7 @@ export function unsavedGuard(condition: Signal<boolean> | (() => boolean)): void
 	effect(function() {
 		if (condition()) {
 			var win = getWindow();
-		
+
 			if (win) {
 				onDestroy(onEvent(win, "beforeunload", prevent));
 			}

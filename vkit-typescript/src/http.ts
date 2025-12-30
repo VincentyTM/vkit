@@ -79,24 +79,24 @@ var INIITIAL_PROGRESS: HttpProgress = {
  * 		}),
  * 		responseType: "json"
  * 	});
- * 	
+ * 
  * 	return view(() => {
  * 		const res = response();
- * 		
+ * 
  * 		if (res.unsent) {
  * 			return "The request is null!";
  * 		}
- * 		
+ * 
  * 		if (res.progress) {
  * 			return res.progress.map((progress) => (
  * 				`Loading: ${progress.loaded} / ${progress.total}`
  * 			));
  * 		}
- * 		
+ * 
  * 		if (!res.ok) {
  * 			return `Request failed! Status: ${res.status}`;
  * 		}
- * 		
+ * 
  * 		return `Successful! Response: ${JSON.stringify(res.body)}`;
  * 	});
  * }
@@ -121,7 +121,7 @@ export function http<T = unknown>(request: HttpRequest | string | null | Signal<
 			unsent: false,
 			uploadProgress: uploadProgress
 		});
-		
+
 		var xhr = new XMLHttpRequest();
 
 		xhr.onprogress = function(event: ProgressEvent<EventTarget>): void {
@@ -150,7 +150,7 @@ export function http<T = unknown>(request: HttpRequest | string | null | Signal<
 				});
 			}
 		};
-		
+
 		if (xhr.upload) {
 			xhr.upload.onprogress = function(event: ProgressEvent<EventTarget>): void {
 				uploadProgress.set(event);
@@ -168,7 +168,7 @@ export function http<T = unknown>(request: HttpRequest | string | null | Signal<
 				req.user,
 				req.password
 			);
-			
+
 			if (req.mimeType !== undefined && xhr.overrideMimeType) {
 				xhr.overrideMimeType(req.mimeType);
 			}
@@ -180,24 +180,24 @@ export function http<T = unknown>(request: HttpRequest | string | null | Signal<
 			}
 
 			var headers = req.headers;
-			
+
 			if (headers) {
 				for (var name in headers) {
 					xhr.setRequestHeader(name, headers[name]);
 				}
 			}
-			
+
 			xhr.send(req.body);
 		}
 
 		onDestroy(function() {
 			xhr.onprogress = null;
 			xhr.onreadystatechange = null;
-			
+
 			if (xhr.upload) {
 				xhr.upload.onprogress = null;
 			}
-			
+
 			xhr.abort();
 		});
 	}
@@ -205,6 +205,6 @@ export function http<T = unknown>(request: HttpRequest | string | null | Signal<
 	effect(function() {
 		setRequest(isSignal(request) ? request() : request);
 	});
-	
+
 	return response;
 }

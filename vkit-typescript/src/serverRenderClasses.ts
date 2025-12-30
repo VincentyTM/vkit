@@ -39,17 +39,17 @@ function bindClass(el: ServerElement, name: string, value: BooleanValue): void {
 		value() ? addClass(el, name) : removeClass(el, name);
 		return;
 	}
-	
+
 	if (value === true) {
 		addClass(el, name);
 		return;
 	}
-	
+
 	if (value === false) {
 		removeClass(el, name);
 		return;
 	}
-	
+
 	if (typeof value === "function") {
 		bindClass(el, name, value());
 		return;
@@ -60,17 +60,17 @@ function bindClasses(el: ServerElement, arg: ClassArgument): void {
 	if (arg === null || arg === undefined || arg === true || arg === false) {
 		return;
 	}
-	
+
 	if (typeof arg === "string") {
 		addClass(el, arg);
 		return;
 	}
-	
+
 	if (isSignal(arg) || typeof arg === "function") {
 		bindClasses(el, arg());
 		return;
 	}
-	
+
 	if (isArrayLike(arg)) {
 		var n = arg.length;
 		for (var i = 0; i < n; ++i) {
@@ -78,7 +78,7 @@ function bindClasses(el: ServerElement, arg: ClassArgument): void {
 		}
 		return;
 	}
-	
+
 	if (typeof arg === "object") {
 		for (var name in arg) {
 			bindClass(el, name, arg[name] || false);

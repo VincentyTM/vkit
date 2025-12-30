@@ -8,16 +8,16 @@ export function updateEffect(effect: Effect): void {
 	if (!(effect.flags & DIRTY_FLAG)) {
 		return;
 	}
-	
+
 	if (effect.flags & COMPUTING_FLAG) {
 		return;
 	}
 
 	effect.flags |= COMPUTING_FLAG;
 	destroyEffect(effect);
-	
+
 	var evaluatedNode = getReactiveNode(true);
-	
+
 	try {
 		setReactiveNode(effect);
 		effect.updateHandler();

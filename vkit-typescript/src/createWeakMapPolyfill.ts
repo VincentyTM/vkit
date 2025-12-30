@@ -25,7 +25,7 @@ function get<K, V>(this: WeakMapPolyfill<K, V>, key: K): V | undefined {
 
 	for (var i = pairs.length - 1; i >= 0; --i) {
 		var pair = pairs[i];
-		
+
 		if (pair.key === key) {
 			return pair.value;
 		}

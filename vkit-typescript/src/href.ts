@@ -24,7 +24,7 @@ export function href(
 	url: string | Signal<string> | (() => string)
 ): Template<HTMLAnchorElement> & Template<HTMLAreaElement> {
 	var win = getWindow();
-	
+
 	return {
 		href: url,
 		onclick: function(e: Event): void {

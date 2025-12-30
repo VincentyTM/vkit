@@ -37,7 +37,7 @@ export function mediaDevices(): Signal<MediaDeviceInfo[]> {
 		status: AsyncStatus.Resolved,
 		value: []
 	});
-	
+
 	function fetchDevices(): void {
 		nav.mediaDevices.enumerateDevices().then(function(list: MediaDeviceInfo[]) {
 			result.set({
@@ -51,7 +51,7 @@ export function mediaDevices(): Signal<MediaDeviceInfo[]> {
 			});
 		});
 	}
-	
+
 	if (nav.mediaDevices && typeof nav.mediaDevices.enumerateDevices === "function") {
 		onDestroy(
 			onEvent(nav.mediaDevices, "devicechange", fetchDevices)

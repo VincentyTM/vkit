@@ -13,7 +13,7 @@ import { Template } from "./Template.js";
  * 	const min = 0;
  * 	const max = 100;
  * 	const step = 1;
- * 	
+ * 
  * 	return [
  * 		H1(percentage, "%"),
  * 		Input(bindNumber(percentage), {type: "number", min, max, step}),
@@ -32,14 +32,14 @@ export function bindNumber(signal: WritableSignal<number>, defaultValue?: number
 			signal.set(defaultValue);
 			return;
 		}
-		
+
 		var value = parseFloat(this.value);
-		
+
 		if (!isNaN(value) && isFinite(value)) {
 			signal.set(value);
 		}
 	}
-	
+
 	return {
 		oninput: set,
 		onchange: set,

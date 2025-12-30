@@ -14,11 +14,11 @@ function findNodes(
 		result.push(container);
 		--count;
 	}
-	
+
 	for (var child = container.firstChild; 0 < count && child; child = child.nextSibling) {
 		count = findNodes(result, child, type, value, count);
 	}
-	
+
 	return count;
 }
 
@@ -28,20 +28,20 @@ export function hydrateHTML<P extends HTMLElement>(pointer: HydrationPointer<P>,
 	var placeholder = "<!---->";
 	var result: (string | number | bigint)[] = [];
 	var l = args.length;
-	
+
 	for (var i = 0; i < l; ++i) {
 		var arg = args[i];
-		
+
 		if (arg === null || arg === undefined) {
 			continue;
 		}
-		
+
 		if (typeof arg === "string") {
 			result.push(arg);
-			
+
 			if (l > 1) {
 				var index = arg.indexOf(placeholder);
-				
+
 				while (index !== -1) {
 					operators.push(document.createComment(""));
 					index = arg.indexOf(placeholder, index + placeholder.length);
@@ -54,14 +54,14 @@ export function hydrateHTML<P extends HTMLElement>(pointer: HydrationPointer<P>,
 			operators.push(arg);
 		}
 	}
-	
+
 	var cTag = "div";
 	var content = result.join("");
 	var tagMatch = content.match(/<[a-zA-Z0-9\-]+/);
-	
+
 	if (tagMatch && tagMatch.length) {
 		var firstTag = tagMatch[0].substring(1).toLowerCase();
-		
+
 		switch (firstTag) {
 			case "th":
 			case "td":
@@ -78,41 +78,41 @@ export function hydrateHTML<P extends HTMLElement>(pointer: HydrationPointer<P>,
 				cTag = "html"; break;
 		}
 	}
-	
+
 	var container = document.createElement(cTag);
 	container.innerHTML = content;
-	
+
 	var n = operators.length;
 
 	if (n > 0) {
 		var comments: Comment[] = [];
 
 		findNodes(comments, container, 8, "", n);
-		
+
 		for (i = 0; i < n; ++i) {
 			var operator = operators[i];
 			var comment = comments[i];
-			
+
 			if (!comment) {
 				throw new Error("Some object or function could not be inserted");
 			}
-			
+
 			var context: Node | null = comment.previousElementSibling;
-			
+
 			if (context === undefined) {
 				context = comment;
-				
+
 				while (context = context.previousSibling) {
 					if (context.nodeType === 1) {
 						break;
 					}
 				}
 			}
-			
+
 			if (context === null) {
 				context = comment.parentNode;
 			}
-			
+
 			if (context === container) {
 				context = null;
 			}
@@ -124,10 +124,10 @@ export function hydrateHTML<P extends HTMLElement>(pointer: HydrationPointer<P>,
 				parentEffect: pointer.parentEffect,
 				stopNode: comment
 			}, operator as Template<ParentNode>);
-			
+
 			comment.parentNode!.removeChild(comment);
 		}
 	}
-	
+
 	hydrate(pointer, Array.prototype.slice.call(container.childNodes));
 }

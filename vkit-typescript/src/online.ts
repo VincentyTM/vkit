@@ -23,9 +23,9 @@ export function online(): Signal<boolean> {
 	function invalidate(): void {
 		value.invalidate();
 	}
-	
+
 	onDestroy(onEvent(win, "online", invalidate));
 	onDestroy(onEvent(win, "offline", invalidate));
-	
+
 	return value;
 }

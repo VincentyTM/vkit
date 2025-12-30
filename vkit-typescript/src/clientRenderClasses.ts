@@ -47,12 +47,12 @@ function bindClass(
 		updateEffect(effect);
 		return;
 	}
-	
+
 	if (value === true) {
 		addClass(el, name);
 		return;
 	}
-	
+
 	if (value === false) {
 		removeClass(el, name);
 		return;
@@ -68,7 +68,7 @@ function bindClasses(
 	if (arg === null || arg === undefined || arg === true || arg === false) {
 		return;
 	}
-	
+
 	if (typeof arg === "string") {
 		addClass(el, arg);
 
@@ -80,7 +80,7 @@ function bindClasses(
 
 		return;
 	}
-	
+
 	if (isSignal(arg) || typeof arg === "function") {
 		var effect = createEffect(parentEffect, function(): void {
 			bindClasses(parentEffect, el, arg(), true);
@@ -88,7 +88,7 @@ function bindClasses(
 		updateEffect(effect);
 		return;
 	}
-	
+
 	if (isArrayLike(arg)) {
 		var n = arg.length;
 		for (var i = 0; i < n; ++i) {
@@ -96,7 +96,7 @@ function bindClasses(
 		}
 		return;
 	}
-	
+
 	if (typeof arg === "object") {
 		for (var name in arg) {
 			bindClass(parentEffect, el, name, arg[name] || false);

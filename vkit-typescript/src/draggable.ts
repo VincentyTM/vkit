@@ -64,35 +64,35 @@ export function draggable(options?: DraggableOptions<DraggableElement>): Templat
 	var dragMove = options && options.onDragMove || defaultDragMove;
 	var dragStart = options && options.onDragStart || noop;
 	var targetRef = options && options.targetRef;
-	
+
 	return {
 		style: {
 			touchAction: "none"
 		},
-		
+
 		onmousedown: function(this: DraggableElement, mouseDownEvent: MouseEvent): void {
 			mouseDownEvent.preventDefault();
 			mouseDownEvent.stopPropagation();
-			
+
 			var elNodeOrNull = targetRef ? targetRef.current : this;
-			
+
 			if (elNodeOrNull === null) {
 				return;
 			}
-			
+
 			var elNode = elNodeOrNull;
 			var startX = getMouseX(mouseDownEvent, elNode);
 			var startY = getMouseY(mouseDownEvent, elNode);
 			var elStartLeft = parseInt(getStyle(elNode, "left")) || 0;
 			var elStartTop = parseInt(getStyle(elNode, "top")) || 0;
-			
+
 			dragStart(
 				elNode,
 				elStartLeft,
 				elStartTop,
 				mouseDownEvent
 			);
-			
+
 			function dragMoveListener(mouseMoveEvent: MouseEvent): void {
 				dragMove(
 					elNode,
@@ -101,12 +101,12 @@ export function draggable(options?: DraggableOptions<DraggableElement>): Templat
 					mouseMoveEvent
 				);
 			}
-			
+
 			function dragEndListener(mouseUpEvent: MouseEvent): void {
 				removeMouseMoveListener();
 				removeMouseLeaveListener();
 				removeMouseUpListener();
-				
+
 				dragEnd(
 					elNode,
 					elStartLeft + getMouseX(mouseUpEvent, elNode) - startX,
@@ -114,39 +114,39 @@ export function draggable(options?: DraggableOptions<DraggableElement>): Templat
 					mouseUpEvent
 				);
 			}
-			
+
 			var removeMouseMoveListener = onEvent(elNode.ownerDocument, "mousemove", dragMoveListener);
 			var removeMouseLeaveListener = onEvent(elNode.ownerDocument, "mouseleave", dragEndListener);
 			var removeMouseUpListener = onEvent(elNode.ownerDocument, "mouseup", dragEndListener);
 		},
-		
+
 		ontouchstart: function(this: DraggableElement, touchStartEvent: TouchEvent): void {
 			touchStartEvent.preventDefault();
 			touchStartEvent.stopPropagation();
-			
+
 			var elNodeOrNull = targetRef ? targetRef.current : this;
-			
+
 			if (elNodeOrNull === null) {
 				return;
 			}
-			
+
 			var elNode = elNodeOrNull;
 			var startX = getTouchX(touchStartEvent);
 			var startY = getTouchY(touchStartEvent);
 			var elStartLeft = parseInt(getStyle(elNode, "left")) || 0;
 			var elStartTop = parseInt(getStyle(elNode, "top")) || 0;
-			
+
 			dragStart(
 				elNode,
 				elStartLeft,
 				elStartTop,
 				touchStartEvent.touches[0]
 			);
-			
+
 			function dragMoveListener(touchMoveEvent: TouchEvent): void {
 				touchMoveEvent.preventDefault();
 				touchMoveEvent.stopPropagation();
-				
+
 				dragMove(
 					elNode,
 					elStartLeft + getTouchX(touchMoveEvent) - startX,
@@ -154,12 +154,12 @@ export function draggable(options?: DraggableOptions<DraggableElement>): Templat
 					touchMoveEvent.touches[0]
 				);
 			}
-			
+
 			function dragEndListener(touchEndEvent: TouchEvent): void {
 				removeTouchMoveListener();
 				removeTouchCancelListener();
 				removeTouchEndListener();
-				
+
 				dragEnd(
 					elNode,
 					elStartLeft + getTouchX(touchEndEvent) - startX,
@@ -167,7 +167,7 @@ export function draggable(options?: DraggableOptions<DraggableElement>): Templat
 					touchEndEvent.touches[0]
 				);
 			}
-			
+
 			var removeTouchMoveListener = onEvent(elNode.ownerDocument, "touchmove", dragMoveListener);
 			var removeTouchCancelListener = onEvent(elNode.ownerDocument, "touchcancel", dragEndListener);
 			var removeTouchEndListener = onEvent(elNode.ownerDocument, "touchend", dragEndListener);
@@ -186,15 +186,15 @@ function getStyle(el: DraggableElement, prop: "left" | "top"): string {
 	if (typeof getComputedStyle === "function") {
 		return getComputedStyle(el, null).getPropertyValue(prop);
 	}
-	
+
 	if ((el as any).currentStyle) {
 		return (el as any).currentStyle[prop];
 	}
-	
+
 	if (el.style) {
 		return el.style[prop];
 	}
-	
+
 	return "";
 }
 
@@ -214,7 +214,7 @@ function getMouseX(e: MouseEvent, el: Node): number {
 	if (win === null) {
 		return 0;
 	}
-	
+
 	return e.clientX + (
 		win.scrollX || doc.documentElement.scrollLeft + (doc.body ? doc.body.scrollLeft : 0) || 0
 	);
@@ -236,7 +236,7 @@ function getMouseY(e: MouseEvent, el: Node): number {
 	if (win === null) {
 		return 0;
 	}
-	
+
 	return e.clientY + (
 		win.scrollY || doc.documentElement.scrollTop + (doc.body ? doc.body.scrollTop : 0) || 0
 	);

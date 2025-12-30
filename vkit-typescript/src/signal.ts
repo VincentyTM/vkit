@@ -42,7 +42,7 @@ export interface WritableSignal<T> extends Signal<T> {
  * @example
  * function Counter() {
  * 	const count = signal(0);
- * 	
+ * 
  * 	return [
  * 		H1("Count: ", count),
  * 		Button("Increment", {

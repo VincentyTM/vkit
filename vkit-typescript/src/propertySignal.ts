@@ -75,7 +75,7 @@ export function propertySignal<T, K extends keyof T>(
 			newParentValue[currentKey] = newValue;
 			parent.set(newParentValue);
 			parent.get();
-			
+
 			if (isSignal(key)) {
 				key.get();
 			}
@@ -84,6 +84,6 @@ export function propertySignal<T, K extends keyof T>(
 
 	use.toString = writableSignalToString;
 	use.update = updateSignalValue;
-	
+
 	return use as WritableSignal<T[K] | undefined>;
 }

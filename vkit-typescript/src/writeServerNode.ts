@@ -31,18 +31,18 @@ function writeElement(res: StreamWriter, element: ServerElement): void {
 	var tagName = element.tagName;
 	var tagNameLower = element.tagNameLower;
 	var children = element.children;
-	
+
 	res.write('<');
 	res.write(tagName);
-	
+
 	for (var name in attributes) {
 		if (name === "value" && tagNameLower === "select") {
 			continue;
 		}
-		
+
 		res.write(' ');
 		res.write(escapeHTML(name));
-		
+
 		if (attributes[name]) {
 			res.write('="');
 			res.write(escapeHTML(attributes[name]));
@@ -51,7 +51,7 @@ function writeElement(res: StreamWriter, element: ServerElement): void {
 	}
 
 	writeStyleAttribute(res, element.styleProps);
-	
+
 	res.write('>');
 
 	if (children) {
@@ -62,7 +62,7 @@ function writeElement(res: StreamWriter, element: ServerElement): void {
 			case "select": writeSelectChildren(res, children, attributes); break;
 			default: writeDefaultElementChildren(res, children);
 		}
-		
+
 		res.write('</');
 		res.write(tagName);
 		res.write('>');
@@ -96,7 +96,7 @@ function writeSelectChildren(
 
 	for (var i = 0; i < n; ++i) {
 		var child = children[i];
-		
+
 		if (typeof child === "string") {
 			writeEscapedText(res, child);
 		} else if (child) {
@@ -113,7 +113,7 @@ function writeSelectChildren(
 				) {
 					setProperty(child, "selected", true);
 				}
-				
+
 				writeElement(res, child);
 			} else {
 				res.write(child.text);
@@ -158,7 +158,7 @@ function writeStyleAttribute(res: StreamWriter, styleProps: Record<string, strin
 		res.write(' style="');
 		break;
 	}
-	
+
 	for (var name in styleProps) {
 		res.write(escapeHTML(name));
 		res.write(':');

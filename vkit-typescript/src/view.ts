@@ -17,12 +17,12 @@ export interface ViewTemplate<P> extends CustomTemplate<P> {
  * function MyComponent() {
  * 	const count = signal(0);
  * 	const isCountMoreThan3 = computed(() => count() > 3);
- * 	
+ * 
  * 	return view(() => {
  * 		if (isCountMoreThan3()) {
  * 			return B("Count is more than 3!");
  * 		}
- * 		
+ * 
  * 		return ["Count is: ", count()];
  * 	});
  * }

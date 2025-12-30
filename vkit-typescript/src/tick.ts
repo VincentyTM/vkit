@@ -26,7 +26,7 @@ export function callTicks(): void {
 		var callbacks = ticks;
 
 		ticks = [];
-		
+
 		for (var i = 0; i < n; ++i) {
 			callbacks[i]();
 		}

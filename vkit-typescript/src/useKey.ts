@@ -47,7 +47,7 @@ function selectRecord(keysAndRecords: KeysAndRecords<unknown>, currentKey: strin
  * 		{id: "2", title: "Book 2"},
  * 		{id: "3", title: "Book 3"},
  * 	]);
- * 	
+ * 
  * 	return Ul(
  * 		useKey(books, "id").views((book) => {
  * 			// book is a signal here
@@ -88,46 +88,46 @@ export function useKey<T>(
 		var records: Record<string, T> = {};
 		var n = array.length;
 		var keys = new Array<string>(n);
-		
+
 		for (var i = 0; i < n; ++i) {
 			var value: T = array[i];
-			
+
 			var key: string = typeof getKey === "function"
 				? getKey(value)
 				: String(value[getKey]);
-			
+
 			if (key in records) {
 				throw new TypeError("Key '" + key + "' is not unique");
 			}
-			
+
 			records[key] = value;
 			keys[i] = key;
 		}
-		
+
 		return {
 			keys: keys,
 			records: records
 		};
 	}, [arraySignal]);
-	
+
 	var keysSignal = computed(getKeys, [keysAndRecordsSignal]);
-	
+
 	function select<K extends string | Signal<string>>(key: K): KeyedSignal<T, K> {
 		var selected = computed(selectRecord, [keysAndRecordsSignal, key]) as Signal<T> as KeyedSignal<T, K>;
 		(selected.key as K) = key;
 		return selected;
 	}
-	
+
 	function useKeyViewList<V extends Template<P>, P extends ParentNode>(getItemTemplate: (item: KeyedSignal<T, string>) => V): Template<P> {
 		return viewList(keysSignal, function(key): V {
 			return getItemTemplate(select(key));
 		});
 	}
-	
+
 	function getItem(key: string): T {
 		return keysAndRecordsSignal.get().records[key];
 	}
-	
+
 	return {
 		array: arraySignal,
 		getItem: getItem,

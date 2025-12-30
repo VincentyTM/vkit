@@ -13,11 +13,11 @@ import { updateEffect } from "./updateEffect.js";
  * 	if (!shouldRunInterval()) {
  * 		return;
  * 	}
- * 	
+ * 
  * 	const interval = setInterval(() => {
  * 		console.log("The current time is:", Date.now());
  * 	}, 1000);
- * 	
+ * 
  * 	onDestroy(() => clearInterval(interval));
  * });
  * @param updateHandler A callback function which is called initially and when any of its dependencies change.
@@ -26,7 +26,7 @@ import { updateEffect } from "./updateEffect.js";
 export function effect(updateHandler: () => void): void {
 	if (inject(RenderConfigService).doRunEffects) {
 		var parentEffect = getEffect();
-		
+
 		updateEffect(
 			createEffect(parentEffect, updateHandler)
 		);

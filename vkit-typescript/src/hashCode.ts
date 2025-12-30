@@ -2,7 +2,7 @@ var map = typeof WeakMap === "function" ? new WeakMap<any, any>() : {
 	get: function(object: any) {
 		return object.__hashCode;
 	},
-	
+
 	set: function(object: any, value: any) {
 		object.__hashCode = value;
 	}
@@ -12,14 +12,14 @@ var objectCount = 0;
 
 function next<T>(value: T): any {
 	var key = map.get(value);
-	
+
 	if (key) {
 		return key;
 	}
-	
+
 	key = ++objectCount;
 	map.set(value, key);
-	
+
 	return key;
 }
 

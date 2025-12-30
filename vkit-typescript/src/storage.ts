@@ -36,7 +36,7 @@ function storage(
 ): WritableSignal<string | null> {
 	var value = signal(storageArea.getItem(key));
 	var set = value.set;
-	
+
 	onDestroy(
 		onEvent(win, "storage", function(event) {
 			var e = event as StorageEvent;
@@ -75,7 +75,7 @@ function storage(
 				newValue: v,
 				storageArea: storageArea
 			});
-			
+
 			win.dispatchEvent(event);
 		} catch (error) {
 			if (onError) {

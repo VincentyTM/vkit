@@ -9,7 +9,7 @@ export function font(
 	url: string | Signal<string> | (() => string)
 ): Signal<AsyncResult<FontFace>> {
 	var win = getWindow();
-	
+
 	return asyncEffect(function(): Promise<FontFace> {
 		if (win === null) {
 			throw new TypeError("Window is not available");

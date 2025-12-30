@@ -64,14 +64,14 @@ export function scrollState(): ScrollState {
 			};
 		}
 	);
-	
+
 	var x = deriveSignal(
 		data,
-		
+
 		function(scroll) {
 			return scroll.x;
 		},
-		
+
 		function(oldValue, x) {
 			return {
 				x: Math.max(0, Math.min(x, oldValue.width)),
@@ -81,14 +81,14 @@ export function scrollState(): ScrollState {
 			};
 		}
 	);
-	
+
 	var y = deriveSignal(
 		data,
-		
+
 		function(scroll) {
 			return scroll.y;
 		},
-		
+
 		function(oldValue, y) {
 			return {
 				x: oldValue.x,
@@ -98,42 +98,42 @@ export function scrollState(): ScrollState {
 			};
 		}
 	);
-	
+
 	function bindElement(scrollable: Element): void {
 		onDestroy(
 			onEvent(scrollable, "scroll", function() {
 				setElementScroll(rawData, scrollable);
 			})
 		);
-		
+
 		effect(function() {
 			var scroll = data();
 			scrollable.scrollLeft = scroll.x;
 			scrollable.scrollTop = scroll.y;
 		});
-		
+
 		tick(function() {
 			setElementScroll(rawData, scrollable);
 		});
 	}
-	
+
 	function bindWindow(scrollable: Window): void {
 		onDestroy(
 			onEvent(scrollable.document, "scroll", function() {
 				setWindowScroll(rawData, scrollable);
 			})
 		);
-		
+
 		effect(function() {
 			var scroll = data();
 			scrollable.scrollTo(scroll.x, scroll.y);
 		});
-		
+
 		tick(function() {
 			setWindowScroll(rawData, scrollable);
 		});
 	}
-	
+
 	return {
 		data: data,
 		x: x,

@@ -8,32 +8,32 @@ export function serverRender<P extends ParentNode>(container: ServerElement, tem
 	if (template === null || template === undefined || template === true || template === false) {
 		return;
 	}
-	
+
 	if (typeof template === "string" || typeof template === "number" || typeof template === "bigint") {
 		appendChild(container, String(template));
 		return;
 	}
-	
+
 	if (isSignal(template)) {
 		appendChild(container, String(template.get()));
 		return;
 	}
-	
+
 	if (typeof template === "function") {
 		appendChild(container, String(template()));
 		return;
 	}
-	
+
 	if ("length" in template) {
 		var n = template.length;
-		
+
 		for (var i = 0; i < n; ++i) {
 			serverRender(container, template[i]);
 		}
-		
+
 		return;
 	}
-	
+
 	if ("next" in template) {
 		var x: IteratorResult<Template<P>, Template<P>>;
 
@@ -67,20 +67,20 @@ function bindTemplate<P>(container: ServerElement, template: Bindings<P>): void 
 			for (var cssKey in value) {
 				var cssValue = value[cssKey];
 				var cssEvaluatedValue = typeof cssValue === "function" ? (cssValue as () => CSSStyleDeclaration[keyof CSSStyleDeclaration])() : cssValue;
-		
+
 				if (typeof cssEvaluatedValue === "string") {
 					style[toKebabCase(cssKey)] = cssEvaluatedValue;
 				}
 			}
-			
+
 			continue;
 		}
-	
+
 		if (isSignal(value)) {
 			setProperty(container, key, value.get());
 			continue;
 		}
-		
+
 		if (typeof value === "function") {
 			if (key.indexOf("on") === 0) {
 				// Do nothing on the server

@@ -41,22 +41,22 @@ export function errorBoundary<P extends Element>(
 ): ViewTemplate<P> {
 	var error: unknown;
 	var isFailed = signal(false);
-	
+
 	function retry(): void {
 		error = undefined;
 		isFailed.set(false);
 	}
-	
+
 	function errorHandler(ex: unknown): void {
 		error = ex;
 		isFailed.set(true);
 	}
-	
+
 	function getOuterTemplate(): Template<P> {
 		if (isFailed()) {
 			return getFallbackTemplate(error, retry);
 		}
-		
+
 		try {
 			return getTemplate();
 		} catch (ex) {

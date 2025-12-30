@@ -8,7 +8,7 @@ import { Template } from "./Template.js";
  * @example
  * function CheckboxBinding() {
  * 	const isDone = signal(false);
- * 	
+ * 
  * 	return [
  * 		H1(() => isDone() ? "Done!" : "Not done yet."),
  * 		Label(

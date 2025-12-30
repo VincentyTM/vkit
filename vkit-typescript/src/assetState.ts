@@ -11,31 +11,31 @@ export function assetState<T>(
 	defaultValue: T
 ): Signal<T> {
 	var state = signal(defaultValue);
-	
+
 	function setAssetName(name: string): void {
 		if (!name && name !== "") {
 			state.set(defaultValue);
 			return;
 		}
-		
+
 		var asset = refs.add(name);
 		state.set(asset.isFulfilled() ? asset.get()! : defaultValue);
-		
+
 		var removeLoadHandler = asset.onLoad(function(value): void {
 			state.set(value);
 		});
-		
+
 		var removeResetHandler = asset.onReset(function(): void {
 			state.set(defaultValue);
 		});
-		
+
 		onDestroy(function(): void {
 			removeLoadHandler();
 			removeResetHandler();
 			refs.remove(name);
 		});
 	}
-	
+
 	if (isSignal(assetName) || typeof assetName === "function") {
 		effect(function(): void {
 			setAssetName(assetName());
@@ -43,6 +43,6 @@ export function assetState<T>(
 	} else {
 		setAssetName(assetName);
 	}
-	
+
 	return state;
 }

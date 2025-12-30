@@ -48,44 +48,44 @@ function getValue<T extends WindowDataValue>(parts: WindowDataPart<T>[], value: 
 
 function getData<T extends WindowDataValue>(key: string, init: InitFunction<T>): WindowData<T> {
 	var windowService = inject(WindowService);
-	
+
 	if (!windowService.data) {
 		windowService.data = {};
 	}
-	
+
 	if (windowService.data[key]) {
 		return windowService.data[key];
 	}
 
 	var result: WindowData<T> | undefined;
-	
+
 	var parentEffect = windowService.effect;
 	var currentEffect = createEffect(parentEffect, function(): void {
 		var parts = signal<WindowDataPart<T>[]>([]);
 		var initialValue: T;
 		var callEffect = noop;
-		
+
 		if (windowService.window) {
 			init(windowService.window, function(value, effect) {
 				initialValue = value;
 				callEffect = effect;
 			});
 		}
-		
+
 		var valueSignal = parts.map(function(parts) {
 			return getValue(parts, initialValue);
 		});
-		
+
 		effect(function() {
 			valueSignal();
 			callEffect();
 		});
-		
+
 		result = {
 			parts: parts,
 			signal: valueSignal
 		};
-		
+
 		if (windowService.data) {
 			windowService.data[key] = result;
 		}
@@ -107,22 +107,22 @@ export function windowData<T extends WindowDataValue>(key: string, init: InitFun
 
 	function use(part?: WindowDataPart<T>) {
 		var data = getData(key, init);
-		
+
 		if (part === undefined) {
 			return data.signal;
 		}
-		
+
 		var parts = data.parts;
-		
+
 		if (isSignal(part)) {
 			onChange(part, data.signal.invalidate);
 		}
-		
+
 		parts.set(parts.get().concat([part]));
-		
+
 		onDestroy(function(): void {
 			var ps = parts.get();
-			
+
 			for (var i = ps.length; i--;) {
 				if (ps[i] === part) {
 					parts.set(

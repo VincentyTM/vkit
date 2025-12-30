@@ -30,7 +30,7 @@ export function fileReader<T extends FileReaderResultType>(
 		total: 0
 	});
 	var as = options && options.as;
-	
+
 	effect(function(): void {
 		if (win === null) {
 			throw new TypeError("Window is not available");
@@ -41,21 +41,21 @@ export function fileReader<T extends FileReaderResultType>(
 		}
 
 		var reader = new win.FileReader();
-		
+
 		reader.onerror = function(): void {
 			result.set({
 				status: AsyncStatus.Rejected,
 				error: reader.error
 			});
 		};
-		
+
 		reader.onload = function(): void {
 			result.set({
 				status: AsyncStatus.Resolved,
 				value: reader.result as FileReaderResult<T>
 			});
 		};
-		
+
 		reader.onprogress = function(e): void {
 			progress.set(e);
 		};
@@ -69,12 +69,12 @@ export function fileReader<T extends FileReaderResultType>(
 				progress
 			);
 		});
-		
+
 		onDestroy(function(): void {
 			reader.abort();
 		});
 	});
-	
+
 	return result;
 }
 
@@ -86,7 +86,7 @@ function updateFileReader<T extends FileReaderResultType>(
 	progress: Signal<Progress>
 ): void {
 	reader.abort();
-	
+
 	if (file === null) {
 		result.set({status: AsyncStatus.Pending});
 	} else {
@@ -94,7 +94,7 @@ function updateFileReader<T extends FileReaderResultType>(
 			status: AsyncStatus.Pending,
 			progress: progress
 		});
-		
+
 		switch (as) {
 			case "arrayBuffer": reader.readAsArrayBuffer(file); break;
 			case "binaryString": reader.readAsBinaryString(file); break;

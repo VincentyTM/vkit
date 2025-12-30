@@ -7,30 +7,30 @@ import { updateEffect } from "./updateEffect.js";
 function getValue<T, K extends keyof T>(object: T, property: K, _receiver: T): T[K] {
 	var value = object[property];
 	var effect = getEffect(true);
-	
+
 	if (!effect) {
 		return value;
 	}
-	
+
 	var observable = observe(object, property);
-	
+
 	if (!observable) {
 		throw new ReferenceError("Property '" + String(property) + "' does not exist and there is no default value provided");
 	}
-	
+
 	var enqueued = false;
 
 	function set(newValue: T[K]): void {
 		if (value !== newValue) {
 			value = newValue;
-			
+
 			if (!enqueued) {
 				enqueued = true;
 				enqueueUpdate(updateOf);
 			}
 		}
 	}
-	
+
 	function updateOf(): void {
 		enqueued = false;
 		updateEffect(effect!);
@@ -39,7 +39,7 @@ function getValue<T, K extends keyof T>(object: T, property: K, _receiver: T): T
 	onDestroy(
 		observable.subscribe(set)
 	);
-	
+
 	return value;
 }
 
@@ -73,7 +73,7 @@ export function of<T extends object, K extends keyof T>(object: T, property?: K)
 	}
 
 	var effect = getEffect(true);
-	
+
 	if (!effect) {
 		return object;
 	}

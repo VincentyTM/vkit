@@ -8,12 +8,12 @@ export function hydrateView<P extends ParentNode>(pointer: HydrationPointer<P>, 
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
 	var parentEffect = view.parentEffect;
-	
+
 	var effect = createEffect(parentEffect, function(): void {
 		var innerTemplate = view.getTemplate();
 		var parentNode = pointer.context;
 		var parent = end.parentNode;
-		
+
 		if (parent && start.nextSibling) {
 			for (var el = end.previousSibling; el && el !== start; el = end.previousSibling) {
 				parent.removeChild(el);
@@ -28,7 +28,7 @@ export function hydrateView<P extends ParentNode>(pointer: HydrationPointer<P>, 
 				parentEffect: getEffect(),
 				stopNode: null
 			};
-			
+
 			hydrate(fragmentPointer, innerTemplate);
 			parent.insertBefore(fragment, end);
 		} else {

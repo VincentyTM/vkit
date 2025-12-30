@@ -23,23 +23,23 @@ var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
  */
 export function observe<T, K extends keyof T>(object: T, property: K): Observable<T[K]> | null {
 	var desc = getOwnPropertyDescriptor(object, property);
-	
+
 	if (!desc) {
 		return null;
 	}
-	
+
 	if (desc.get && (desc.get as any).emitChange) {
 		return (desc.get as any).emitChange as Observable<T[K]>;
 	}
-	
+
 	var value = object[property];
-	
+
 	function get(): T[K] {
 		return value;
 	}
-	
+
 	var emitChange = get.emitChange = observable<T[K]>();
-	
+
 	defineProperty(object, property, {
 		get: get,
 		set: function(v: T[K]): void {
@@ -49,6 +49,6 @@ export function observe<T, K extends keyof T>(object: T, property: K): Observabl
 			}
 		}
 	});
-	
+
 	return emitChange;
 }

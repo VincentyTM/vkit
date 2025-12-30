@@ -53,7 +53,7 @@ function getIsAvailable(state: InstallPromptState): boolean {
  * @example
  * function InstallPrompt() {
  * 	const prompt = installPrompt();
- * 	
+ * 
  * 	return view(() => prompt.isAvailable() && Div(
  * 		P("Would you like to install our webapp?"),
  * 		Button("Yes", {onclick: () => prompt.accept()}),
@@ -64,7 +64,7 @@ function getIsAvailable(state: InstallPromptState): boolean {
  */
 export function installPrompt(): InstallPrompt {
 	var win = getWindow();
-	
+
 	var isAppInstalledInitially = !!win && (
 		(win.navigator as any).standalone ||
 		(win.matchMedia && win.matchMedia("(display-mode: standalone) or (display-mode: fullscreen) or (display-mode: minimal-ui)").matches) ||
@@ -75,7 +75,7 @@ export function installPrompt(): InstallPrompt {
 		event: null,
 		status: isAppInstalledInitially ? "installed" : "default"
 	});
-	
+
 	function beforeInstall(event: Event): void {
 		var e = event as BeforeInstallPromptEvent;
 		e.preventDefault();
@@ -84,7 +84,7 @@ export function installPrompt(): InstallPrompt {
 			status: "default"
 		});
 	}
-	
+
 	function setChoice(choiceResult: BeforeInstallPromptChoiceResult): void {
 		state.set({
 			event: null,
@@ -92,14 +92,14 @@ export function installPrompt(): InstallPrompt {
 		});
 		update();
 	}
-	
+
 	function appInstalled(): void {
 		state.set({
 			event: null,
 			status: "installed"
 		});
 	}
-	
+
 	if (win) {
 		onDestroy(onEvent(win, "beforeinstallprompt", beforeInstall));
 		onDestroy(onEvent(win, "appinstalled", appInstalled));

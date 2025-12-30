@@ -8,7 +8,7 @@ import { isSignal } from "./isSignal.js";
  * @example
  * function NavigationButton() {
  * 	const win = getWindow();
- * 	
+ * 
  * 	return Button("About", {
  * 		onclick() {
  * 			navigate(win, "?page=about");
@@ -23,13 +23,13 @@ export function navigate(window: Window | null, url: string | Signal<string> | (
 	if (window === null) {
 		return;
 	}
-	
+
 	var currentURL = (
 		isSignal(url) ? url.get() :
 		typeof url === "function" ? url() :
 		url
 	);
-	
+
 	var history = window.history;
 
 	if (!history.pushState || typeof PopStateEvent !== "function") {

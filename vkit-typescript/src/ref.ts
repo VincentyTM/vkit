@@ -19,7 +19,7 @@ export interface Ref<T> extends CustomTemplate<T> {
  * @example
  * function MyComponent() {
  * 	const input = ref();
- * 	
+ * 
  * 	return [
  * 		Input(input),
  * 		Button("Focus", {

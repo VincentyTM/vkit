@@ -33,19 +33,19 @@ export function wakeLock(condition?: Signal<boolean> | (() => boolean)): Signal<
 	var navigator = win.navigator as NavigatorExtension;
 	var currentSentinel = signal<WakeLockSentinel | null>(null);
 	var isPending = false;
-	
+
 	function lock(): void {
 		if (navigator.wakeLock && !isPending && !currentSentinel.get()) {
 			isPending = true;
-			
+
 			navigator.wakeLock.request("screen").then(function(sentinel: WakeLockSentinel): void {
 				isPending = false;
-				
+
 				if (!sentinel.released) {
 					sentinel.onrelease = function(): void {
 						currentSentinel.set(null);
 					};
-					
+
 					currentSentinel.set(sentinel);
 				}
 			}, function(_error: unknown): void {
@@ -54,13 +54,13 @@ export function wakeLock(condition?: Signal<boolean> | (() => boolean)): Signal<
 			});
 		}
 	}
-	
+
 	function unlock(): void {
 		var sentinel = currentSentinel.get();
-		
+
 		if (sentinel && !isPending) {
 			isPending = true;
-			
+
 			sentinel.release().then(function(): void {
 				isPending = false;
 				currentSentinel.set(null);
@@ -69,7 +69,7 @@ export function wakeLock(condition?: Signal<boolean> | (() => boolean)): Signal<
 			});
 		}
 	}
-	
+
 	if (isSignal(condition)) {
 		effect(function(): void {
 			condition() ? lock() : unlock();
@@ -83,8 +83,8 @@ export function wakeLock(condition?: Signal<boolean> | (() => boolean)): Signal<
 	} else {
 		lock();
 	}
-	
+
 	onDestroy(unlock);
-	
+
 	return currentSentinel.map(Boolean);
 }

@@ -49,7 +49,7 @@ function hydrateSkipHydration<P extends ParentNode>(
 		hydrate(hydrationPointer, template.template);
 		return;
 	}
-	
+
 	if (hydrationPointer.currentNode !== hydrationPointer.stopNode) {
 		hydrationPointer.currentNode = hydrationPointer.currentNode.nextSibling;
 	}

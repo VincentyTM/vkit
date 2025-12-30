@@ -12,7 +12,7 @@ import { RenderConfigService } from "./RenderConfigService.js";
  * @example
  * function SimpleRouter() {
  * 	const currentPage = param("page");
- * 	
+ * 
  * 	return [
  * 		A("Home", href("?page=home")),
  * 		" | ",
@@ -54,7 +54,7 @@ export function param(paramName: string | Signal<string>): Signal<string> {
 
 function selectSearchParam(url: string, paramName: string): string {
 	var i = url.indexOf("?");
-	
+
 	if (i === -1) {
 		return "";
 	}

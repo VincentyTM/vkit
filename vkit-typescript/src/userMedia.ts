@@ -52,6 +52,6 @@ export function userMedia(
 			});
 		}
 	});
-	
+
 	return latestStream;
 }

@@ -9,7 +9,7 @@ import { Template } from "./Template.js";
  * @example
  * function MediaBinding() {
  * 	const playing = signal(false);
- * 	
+ * 
  * 	return [
  * 		Video(
  * 			bindPlaying(playing),
@@ -38,7 +38,7 @@ export function bindPlaying(isPlaying: WritableSignal<boolean>): Template<HTMLMe
 			if (isPlaying()) {
 				if (element.paused) {
 					var playPromise = element.play();
-					
+
 					if (playPromise) {
 						playPromise.then(null, reset);
 					}

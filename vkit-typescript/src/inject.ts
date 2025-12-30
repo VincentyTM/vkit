@@ -18,9 +18,9 @@ import { createProvider } from "./createProvider.js";
  * function MyComponent() {
  * 	const myService1 = inject(MyService);
  * 	const myService2 = inject(MyService);
- * 	
+ * 
  * 	// myService1 === myService2
- * 	
+ * 
  * 	return H1("Hello ", myService1.name);
  * }
  * @param injectable Used as a key to find a provider of the service.
@@ -44,10 +44,10 @@ export function inject<T>(injectable: Injectable<T>): T {
 			if (provider.isCreated) {
 				return provider.instance as T;
 			}
-		
+
 			try {
 				setReactiveNode(provider.effect);
-		
+
 				var instance = provider.injectable.create() as T;
 				provider.isCreated = true;
 				provider.instance = instance;

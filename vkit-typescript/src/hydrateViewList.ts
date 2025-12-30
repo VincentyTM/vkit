@@ -28,24 +28,24 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 	var listEffect = createEffect(parentEffect, function(): void {
 		var models = template.models();
 		var n = models.length;
-		
+
 		if (!isArray(models)) {
 			models = toArray(models);
 		}
-		
+
 		var newBlockMap: Record<string, Block> = {};
 		var newBlockArray = new Array<Block>(n);
 		var n = models.length;
 		var oldBlockMap = blockMap;
-		
+
 		for (var i = 0; i < n; ++i) {
 			var model: T = models[i];
 			var key = hashCode(model);
-			
+
 			while (key in newBlockMap) {
 				key = "_" + key;
 			}
-			
+
 			var block = newBlockArray[i] = newBlockMap[key] = oldBlockMap[key] || createBlock<T, P>(
 				pointer,
 				model,
@@ -54,7 +54,7 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 				listEffect
 			);
 		}
-		
+
 		for (var key in oldBlockMap) {
 			if (!(key in newBlockMap)) {
 				var block = oldBlockMap[key];
@@ -70,35 +70,35 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 				if (blockEnd.parentNode) {
 					blockEnd.parentNode.removeChild(blockEnd);
 				}
-				
+
 				destroyEffect(block.effect);
 			}
 		}
-		
+
 		blockMap = newBlockMap;
-		
+
 		if (listStart.nextSibling) {
 			var m = blockArray.length;
 			var l = m;
-			
+
 			while (m > 0 && n > 0 && blockArray[m - 1] === newBlockArray[n - 1]) {
 				--m;
 				--n;
 			}
-			
+
 			if (n === 0 && m === 0) {
 				blockArray = newBlockArray;
 				return;
 			}
-			
+
 			var i = 0;
 			var k = Math.min(m, n);
 			var end = m < l ? blockArray[m].start : listEnd;
-			
+
 			while (i < k && blockArray[i] === newBlockArray[i]) {
 				++i;
 			}
-			
+
 			while (i < n) {
 				var block = newBlockArray[i];
 
@@ -125,14 +125,14 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 			}
 		} else {
 			var n = newBlockArray.length;
-			
+
 			parentNode.insertBefore(listStart, pointer.currentNode);
-		
+
 			for (var i = 0; i < n; ++i) {
 				var block = newBlockArray[i];
-		
+
 				parentNode.insertBefore(block.start, pointer.currentNode);
-				
+
 				var blockPointer: HydrationPointer<P> = {
 					context: pointer.context,
 					currentNode: pointer.currentNode,
@@ -146,7 +146,7 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 
 				parentNode.insertBefore(block.end, pointer.currentNode);
 			}
-		
+
 			parentNode.insertBefore(listEnd, pointer.currentNode);
 		}
 
@@ -161,9 +161,9 @@ function clearRange(start: Node, end: Node): void {
 	if (!start.nextSibling) {
 		throw new Error("Cannot clear detached range");
 	}
-	
+
 	var parent = start.parentNode;
-	
+
 	if (parent) {
 		for (var el = end.previousSibling; el && el !== start; el = end.previousSibling) {
 			parent.removeChild(el);
@@ -180,17 +180,17 @@ function createBlock<T, P extends ParentNode>(
 ): Block {
 	var start = document.createTextNode("");
 	var end = document.createTextNode("");
-	
+
 	var effect = createEffect(parentEffect, function(): void {
 		var innerTemplate = block.currentTemplate = getItemTemplate(model);
-		
+
 		var parent = end.parentNode;
-		
+
 		if (parent) {
 			clearRange(start, end);
 
 			var fragment = document.createDocumentFragment();
-			
+
 			var fragmentPointer: HydrationPointer<DocumentFragment> = {
 				context: fragment,
 				currentNode: null,
@@ -203,9 +203,9 @@ function createBlock<T, P extends ParentNode>(
 			parent.insertBefore(fragment, end);
 		}
 	});
-	
+
 	subscribe(listEffect, effect);
-	
+
 	var block: Block = {
 		currentTemplate: undefined,
 		effect: effect,
@@ -220,7 +220,7 @@ function createBlock<T, P extends ParentNode>(
 
 function insertRangeBefore(start: ChildNode, end: ChildNode, anchor: Node): void {
 	var parent = anchor.parentNode;
-	
+
 	if (parent) {
 		var fragment = document.createDocumentFragment();
 

@@ -21,7 +21,7 @@ type NotificationPermissionState = "default" | "denied" | "granted" | "prompt";
 
 export function notification(options?: NotificationManagerOptions): NotificationManager {
 	var win = getWindow();
-	
+
 	if (win === null) {
 		return {
 			dismiss: noop,
@@ -37,19 +37,19 @@ export function notification(options?: NotificationManagerOptions): Notification
 			}
 		};
 	}
-	
+
 	var nav = win.navigator;
 	var Notification = win.Notification;
 	var isSupported = typeof Notification === "function";
-	
+
 	var permission = signal<NotificationPermissionState>(
 		isSupported
 			? (Notification.permission === "default" ? "prompt" : Notification.permission)
 			: "default"
 	);
-	
+
 	var unsubscribe: (() => void) | undefined;
-	
+
 	onDestroy(function(): void {
 		if (unsubscribe) {
 			unsubscribe();
@@ -57,29 +57,29 @@ export function notification(options?: NotificationManagerOptions): Notification
 	});
 
 	var onError = options && options.onError;
-	
+
 	if (nav.permissions) {
 		nav.permissions.query({name: "notifications"}).then(function(perm: PermissionStatus): void {
 			var state: PermissionState | "default" = perm.state || (perm as any).status;
-			
+
 			if (Notification.permission === "denied" && state === "prompt") {
 				state = "default";
 			}
-			
+
 			permission.set(state);
-			
+
 			unsubscribe = onEvent(perm, "change", function(): void {
 				var state: PermissionState | "default" = perm.state || (perm as any).status;
-				
+
 				if (Notification.permission === "denied" && state === "prompt") {
 					state = "default";
 				}
-				
+
 				permission.set(state);
 			});
 		}, onError);
 	}
-	
+
 	function request(): void {
 		if (isSupported && Notification.permission !== "granted" && permission.get() === "prompt") {
 			Notification.requestPermission(function(perm): void {
@@ -87,17 +87,17 @@ export function notification(options?: NotificationManagerOptions): Notification
 			});
 		}
 	}
-	
+
 	function dismiss(): void {
 		if (permission.get() === "prompt") {
 			permission.set("default");
 		}
 	}
-	
+
 	function granted(): boolean {
 		return permission.get() === "granted";
 	}
-	
+
 	function showNotification(
 		title: string,
 		options?: NotificationOptions
@@ -106,18 +106,18 @@ export function notification(options?: NotificationManagerOptions): Notification
 			if (typeof onError === "function") {
 				onError(new Error("Notification API is not supported"));
 			}
-			
+
 			return null;
 		}
-		
+
 		if (!granted()) {
 			if (typeof onError === "function") {
 				onError(new Error("Notifications are not granted by the user"));
 			}
-			
+
 			return null;
 		}
-		
+
 		try {
 			return new Notification(title, options);
 		} catch(ex) {
@@ -128,11 +128,11 @@ export function notification(options?: NotificationManagerOptions): Notification
 			} else if (typeof onError === "function") {
 				onError(ex);
 			}
-			
+
 			return null;
 		}
 	}
-	
+
 	return {
 		permission: permission,
 		dismiss: dismiss,

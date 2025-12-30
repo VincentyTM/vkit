@@ -9,14 +9,14 @@ export function insertText(
 	value: string | ((oldValue: string) => string)
 ): void {
 	var doc = element.ownerDocument;
-	
+
 	if ((doc as any).selection) {
 		element.focus();
-		
+
 		var sel = (doc as any).selection.createRange();
 		sel.text = typeof value === "function" ? value(sel.text) : value;
 		sel.moveStart("character", -element.value.length);
-		
+
 		var pos = sel.text.length;
 		var range = (element as any).createTextRange();
 		range.collapse(true);
@@ -26,17 +26,17 @@ export function insertText(
 	} else if ("selectionStart" in element) {
 		var s = element.selectionStart || 0;
 		var e = element.selectionEnd || 0;
-		
+
 		if (typeof value === "function") {
 			value = value(element.value.substring(s, e));
 		}
-		
+
 		if (!doc.execCommand || !doc.execCommand("insertText", false, value)) {
 			element.value = element.value.substring(0, s) + value + element.value.substring(e);
 		}
-		
+
 		var c = s + value.length;
-		
+
 		element.focus();
 		element.setSelectionRange(c, c);
 	}

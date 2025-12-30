@@ -5,7 +5,7 @@ import { removeRemainingNodes } from "./removeRemainingNodes.js";
 export function hydrateHTMLElement<N extends keyof HTMLElementTagNameMap>(pointer: HydrationPointer<ParentNode>, template: HTMLElementTemplate<N>): void {
 	var current = pointer.currentNode;
 	var tagName = template.tagName;
-	
+
 	if (current && current.nodeName === tagName.toUpperCase() && current !== pointer.stopNode) {
 		var childPointer: HydrationPointer<HTMLElementTagNameMap[N]> = {
 			context: current as HTMLElementTagNameMap[N],

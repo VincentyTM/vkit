@@ -15,7 +15,7 @@ export function interval(callback: () => void, delay: number): void {
 	effect(function(): void {
 		var global = getGlobalContext();
 		var interval = global.setInterval(callback, delay);
-		
+
 		onDestroy(function(): void {
 			global.clearInterval(interval);
 		});

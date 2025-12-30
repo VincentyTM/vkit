@@ -22,7 +22,7 @@ var leadingAndTrailingWhitespaces = /(^\s+)|(\s+$)/g;
 
 export function cookies(): Cookies {
 	var win = getWindow();
-	
+
 	return {
 		document: win ? win.document : null,
 		renderConfig: inject(RenderConfigService),
@@ -52,7 +52,7 @@ function forEach(this: Cookies, callback: (name: string, value: string) => void)
 		var rc = cookieStrings[j];
 		var cookies = rc.split(";");
 		var n = cookies.length;
-		
+
 		for (var i = 0; i < n; ++i) {
 			var cookie = cookies[i].replace(leadingAndTrailingWhitespaces, "").split("=");
 			callback(decodeURIComponent(cookie[0]), decodeURIComponent(cookie[1]));
@@ -67,18 +67,18 @@ function getCookie(this: Cookies, name: string): string | null {
 		var cookies = ";" + doc.cookie.replace(/\s/g, "");
 		var search = ";" + encodeURIComponent(name) + "=";
 		var offset = cookies.indexOf(search);
-		
+
 		if (offset === -1) {
 			return null;
 		}
-		
+
 		offset += search.length;
 		var end = cookies.indexOf(";", offset);
-		
+
 		if (end === -1) {
 			end = cookies.length;
 		}
-		
+
 		return decodeURIComponent(cookies.substring(offset, end));
 	}
 
@@ -89,7 +89,7 @@ function getCookie(this: Cookies, name: string): string | null {
 	}
 
 	var cookieHeadersRaw = request.headers.cookie;
-		
+
 	if (!cookieHeadersRaw) {
 		return null;
 	}
@@ -97,20 +97,20 @@ function getCookie(this: Cookies, name: string): string | null {
 	var cookieHeaders = typeof cookieHeadersRaw === "string" ? [cookieHeadersRaw] : cookieHeadersRaw;
 	var m = cookieHeaders.length;
 
-	for (var j = 0; j < m; ++j) {	
+	for (var j = 0; j < m; ++j) {
 		var rcParts = cookieHeaders[j].split(";");
 		var n = rcParts.length;
-		
+
 		for (var i = 0; i < n; ++i) {
 			var token = rcParts[i];
 			var cookie = token.replace(leadingAndTrailingWhitespaces, "").split("=");
-			
+
 			if (cookie[0] === name) {
 				return decodeURIComponent(cookie[1]);
 			}
 		}
 	}
-	
+
 	return null;
 }
 
@@ -122,24 +122,24 @@ function setCookie(
 	options?: SetCookieOptions
 ): void {
 	var suffix: string[] = [];
-	
+
 	if (expiry !== undefined && expiry !== null) {
 		suffix.push("; Expires=", new Date(expiry).toUTCString());
 	}
-	
+
 	if (options && options.secure) {
 		suffix.push("; Secure");
 	}
-	
+
 	if (options && options.httpOnly) {
 		suffix.push("; HttpOnly");
 	}
-	
+
 	suffix.push(
 		"; SameSite=", options && options.sameSite || "Strict",
 		"; Path=", options && options.path || "/"
 	);
-	
+
 	var doc = this.document;
 
 	if (doc) {
@@ -154,7 +154,7 @@ function setCookie(
 			value: value,
 			suffix: suffix.join("")
 		};
-		
+
 		setResponseHeader(this.renderConfig);
 	}
 }
@@ -162,7 +162,7 @@ function setCookie(
 function setResponseHeader(renderConfig: RenderConfig): void {
 	var renderConfigCookies = renderConfig.cookies;
 	var collection: string[] = [];
-	
+
 	for (var name in renderConfigCookies) {
 		var cookie = renderConfigCookies[name];
 		var cookieString = [
@@ -173,7 +173,7 @@ function setResponseHeader(renderConfig: RenderConfig): void {
 		].join("");
 		collection.push(cookieString);
 	}
-	
+
 	var response = renderConfig.response;
 
 	if (response) {

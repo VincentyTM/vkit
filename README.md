@@ -18,7 +18,7 @@ const Button = htmlTag("button");
 
 function CounterApp() {
     const count = signal(0);
-    
+
     return [
         Button("Increment", {
             onclick: () => count.update(x => x + 1)
@@ -425,7 +425,7 @@ Side effects can also be created that run when the value of an input signal chan
 ```javascript
 effect(() => {
     console.log(`Hello ${name()}`);
-    
+
     onDestroy(() => {
         console.log("Optional cleanup function");
     });
@@ -526,15 +526,15 @@ Fortunately, the `onDestroy` function can be used here.
 ```javascript
 function Clock() {
     const date = signal(new Date());
-    
+
     const interval = setInterval(() => {
         date.set(new Date());
     }, 1000);
-    
+
     onDestroy(() => {
         clearInterval(interval);
     });
-    
+
     return computed(() => date().toLocaleString());
 }
 ```
@@ -558,13 +558,13 @@ There are two ways a component can get data: from function parameters and from i
 ```javascript
 function MyComponent() {
     const myService = inject(MyService);
-    
+
     return P(myService.getText());
 }
 
 const MyService = createInjectable(() => ({
     anotherService: inject(AnotherService),
-    
+
     getText() {
         return this.anotherService.text;
     }
@@ -595,7 +595,7 @@ Although element (or other) references can be set with simple functions, there i
 ```javascript
 function InputFocusComponent() {
     const inputRef = ref();
-    
+
     return html(
         '<input>', inputRef,
         '<input type="button" value="Focus">', {

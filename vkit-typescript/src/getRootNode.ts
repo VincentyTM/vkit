@@ -30,7 +30,7 @@ export function getRootNode<T extends Template>(template: T):
 		parentEffect: getEffect(),
 		stopNode: null
 	};
-	
+
 	hydrate(pointer, template);
 
 	var firstChild = container.firstChild;

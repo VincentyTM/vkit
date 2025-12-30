@@ -10,20 +10,20 @@ interface TextSelection {
  */
 export function getTextSelection(element: HTMLInputElement & HTMLTextAreaElement): TextSelection {
 	var selection = (element.ownerDocument as any).selection;
-	
+
 	if (selection) {
 		var sel = selection.createRange();
 		var length = sel.text.length;
 		var end = sel.text.length;
-		
+
 		sel.moveStart("character", -element.value.length);
-		
+
 		return {
 			start: end - length,
 			end: end
 		};
 	}
-	
+
 	return {
 		start: element.selectionStart || 0,
 		end: element.selectionEnd || 0

@@ -124,11 +124,11 @@ export function webSocket<T extends WebSocketMessage>(params: WebSocketParams<T>
 	function onOpen(): void {
 		isOpen.set(true);
 		var n = queue.length;
-		
+
 		if (n) {
 			var q = queue;
 			queue = [];
-			
+
 			for (var i = 0; i < n; ++i) {
 				send(q[i]);
 			}
@@ -137,7 +137,7 @@ export function webSocket<T extends WebSocketMessage>(params: WebSocketParams<T>
 
 	function close(): void {
 		var ws = webSocket;
-	
+
 		if (ws) {
 			ws.onmessage = null;
 			ws.onopen = null;
@@ -147,7 +147,7 @@ export function webSocket<T extends WebSocketMessage>(params: WebSocketParams<T>
 			webSocket = null;
 			isOpen.set(false);
 		}
-	}	
+	}
 
 	function connect(): void {
 		if (isDestroyed) {
@@ -158,7 +158,7 @@ export function webSocket<T extends WebSocketMessage>(params: WebSocketParams<T>
 			if (typeof win.WebSocket !== "function") {
 				throw new ReferenceError("WebSocket is not supported");
 			}
-			
+
 			var ws = new win.WebSocket(currentURL);
 			ws.onopen = onOpen;
 			ws.onmessage = onMessage;
@@ -168,7 +168,7 @@ export function webSocket<T extends WebSocketMessage>(params: WebSocketParams<T>
 			webSocket = ws;
 		}
 	}
-	
+
 	function send(message: WebSocketMessage): void {
 		if (isDestroyed) {
 			throw new Error("Cannot send message, WebSocket is destroyed");

@@ -8,7 +8,7 @@ import { Template } from "./Template.js";
  * @example
  * function TextBindings() {
  * 	const text = signal("Hello world");
- * 	
+ * 
  * 	return [
  * 		H1(text),
  * 		Input(bindText(text)),
@@ -26,7 +26,7 @@ export function bindText(signal: WritableSignal<string>): Template<HTMLInputElem
 	function update(this: HTMLInputElement | HTMLTextAreaElement): void {
 		signal.set(this.value);
 	}
-	
+
 	return {
 		onchange: update,
 		oninput: update,

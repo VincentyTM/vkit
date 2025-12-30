@@ -33,15 +33,15 @@ export function dequeueUpdate(callback: () => void): void {
  */
 export function update(): void {
 	var n: number;
-	
+
 	while (n = queue.length) {
 		var updates = queue;
 		queue = [];
-		
+
 		for (var i = 0; i < n; ++i) {
 			updates[i]();
 		}
 	}
-	
+
 	callTicks();
 }

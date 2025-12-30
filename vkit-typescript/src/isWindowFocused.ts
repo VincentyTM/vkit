@@ -13,7 +13,7 @@ export function isWindowFocused(): Signal<boolean> {
 	}
 
 	var doc = win.document;
-	
+
 	var focused = computed(function() {
 		return doc.hasFocus();
 	});
@@ -21,9 +21,9 @@ export function isWindowFocused(): Signal<boolean> {
 	function invalidate(): void {
 		focused.invalidate();
 	}
-	
+
 	onDestroy(onEvent(win, "blur", invalidate));
 	onDestroy(onEvent(win, "focus", invalidate));
-	
+
 	return focused;
 }

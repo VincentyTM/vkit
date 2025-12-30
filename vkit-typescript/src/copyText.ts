@@ -5,7 +5,7 @@
  * @example
  * function CopyButton() {
  * 	const win = getWindow();
- * 	
+ * 
  * 	return Button("Copy!", {
  * 		onclick() {
  * 			copyText("Hello world", win);
@@ -23,7 +23,7 @@ export function copyText(text: string, window: Window | null): void {
 
 	var doc = window.document;
 	var nav = window.navigator;
-	
+
 	function exec(): void {
 		var container = doc.body || doc.documentElement;
 		var textarea = doc.createElement("textarea");

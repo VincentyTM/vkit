@@ -68,6 +68,6 @@ function getCombinedCSS(): string {
 			stylesArray.push(style);
 		}
 	}
-	
+
 	return stylesArray.join("\n");
 }

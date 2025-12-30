@@ -24,11 +24,11 @@ function getHash(win: Window): string {
 export function hash(): Signal<string> {
 	var win = getWindow();
 	var hash = win ? computed(getHash, [win]) : computed(getEmptyString);
-	
+
 	if (win) {
 		onDestroy(onEvent(win, "hashchange", hash.invalidate));
 		onDestroy(onEvent(win, "popstate", hash.invalidate));
 	}
-	
+
 	return hash;
 }

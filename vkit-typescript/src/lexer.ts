@@ -54,13 +54,13 @@ function createLexer(rules: LexerRules, text: string): Lexer {
 	var pos = 0;
 	var buffer: LexerNode[] = [];
 	var lexer = {} as Lexer;
-	
+
 	lexer.rules = rules;
-	
+
 	if (iterator) {
 		lexer[iterator] = returnSelf;
 	}
-	
+
 	lexer.all = function(this: Lexer): LexerNode[] {
 		var array: LexerNode[] = [];
 		while (!this.ended()) {
@@ -68,7 +68,7 @@ function createLexer(rules: LexerRules, text: string): Lexer {
 		}
 		return array;
 	};
-	
+
 	lexer.next = function(this: Lexer): IteratorResult<LexerNode, undefined> {
 		return this.ended() ? {
 			done: true,
@@ -78,7 +78,7 @@ function createLexer(rules: LexerRules, text: string): Lexer {
 			value: this.shift()!
 		};
 	};
-	
+
 	lexer.shift = function(this: Lexer): LexerNode | undefined {
 		if (buffer.length > 0) {
 			return buffer.pop();
@@ -125,33 +125,33 @@ function createLexer(rules: LexerRules, text: string): Lexer {
 
 		throw new SyntaxError("Reached the end of input. Should not happen.");
 	};
-	
+
 	lexer.unshift = function(this: Lexer, token: LexerNode): void {
 		buffer.push(token);
 	};
-	
+
 	lexer.pos = function(this: Lexer): number {
 		return pos;
 	};
-	
+
 	lexer.jump = function(this: Lexer, p: number | LexerNode): void {
 		pos = typeof p === "number" ? p : p.pos;
 	};
-	
+
 	lexer.ended = function(this: Lexer): boolean {
 		return pos >= text.length && !buffer.length;
 	};
-	
+
 	lexer.line = function(this: Lexer, token?: LexerNode): number {
 		var p = token ? token.pos : pos;
 		return text.substring(0, p).split("\n").length;
 	};
-	
+
 	lexer.charPos = function(this: Lexer, token?: LexerNode): number {
 		var p = token ? token.pos : pos;
 		return p - text.lastIndexOf("\n", p - 1);
 	};
-	
+
 	lexer.info = function(this: Lexer, token: LexerNode): string {
 		return "'" + (token.word || token.type) + "' at line " + this.line(token) + ", char " + this.charPos(token) + ".";
 	};

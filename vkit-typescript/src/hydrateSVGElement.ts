@@ -5,7 +5,7 @@ import { SVGElementTemplate } from "./svgTag.js";
 export function hydrateSVGElement<N extends keyof SVGElementTagNameMap>(pointer: HydrationPointer<ParentNode>, template: SVGElementTemplate<N>): void {
 	var current = pointer.currentNode;
 	var tagName = template.tagName;
-	
+
 	if (current && current.nodeName === tagName.toUpperCase() && current !== pointer.stopNode) {
 		var childPointer: HydrationPointer<SVGElementTagNameMap[N]> = {
 			context: current as SVGElementTagNameMap[N],

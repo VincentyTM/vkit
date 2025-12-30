@@ -42,27 +42,27 @@ export function permission(
 			permission.set("granted");
 		}
 	}
-	
+
 	function deny(): void {
 		if (permission.get() === "prompt") {
 			permission.set("denied");
 		}
 	}
-	
+
 	function request(): void {
 		if (permission.get() === "prompt") {
 			onRequestPermission(grant, deny);
 		}
 	}
-	
+
 	function dismiss(): void {
 		if (permission.get() === "prompt") {
 			permission.set("default");
 		}
 	}
-	
+
 	var permission = signal<PermissionState | "default">("default");
-	
+
 	var prompt = permission.map(function(perm: PermissionState | "default"): PermissionPrompt {
 		if (perm === "granted") {
 			return {
@@ -70,14 +70,14 @@ export function permission(
 				granted: true
 			};
 		}
-		
+
 		if (perm === "denied") {
 			return {
 				state: "denied",
 				denied: true
 			};
 		}
-		
+
 		if (perm === "prompt") {
 			return {
 				state: "prompt",
@@ -86,14 +86,14 @@ export function permission(
 				dismiss: dismiss
 			};
 		}
-		
+
 		return {
 			state: "default"
 		};
 	});
-	
+
 	var unsubscribe: (() => void) | undefined;
-	
+
 	onDestroy(function(): void {
 		if (unsubscribe) {
 			unsubscribe();
@@ -101,11 +101,11 @@ export function permission(
 	});
 
 	var win = getWindow();
-	
+
 	if (win && win.navigator && win.navigator.permissions) {
 		win.navigator.permissions.query({name: name}).then(function(perm: PermissionStatus): void {
 			permission.set(perm.state || (perm as any).status);
-			
+
 			unsubscribe = onEvent(perm, "change", function(): void {
 				permission.set(perm.state || (perm as any).status);
 			});
@@ -115,6 +115,6 @@ export function permission(
 			}
 		});
 	}
-	
+
 	return prompt;
 }

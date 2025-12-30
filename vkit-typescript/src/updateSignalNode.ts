@@ -17,7 +17,7 @@ export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
 		}
 
 		node.flags |= COMPUTING_FLAG;
-		
+
 		var subscribers = node.subscribers;
 
 		try {
@@ -25,26 +25,26 @@ export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
 
 			var dependencies = node.dependencies;
 			var newValue: T;
-			
+
 			if (dependencies) {
 				var n = dependencies.length;
 				var resolvedDependencies = Array.prototype.slice.call(dependencies);
-				
+
 				for (var i = 0; i < n; ++i) {
 					var dependency = dependencies[i];
 					resolvedDependencies[i] = isSignal(dependency) ? dependency() : dependency;
 				}
-	
+
 				newValue = node.computeValue.apply(node, resolvedDependencies as never[]);
 			} else {
 				newValue = node.computeValue();
 			}
 
 			var oldValue = node.value;
-			
+
 			if (newValue !== oldValue) {
 				node.value = newValue;
-				
+
 				var n = subscribers.length;
 
 				for (var i = 0; i < n; ++i) {

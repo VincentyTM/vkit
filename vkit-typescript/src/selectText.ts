@@ -9,7 +9,7 @@ export function selectText(element: HTMLInputElement & HTMLTextAreaElement): voi
 		element.select();
 		return;
 	}
-	
+
 	if ((doc as any).selection) {
 		var textRange = (doc.body as any).createTextRange();
 		textRange.moveToElementText(element);
@@ -18,7 +18,7 @@ export function selectText(element: HTMLInputElement & HTMLTextAreaElement): voi
 	}
 
 	var win: (Window & typeof globalThis) | null = doc && doc.defaultView || (doc as any).parentWindow || null;
-	
+
 	if (win && win.getSelection) {
 		var range = doc.createRange();
 		range.selectNode(element);

@@ -28,16 +28,16 @@ export function objectProperty<T, K extends keyof T>(
 	getDefaultValue?: () => T[K]
 ): WritableSignal<T[K]> {
 	var value = signal<T[K]>(getSnapshot(object)[getSnapshot(property)]);
-	
+
 	effect(function() {
 		getSnapshot(object)[getSnapshot(property)] = value();
 	});
-	
+
 	effect(function() {
 		var o = isSignal(object) ? object() : object;
 		var p = isSignal(property) ? property() : property;
 		var change = observe(o, p);
-		
+
 		if (!change && getDefaultValue) {
 			o[p] = getDefaultValue();
 			change = observe(o, p);
@@ -46,13 +46,13 @@ export function objectProperty<T, K extends keyof T>(
 		if (!change) {
 			throw new Error("Property '" + String(p) + "' does not exist and there is no default value provided");
 		}
-		
+
 		onDestroy(change.subscribe(function(newValue: T[K]): void {
 			value.set(newValue);
 		}));
 
 		value.set(o[p]);
 	});
-	
+
 	return value;
 }

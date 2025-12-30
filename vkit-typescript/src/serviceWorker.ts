@@ -11,7 +11,7 @@ export function serviceWorker(src: string, options?: RegistrationOptions): Signa
 		}
 
 		var nav = win.navigator;
-		
+
 		if (!(nav.serviceWorker && typeof nav.serviceWorker.register === "function")) {
 			throw new TypeError("ServiceWorker API is not supported");
 		}

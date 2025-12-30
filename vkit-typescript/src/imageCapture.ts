@@ -14,7 +14,7 @@ interface ImageCapturePhotoSettings {
 	imageWidth?: number;
 	redEyeReduction?: boolean;
 }
-	
+
 function takePhoto(
 	ctx: CanvasRenderingContext2D,
 	video: HTMLVideoElement,
@@ -68,7 +68,7 @@ function ImageCapturePolyfill(track: MediaStreamTrack): ImageCapture {
 			takePhoto(ctx, video, callbacks[i]);
 		}
 	};
-	
+
 	return {
 		takePhoto: function() {
 			return new Promise(function(resolve) {
@@ -98,7 +98,7 @@ export function imageCapture(
 		if (s === null) {
 			return null;
 		}
-		
+
 		var track = "getVideoTracks" in s ? s.getVideoTracks()[0] : s;
 
 		if (!track) {
@@ -108,18 +108,18 @@ export function imageCapture(
 		if (typeof (win as any).ImageCapture === "function") {
 			return new (win as any).ImageCapture(track) as ImageCapture;
 		}
-		
+
 		return ImageCapturePolyfill(track);
 	});
 
 	return asyncEffect(function() {
 		var ic = awaitResult(imageCapture());
 		var ps = isSignal(photoSettings) || typeof photoSettings === "function" ? photoSettings() : photoSettings;
-		
+
 		if (!ic || !ps) {
 			throw Suspend;
 		}
-		
+
 		return ic.takePhoto(ps);
 	});
 }

@@ -81,7 +81,7 @@ function createAsset<T>(name: string): AssetInternals<T> {
 	var loadHandler = observable<T>();
 	var progressHandler = observable<unknown>();
 	var resetHandler = observable();
-	
+
 	return {
 		data: undefined,
 		error: error,
@@ -115,13 +115,13 @@ function addRef<T>(asset: AssetInternals<T>): void {
 
 function removeRef<T>(asset: AssetInternals<T>): boolean {
 	var doUnload = --asset.refCount <= 0;
-	
+
 	if (doUnload) {
 		asset.reset();
 		asset.unload();
 		asset.unload.clear();
 	}
-	
+
 	return doUnload;
 }
 
@@ -177,7 +177,7 @@ function then<T>(
 	rejectHandler: (error: unknown) => void
 ): void {
 	var unsub = observable();
-	
+
 	if (typeof resolveHandler === "function") {
 		if (this.status === AssetStatus.Fulfilled) {
 			resolveHandler(this.data as T);
@@ -190,7 +190,7 @@ function then<T>(
 			);
 		}
 	}
-	
+
 	if (typeof rejectHandler === "function") {
 		if (this.status === AssetStatus.Rejected) {
 			rejectHandler(this.data);
@@ -223,11 +223,11 @@ function addToRefs<T>(this: AssetRefsInternals<T>, name: string): Asset<T> {
 	var assetContainer = this.assetContainer;
 	var refs = this.refs;
 	var asset = refs[name];
-	
+
 	if (asset) {
 		return asset;
 	}
-	
+
 	refs[name] = asset = addAsset(assetContainer, name);
 	return asset;
 }
@@ -275,12 +275,12 @@ function addAsset<T>(assetContainer: AssetContainerInternals<T>, name: string): 
 	var assets = assetContainer.assets;
 	var assetNeeded = assetContainer.assetNeeded;
 	var asset = assets[name];
-	
+
 	if (asset) {
 		addRef(asset);
 	} else {
 		asset = assets[name] = createAsset(name);
-		
+
 		if (typeof assetNeeded === "function") {
 			try {
 				assetNeeded(asset);
@@ -289,14 +289,14 @@ function addAsset<T>(assetContainer: AssetContainerInternals<T>, name: string): 
 			}
 		}
 	}
-	
+
 	return asset;
 }
 
 function removeAsset<T>(assetContainer: AssetContainerInternals<T>, name: string): void {
 	var assets = assetContainer.assets;
 	var asset = assets[name];
-	
+
 	if (asset && removeRef(asset)) {
 		delete assets[name];
 	}
@@ -306,27 +306,27 @@ function bind<T>(this: AssetContainerInternals<T>, destination: Asset<T>, loadHa
 	var assetContainer = this;
 	var name = destination.name;
 	var asset = addAsset(this, name);
-	
+
 	destination.onUnload(
 		asset.onLoad(loadHandler)
 	);
-	
+
 	destination.onUnload(
 		asset.onError(destination.error)
 	);
-	
+
 	destination.onUnload(
 		asset.onReset(destination.reset)
 	);
-	
+
 	if (asset.isFulfilled()) {
 		loadHandler(asset.get()!);
 	}
-	
+
 	destination.onUnload(function(): void {
 		removeAsset(assetContainer, name);
 	});
-	
+
 	if (typeof unloadHandler === "function") {
 		destination.onUnload(
 			asset.onUnload(unloadHandler)
@@ -341,7 +341,7 @@ function forEach<T>(this: AssetContainerInternals<T>, callback: (asset: Asset<T>
 		callback(assets[name]);
 	}
 }
-	
+
 function select<T>(this: AssetContainerInternals<T>, name: string): Asset<T> | undefined {
 	return this.assets[name];
 }

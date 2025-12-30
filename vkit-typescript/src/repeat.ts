@@ -12,11 +12,11 @@ function getNumber(num: number): number {
 function createRangeArray(length: number): number[] {
 	length = getNumber(length);
 	var array = new Array<number>(length);
-	
+
 	for (var i = 0; i < length; ++i) {
 		array[i] = i;
 	}
-	
+
 	return array; 
 }
 
@@ -25,7 +25,7 @@ function createRangeArray(length: number): number[] {
  * @example
  * function Lines() {
  * 	const lineCount = signal(10);
- * 	
+ * 
  * 	return [
  * 		Button("Clear", {
  * 			onclick: () => lineCount.set(0)
@@ -59,14 +59,14 @@ export function repeat(
 		var arrayState = count.map(createRangeArray);
 		return viewList(arrayState, getTemplate as (index: number) => Template<unknown>);
 	}
-	
+
 	count = getNumber(count);
-	
+
 	var array: unknown[] = new Array(count);
-	
+
 	for (var i = 0; i < count; ++i) {
 		array[i] = getTemplate(i);
 	}
-	
+
 	return array;
 }

@@ -13,16 +13,16 @@ export function visibilityState(): Signal<boolean> {
 	}
 
 	var doc = win.document;
-	
+
 	var visibility = computed(function(): boolean {
 		return doc.visibilityState === "visible" || !doc.visibilityState;
 	});
-	
+
 	onDestroy(
 		onEvent(doc, "visibilitychange", function(): void {
 			visibility.invalidate();
 		})
 	);
-	
+
 	return visibility;
 }

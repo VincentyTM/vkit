@@ -7,12 +7,12 @@ import { Effect } from "./createEffect.js";
  */
 export function onDestroy(destroyHandler: () => void): void {
 	var effect = getEffect();
-	
+
 	var e: Effect | undefined = effect;
-	
+
 	while (e && e.destroyHandlers === undefined) {
 		e.destroyHandlers = [];
-		
+
 		if (e.parent) {
 			if (e.parent.children) {
 				e.parent.children.push(e);
@@ -20,9 +20,9 @@ export function onDestroy(destroyHandler: () => void): void {
 				e.parent.children = [e];
 			}
 		}
-		
+
 		e = e.parent;
 	}
-	
+
 	effect!.destroyHandlers!.push(destroyHandler);
 }

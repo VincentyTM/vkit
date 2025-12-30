@@ -29,39 +29,39 @@ export function preferredLanguages(): Signal<readonly string[]> {
 
 	if (!win) {
 		var request = inject(RenderConfigService).request;
-	
+
 		if (request === undefined) {
 			return computed(getEmptyArray);
 		}
-		
+
 		var header = request.headers["accept-language"];
 		var langs = typeof header === "string" ? header.replace(/\s+/g, "").split(",") : [];
-		
+
 		for (var i = langs.length; i--;) {
 			var l = langs[i];
 			var p = l.indexOf(";");
-			
+
 			if (p !== -1) {
 				langs[i] = l.substring(0, p);
 			}
 		}
-		
+
 		return computed(function(): readonly string[] {
 			return langs;
 		});
 	}
 
 	var nav = win.navigator as NavigatorExtension;
-	
+
 	var clientLangs = computed(function(): readonly string[] {
 		return getPreferredLanguages(nav);
 	});
-	
+
 	onDestroy(
 		onEvent(win, "languagechange", function(): void {
 			clientLangs.invalidate();
 		})
 	);
-	
+
 	return clientLangs;
 }

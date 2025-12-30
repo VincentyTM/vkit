@@ -29,17 +29,17 @@ export function hydrate<P extends ParentNodeCore>(pointer: HydrationPointer<P>, 
 	if (template === null || template === undefined || template === true || template === false) {
 		return;
 	}
-	
+
 	if (typeof template === "string" || typeof template === "number" || typeof template === "bigint") {
 		hydrateText(pointer, String(template));
 		return;
 	}
-	
+
 	if (isSignal(template)) {
 		hydrateDynamicSignalText(pointer, template);
 		return;
 	}
-	
+
 	if (typeof template === "function") {
 		hydrateDynamicText(pointer, template);
 		return;
@@ -49,22 +49,22 @@ export function hydrate<P extends ParentNodeCore>(pointer: HydrationPointer<P>, 
 		template.hydrate(pointer, template);
 		return;
 	}
-	
+
 	if ("nodeType" in template) {
 		pointer.context.insertBefore(template, pointer.currentNode);
 		return;
 	}
-	
+
 	if ("length" in template) {
 		var n = template.length;
-		
+
 		for (var i = 0; i < n; ++i) {
 			hydrate(pointer, template[i]);
 		}
-		
+
 		return;
 	}
-	
+
 	if ("next" in template) {
 		var x: IteratorResult<Template<P>, Template<P>>;
 
@@ -75,13 +75,13 @@ export function hydrate<P extends ParentNodeCore>(pointer: HydrationPointer<P>, 
 
 		return;
 	}
-	
+
 	hydrateBindings(pointer, template);
 }
 
 function hydrateText(pointer: HydrationPointer<ParentNodeCore>, text: string): Text {
 	var current = pointer.currentNode;
-	
+
 	if (current && current.nodeType === 3 && current !== pointer.stopNode) {
 		current.nodeValue = text;
 		pointer.currentNode = current.nextSibling;
@@ -150,7 +150,7 @@ function hydrateBinding<P, K extends string & keyof Bindings<P>>(
 		hydrateSignalBinding(pointer, key, value as Signal<P[K]>);
 		return;
 	}
-	
+
 	if (typeof value === "function") {
 		if (key.indexOf("on") === 0) {
 			var element = pointer.context;

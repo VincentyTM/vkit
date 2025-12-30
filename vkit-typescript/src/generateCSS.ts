@@ -12,7 +12,7 @@ interface ConditionalValue<T, K extends keyof T> {
 type CSSValue<T, K extends keyof T> = T[K] | ConditionalValue<T, K>[];
 
 export type CSSProperties = object & {
-    [K in keyof Partial<CSSStyleDeclaration>]: CSSValue<CSSStyleDeclaration, K>;
+	[K in keyof Partial<CSSStyleDeclaration>]: CSSValue<CSSStyleDeclaration, K>;
 } & {
 	[K: string]: CSSValue<Record<string, string>, string>;
 };
@@ -40,13 +40,13 @@ function setConditionalValues<K extends keyof CSSStyleDeclaration & string>(
 				rule[prefixes[i] + propName as K] = conditionalValues;
 			}
 		}
-		
+
 		rule[propName] = conditionalValues;
 		return;
 	}
-	
+
 	var n = conditionalValues.length;
-	
+
 	for (var i = 0; i < n; ++i) {
 		var conditionalValue = conditionalValues[i];
 		var mediaQueryName = conditionalValue.media || "";
@@ -69,7 +69,7 @@ function setConditionalValues<K extends keyof CSSStyleDeclaration & string>(
 export function generateCSS(props: CSSProperties, pseudoElement: string | undefined): string {
 	var baseSelector = "::this" + (pseudoElement !== undefined ? "::" + pseudoElement : "");
 	var mediaQueries: MediaQueries = {};
-	
+
 	for (var propName in props) {
 		var cssValue = props[propName as keyof CSSProperties & string];
 
@@ -84,20 +84,20 @@ export function generateCSS(props: CSSProperties, pseudoElement: string | undefi
 			);
 		}
 	}
-	
+
 	var css: string[] = [];
-	
+
 	for (var mediaQueryName in mediaQueries) {
 		if (mediaQueryName) {
 			css.push("@media ", mediaQueryName, "{");
 		}
-		
+
 		var mediaQuery = mediaQueries[mediaQueryName];
-		
+
 		for (var selector in mediaQuery) {
 			var rule = mediaQuery[selector];
 			css.push(selector, "{");
-			
+
 			for (var propName in rule) {
 				var propValue = rule[propName];
 
@@ -105,14 +105,14 @@ export function generateCSS(props: CSSProperties, pseudoElement: string | undefi
 					css.push(toKebabCase(propName), ":", propValue, ";\r\n");
 				}
 			}
-			
+
 			css.push("}");
 		}
-		
+
 		if (mediaQueryName) {
 			css.push("}");
 		}
 	}
-	
+
 	return css.join("");
 }

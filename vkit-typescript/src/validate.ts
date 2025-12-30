@@ -300,7 +300,7 @@ export function validate<T>(value: any, schema: Schema<T>): ValidationError | nu
 
 		return null;
 	}
-	
+
 	if (schema.type === "number") {
 		if (typeof value !== "number") {
 			return {
@@ -335,7 +335,7 @@ export function validate<T>(value: any, schema: Schema<T>): ValidationError | nu
 
 		return null;
 	}
-	
+
 	if (schema.type === "boolean") {
 		if (typeof value !== "boolean") {
 			return {
@@ -346,7 +346,7 @@ export function validate<T>(value: any, schema: Schema<T>): ValidationError | nu
 
 		return null;
 	}
-	
+
 	if (schema.type === "null") {
 		if (value !== null) {
 			return {
@@ -354,7 +354,7 @@ export function validate<T>(value: any, schema: Schema<T>): ValidationError | nu
 				value: value
 			};
 		}
-		
+
 		return null;
 	}
 

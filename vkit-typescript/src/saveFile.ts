@@ -8,7 +8,7 @@ import { URLWithFallback } from "./objectURL.js";
  * @example
  * function FileSaver() {
  * 	const myBlob = new Blob(["Hello world"]);
- * 	
+ * 
  * 	return Button("Save", {
  * 		onclick: () => saveFile(myBlob, "HelloWorld.txt")
  * 	});
@@ -27,7 +27,7 @@ export function saveFile(blob: Blob, name?: string): void {
 		(navigator as any).msSaveOrOpenBlob(blob, name);
 		return;
 	}
-	
+
 	var url = URLWithFallback.createObjectURL(blob);
 	var a = document.createElement("a");
 	a.href = url;

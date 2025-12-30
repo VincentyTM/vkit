@@ -59,7 +59,7 @@ function propToAttr(name: string): string {
 	if (name.indexOf("aria") === 0) {
 		return toKebabCase(name);
 	}
-	
+
 	return name.toLowerCase();
 }
 
@@ -86,10 +86,10 @@ export function getInnerText(element: ServerElement): string {
 
 	var parts: string[] = [];
 	var n = children.length;
-	
+
 	for (var i = 0; i < n; ++i) {
 		var child = children[i];
-		
+
 		if (typeof child === "string") {
 			parts.push(child);
 		} else if (child) {
@@ -100,7 +100,7 @@ export function getInnerText(element: ServerElement): string {
 			}
 		}
 	}
-	
+
 	return parts.join("");
 }
 
@@ -129,7 +129,7 @@ export function setProperty(element: ServerElement, name: string, value: unknown
 		}
 		return;
 	}
-	
+
 	if (typeof value === "string") {
 		if (name === "value" && element.tagNameLower === "textarea") {
 			appendChild(element, value);
@@ -138,7 +138,7 @@ export function setProperty(element: ServerElement, name: string, value: unknown
 		}
 		return;
 	}
-	
+
 	if (typeof value === "number") {
 		if (name === "value" && element.tagNameLower === "textarea") {
 			appendChild(element, String(value));

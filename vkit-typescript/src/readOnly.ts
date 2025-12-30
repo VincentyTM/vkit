@@ -11,7 +11,7 @@ function getSelf<T>(value: T): T {
  * @example
  * function OneMinuteCountdown() {
  * 	const secondsLeft = signal(60);
- * 	
+ * 
  * 	effect(() => {
  * 		if (is(() => secondsLeft() > 0)) {
  * 			interval(() => secondsLeft.set(secondsLeft.get() - 1), 1000);

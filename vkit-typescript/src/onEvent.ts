@@ -40,7 +40,7 @@ export function onEvent<K extends string>(
 		if (!e.preventDefault) {
 			e.preventDefault = preventDefault;
 		}
-		
+
 		if (!e.stopPropagation) {
 			e.stopPropagation = stopPropagation;
 		}
@@ -48,24 +48,24 @@ export function onEvent<K extends string>(
 		if (!e.currentTarget) {
 			(e as any).currentTarget = target;
 		}
-		
+
 		return listener.call(target, e);
 	}
-	
+
 	if (target.addEventListener) {
 		target.addEventListener(type, eventListener, false);
-		
+
 		return function(): void {
 			target.removeEventListener!(type, eventListener, false);
 		};
 	} else if (target.attachEvent) {
 		var extendedType = "on" + type;
 		target.attachEvent(extendedType, eventListener);
-		
+
 		return function(): void {
 			target.detachEvent!(extendedType, eventListener);
 		};
 	}
-	
+
 	throw new Error("Event listener could not be attached.");
 }

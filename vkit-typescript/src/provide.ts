@@ -28,7 +28,7 @@ import { noop } from "./noop.js";
  * function Display() {
  * 	const language = inject(LanguageService);
  * 	const theme = inject(ThemeService);
- * 	
+ * 
  * 	return [
  * 		P("Provided language: ", language),
  * 		P("Provided theme: ", theme)

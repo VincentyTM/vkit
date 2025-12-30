@@ -21,11 +21,11 @@ import { getEffect, setReactiveNode } from "./contextGuard.js";
  */
 export function untracked<T>(callback: () => T): T {
 	var effect = getEffect(true);
-	
+
 	if (!effect) {
 		return callback();
 	}
-	
+
 	try {
 		setReactiveNode(undefined);
 		return callback();

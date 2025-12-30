@@ -65,7 +65,7 @@ function splitText<T>(
 		var a = pattern.lastIndex - match[0].length;
 		var b = pattern.lastIndex;
 		var matchedText = text.substring(a, b);
-		
+
 		splitText(
 			text.substring(last, a),
 			rules,
