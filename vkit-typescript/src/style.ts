@@ -223,7 +223,7 @@ function clientRenderStyle(
 				if (map !== null) {
 					map["delete"](parent);
 				} else {
-					delete (parent as WithStyleContainer).__styleContainer;
+					(parent as WithStyleContainer).__styleContainer = undefined;
 				}
 			}
 		}
