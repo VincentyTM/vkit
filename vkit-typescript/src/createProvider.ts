@@ -6,6 +6,7 @@ export interface Provider<T> {
 	readonly injectable: Injectable<T>;
 	instance: T | undefined;
 	isCreated: boolean;
+	isCreating: boolean;
 }
 
 export function createProvider<T>(
@@ -16,6 +17,7 @@ export function createProvider<T>(
 		effect: effect,
 		injectable: injectable,
 		instance: undefined,
-		isCreated: false
+		isCreated: false,
+		isCreating: false
 	};
 }

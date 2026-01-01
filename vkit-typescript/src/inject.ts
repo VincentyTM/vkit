@@ -45,14 +45,21 @@ export function inject<T>(injectable: Injectable<T>): T {
 				return provider.instance as T;
 			}
 
+			if (provider.isCreating) {
+				effect = effect.injectorParent;
+				continue;
+			}
+
 			try {
 				setReactiveNode(provider.effect);
+				provider.isCreating = true;
 
 				var instance = provider.injectable.create() as T;
 				provider.isCreated = true;
 				provider.instance = instance;
 				return instance;
 			} finally {
+				provider.isCreating = false;
 				setReactiveNode(parentEffect);
 			}
 		}
@@ -63,12 +70,14 @@ export function inject<T>(injectable: Injectable<T>): T {
 
 			try {
 				setReactiveNode(newProvider.effect);
+				newProvider.isCreating = true;
 
 				var instance = injectable.create();
 				newProvider.isCreated = true;
 				newProvider.instance = instance;
 				return instance;
 			} finally {
+				newProvider.isCreating = false;
 				setReactiveNode(parentEffect);
 			}
 		}
