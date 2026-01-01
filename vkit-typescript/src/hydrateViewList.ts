@@ -1,3 +1,4 @@
+import { setReactiveNode } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { hashCode } from "./hashCode.js";
@@ -116,6 +117,7 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 						stopNode: null
 					};
 
+					setReactiveNode(block.effect);
 					hydrate(fragmentPointer, block.currentTemplate);
 					fragment.appendChild(block.end);
 					parentNode.insertBefore(fragment, end);
@@ -141,6 +143,7 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 					stopNode: block.end
 				};
 
+				setReactiveNode(block.effect);
 				hydrate(blockPointer, block.currentTemplate);
 				pointer.currentNode = blockPointer.currentNode;
 
