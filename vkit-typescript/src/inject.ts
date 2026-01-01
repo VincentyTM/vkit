@@ -1,6 +1,7 @@
 import { getEffect, setReactiveNode } from "./contextGuard.js";
 import { Effect } from "./createEffect.js";
 import { Injectable } from "./createInjectable.js";
+import { Injector } from "./createInjector.js";
 import { createProvider } from "./createProvider.js";
 
 /**
@@ -64,7 +65,7 @@ export function inject<T>(injectable: Injectable<T>): T {
 			}
 		}
 
-		if (injector.allowMissingProvider) {
+		if (injector.allowMissingProvider || hasProvidedDependency(injector, injectable.dependencies)) {
 			var newProvider = createProvider(injectable, effect);
 			injector.providers.set(injectable.token, newProvider);
 
@@ -86,4 +87,26 @@ export function inject<T>(injectable: Injectable<T>): T {
 	}
 
 	throw new Error("No injector contains a provider for this injectable");
+}
+
+function hasProvidedDependency(injector: Injector, dependencies: readonly Injectable<unknown>[] | undefined): boolean {
+	if (dependencies === undefined) {
+		return false;
+	}
+
+	var n = dependencies.length;
+
+	for (var i = 0; i < n; ++i) {
+		var dependency = dependencies[i];
+
+		if (injector.providers.get(dependency.token) !== undefined) {
+			return true;
+		}
+
+		if (hasProvidedDependency(injector, dependency.dependencies)) {
+			return true;
+		}
+	}
+
+	return false;
 }
