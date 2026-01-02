@@ -2,7 +2,7 @@ import { Signal } from "./computed.js";
 import { directive } from "./directive.js";
 import { isSignal } from "./isSignal.js";
 import { onEvent } from "./onEvent.js";
-import { render, RenderRoot } from "./render.js";
+import { render } from "./render.js";
 import { Template } from "./Template.js";
 
 /**
@@ -37,12 +37,16 @@ export function frameContent(getTemplate: (() => Template<HTMLElement>) | Signal
 					if (root !== undefined) {
 						root.destroy();
 					} else {
-						setTimeout((root as RenderRoot).destroy, 0);
+						setTimeout(destroyRoot, 0);
 					}
 				});
 
 				return (isSignal(getTemplate) ? getTemplate.get() : getTemplate)();
 			}, win.document.body);
+
+			function destroyRoot(): void {
+				root.destroy();
+			}
 		}
 	};
 
