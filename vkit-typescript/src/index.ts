@@ -107,7 +107,6 @@ export { localStorage, sessionStorage } from "./storage.js";
 export { style } from "./style.js";
 export { styleOutlet } from "./styleOutlet.js";
 export { svgTag, SVGView } from "./svgTag.js";
-export { svgTags } from "./svgTags.js";
 export { Template } from "./Template.js";
 export { tick } from "./tick.js";
 export { timeout } from "./timeout.js";
