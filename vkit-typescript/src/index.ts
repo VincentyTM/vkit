@@ -1,5 +1,4 @@
 export { arrayItemSignal } from "./arrayItemSignal.js";
-export { assets } from "./assets.js";
 export { asyncEffect, AsyncResult } from "./asyncEffect.js";
 export { attribute } from "./attribute.js";
 export { awaitResult } from "./awaitResult.js";
