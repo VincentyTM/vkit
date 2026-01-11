@@ -47,7 +47,6 @@ export { hash } from "./hash.js";
 export { href } from "./href.js";
 export { html } from "./html.js";
 export { htmlTag } from "./htmlTag.js";
-export { htmlTags } from "./htmlTags.js";
 export { http, HttpProgress, HttpRequest, HttpResponse } from "./http.js";
 export { imageCapture } from "./imageCapture.js";
 export { inject } from "./inject.js";
