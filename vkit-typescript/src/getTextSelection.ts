@@ -8,7 +8,7 @@ interface TextSelection {
  * @param element The input or textarea element.
  * @returns The start and end caret position of the selection.
  */
-export function getTextSelection(element: HTMLInputElement & HTMLTextAreaElement): TextSelection {
+export function getTextSelection(element: HTMLInputElement | HTMLTextAreaElement): TextSelection {
 	var selection = (element.ownerDocument as any).selection;
 
 	if (selection) {
