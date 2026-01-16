@@ -2,7 +2,7 @@
  * Selects the text content of the specified input or textarea element.
  * @param element The input/textarea element in which the whole text is selected.
  */
-export function selectText(element: HTMLInputElement & HTMLTextAreaElement): void {
+export function selectText(element: HTMLInputElement | HTMLTextAreaElement): void {
 	var doc = element.ownerDocument;
 
 	if (element.select) {
