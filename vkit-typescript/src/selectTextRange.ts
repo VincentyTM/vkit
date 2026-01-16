@@ -5,7 +5,7 @@
  * @param end The end caret position of the selection, exclusive.
  */
 export function selectTextRange(
-	element: HTMLInputElement & HTMLTextAreaElement,
+	element: HTMLInputElement | HTMLTextAreaElement,
 	start: number,
 	end: number
 ): void {
