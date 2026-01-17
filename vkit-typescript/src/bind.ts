@@ -40,7 +40,7 @@ type Binding<T, K extends keyof T> = T[K] extends ((this: GlobalEventHandlers, e
 	? (this: T, ev: ExtendedEvent<EventType, T>) => void
 	: (T[K] | (() => T[K]) | Signal<T[K]> | Bindings<T[K]>);
 
-export type Bindings<T> = {
+export type Bindings<T> = object & {
 	[K in keyof T]?: Binding<T, K>;
 };
 
