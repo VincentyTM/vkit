@@ -17,10 +17,15 @@ import { Template } from "./Template.js";
  */
 export function windowContent(window: Window, getTemplate: () => Template<HTMLElement>): void {
 	var root = render(function(): Template<HTMLElement> {
-		onEvent(window, "unload", function(): void {
-			root.destroy();
-		});
-
+		onEvent(window, "unload", unloadHandler);
 		return getTemplate();
 	}, window.document.body);
+
+	function unloadHandler(): void {
+		if (root !== undefined) {
+			root.destroy();
+		} else {
+			setTimeout(unloadHandler, 0);
+		}
+	}
 }
