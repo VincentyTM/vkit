@@ -3,11 +3,9 @@ import { createEffect, Effect } from "./createEffect.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { hashCode } from "./hashCode.js";
 import { hydrate, HydrationPointer } from "./hydrate.js";
-import { isArray } from "./isArray.js";
 import { PERSISTENT_SUBSCRIBERS_FLAG } from "./reactiveNodeFlags.js";
 import { subscribe } from "./subscribe.js";
 import { Template } from "./Template.js";
-import { toArray } from "./toArray.js";
 import { updateEffect } from "./updateEffect.js";
 import { ViewListTemplate } from "./viewList.js";
 
@@ -29,14 +27,8 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 	var listEffect = createEffect(parentEffect, function(): void {
 		var models = template.models();
 		var n = models.length;
-
-		if (!isArray(models)) {
-			models = toArray(models);
-		}
-
 		var newBlockMap: Record<string, Block> = {};
 		var newBlockArray = new Array<Block>(n);
-		var n = models.length;
 		var oldBlockMap = blockMap;
 
 		for (var i = 0; i < n; ++i) {

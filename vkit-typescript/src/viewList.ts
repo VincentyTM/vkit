@@ -6,23 +6,13 @@ import { serverRenderViewList } from "./serverRenderViewList.js";
 import { CustomTemplate, Template } from "./Template.js";
 
 export interface ViewListTemplate<T, P> extends CustomTemplate<P> {
-	readonly models: Signal<ArrayLike<T>>;
+	readonly models: Signal<readonly T[]>;
 	readonly parentEffect: Effect;
 	getItemTemplate(model: T): Template<P>;
 }
 
 export function viewList<T, P extends ParentNode>(
-	models: Signal<T[]>,
-	getItemTemplate: (model: T) => Template<P>
-): ViewListTemplate<T, P>;
-
-export function viewList<T, P extends ParentNode>(
-	models: Signal<ArrayLike<T>>,
-	getItemTemplate: (model: T) => Template<P>
-): ViewListTemplate<T, P>;
-
-export function viewList<T, P extends ParentNode>(
-	models: Signal<ArrayLike<T>>,
+	models: Signal<readonly T[]>,
 	getItemTemplate: (model: T) => Template<P>
 ): ViewListTemplate<T, P> {
 	return {
