@@ -70,9 +70,11 @@ function selectSearchParam(url: string, paramName: string): string {
 	var paramValueStart = paramNameStart + encodedParamName.length + 2;
 	var nextSeparatorPos = queryString.indexOf("&", paramValueStart);
 
-	return queryString.substring(
-		paramValueStart,
-		nextSeparatorPos === -1 ? queryString.length : nextSeparatorPos
+	return decodeURIComponent(
+		queryString.substring(
+			paramValueStart,
+			nextSeparatorPos === -1 ? queryString.length : nextSeparatorPos
+		)
 	);
 }
 
