@@ -66,7 +66,6 @@ export { notification } from "./notification.js";
 export { objectURL } from "./objectURL.js";
 export { observable } from "./observable.js";
 export { observe } from "./observe.js";
-export { of } from "./of.js";
 export { onDestroy } from "./onDestroy.js";
 export { onEvent } from "./onEvent.js";
 export { online } from "./online.js";
