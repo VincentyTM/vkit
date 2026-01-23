@@ -63,7 +63,6 @@ export { mediaQuery } from "./mediaQuery.js";
 export { navigate } from "./navigate.js";
 export { noop } from "./noop.js";
 export { notification } from "./notification.js";
-export { objectProperty } from "./objectProperty.js";
 export { objectURL } from "./objectURL.js";
 export { observable } from "./observable.js";
 export { observe } from "./observe.js";
