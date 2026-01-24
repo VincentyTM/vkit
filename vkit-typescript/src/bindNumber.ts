@@ -44,6 +44,10 @@ export function bindNumber(signal: WritableSignal<number>, defaultValue?: number
 		oninput: set,
 		onchange: set,
 		onkeyup: set,
-		value: computed(String, [signal])
+		value: computed(numberToInputValue, [signal])
 	};
+}
+
+function numberToInputValue(value: number): string {
+	return isNaN(value) ? "" : String(value);
 }
