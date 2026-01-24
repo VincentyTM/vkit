@@ -4,7 +4,7 @@ import { WritableSignal } from "./signal.js";
 import { Template } from "./Template.js";
 
 /**
- * Sets up a two-way data binding between a writable signal and a <select> HTML element.
+ * Sets up a two-way data binding between a writable signal and a `<select>` HTML element.
  * When the value of the signal changes, so does the select's value and vice versa.
  * @example
  * function SelectBinding() {
