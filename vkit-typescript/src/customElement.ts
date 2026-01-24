@@ -5,9 +5,9 @@ import { empty } from "./empty.js";
 import { getWindow, WindowService } from "./getWindow.js";
 import { hydrate, HydrationPointer } from "./hydrate.js";
 import { inject } from "./inject.js";
+import { onNextTick } from "./onNextTick.js";
 import { signal, WritableSignal } from "./signal.js";
 import { Template } from "./Template.js";
-import { tick } from "./tick.js";
 import { updateEffect } from "./updateEffect.js";
 
 type CustomElementGetTemplate = (
@@ -34,7 +34,7 @@ type ExtendedHTMLElement = HTMLElement & {
 var setPrototypeOf = Object.setPrototypeOf;
 var rendered = false;
 
-tick(function() {
+onNextTick(function() {
 	rendered = true;
 });
 

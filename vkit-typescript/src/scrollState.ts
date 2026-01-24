@@ -2,8 +2,8 @@ import { deriveSignal } from "./deriveSignal.js";
 import { effect } from "./effect.js";
 import { onDestroy } from "./onDestroy.js";
 import { onEvent } from "./onEvent.js";
+import { onNextTick } from "./onNextTick.js";
 import { signal, WritableSignal } from "./signal.js";
-import { tick } from "./tick.js";
 
 export interface ScrollData {
 	height: number;
@@ -112,7 +112,7 @@ export function scrollState(): ScrollState {
 			scrollable.scrollTop = scroll.y;
 		});
 
-		tick(function() {
+		onNextTick(function() {
 			setElementScroll(rawData, scrollable);
 		});
 	}
@@ -129,7 +129,7 @@ export function scrollState(): ScrollState {
 			scrollable.scrollTo(scroll.x, scroll.y);
 		});
 
-		tick(function() {
+		onNextTick(function() {
 			setWindowScroll(rawData, scrollable);
 		});
 	}

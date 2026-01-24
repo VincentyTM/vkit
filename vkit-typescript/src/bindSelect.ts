@@ -1,7 +1,7 @@
 import { directive } from "./directive.js";
+import { onNextTick } from "./onNextTick.js";
 import { WritableSignal } from "./signal.js";
 import { Template } from "./Template.js";
-import { tick } from "./tick.js";
 
 /**
  * Sets up a two-way data binding between a writable signal and a <select> HTML element.
@@ -26,7 +26,7 @@ export function bindSelect(signal: WritableSignal<string>): Template<HTMLSelectE
 		directive(function(el: HTMLSelectElement): void {
 			var value = signal();
 
-			tick(function(): void {
+			onNextTick(function(): void {
 				el.value = value;
 			});
 		}),

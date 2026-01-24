@@ -6,7 +6,7 @@ var ticks: (() => void)[] = [];
  * It does not need to be called from reactive context, it can also be called from asynchronous functions and event listeners.
  * @example
  * function AutoFocus(el) {
- * 	return tick(() => el.focus());
+ * 	return onNextTick(() => el.focus());
  * }
  * 
  * function AutoFocusedInput() {
@@ -15,7 +15,7 @@ var ticks: (() => void)[] = [];
  * 
  * @param callback The function that will run when the current render cycle ends.
  */
-export function tick(callback: () => void): void {
+export function onNextTick(callback: () => void): void {
 	ticks.push(callback);
 }
 

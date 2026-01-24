@@ -7,9 +7,9 @@ import { CSSProperties, generateCSS } from "./generateCSS.js";
 import { ClientRenderer } from "./hydrate.js";
 import { inject } from "./inject.js";
 import { onDestroy } from "./onDestroy.js";
+import { onNextTick } from "./onNextTick.js";
 import { serverRenderClasses } from "./serverRenderClasses.js";
 import { CustomTemplate } from "./Template.js";
-import { tick } from "./tick.js";
 
 type StylableNode = Element | ShadowRoot;
 
@@ -197,7 +197,7 @@ function clientRenderStyle(
 	var controller: StyleController | null = null;
 	var styleService = inject(StyleService);
 
-	tick(function(): void {
+	onNextTick(function(): void {
 		container = getStyleContainer(element, styleService.styleElement);
 		controller = container.add(selector);
 		controller.setValue(
