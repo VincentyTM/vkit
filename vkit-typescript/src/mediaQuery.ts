@@ -3,10 +3,18 @@ import { getWindow } from "./getWindow.js";
 import { onDestroy } from "./onDestroy.js";
 import { signal } from "./signal.js";
 
-function getFalse(): boolean {
-	return false;
-}
-
+/**
+ * Returns a signal indicating whether the specified media query matches the current viewport.
+ * If the media query is not supported or the function is called from the server,
+ * the signal's value is false.
+ * 
+ * @param query A string representing the CSS media query, excluding `@media`.
+ * 
+ * @example
+ * const isWideScreen = mediaQuery("screen and (min-width: 40em)");
+ * 
+ * @returns A boolean signal that reflects whether the media query is currently matched.
+ */
 export function mediaQuery(query: string): Signal<boolean> {
 	var win = getWindow();
 
@@ -36,4 +44,8 @@ export function mediaQuery(query: string): Signal<boolean> {
 	}
 
 	return matches;
+}
+
+function getFalse(): boolean {
+	return false;
 }
