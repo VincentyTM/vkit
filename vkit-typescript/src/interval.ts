@@ -3,13 +3,20 @@ import { getGlobalContext } from "./getGlobalContext.js";
 import { onDestroy } from "./onDestroy.js";
 
 /**
- * Sets an interval in the current global context and clears it when the current reactive context is destroyed.
+ * Schedules a periodic interval in the current execution context (worker, window, or server app)
+ * that runs the provided callback function. This interval will be canceled if the current reactive
+ * context is destroyed. It will not be set if effects are disabled (for example, during
+ * server-side rendering).
+ * 
+ * The provided callback function will be executed repeatedly at the specified interval.
+ * 
  * @example
  * interval(() => {
  * 	console.log("Date and time:", new Date().toLocaleString());
  * }, 1000);
- * @param callback A function which runs periodically.
- * @param delay The time delay in milliseconds between two function calls.
+ * 
+ * @param callback The function to be executed periodically.
+ * @param delay The duration to wait between successive function calls, in milliseconds.
  */
 export function interval(callback: () => void, delay: number): void {
 	effect(function(): void {
