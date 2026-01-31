@@ -41,5 +41,5 @@
 	},
 	"type": "module",
 	"types": "./vkit-typescript/dist/index.d.ts",
-	"version": "0.0.9"
+	"version": "0.0.10"
 }
