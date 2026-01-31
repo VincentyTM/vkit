@@ -43,7 +43,7 @@ export interface ClassesTemplate extends CustomTemplate<Element> {
  * 	classes(() => shouldClass11BeUsed() && "class11")
  * )
  * 
- * @returns A directive that binds the classes to an element.
+ * @returns A template that controls the existence and the value of one or more classes on an element.
  */
 export function classes(...args: readonly ClassArgument[]): ClassesTemplate;
 
