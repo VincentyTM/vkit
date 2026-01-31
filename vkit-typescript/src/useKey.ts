@@ -14,9 +14,9 @@ interface KeysAndRecords<T> {
 interface UseKeyHandle<T> {
 	readonly array: Signal<T[]>;
 	readonly records: ComputedSignal<Record<string, T>>;
-	getItem(key: string): T;
-	select(key: string): KeyedSignal<T, string>;
-	select(key: Signal<string>): KeyedSignal<T, Signal<string>>;
+	getItem(key: string): T | undefined;
+	select(key: string): KeyedSignal<T | undefined, string>;
+	select(key: Signal<string>): KeyedSignal<T | undefined, Signal<string>>;
 	viewList<V extends Template<P>, P>(getItemTemplate: (item: KeyedSignal<T, string>) => V): Template<P>;
 }
 
@@ -115,7 +115,7 @@ export function useKey<T>(
 		});
 	}
 
-	function getItem(key: string): T {
+	function getItem(key: string): T | undefined {
 		return keysAndRecordsSignal.get().records[key];
 	}
 
