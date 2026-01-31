@@ -62,27 +62,17 @@ function selectRecord(keysAndRecords: KeysAndRecords<unknown>, currentKey: strin
  * @returns An object that can be used to handle the array with the keys.
  */
 export function useKey<T>(
-	arraySignal: Signal<T[]>,
+	arraySignal: Signal<readonly T[]>,
 	getKey: keyof T
 ): UseKeyHandle<T>;
 
 export function useKey<T>(
-	arraySignal: Signal<T[]>,
+	arraySignal: Signal<readonly T[]>,
 	getKey: ((value: T) => string)
 ): UseKeyHandle<T>;
 
 export function useKey<T>(
-	arraySignal: Signal<ArrayLike<T>>,
-	getKey: keyof T
-): UseKeyHandle<T>;
-
-export function useKey<T>(
-	arraySignal: Signal<ArrayLike<T>>,
-	getKey: ((value: T) => string)
-): UseKeyHandle<T>;
-
-export function useKey<T>(
-	arraySignal: Signal<ArrayLike<T>>,
+	arraySignal: Signal<readonly T[]>,
 	getKey: keyof T | ((value: T) => string)
 ): UseKeyHandle<T> {
 	var keysAndRecordsSignal = computed(function(array: ArrayLike<T>) {
