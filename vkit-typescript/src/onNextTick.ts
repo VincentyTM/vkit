@@ -1,19 +1,27 @@
 var ticks: (() => void)[] = [];
 
 /**
- * Schedules a function to run after the current render cycle ends (after DOM updates and side effects).
- * It can be used for focusing, scrolling or measuring elements.
- * It does not need to be called from reactive context, it can also be called from asynchronous functions and event listeners.
+ * Schedules a function to execute after the current update cycle completes,
+ * ensuring that all side effects, such as DOM rendering, have finished.
+ * 
+ * This method is particularly useful for tasks involving focusing on elements,
+ * scrolling, or measuring dimensions after rendering.
+ * It can be invoked from any context, not just reactive environments.
+ * 
  * @example
- * function AutoFocus(el) {
- * 	return onNextTick(() => el.focus());
+ * // Automatically focuses an element after the DOM has updated.
+ * function AutoFocus() {
+ * 	return directive(el => {
+ * 		onNextTick(() => el.focus());
+ * 	});
  * }
  * 
+ * // An input component that applies the AutoFocus directive.
  * function AutoFocusedInput() {
- * 	return Input(AutoFocus);
+ * 	return Input(AutoFocus());
  * }
  * 
- * @param callback The function that will run when the current render cycle ends.
+ * @param callback The function to execute once the current render cycle ends.
  */
 export function onNextTick(callback: () => void): void {
 	ticks.push(callback);
