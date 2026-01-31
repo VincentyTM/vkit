@@ -57,7 +57,7 @@ You can add vKit to your existing TypeScript web project:
 2. Import the methods you wish to use
 
 You can import the dependencies by name:
-`import { htmlTags, render, signal } from "vkit-js";`
+`import { htmlTag, render, signal } from "vkit-js";`
 
 ### Use the CLI
 
@@ -80,9 +80,8 @@ An example server app:
 ```javascript
 // App.js (universal code)
 
-import { classes, href, htmlTags, param, path } from "vkit-js";
-
-const {A, Body, Li, H1, Head, Main, Nav, Ul} = htmlTags;
+import { classes, href, param, path } from "vkit-js";
+import { A, Body, Li, H1, Head, Main, Nav, Ul } from "./htmlTags.js";
 
 export function App() {
     const page = param("page");
@@ -111,10 +110,9 @@ export function App() {
 // server.js (server-only code)
 
 import http from "http";
-import { html, htmlTags, renderToStream } from "vkit-js";
+import { html, renderToStream } from "vkit-js";
 import { App } from "./App.js";
-
-const {Body, Head, Html, Script, Style, Title} = htmlTags;
+import { Body, Head, Html, Script, Style, Title } from "./htmlTags.js";
 
 function Document() {
     // The App component can modify the server template, enabling the configuration
@@ -539,15 +537,17 @@ function Clock() {
 }
 ```
 
-You can enqueue a function to be called after the current render cycle using `tick`. This is useful for interacting with the DOM after it has been rendered (e.g. when playing videos, scrolling, measuring CSS properties of elements, auto-focusing).
+You can enqueue a function to be called after the current render cycle using `onNextTick`. This is useful for interacting with the DOM after it has been rendered (e.g. when playing videos, scrolling, measuring CSS properties of elements, auto-focusing).
 
 ```javascript
-const AutoFocus = directive((element) => {
-    tick(() => element.focus());
-});
+function AutoFocus() {
+    return directive((element) => {
+        onNextTick(() => element.focus());
+    });
+}
 
 function AutoFocusedInput() {
-    return Input(AutoFocus);
+    return Input(AutoFocus());
 }
 ```
 
