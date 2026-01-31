@@ -14,8 +14,14 @@ export interface Ref<T> extends CustomTemplate<T> {
 }
 
 /**
- * Creates and returns a reference which can contain any object (usually an element) or null.
- * You can get its current value with its `current` property.
+ * Creates a reference template (`Ref`) that enables extraction of a DOM element reference from a template.
+ * 
+ * You can get its current value via its `current` property. When the reference template is rendered,
+ * the `current` property is bound to the container element until the current reactive context is destroyed.
+ * If the reference template is not rendered, the `current` property will be `null`.
+ * 
+ * An error will be thrown if the same reference is simultaneously bound to multiple DOM elements.
+ * 
  * @example
  * function MyComponent() {
  * 	const input = ref();
@@ -31,7 +37,8 @@ export interface Ref<T> extends CustomTemplate<T> {
  * 		})
  * 	];
  * }
- * @returns A function directive which binds an element (or any other object) to the reference until the current reactive context is destroyed.
+ * 
+ * @returns The reference template.
  */
 export function ref<T = HTMLElement | SVGElement>(): Ref<T> {
 	var reference: MutableRef<T> = {
