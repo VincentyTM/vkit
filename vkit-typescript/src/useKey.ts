@@ -40,6 +40,7 @@ function selectRecord(keysAndRecords: KeysAndRecords<unknown>, currentKey: strin
  * If there is a key in the array items (or a key can be calculated from the items),
  * it can be used to tell if two items are equal. However, this means that the item of the
  * same key can change, so it is wrapped in a signal.
+ * 
  * @example
  * function Books() {
  * 	const books = signal([
@@ -49,7 +50,7 @@ function selectRecord(keysAndRecords: KeysAndRecords<unknown>, currentKey: strin
  * 	]);
  * 
  * 	return Ul(
- * 		useKey(books, "id").views((book) => {
+ * 		useKey(books, "id").viewList((book) => {
  * 			// book is a signal here
  * 			return Li(() => book().title);
  * 		})
