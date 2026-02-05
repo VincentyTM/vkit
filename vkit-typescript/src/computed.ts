@@ -43,19 +43,6 @@ export interface Signal<T> {
 	map<U>(transform: (value: T) => U): ComputedSignal<U>;
 
 	/**
-	 * Subscribes a change handler function to the signal and returns a function to unsubscribe.
-	 * @example
-	 * const count = signal(0);
-	 * count.subscribe((value) => console.log(`Count has changed to ${count}`));
-	 * count.set(1);
-	 * 
-	 * @param callback A function which is called when the value of the signal changes.
-	 * @returns The unsubscribe function. It removes the callback from the signal, so it will
-	 * not be called anymore when its value changes.
-	 */
-	subscribe(callback: (value: T) => void): () => void;
-
-	/**
 	 * Returns a string generated from the signal's current value.
 	 * This method should only be used for debugging.
 	 * Note that you cannot concatenate a signal with a string using the + operator.
