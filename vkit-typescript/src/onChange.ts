@@ -9,7 +9,7 @@ import { effect } from "./effect.js";
  * const count = signal(0);
  * 
  * onChange(count, (value) => {
- * 	console.log(`Count has changed to ${count}`);
+ * 	console.log(`Count has changed to ${value}`);
  * });
  * 
  * count.set(1);
