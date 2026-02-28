@@ -1,16 +1,16 @@
 import { Effect } from "./createEffect.js";
-import { Injectable } from "./createInjectable.js";
+import { InjectableConfig } from "./createInjectable.js";
 
 export interface Provider<T> {
 	readonly effect: Effect;
-	readonly injectable: Injectable<T>;
+	readonly injectable: InjectableConfig<T>;
 	instance: T | undefined;
 	isCreated: boolean;
 	isCreating: boolean;
 }
 
 export function createProvider<T>(
-	injectable: Injectable<T>,
+	injectable: InjectableConfig<T>,
 	effect: Effect
 ): Provider<T> {
 	return {

@@ -1,9 +1,12 @@
-export interface Injectable<T> {
+export interface Injectable<T> extends InjectableConfig<T> {
 	readonly dependencies: readonly Injectable<unknown>[] | undefined;
-	readonly token: object;
 	readonly transient: boolean;
+	override(create: () => T): InjectableConfig<T>;
+}
+
+export interface InjectableConfig<T> {
+	readonly token: object;
 	create(): T;
-	override(create: () => T): Injectable<T>;
 }
 
 interface InjectableOptions {
@@ -21,12 +24,9 @@ export function createInjectable<T>(create: () => T, options?: InjectableOptions
 	};
 }
 
-function overrideInjectable<T>(this: Injectable<T>, create: () => T): Injectable<T> {
+function overrideInjectable<T>(this: Injectable<T>, create: () => T): InjectableConfig<T> {
 	return {
-		dependencies: undefined,
 		token: this.token,
-		transient: false,
-		create: create,
-		override: overrideInjectable
+		create: create
 	};
 }

@@ -1,6 +1,6 @@
 import { getEffect, setReactiveNode } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
-import { Injectable } from "./createInjectable.js";
+import { InjectableConfig } from "./createInjectable.js";
 import { createInjector } from "./createInjector.js";
 import { createProvider } from "./createProvider.js";
 import { noop } from "./noop.js";
@@ -40,7 +40,7 @@ import { noop } from "./noop.js";
  * @returns The result returned by `getContent`.
  */
 export function provide<R>(
-	configs: Injectable<unknown>[] | null,
+	configs: InjectableConfig<unknown>[] | null,
 	getContent: () => R
 ): R {
 	var parentEffect = getEffect();
