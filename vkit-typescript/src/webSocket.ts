@@ -9,49 +9,50 @@ export type WebSocketMessage = string | ArrayBufferLike | Blob | ArrayBufferView
 
 export interface WebSocketClient {
 	/**
-	 * A read-only signal which tells whether the WebSocket client
+	 * A read-only signal indicating whether the WebSocket client
 	 * is successfully connected to the server.
 	 */
 	readonly isOpen: Signal<boolean>;
 
 	/**
-	 * (Re)opens the connection.
-	 * It can be used to reactivate a WebSocket connection with a user event, for example.
-	 * Calling it multiple times has no effect.
+	 * Opens a connection to the WebSocket server.
+	 * This method can be invoked by user events to reactivate the connection.
+	 * Subsequent calls will have no additional effect.
 	 * 
-	 * It cannot be called after the WebSocket client has been destroyed.
+	 * This method cannot be called after the WebSocket client has been destroyed.
 	 */
 	connect(): void;
 
 	/**
 	 * Sends a message to the WebSocket server.
-	 * If the connection is not open, the message is queued and reconnection is attempted.
+	 * If the connection is closed, the message will be queued until
+	 * reconnection is successful.
 	 * 
-	 * It cannot be called after the WebSocket client has been destroyed.
+	 * This method cannot be called after the WebSocket client has been destroyed.
 	 */
 	send(message: WebSocketMessage): void;
 }
 
 interface WebSocketParamsBase {
 	/**
-	 * The type of binary messages. It can be `blob` (default) or `arraybuffer`.
+	 * Specifies the type of binary messages: `blob` (default) or `arraybuffer`.
 	 */
 	binaryType?: "arraybuffer" | "blob";
 
 	/**
-	 * The WebSocket server's URL. It should start with the ws:// or wss:// protocol.
+	 * The URL of the WebSocket server, which should begin with `ws://` or `wss://`.
 	 */
 	url: string | null | Signal<string | null> | (() => string | null);
 
 	/**
 	 * An optional error handler.
-	 * @param error The error object.
+	 * @param error The error object encountered during WebSocket operations.
 	 */
 	onError?(error: unknown): void;
 
 	/**
-	 * Handles received messages.
-	 * @param message The WebSocket message from the server.
+	 * Callback for handling messages received from the server.
+	 * @param message The WebSocket message received.
 	 */
 	onMessage(message: string | ArrayBuffer | Blob): void;
 }
@@ -72,8 +73,9 @@ type WebSocketParams =
 ;
 
 /**
- * Creates and returns a WebSocket client. It can be used to send and receive messages.
- * When the current reactive context is destroyed, the client disconnects and can no longer be used.
+ * Creates and returns a WebSocket client for sending and receiving messages.
+ * The client will automatically disconnect when the current reactive context is destroyed.
+ * 
  * @example
  * function MyWebSocketClient() {
  * 	const ws = webSocket({
@@ -83,13 +85,18 @@ type WebSocketParams =
  * 		}
  * 	});
  * 
- * 	timeout(() => ws.send("Current time: " + Date.now()), 1000);
+ * 	return Div(
+ * 		P(() => ws.isOpen() ? "Connected" : "Not connected"),
  * 
- * 	return Div(() => ws.isOpen ? "Connected" : "Not connected");
+ * 		Button("Send current time", {
+ * 			onclick: () => ws.send("Current time: " + Date.now())
+ * 		})
+ * 	);
  * }
- * @param params The WebSocket configuration. It must contain the URL and the message handler
- * but may also include `binaryType` and an error handler.
- * @returns The WebSocket client instance.
+ * @param params The configuration object for the WebSocket.
+ * It must include the URL and the message handler, but may also specify
+ * `binaryType` and an optional error handler.
+ * @returns The instance of the WebSocket client.
  */
 export function webSocket(params: WebSocketParams): WebSocketClient {
 	var win = getWindow();
