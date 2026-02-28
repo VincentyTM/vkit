@@ -64,6 +64,7 @@ export { navigate } from "./navigate.js";
 export { noop } from "./noop.js";
 export { notification } from "./notification.js";
 export { objectURL } from "./objectURL.js";
+export { onChange } from "./onChange.js";
 export { onDestroy } from "./onDestroy.js";
 export { onEvent } from "./onEvent.js";
 export { online } from "./online.js";
