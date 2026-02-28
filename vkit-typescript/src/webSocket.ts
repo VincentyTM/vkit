@@ -5,11 +5,9 @@ import { isSignal } from "./isSignal.js";
 import { onDestroy } from "./onDestroy.js";
 import { signal } from "./signal.js";
 
-type WebSocketBinaryType = "arraybuffer" | "blob";
+export type WebSocketMessage = string | ArrayBufferLike | Blob | ArrayBufferView;
 
-type WebSocketMessage = string | ArrayBufferLike | Blob | ArrayBufferView;
-
-interface WebSocketClient<U extends WebSocketMessage> {
+export interface WebSocketClient {
 	/**
 	 * A read-only signal which tells whether the WebSocket client
 	 * is successfully connected to the server.
@@ -31,14 +29,14 @@ interface WebSocketClient<U extends WebSocketMessage> {
 	 * 
 	 * It cannot be called after the WebSocket client has been destroyed.
 	 */
-	send(message: U): void;
+	send(message: WebSocketMessage): void;
 }
 
-interface WebSocketParams<T> {
+interface WebSocketParamsBase {
 	/**
 	 * The type of binary messages. It can be `blob` (default) or `arraybuffer`.
 	 */
-	binaryType?: WebSocketBinaryType;
+	binaryType?: "arraybuffer" | "blob";
 
 	/**
 	 * The WebSocket server's URL. It should start with the ws:// or wss:// protocol.
@@ -55,8 +53,23 @@ interface WebSocketParams<T> {
 	 * Handles received messages.
 	 * @param message The WebSocket message from the server.
 	 */
-	onMessage(message: T): void;
+	onMessage(message: string | ArrayBuffer | Blob): void;
 }
+
+interface ArrayBufferWebSocketParams extends WebSocketParamsBase {
+	binaryType: "arraybuffer";
+	onMessage(message: string | ArrayBuffer): void;
+}
+
+interface BlobWebSocketParams extends WebSocketParamsBase {
+	binaryType?: "blob";
+	onMessage(message: string | Blob): void;
+}
+
+type WebSocketParams =
+	| ArrayBufferWebSocketParams
+	| BlobWebSocketParams
+;
 
 /**
  * Creates and returns a WebSocket client. It can be used to send and receive messages.
@@ -78,7 +91,7 @@ interface WebSocketParams<T> {
  * but may also include `binaryType` and an error handler.
  * @returns The WebSocket client instance.
  */
-export function webSocket<T extends WebSocketMessage>(params: WebSocketParams<T>): WebSocketClient<WebSocketMessage> {
+export function webSocket(params: WebSocketParams): WebSocketClient {
 	var win = getWindow();
 	var isOpen = signal(false);
 	var queue: WebSocketMessage[] = [];
@@ -117,7 +130,7 @@ export function webSocket<T extends WebSocketMessage>(params: WebSocketParams<T>
 		isOpen.set(false);
 	}
 
-	function onMessage(event: MessageEvent<T>): void {
+	function onMessage(event: MessageEvent): void {
 		params.onMessage(event.data);
 	}
 
