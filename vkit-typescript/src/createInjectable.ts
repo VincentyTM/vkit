@@ -5,9 +5,13 @@ export interface Injectable<T> {
 	override(create: () => T): Injectable<T>;
 }
 
-export function createInjectable<T>(create: () => T, dependencies?: readonly Injectable<unknown>[]): Injectable<T> {
+interface InjectableOptions {
+	dependencies?: readonly Injectable<unknown>[];
+}
+
+export function createInjectable<T>(create: () => T, options?: InjectableOptions): Injectable<T> {
 	return {
-		dependencies: dependencies,
+		dependencies: options && options.dependencies,
 		token: {},
 		create: create,
 		override: overrideInjectable
