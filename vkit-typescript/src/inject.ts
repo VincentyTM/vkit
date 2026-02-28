@@ -56,8 +56,11 @@ export function inject<T>(injectable: Injectable<T>): T {
 				provider.isCreating = true;
 
 				var instance = provider.injectable.create() as T;
-				provider.isCreated = true;
-				provider.instance = instance;
+
+				if (!injectable.transient) {
+					provider.isCreated = true;
+					provider.instance = instance;
+				}
 				return instance;
 			} finally {
 				provider.isCreating = false;
@@ -74,8 +77,11 @@ export function inject<T>(injectable: Injectable<T>): T {
 				newProvider.isCreating = true;
 
 				var instance = injectable.create();
-				newProvider.isCreated = true;
-				newProvider.instance = instance;
+				
+				if (!injectable.transient) {
+					newProvider.isCreated = true;
+					newProvider.instance = instance;
+				}
 				return instance;
 			} finally {
 				newProvider.isCreating = false;
