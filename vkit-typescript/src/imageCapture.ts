@@ -1,8 +1,9 @@
-import { asyncEffect, AsyncResult, Suspend } from "./asyncEffect.js";
+import { asyncEffect, AsyncResult } from "./asyncEffect.js";
 import { awaitResult } from "./awaitResult.js";
 import { Signal } from "./computed.js";
 import { getWindow } from "./getWindow.js";
 import { isSignal } from "./isSignal.js";
+import { noop } from "./noop.js";
 
 interface ImageCapture {
 	takePhoto(photoSettings?: ImageCapturePhotoSettings): Promise<Blob>;
@@ -117,7 +118,7 @@ export function imageCapture(
 		var ps = isSignal(photoSettings) || typeof photoSettings === "function" ? photoSettings() : photoSettings;
 
 		if (!ic || !ps) {
-			throw Suspend;
+			return { then: noop };
 		}
 
 		return ic.takePhoto(ps);
