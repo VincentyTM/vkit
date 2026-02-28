@@ -1,3 +1,4 @@
+import { getReactiveNode, setReactiveNode } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
 import { createInjector } from "./createInjector.js";
 import { createServerElement } from "./createServerElement.js";
@@ -47,5 +48,12 @@ export function renderToStream(
 
 	updateEffect(effect);
 	update();
-	destroyEffect(effect);
+
+	var evaluatedNode = getReactiveNode(true);
+	try {
+		setReactiveNode(undefined);
+		destroyEffect(effect);
+	} finally {
+		setReactiveNode(evaluatedNode);
+	}
 }

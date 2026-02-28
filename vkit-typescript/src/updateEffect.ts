@@ -14,11 +14,12 @@ export function updateEffect(effect: Effect): void {
 	}
 
 	effect.flags |= COMPUTING_FLAG;
-	destroyEffect(effect);
 
 	var evaluatedNode = getReactiveNode(true);
 
 	try {
+		setReactiveNode(undefined);
+		destroyEffect(effect);
 		setReactiveNode(effect);
 		effect.updateHandler();
 	} catch (error) {

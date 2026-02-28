@@ -1,4 +1,4 @@
-import { getEffect } from "./contextGuard.js";
+import { getEffect, getReactiveNode, setReactiveNode } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { updateEffect } from "./updateEffect.js";
@@ -47,7 +47,13 @@ export function createEffectSpawner<T>(
 			updateEffect(childEffect);
 
 			function destroy(): void {
-				destroyEffect(childEffect);
+				var evaluatedNode = getReactiveNode(true);
+				try {
+					setReactiveNode(undefined);
+					destroyEffect(childEffect);
+				} finally {
+					setReactiveNode(evaluatedNode);
+				}
 			}
 		}
 	};

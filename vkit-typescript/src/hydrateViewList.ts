@@ -31,6 +31,8 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 		var newBlockArray = new Array<Block>(n);
 		var oldBlockMap = blockMap;
 
+		setReactiveNode(undefined);
+
 		for (var i = 0; i < n; ++i) {
 			var model: T = models[i];
 			var key = hashCode(model);

@@ -1,5 +1,5 @@
 import { Signal } from "./computed.js";
-import { getEffect } from "./contextGuard.js";
+import { getEffect, setReactiveNode } from "./contextGuard.js";
 import { createEffect, Effect } from "./createEffect.js";
 import { destroyEffect } from "./destroyEffect.js";
 import { inject } from "./inject.js";
@@ -87,6 +87,8 @@ export function effectMap<K extends string, T, U, V, W extends Signal<Record<K, 
 	var effects: Record<string, Effect> = {};
 	var groupEffect = createEffect(parentEffect, function() {
 		var object = objectSignal();
+
+		setReactiveNode(undefined);
 
 		for (var key in effects) {
 			if (!(key in object)) {

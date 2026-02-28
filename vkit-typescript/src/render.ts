@@ -1,3 +1,4 @@
+import { getReactiveNode, setReactiveNode } from "./contextGuard.js";
 import { createEffect } from "./createEffect.js";
 import { createInjector } from "./createInjector.js";
 import { destroyEffect } from "./destroyEffect.js";
@@ -69,7 +70,13 @@ export function render<P extends HTMLElement>(
 
 	return {
 		destroy: function(): void {
-			destroyEffect(rootEffect);
+			var evaluatedNode = getReactiveNode(true);
+			try {
+				setReactiveNode(undefined);
+				destroyEffect(rootEffect);
+			} finally {
+				setReactiveNode(evaluatedNode);
+			}
 		}
 	};
 }
