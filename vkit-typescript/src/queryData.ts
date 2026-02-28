@@ -5,7 +5,7 @@ export interface DataQuery<T> {
 	skip?: number;
 	take?: number;
 	order?(value1: T, value2: T): number;
-	where?(value: T): boolean;
+	where?(value: T, key: string): boolean;
 }
 
 export interface DataQueryResult<T> {
@@ -95,7 +95,7 @@ function selectRequeriedData<T>(dataSet: DataWithContext<T>[], query: DataQuery<
 	for (var i = 0; i < n; ++i) {
 		var context = dataSet[i];
 
-		if (query.where !== undefined && !query.where(context.value)) {
+		if (query.where !== undefined && !query.where(context.value, context.id)) {
 			continue;
 		}
 
@@ -131,7 +131,7 @@ function selectQueriedData<T>(dataSet: DataSet<T>, query: DataQuery<T>): DataWit
 	for (var id in dataSet) {
 		var record = dataSet[id];
 
-		if (record === undefined || (query.where !== undefined && !query.where(record))) {
+		if (record === undefined || (query.where !== undefined && !query.where(record, id))) {
 			continue;
 		}
 
