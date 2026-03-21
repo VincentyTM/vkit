@@ -40,7 +40,7 @@ export { getDocument } from "./getDocument.js";
 export { getRootNode } from "./getRootNode.js";
 export { getSnapshot } from "./getSnapshot.js";
 export { getTextSelection } from "./getTextSelection.js";
-export { getWindow } from "./getWindow.js";
+export { getWindow, WindowService } from "./getWindow.js";
 export { hash } from "./hash.js";
 export { href } from "./href.js";
 export { html } from "./html.js";
