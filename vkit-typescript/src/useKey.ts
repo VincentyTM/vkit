@@ -13,11 +13,11 @@ interface KeysAndRecords<T> {
 
 interface UseKeyHandle<T> {
 	readonly array: Signal<readonly T[]>;
-	readonly records: Signal<Record<string, T>>;
+	readonly records: Signal<Record<string, T | undefined>>;
 	getItem(key: string): T | undefined;
 	select(key: string): KeyedSignal<T | undefined, string>;
 	select(key: Signal<string>): KeyedSignal<T | undefined, Signal<string>>;
-	viewList<V extends Template<P>, P>(getItemTemplate: (item: KeyedSignal<T, string>) => V): Template<P>;
+	viewList<P extends ParentNode>(getItemTemplate: (item: KeyedSignal<T, string>) => Template<P>): Template<P>;
 }
 
 function getKeys<T>(result: KeysAndRecords<T>): string[] {
@@ -28,7 +28,7 @@ function getRecords<T>(result: KeysAndRecords<T>): Record<string, T> {
 	return result.records;
 }
 
-function selectRecord(keysAndRecords: KeysAndRecords<unknown>, currentKey: string): unknown {
+function selectRecord<T>(keysAndRecords: KeysAndRecords<T>, currentKey: string): T {
 	return keysAndRecords.records[currentKey];
 }
 
@@ -75,7 +75,7 @@ export function useKey<T>(
 	arraySignal: Signal<readonly T[]>,
 	getKey: keyof T | ((value: T) => string)
 ): UseKeyHandle<T> {
-	var keysAndRecordsSignal = computed(function(array: ArrayLike<T>) {
+	var keysAndRecordsSignal = computed(function(array: ArrayLike<T>): KeysAndRecords<T> {
 		var records: Record<string, T> = {};
 		var n = array.length;
 		var keys = new Array<string>(n);
@@ -102,6 +102,9 @@ export function useKey<T>(
 	}, [arraySignal]);
 
 	var keysSignal = computed(getKeys, [keysAndRecordsSignal]);
+	var recordsSignal = computed<
+		(result: KeysAndRecords<T>) => Record<string, T>
+	>(getRecords, [keysAndRecordsSignal]);
 
 	function select<K extends string | Signal<string>>(key: K): KeyedSignal<T, K> {
 		var selected = computed(selectRecord, [keysAndRecordsSignal, key]) as Signal<T> as KeyedSignal<T, K>;
@@ -109,8 +112,8 @@ export function useKey<T>(
 		return selected;
 	}
 
-	function useKeyViewList<V extends Template<P>, P extends ParentNode>(getItemTemplate: (item: KeyedSignal<T, string>) => V): Template<P> {
-		return viewList(keysSignal, function(key): V {
+	function useKeyViewList<P extends ParentNode>(getItemTemplate: (item: KeyedSignal<T, string>) => Template<P>): Template<P> {
+		return viewList(keysSignal, function(key): Template<P> {
 			return getItemTemplate(select(key));
 		});
 	}
@@ -121,9 +124,9 @@ export function useKey<T>(
 
 	return {
 		array: arraySignal,
+		records: recordsSignal,
 		getItem: getItem,
-		records: computed(getRecords, [keysAndRecordsSignal]),
 		select: select,
 		viewList: useKeyViewList
-	} as UseKeyHandle<T>;
+	};
 }
