@@ -6,9 +6,11 @@ import { updateSignalValue, writableSignalToString, WritableSignal } from "./sig
 import { updateSignalNode } from "./updateSignalNode.js";
 
 /**
- * Creates and returns a writable signal that reflects and updates a property of the current value of another writable signal.
- * In contrast to `objectProperty`, it maintains an immutable data structure and replaces the parent object instead of modifying it.
- * Writing a property signal is delayed until the next update, unlike a regular writable signal.
+ * Creates a writable signal that acts as a proxy to a specific property of a parent signal.
+ * 
+ * When the returned signal is updated, it immutably updates the parent signal by
+ * creating a new object reference with the changed property.
+ * 
  * @example
  * interface Person {
  * 	firstName: string;
@@ -25,10 +27,13 @@ import { updateSignalNode } from "./updateSignalNode.js";
  * const lastName = propertySignal(person, "lastName");
  * const age = propertySignal(person, "age", 42);
  * 
- * @param parent The signal that contains the object.
- * @param key The key of the property of the object. It may be a signal if it can change dynamically.
- * @param defaultValue An optional default value to replace undefined.
- * @returns A writable signal that contains the property's current value.
+ * // Update person to { firstName: "John", lastName: "Smith", age: 43 }
+ * age.set(43);
+ * 
+ * @param parent The source signal containing the object.
+ * @param key The property key to track (can be a signal for dynamic keys).
+ * @param defaultValue An optional fallback value used if the property is undefined.
+ * @returns A writable signal synchronized with the parent's property.
  */
 export function propertySignal<T, K extends keyof T>(
 	parent: WritableSignal<T>,
