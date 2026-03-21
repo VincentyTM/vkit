@@ -108,7 +108,7 @@ export { unpackFiles } from "./unpackFiles.js";
 export { unsavedGuard } from "./unsavedGuard.js";
 export { untracked } from "./untracked.js";
 export { update } from "./update.js";
-export { useKey, KeyedSignal } from "./useKey.js";
+export { useKey } from "./useKey.js";
 export { userMedia } from "./userMedia.js";
 export { isValid, validate, ValidationError, Schema } from "./validate.js";
 export { view } from "./view.js";
