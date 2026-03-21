@@ -1,12 +1,18 @@
-import { asyncEffect, AsyncResult } from "./asyncEffect.js";
-import { awaitResult } from "./awaitResult.js";
-import { Signal } from "./computed.js";
+import { computed, Signal } from "./computed.js";
+import { effect } from "./effect.js";
 import { getWindow } from "./getWindow.js";
 import { isSignal } from "./isSignal.js";
-import { noop } from "./noop.js";
+import { onDestroy } from "./onDestroy.js";
 
 interface ImageCapture {
 	takePhoto(photoSettings?: ImageCapturePhotoSettings): Promise<Blob>;
+}
+
+interface ImageCaptureConfig {
+	photoSettings: ImageCapturePhotoSettings | null | Signal<ImageCapturePhotoSettings | null>;
+	stream: MediaStream | MediaStreamTrack | null | Signal<MediaStream | MediaStreamTrack | null> | (() => MediaStream | MediaStreamTrack | null);
+	onCapture: (blob: Blob) => void;
+	onError: (error: unknown) => void;
 }
 
 interface ImageCapturePhotoSettings {
@@ -81,46 +87,79 @@ function ImageCapturePolyfill(track: MediaStreamTrack): ImageCapture {
 			});
 		}
 	};
-};
+}
 
-export function imageCapture(
-	stream: MediaStream | MediaStreamTrack | null | Signal<MediaStream | MediaStreamTrack | null> | (() => MediaStream | MediaStreamTrack | null),
-	photoSettings: ImageCapturePhotoSettings | null | Signal<ImageCapturePhotoSettings | null>
-): Signal<AsyncResult<Blob>> {
+function createImageCapture(stream: MediaStream | MediaStreamTrack, win: Window | null): ImageCapture {
+	if (win === null) {
+		throw new Error("Window is not available");
+	}
+
+	var track = "getVideoTracks" in stream ? stream.getVideoTracks()[0] : stream;
+
+	if (track === undefined) {
+		throw new Error("No video track in stream");
+	}
+
+	if (typeof (win as any).ImageCapture === "function") {
+		return new (win as any).ImageCapture(track) as ImageCapture;
+	}
+
+	return ImageCapturePolyfill(track);
+}
+
+export function imageCapture(config: ImageCaptureConfig): void {
 	var win = getWindow();
+	var photoSettings = config.photoSettings;
+	var stream = config.stream;
+	var onCapture = config.onCapture;
+	var onError = config.onError;
 
-	var imageCapture = asyncEffect(function() {
-		if (win === null) {
-			throw new Error("Window is not available");
-		}
-
+	var imageCapture = computed(function() {
 		var s = isSignal(stream) || typeof stream === "function" ? stream() : stream;
-
-		if (s === null) {
-			return null;
-		}
-
-		var track = "getVideoTracks" in s ? s.getVideoTracks()[0] : s;
-
-		if (!track) {
-			throw new Error("No video track in stream");
-		}
-
-		if (typeof (win as any).ImageCapture === "function") {
-			return new (win as any).ImageCapture(track) as ImageCapture;
-		}
-
-		return ImageCapturePolyfill(track);
+		return s === null ? null : createImageCapture(s, win);
 	});
 
-	return asyncEffect(function() {
-		var ic = awaitResult(imageCapture());
+	var destroyed = false;
+	var pending = false;
+
+	effect(function() {
+		var ic = imageCapture();
 		var ps = isSignal(photoSettings) || typeof photoSettings === "function" ? photoSettings() : photoSettings;
 
-		if (!ic || !ps) {
-			return { then: noop };
+		if (ic === null || ps === null) {
+			return;
 		}
 
-		return ic.takePhoto(ps);
+		if (!pending) {
+			pending = true;
+			ic.takePhoto(ps).then(handleBlob, handleError);
+		}
+	});
+
+	function handleBlob(blob: Blob): void {
+		if (destroyed) {
+			return;
+		}
+
+		pending = false;
+
+		if (blob.size > 0) {
+			onCapture(blob);
+		} else {
+			onError(new Error("Empty file"));
+		}
+	}
+
+	function handleError(error: unknown): void {
+		if (destroyed) {
+			return;
+		}
+
+		pending = false;
+		onError(error);
+	}
+
+	onDestroy(function() {
+		destroyed = true;
 	});
 }
