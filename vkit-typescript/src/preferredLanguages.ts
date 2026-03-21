@@ -24,6 +24,23 @@ function getPreferredLanguages(nav: NavigatorExtension): readonly string[] {
 	];
 }
 
+/**
+ * Returns a signal with the user's preferred languages.
+ * 
+ * On the client, the value comes from browser language settings and updates automatically
+ * when the user changes their language preferences. On the server, it is derived from the
+ * accept-language HTTP header (quality values are removed).
+ * 
+ * @example
+ * const languages = preferredLanguages();
+ * 
+ * effect(() => {
+ * 	console.log(languages());
+ * 	// Output: ["en", "en-US"]
+ * });
+ * 
+ * @returns A signal containing a readonly array of language codes, ordered by preference.
+ */
 export function preferredLanguages(): Signal<readonly string[]> {
 	var win = getWindow();
 
