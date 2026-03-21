@@ -1,8 +1,8 @@
-import { computed, ComputedSignal, Signal } from "./computed.js";
+import { computed, Signal } from "./computed.js";
 import { Template } from "./Template.js";
 import { viewList } from "./viewList.js";
 
-export interface KeyedSignal<T, K> extends ComputedSignal<T> {
+export interface KeyedSignal<T, K> extends Signal<T> {
 	readonly key: K;
 }
 
@@ -12,8 +12,8 @@ interface KeysAndRecords<T> {
 }
 
 interface UseKeyHandle<T> {
-	readonly array: Signal<T[]>;
-	readonly records: ComputedSignal<Record<string, T>>;
+	readonly array: Signal<readonly T[]>;
+	readonly records: Signal<Record<string, T>>;
 	getItem(key: string): T | undefined;
 	select(key: string): KeyedSignal<T | undefined, string>;
 	select(key: Signal<string>): KeyedSignal<T | undefined, Signal<string>>;
