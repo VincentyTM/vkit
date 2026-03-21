@@ -3,6 +3,7 @@ import { Template } from "./Template.js";
 import { viewList } from "./viewList.js";
 
 interface KeysAndRecords<T> {
+	readonly indexes: Record<string, number>;
 	readonly keys: string[];
 	readonly records: Record<string, T>;
 }
@@ -13,7 +14,11 @@ interface UseKeyHandle<T> {
 	getItem(key: string): T | undefined;
 	select(key: string): Signal<T | undefined>;
 	select(key: Signal<string>): Signal<T | undefined>;
-	viewList<P extends ParentNode>(getItemTemplate: (item: Signal<T>, key: string) => Template<P>): Template<P>;
+	viewList<P extends ParentNode>(getItemTemplate: (item: Signal<T>, key: string, index: Signal<number>) => Template<P>): Template<P>;
+}
+
+function getIndex<T>(keysAndRecords: KeysAndRecords<T>, key: string): number {
+	return keysAndRecords.indexes[key];
 }
 
 function getKeys<T>(result: KeysAndRecords<T>): string[] {
@@ -46,8 +51,8 @@ function selectRecord<T>(keysAndRecords: KeysAndRecords<T>, currentKey: string):
  * 	]);
  * 
  * 	return Ul(
- * 		useKey(books, "id").viewList((book, id) => {
- * 			// book is a signal here
+ * 		useKey(books, "id").viewList((book, id, index) => {
+ * 			// book and index are signals
  * 			return Li(() => book().title);
  * 		})
  * 	);
@@ -72,6 +77,7 @@ export function useKey<T>(
 	getKey: keyof T | ((value: T) => string)
 ): UseKeyHandle<T> {
 	var keysAndRecordsSignal = computed(function(array: ArrayLike<T>): KeysAndRecords<T> {
+		var indexes: Record<string, number> = {};
 		var records: Record<string, T> = {};
 		var n = array.length;
 		var keys = new Array<string>(n);
@@ -87,11 +93,13 @@ export function useKey<T>(
 				throw new TypeError("Key '" + key + "' is not unique");
 			}
 
+			indexes[key] = i;
 			records[key] = value;
 			keys[i] = key;
 		}
 
 		return {
+			indexes: indexes,
 			keys: keys,
 			records: records
 		};
@@ -108,9 +116,15 @@ export function useKey<T>(
 		>(selectRecord, [keysAndRecordsSignal, key]);
 	}
 
-	function useKeyViewList<P extends ParentNode>(getItemTemplate: (item: Signal<T>, key: string) => Template<P>): Template<P> {
+	function selectIndex(key: string | Signal<string>): Signal<number> {
+		return computed<
+			(keysAndRecords: KeysAndRecords<T>, currentKey: string) => number
+		>(getIndex, [keysAndRecordsSignal, key]);
+	}
+
+	function useKeyViewList<P extends ParentNode>(getItemTemplate: (item: Signal<T>, key: string, index: Signal<number>) => Template<P>): Template<P> {
 		return viewList(keysSignal, function(key): Template<P> {
-			return getItemTemplate(select(key), key);
+			return getItemTemplate(select(key), key, selectIndex(key));
 		});
 	}
 
