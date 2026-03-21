@@ -25,6 +25,36 @@ function getEmptyList(): [] {
 	return [];
 }
 
+/**
+ * Returns a reactive signal containing an array of all available media devices.
+ * The list updates automatically when devices are connected or disconnected.
+ * If rendered on the server, the list will be empty.
+ * If an error occurs while attempting to read or use the device list,
+ * the error will be propagated.
+ * 
+ * @example
+ * function AudioInputSelector() {
+ * 	const devices = mediaDevices();
+ * 	const audioInputs = computed(() =>
+ * 		devices().filter(
+ * 			d => d.kind === "audioinput"
+ * 		)
+ * 	);
+ * 
+ * 	return Select(
+ * 		Option({
+ * 			label: "- None selected -",
+ * 			value: ""
+ * 		}),
+ * 		viewList(devices, device => Option({
+ * 			label: device.label,
+ * 			value: device.deviceId
+ * 		}))
+ * 	);
+ * }
+ * 
+ * @returns A signal containing an array of available `MediaDeviceInfo` objects.
+ */
 export function mediaDevices(): Signal<MediaDeviceInfo[]> {
 	var win = getWindow();
 
