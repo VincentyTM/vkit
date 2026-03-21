@@ -16,11 +16,11 @@ import { WritableSignal } from "./signal.js";
  * @param index The index of the array item. It may be a signal if it can change dynamically.
  * @returns A writable signal that contains the array item's current value.
  */
-export function arrayItemSignal<T>(parent: WritableSignal<T[]>, index: number | Signal<number>): WritableSignal<T> {
+export function arrayItemSignal<T>(parent: WritableSignal<readonly T[]>, index: number | Signal<number>): WritableSignal<T> {
 	return deriveSignal(parent, selectValue, updateValue, index);
 }
 
-function selectValue<T>(state: T[], index: number): T {
+function selectValue<T>(state: readonly T[], index: number): T {
 	if (!(index in state)) {
 		throw new RangeError("Index " + index + " is out of range");
 	}
@@ -28,7 +28,7 @@ function selectValue<T>(state: T[], index: number): T {
 	return state[index];
 }
 
-function updateValue<T>(state: T[], newValue: T, index: number): T[] {
+function updateValue<T>(state: readonly T[], newValue: T, index: number): readonly T[] {
 	if (!(index in state)) {
 		throw new RangeError("Index " + index + " is out of range");
 	}
