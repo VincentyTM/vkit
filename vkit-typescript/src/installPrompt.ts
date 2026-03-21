@@ -43,7 +43,7 @@ interface InstallPromptState {
 }
 
 function getIsAvailable(state: InstallPromptState): boolean {
-	return state.status === "default";
+	return state.status === "default" && state.event !== null;
 }
 
 /**
