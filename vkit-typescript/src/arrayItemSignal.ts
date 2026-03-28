@@ -1,43 +1,81 @@
-import { Signal } from "./computed.js";
-import { deriveSignal } from "./deriveSignal.js";
-import { WritableSignal } from "./signal.js";
+import { Signal, signalMap } from "./computed.js";
+import { createSignalNode, SignalNode } from "./createSignalNode.js";
+import { isSignal } from "./isSignal.js";
+import { updateSignalValue, writableSignalToString, WritableSignal } from "./signal.js";
+import { updateSignalNode } from "./updateSignalNode.js";
 
 /**
- * Creates and returns a writable signal that reflects and updates an array item at the given index.
+ * Creates a writable signal that acts as a proxy to a specific item in a parent array signal.
+ * 
+ * When the returned signal is set, the parent signal is assigned a new array with the changed item.
+ * 
  * @example
  * const fruits = signal(["apple", "banana", "orange"]);
- * const secondFruit = arrayItemSignal(fruits, 1);
+ * const currentFruitIndex = signal(1);
+ * const currentFruit = arrayItemSignal(fruits, currentFruitIndex, "none");
  * 
- * secondFruit.set("strawberry");
+ * currentFruit.set("strawberry");
  * 
  * console.log(fruits.get()); // ["apple", "strawberry", "orange"]
  * 
- * @param parent The signal that contains the array.
- * @param index The index of the array item. It may be a signal if it can change dynamically.
- * @returns A writable signal that contains the array item's current value.
+ * @param parent The source signal containing the array.
+ * @param index The array index to track (can be a signal for dynamic indices).
+ * @param defaultValue An optional fallback value used if the item at the index does not exist.
+ * @returns A writable signal synchronized with the parent's array item.
  */
-export function arrayItemSignal<T>(parent: WritableSignal<readonly T[]>, index: number | Signal<number>): WritableSignal<T> {
-	return deriveSignal(parent, selectValue, updateValue, index);
-}
+export function arrayItemSignal<T>(
+	parent: WritableSignal<readonly T[]>,
+	index: number | Signal<number>,
+	defaultValue: T
+): WritableSignal<T>;
 
-function selectValue<T>(state: readonly T[], index: number): T {
-	if (!(index in state)) {
-		throw new RangeError("Index " + index + " is out of range");
+export function arrayItemSignal<T>(
+	parent: WritableSignal<readonly T[]>,
+	index: number | Signal<number>,
+): WritableSignal<T | undefined>;
+
+export function arrayItemSignal<T>(
+	parent: WritableSignal<readonly T[]>,
+	index: number | Signal<number>,
+	defaultValue?: T
+): WritableSignal<T | undefined> {
+	var node: SignalNode<T | undefined> = createSignalNode(selectValue, [parent, index]);
+
+	function selectValue(state: readonly T[], index: number): T | undefined {
+		return index in state ? state[index] : defaultValue;
 	}
 
-	return state[index];
-}
-
-function updateValue<T>(state: readonly T[], newValue: T, index: number): readonly T[] {
-	if (!(index in state)) {
-		throw new RangeError("Index " + index + " is out of range");
+	function use(): T | undefined {
+		return updateSignalNode(node, true);
 	}
 
-	if (state[index] === newValue) {
-		return state;
-	}
+	use.isSignal = true;
 
-	var newState = state.slice();
-	newState[index] = newValue;
-	return newState;
+	use.get = function(): T | undefined {
+		return updateSignalNode(node, false);
+	};
+
+	use.map = signalMap;
+
+	use.set = function(this: WritableSignal<T | undefined>, newValue: T): void {
+		var parentValue = parent.get();
+		var currentIndex = isSignal(index) ? index.get() : index;
+		var value = selectValue(parentValue, currentIndex);
+
+		if (value !== newValue) {
+			var newParentValue = parentValue.slice();
+			newParentValue[currentIndex] = newValue;
+			parent.set(newParentValue);
+			parent.get();
+
+			if (isSignal(index)) {
+				index.get();
+			}
+		}
+	};
+
+	use.toString = writableSignalToString;
+	use.update = updateSignalValue;
+
+	return use as WritableSignal<T | undefined>;
 }
