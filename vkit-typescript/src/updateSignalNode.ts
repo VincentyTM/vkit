@@ -2,6 +2,7 @@ import { getReactiveNode, setReactiveNode } from "./contextGuard.js";
 import { SignalNode } from "./createSignalNode.js";
 import { isSignal } from "./isSignal.js";
 import { COMPUTING_FLAG, DIRTY_FLAG, FAILED_FLAG, IN_STACK_FLAG } from "./reactiveNodeFlags.js";
+import { getGlobalVersion } from "./reactiveNodeStack.js";
 import { subscribe } from "./subscribe.js";
 
 export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
@@ -11,7 +12,9 @@ export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
 		subscribe(node, evaluatedNode);
 	}
 
-	if (node.flags & (DIRTY_FLAG | IN_STACK_FLAG)) {
+	var globalVersion = getGlobalVersion();
+
+	if (node.flags & DIRTY_FLAG || (node.flags & IN_STACK_FLAG && node.version !== globalVersion)) {
 		if (node.flags & COMPUTING_FLAG) {
 			throw new Error("Cycle detected");
 		}
@@ -61,6 +64,7 @@ export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
 			node.subscribers = subscribers;
 		} finally {
 			node.flags &= ~(COMPUTING_FLAG | DIRTY_FLAG);
+			node.version = globalVersion;
 			setReactiveNode(evaluatedNode);
 		}
 	}

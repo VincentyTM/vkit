@@ -1,6 +1,7 @@
 import { getReactiveNode } from "./contextGuard.js";
 import { ReactiveNodeBase, ReactiveNodeType } from "./ReactiveNode.js";
 import { DIRTY_FLAG } from "./reactiveNodeFlags.js";
+import { getGlobalVersion } from "./reactiveNodeStack.js";
 import { subscribe } from "./subscribe.js";
 import { updateSignalNode } from "./updateSignalNode.js";
 
@@ -8,6 +9,7 @@ export interface SignalNode<T> extends ReactiveNodeBase {
 	readonly dependencies: ArrayLike<unknown> | undefined;
 	readonly type: ReactiveNodeType.Signal;
 	value: unknown;
+	version: number;
 	computeValue(...args: unknown[]): T;
 }
 
@@ -23,6 +25,7 @@ export function createSignalNode<T>(
 		subscribers: [],
 		type: ReactiveNodeType.Signal,
 		value: INITIAL_SIGNAL_VALUE,
+		version: getGlobalVersion(),
 		computeValue: computeValue,
 		update: updateSignalNode
 	};

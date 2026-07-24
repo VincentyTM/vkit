@@ -5,6 +5,7 @@ import { enqueueUpdate } from "./update.js";
 
 var count = 0;
 var stack: ReactiveNode[] = [];
+var globalVersion = 0;
 
 export function flush(): void {
 	while (count > 0) {
@@ -30,7 +31,12 @@ export function flush(): void {
 	}
 }
 
+export function getGlobalVersion(): number {
+	return globalVersion;
+}
+
 export function invalidateNode(node: ReactiveNode): void {
+	++globalVersion;
 	node.flags |= DIRTY_FLAG;
 	collectOrderedStack(node, stack);
 	enqueueUpdate(flush);
