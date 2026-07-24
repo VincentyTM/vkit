@@ -1,39 +1,32 @@
 import { destroySubscribers } from "./destroySubscribers.js";
 import { ReactiveNode, ReactiveNodeType } from "./ReactiveNode.js";
-import { DESTROYED_FLAG, DIRTY_FLAG, TO_BE_EVALUATED_FLAG, VISITED_FLAG } from "./reactiveNodeFlags.js";
+import { DESTROYED_FLAG, DIRTY_FLAG, IN_STACK_FLAG } from "./reactiveNodeFlags.js";
 import { enqueueUpdate } from "./update.js";
 
+var count = 0;
 var stack: ReactiveNode[] = [];
 
 export function flush(): void {
-	var n: number;
+	while (count > 0) {
+		var node = stack[count - 1];
 
-	while (n = stack.length) {
-		var currentStack = stack;
+		node.flags &= ~IN_STACK_FLAG;
+		--count;
 
-		stack = [];
-
-		for (var i = n - 1; i >= 0; --i) {
-			var node = currentStack[i];
-			node.flags = (node.flags & ~VISITED_FLAG) | TO_BE_EVALUATED_FLAG;
+		if (node.flags & DESTROYED_FLAG) {
+			destroySubscribers(node);
+			continue;
 		}
 
-		for (var i = n - 1; i >= 0; --i) {
-			var node = currentStack[i];
-
-			node.flags &= ~TO_BE_EVALUATED_FLAG;
-
-			if (node.flags & DESTROYED_FLAG) {
-				destroySubscribers(node);
-				continue;
-			}
-
-			if (node.type === ReactiveNodeType.Signal && node.subscribers.length === 0) {
-				continue;
-			}
-
-			node.update(node, false);
+		if (node.type === ReactiveNodeType.Signal && node.subscribers.length === 0) {
+			continue;
 		}
+
+		node.update(node, false);
+	}
+
+	if (0 < stack.length) {
+		stack.splice(0, stack.length);
 	}
 }
 
@@ -44,8 +37,8 @@ export function invalidateNode(node: ReactiveNode): void {
 }
 
 function collectOrderedStack(node: ReactiveNode, stack: ReactiveNode[]): void {
-	if (!(node.flags & VISITED_FLAG)) {
-		node.flags |= VISITED_FLAG;
+	if (!(node.flags & IN_STACK_FLAG)) {
+		node.flags |= IN_STACK_FLAG;
 
 		var subscribers = node.subscribers;
 		var n = subscribers.length;
@@ -54,6 +47,11 @@ function collectOrderedStack(node: ReactiveNode, stack: ReactiveNode[]): void {
 			collectOrderedStack(subscribers[i], stack);
 		}
 
-		stack.push(node);
+		if (count < stack.length) {
+			stack.splice(count, stack.length - count, node);
+			count = stack.length;
+		} else {
+			count = stack.push(node);
+		}
 	}
 }

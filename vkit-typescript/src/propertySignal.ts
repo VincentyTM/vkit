@@ -79,11 +79,6 @@ export function propertySignal<T, K extends keyof T>(
 			var newParentValue = objectAssign({}, parentValue);
 			newParentValue[currentKey] = newValue;
 			parent.set(newParentValue);
-			parent.get();
-
-			if (isSignal(key)) {
-				key.get();
-			}
 		}
 	};
 
