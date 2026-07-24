@@ -360,22 +360,6 @@ const filtered = computed(() => (
 ));
 ```
 
-Computed signals are not immediately updated. The updates are added to a queue instead. To make sure all computed signals are up to date, you can call `update`.
-
-```javascript
-const a = signal(3);
-const b = signal(5);
-
-const aPlusB = computed(() => a() + b());
-console.log(aPlusB.get()); // 8
-
-a.set(13);
-console.log(aPlusB.get()); // 8
-
-update();
-console.log(aPlusB.get()); // 18
-```
-
 ### Using a Signal
 
 A signal can be simply used as a dynamic text in the DOM.
