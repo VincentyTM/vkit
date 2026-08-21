@@ -1,8 +1,8 @@
-import { HTMLTemplate } from "./html.js";
+import { HTMLLiteralTemplate } from "./html.js";
 import { ServerElement } from "./createServerElement.js";
 import { serverRender } from "./serverRender.js";
 
-export function serverRenderHTML(element: ServerElement, template: HTMLTemplate<unknown>): void {
+export function serverRenderHTML(element: ServerElement, template: HTMLLiteralTemplate<unknown>): void {
 	if (element.children) {
 		var args = template.args;
 		var n = args.length;

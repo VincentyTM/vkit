@@ -1,5 +1,5 @@
 import { HydrationPointer } from "./hydrate.js";
-import { HTMLTemplate } from "./html.js";
+import { HTMLLiteralTemplate } from "./html.js";
 import { hydrate } from "./hydrate.js";
 import { Template } from "./Template.js";
 
@@ -22,7 +22,7 @@ function findNodes(
 	return count;
 }
 
-export function hydrateHTML<P extends HTMLElement>(pointer: HydrationPointer<P>, template: HTMLTemplate<P>): void {
+export function hydrateHTML<P extends HTMLElement>(pointer: HydrationPointer<P>, template: HTMLLiteralTemplate<P>): void {
 	var args = template.args;
 	var operators: Template<P>[] = [];
 	var placeholder = "<!---->";

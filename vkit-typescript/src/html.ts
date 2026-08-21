@@ -3,7 +3,7 @@ import { isArray } from "./isArray.js";
 import { serverRenderHTML } from "./serverRenderHTML.js";
 import { CustomTemplate, Template } from "./Template.js";
 
-export interface HTMLTemplate<P> extends CustomTemplate<P> {
+export interface HTMLLiteralTemplate<P> extends CustomTemplate<P> {
 	args: ArrayLike<Template<P>>;
 }
 
@@ -24,20 +24,20 @@ export interface HTMLTemplate<P> extends CustomTemplate<P> {
  */
  export function html<P extends HTMLElement>(
 	...expressions: Template<P>[]
-): HTMLTemplate<P>;
+): HTMLLiteralTemplate<P>;
 
 export function html<P extends HTMLElement>(
 	strings: ArrayLike<string> & {
 		raw: ArrayLike<string>
 	},
 	...expressions: Template<P>[]
-): HTMLTemplate<P>;
+): HTMLLiteralTemplate<P>;
 
 export function html<P extends HTMLElement>(
 	strings: (ArrayLike<string> & {
 		raw: ArrayLike<string>
 	}) | Template<P>
-): HTMLTemplate<P> {
+): HTMLLiteralTemplate<P> {
 	if (isArray(strings) && isArray((strings as any).raw)) {
 		var n = strings.length;
 		var a = new Array(2 * n - 1);
@@ -52,7 +52,7 @@ export function html<P extends HTMLElement>(
 			a[j++] = strings[i];
 		}
 
-		return html.apply(null, a as any) as HTMLTemplate<P>;
+		return html.apply(null, a as any) as HTMLLiteralTemplate<P>;
 	}
 
 	return {
