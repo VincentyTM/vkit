@@ -1,6 +1,7 @@
 import { getReactiveNode, setReactiveNode } from "./contextGuard.js";
 import { SignalNode } from "./createSignalNode.js";
 import { isSignal } from "./isSignal.js";
+import { ReactiveNode, ReactiveNodeType } from "./ReactiveNode.js";
 import { COMPUTING_FLAG, DIRTY_FLAG, FAILED_FLAG, IN_STACK_FLAG } from "./reactiveNodeFlags.js";
 import { getGlobalVersion } from "./reactiveNodeStack.js";
 import { subscribe } from "./subscribe.js";
@@ -14,7 +15,7 @@ export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
 
 	var globalVersion = getGlobalVersion();
 
-	if (node.flags & DIRTY_FLAG || (node.flags & IN_STACK_FLAG && node.version !== globalVersion)) {
+	if (node.flags & DIRTY_FLAG || (node.flags & IN_STACK_FLAG && node.version !== globalVersion && !willBeUpdated(node.parent, globalVersion))) {
 		if (node.flags & COMPUTING_FLAG) {
 			throw new Error("Cycle detected");
 		}
@@ -74,4 +75,32 @@ export function updateSignalNode<T>(node: SignalNode<T>, tracked: boolean): T {
 	}
 
 	return node.value as T;
+}
+
+function willBeUpdated(node: ReactiveNode | undefined, globalVersion: number): boolean {
+	if (node === undefined || !(node.flags & IN_STACK_FLAG)) {
+		return false;
+	}
+
+	if (node.type === ReactiveNodeType.Signal) {
+		if (node.version === globalVersion) {
+			return false;
+		}
+
+		var oldValue = node.value;
+		node.update(node, false);
+		var newValue = node.value;
+		return oldValue !== newValue;
+	}
+
+	var sources = node.sources;
+	var n = sources.length;
+
+	for (var i = 0; i < n; ++i) {
+		if (willBeUpdated(sources[i], globalVersion)) {
+			return true;
+		}
+	}
+
+	return false;
 }

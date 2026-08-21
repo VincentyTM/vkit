@@ -1,5 +1,5 @@
 import { Injector } from "./createInjector.js";
-import { ReactiveNodeBase, ReactiveNodeType } from "./ReactiveNode.js";
+import { ReactiveNode, ReactiveNodeBase, ReactiveNodeType } from "./ReactiveNode.js";
 import { DIRTY_FLAG } from "./reactiveNodeFlags.js";
 import { subscribe } from "./subscribe.js";
 import { updateEffect } from "./updateEffect.js";
@@ -10,6 +10,7 @@ export interface Effect extends ReactiveNodeBase {
 	readonly injector: Injector | undefined;
 	readonly injectorParent: Effect | undefined;
 	readonly parent: Effect | undefined;
+	readonly sources: ReactiveNode[];
 	readonly type: ReactiveNodeType.Effect;
 	errorHandler: ((error: unknown) => void) | undefined;
 	updateHandler(): void;
@@ -31,6 +32,7 @@ export function createEffect(
 			parentEffect.injector !== undefined ? parentEffect :
 			parentEffect.injectorParent,
 		parent: parentEffect,
+		sources: [],
 		subscribers: [],
 		type: ReactiveNodeType.Effect,
 		errorHandler: errorHandler,

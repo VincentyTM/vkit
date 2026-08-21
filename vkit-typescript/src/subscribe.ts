@@ -1,4 +1,4 @@
-import { ReactiveNode } from "./ReactiveNode.js";
+import { ReactiveNode, ReactiveNodeType } from "./ReactiveNode.js";
 
 export function subscribe(source: ReactiveNode, target: ReactiveNode): void {
 	var subscribers = source.subscribers;
@@ -10,4 +10,8 @@ export function subscribe(source: ReactiveNode, target: ReactiveNode): void {
 	}
 
 	subscribers.push(target);
+
+	if (target.type === ReactiveNodeType.Effect) {
+		target.sources.push(source);
+	}
 }
