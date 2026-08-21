@@ -8,7 +8,7 @@ export interface CustomTemplate<P> {
 	serverRender(serverElement: ServerElement, template: CustomTemplate<P>): void;
 }
 
-export type Template<P = unknown> = (
+export type Template<P = never> = (
 	| Node
 	| string
 	| number
