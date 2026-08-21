@@ -35,10 +35,10 @@ import { ViewTemplate } from "./view.js";
  * @param getFallbackTemplate A function that returns a placeholder view.
  * @returns The error boundary.
  */
-export function errorBoundary<P extends Element>(
-	getTemplate: () => Template<P>,
-	getFallbackTemplate: (error: unknown, retry: () => void) => Template<P>
-): ViewTemplate<P> {
+export function errorBoundary(
+	getTemplate: () => Template<never>,
+	getFallbackTemplate: (error: unknown, retry: () => void) => Template<never>
+): ViewTemplate {
 	var error: unknown;
 	var isFailed = signal(false);
 
@@ -52,7 +52,7 @@ export function errorBoundary<P extends Element>(
 		isFailed.set(true);
 	}
 
-	function getOuterTemplate(): Template<P> {
+	function getOuterTemplate(): Template<never> {
 		if (isFailed()) {
 			return getFallbackTemplate(error, retry);
 		}
