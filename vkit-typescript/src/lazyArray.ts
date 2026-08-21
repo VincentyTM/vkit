@@ -3,8 +3,8 @@ import { effect } from "./effect.js";
 import { onDestroy } from "./onDestroy.js";
 import { signal } from "./signal.js";
 
-export function lazyArray<T>(arraySignal: Signal<T[]>, backwards: boolean): Signal<T[]> {
-	var optimized = signal<T[]>([]);
+export function lazyArray<T>(arraySignal: Signal<readonly T[]>, backwards: boolean): Signal<readonly T[]> {
+	var optimized = signal<readonly T[]>([]);
 
 	effect(function() {
 		var array = arraySignal();
