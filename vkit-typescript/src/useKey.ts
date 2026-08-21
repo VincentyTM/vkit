@@ -14,7 +14,7 @@ interface UseKeyHandle<T> {
 	getItem(key: string): T | undefined;
 	select(key: string): Signal<T | undefined>;
 	select(key: Signal<string>): Signal<T | undefined>;
-	viewList(getItemTemplate: (item: Signal<T>, key: string, index: Signal<number>) => Template): Template;
+	viewList(getItemTemplate: (item: Signal<T>, key: string, index: Signal<number>) => Template<never>): Template<never>;
 }
 
 function getIndex<T>(keysAndRecords: KeysAndRecords<T>, key: string): number {
@@ -122,7 +122,7 @@ export function useKey<T>(
 		>(getIndex, [keysAndRecordsSignal, key]);
 	}
 
-	function useKeyViewList(getItemTemplate: (item: Signal<T>, key: string, index: Signal<number>) => Template): Template {
+	function useKeyViewList(getItemTemplate: (item: Signal<T>, key: string, index: Signal<number>) => Template<never>): Template<never> {
 		return viewList(keysSignal, function(key) {
 			return getItemTemplate(select(key), key, selectIndex(key));
 		});

@@ -5,10 +5,10 @@ import { hydrateViewList } from "./hydrateViewList.js";
 import { serverRenderViewList } from "./serverRenderViewList.js";
 import { CustomTemplate, Template } from "./Template.js";
 
-export interface ViewListTemplate<T, P> extends CustomTemplate<P> {
+export interface ViewListTemplate<T> extends CustomTemplate<unknown> {
 	readonly models: Signal<readonly T[]>;
 	readonly parentEffect: Effect;
-	getItemTemplate(model: T): Template<P>;
+	getItemTemplate(model: T): Template<never>;
 }
 
 /**
@@ -43,10 +43,10 @@ export interface ViewListTemplate<T, P> extends CustomTemplate<P> {
  * 
  * @returns A template that represents a dynamic view list.
  */
-export function viewList<T, P extends ParentNode>(
+export function viewList<T>(
 	models: Signal<readonly T[]>,
-	getItemTemplate: (model: T) => Template<P>
-): ViewListTemplate<T, P> {
+	getItemTemplate: (model: T) => Template<never>
+): ViewListTemplate<T> {
 	return {
 		models: models,
 		parentEffect: getEffect(),

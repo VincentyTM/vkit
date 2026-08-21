@@ -4,9 +4,9 @@ import { serverRender } from "./serverRender.js";
 import { updateEffect } from "./updateEffect.js";
 import { ViewListTemplate } from "./viewList.js";
 
-export function serverRenderViewList<T, P extends ParentNode>(
+export function serverRenderViewList<T>(
 	element: ServerElement,
-	listTemplate: ViewListTemplate<T, P>
+	listTemplate: ViewListTemplate<T>
 ): void {
 	var parentEffect = listTemplate.parentEffect;
 	var list = listTemplate.models.get();
@@ -17,10 +17,10 @@ export function serverRenderViewList<T, P extends ParentNode>(
 	}
 }
 
-function serverRenderViewListBlock<T, P extends ParentNode>(
+function serverRenderViewListBlock<T>(
 	parentEffect: Effect,
 	element: ServerElement,
-	listTemplate: ViewListTemplate<T, P>,
+	listTemplate: ViewListTemplate<T>,
 	model: T
 ): void {
 	var effect = createEffect(parentEffect, function(): void {

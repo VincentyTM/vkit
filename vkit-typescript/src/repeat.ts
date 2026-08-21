@@ -46,10 +46,10 @@ export function repeat<T>(
 	getTemplate: (index: number) => T
 ): T[];
 
-export function repeat<V extends Template<P>, P>(
+export function repeat(
 	count: Signal<number>,
-	getTemplate: (index: number) => V
-): Template<P>;
+	getTemplate: (index: number) => Template<never>
+): Template<never>;
 
 export function repeat(
 	count: Signal<number> | number,
@@ -57,7 +57,7 @@ export function repeat(
 ): unknown {
 	if (isSignal(count)) {
 		var arrayState = count.map(createRangeArray);
-		return viewList(arrayState, getTemplate as (index: number) => Template<unknown>);
+		return viewList(arrayState, getTemplate as (index: number) => Template<never>);
 	}
 
 	count = getNumber(count);

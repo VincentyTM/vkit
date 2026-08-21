@@ -16,7 +16,7 @@ interface Block {
 	readonly start: ChildNode;
 }
 
-export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPointer<P>, template: ViewListTemplate<T, P>): void {
+export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPointer<P>, template: ViewListTemplate<T>): void {
 	var listStart = document.createTextNode("");
 	var listEnd = document.createTextNode("");
 	var blockMap: Record<string, Block> = {};
@@ -114,7 +114,11 @@ export function hydrateViewList<T, P extends ParentNode>(pointer: HydrationPoint
 					setReactiveNode(block.effect);
 					hydrate(fragmentPointer, block.currentTemplate);
 					fragment.appendChild(block.end);
-					parentNode.insertBefore(fragment, end);
+					var endParent = end.parentNode;
+					if (endParent === null) {
+						throw new TypeError("End node is not in the DOM");
+					}
+					endParent.insertBefore(fragment, end);
 				}
 
 				++i;
