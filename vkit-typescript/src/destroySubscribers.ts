@@ -6,6 +6,9 @@ export function destroySubscribers(node: ReactiveNode): void {
 	var n = subscribers.length;
 
 	for (var i = 0; i < n; ++i) {
-		subscribers[i].flags |= DESTROYED_FLAG;
+		var subscriber = subscribers[i];
+		if (subscriber.parent === node) {
+			subscriber.flags |= DESTROYED_FLAG;
+		}
 	}
 }

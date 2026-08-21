@@ -5,6 +5,7 @@ export type ReactiveNode = SignalNode<unknown> | Effect;
 
 export interface ReactiveNodeBase {
 	flags: number;
+	readonly parent: ReactiveNode | undefined;
 	subscribers: ReactiveNode[];
 	readonly type: ReactiveNodeType;
 	update(node: ReactiveNode, tracked: boolean): void;

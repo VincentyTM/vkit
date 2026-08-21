@@ -19,9 +19,12 @@ export function createSignalNode<T>(
 	computeValue: (...args: never[]) => T,
 	dependencies: ArrayLike<unknown> | undefined
 ): SignalNode<T> {
+	var evaluatedNode = getReactiveNode(true);
+
 	var node: SignalNode<T> = {
 		dependencies: dependencies,
 		flags: DIRTY_FLAG,
+		parent: evaluatedNode,
 		subscribers: [],
 		type: ReactiveNodeType.Signal,
 		value: INITIAL_SIGNAL_VALUE,
@@ -29,8 +32,6 @@ export function createSignalNode<T>(
 		computeValue: computeValue,
 		update: updateSignalNode
 	};
-
-	var evaluatedNode = getReactiveNode(true);
 
 	if (evaluatedNode !== undefined) {
 		subscribe(evaluatedNode, node);
