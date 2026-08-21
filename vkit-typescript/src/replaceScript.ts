@@ -17,7 +17,7 @@ import { Template } from "./Template.js";
  * @param getTemplate The component to replace the script element with.
  * @returns A render root object.
  */
-export function replaceScript(getTemplate: () => Template<unknown>): RenderRoot {
+export function replaceScript(getTemplate: () => Template<never>): RenderRoot {
 	var script = getCurrentScript(document);
 
 	if (script.parentNode === null) {
