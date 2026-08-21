@@ -2,7 +2,7 @@ import { HTMLLiteralTemplate } from "./html.js";
 import { ServerElement } from "./createServerElement.js";
 import { serverRender } from "./serverRender.js";
 
-export function serverRenderHTML(element: ServerElement, template: HTMLLiteralTemplate<unknown>): void {
+export function serverRenderHTML(element: ServerElement, template: HTMLLiteralTemplate): void {
 	if (element.children) {
 		var args = template.args;
 		var n = args.length;

@@ -22,9 +22,9 @@ function findNodes(
 	return count;
 }
 
-export function hydrateHTML<P extends HTMLElement>(pointer: HydrationPointer<P>, template: HTMLLiteralTemplate<P>): void {
+export function hydrateHTML<P extends ParentNode>(pointer: HydrationPointer<P>, template: HTMLLiteralTemplate): void {
 	var args = template.args;
-	var operators: Template<P>[] = [];
+	var operators: Template<never>[] = [];
 	var placeholder = "<!---->";
 	var result: (string | number | bigint)[] = [];
 	var l = args.length;

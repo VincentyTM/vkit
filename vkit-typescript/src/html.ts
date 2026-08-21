@@ -3,8 +3,8 @@ import { isArray } from "./isArray.js";
 import { serverRenderHTML } from "./serverRenderHTML.js";
 import { CustomTemplate, Template } from "./Template.js";
 
-export interface HTMLLiteralTemplate<P> extends CustomTemplate<P> {
-	args: ArrayLike<Template<P>>;
+export interface HTMLLiteralTemplate extends CustomTemplate<unknown> {
+	args: ArrayLike<Template<never>>;
 }
 
 /**
@@ -14,30 +14,27 @@ export interface HTMLLiteralTemplate<P> extends CustomTemplate<P> {
  * html`
  * 	<h1>Hello ${name}</h1>
  * 	<div>
- * 		${{className: "a-class-on-the-div"}}
  * 		${SomeOtherComponent()}
- * 		<input>
- * 		${{value: "The value of the input"}}
  * 	</div>
  * `
  * @returns A template that represents the parsed HTML elements and other nodes.
  */
- export function html<P extends HTMLElement>(
-	...expressions: Template<P>[]
-): HTMLLiteralTemplate<P>;
+export function html(
+	...expressions: Template<never>[]
+): HTMLLiteralTemplate;
 
-export function html<P extends HTMLElement>(
+export function html(
 	strings: ArrayLike<string> & {
 		raw: ArrayLike<string>
 	},
-	...expressions: Template<P>[]
-): HTMLLiteralTemplate<P>;
+	...expressions: Template<never>[]
+): HTMLLiteralTemplate;
 
-export function html<P extends HTMLElement>(
+export function html(
 	strings: (ArrayLike<string> & {
 		raw: ArrayLike<string>
-	}) | Template<P>
-): HTMLLiteralTemplate<P> {
+	}) | Template<never>
+): HTMLLiteralTemplate {
 	if (isArray(strings) && isArray((strings as any).raw)) {
 		var n = strings.length;
 		var a = new Array(2 * n - 1);
@@ -52,7 +49,7 @@ export function html<P extends HTMLElement>(
 			a[j++] = strings[i];
 		}
 
-		return html.apply(null, a as any) as HTMLLiteralTemplate<P>;
+		return html.apply(null, a as any) as HTMLLiteralTemplate;
 	}
 
 	return {
