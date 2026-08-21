@@ -33,11 +33,19 @@ export function fileReader<T extends FileReaderResultType>(
 
 	effect(function(): void {
 		if (win === null) {
-			throw new TypeError("Window is not available");
+			result.set({
+				status: AsyncStatus.Rejected,
+				error: new TypeError("Window is not available")
+			});
+			return;
 		}
 
 		if (typeof win.FileReader !== "function") {
-			throw new TypeError("FileReader API is not supported");
+			result.set({
+				status: AsyncStatus.Rejected,
+				error: new TypeError("FileReader API is not supported")
+			});
+			return;
 		}
 
 		var reader = new win.FileReader();
