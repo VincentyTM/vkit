@@ -20,11 +20,11 @@ import { Template } from "./Template.js";
 export function replaceScript(getTemplate: () => Template<unknown>): RenderRoot {
 	var script = getCurrentScript(document);
 
-	if (script.parentNode === null || script.parentNode.nodeType !== 1) {
-		throw new Error("The current script's parent node must be an HTML element");
+	if (script.parentNode === null) {
+		throw new Error("The current script must be attached");
 	}
 
-	return render(getTemplate, script.parentNode as HTMLElement, {
+	return render(getTemplate, script.parentNode, {
 		endNode: script.nextSibling,
 		startNode: script
 	});
