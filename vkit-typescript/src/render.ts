@@ -38,7 +38,7 @@ export interface RenderRoot {
  * @param container A container DOM node in which the application is rendered.
  * @returns An object that can be used to destroy the rendered effects.
  */
-export function render<P extends HTMLElement>(
+export function render<P extends ParentNode>(
 	getTemplate: () => Template<P>,
 	container: P,
 	options?: RenderOptions
