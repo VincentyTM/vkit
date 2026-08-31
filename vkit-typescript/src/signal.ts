@@ -46,7 +46,7 @@ export interface WritableSignal<T> extends Signal<T> {
  * 	return [
  * 		H1("Count: ", count),
  * 		Button("Increment", {
- * 			onclick: () => count.add(1)
+ * 			onclick: () => count.update(c => c + 1)
  * 		}),
  * 		Button("Reset", {
  * 			disabled: () => count() === 0,
