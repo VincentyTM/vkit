@@ -18,6 +18,11 @@ interface BooleanSchema extends SchemaBase {
 	type: "boolean";
 }
 
+interface CustomSchema<T> extends SchemaBase {
+	type: "custom";
+	isValid(value: unknown): value is T;
+}
+
 interface NullSchema extends SchemaBase {
 	type: "null";
 }
@@ -71,7 +76,7 @@ type UnionToTuple<T> = UnionToIntersection<(T extends any ? (t: T) => T : never)
 	? [...UnionToTuple<Exclude<T, W>>, W]
 	: [];
 
-export type Schema<T> = EnumSchema<T> | UnknownSchema | (
+export type Schema<T> = EnumSchema<T> | CustomSchema<T> | UnknownSchema | (
 	T extends string ? StringSchema :
 	T extends number ? NumberSchema :
 	T extends boolean ? BooleanSchema :
@@ -91,6 +96,7 @@ export type ValidationError = (
 	| ArrayMaxCountValidationError
 	| ArrayMinCountValidationError
 	| BooleanValidationError
+	| CustomValidationError
 	| EnumValidationError
 	| NullValidationError
 	| NumberValidationError
@@ -138,6 +144,10 @@ interface ArrayMinCountValidationError extends ValidationErrorBase {
 
 interface BooleanValidationError extends ValidationErrorBase {
 	readonly type: "boolean";
+}
+
+interface CustomValidationError extends ValidationErrorBase {
+	readonly type: "custom";
 }
 
 interface EnumValidationError extends ValidationErrorBase {
@@ -262,6 +272,17 @@ export function validate<T>(value: any, schema: Schema<T>): ValidationError | nu
 		return {
 			options: schema.options,
 			type: "enum",
+			value: value
+		};
+	}
+
+	if (schema.type === "custom") {
+		if (schema.isValid(value)) {
+			return null;
+		}
+
+		return {
+			type: "custom",
 			value: value
 		};
 	}
