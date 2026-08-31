@@ -580,11 +580,11 @@ Although element (or other) references can be set with simple functions, there i
 function InputFocusComponent() {
     const inputRef = ref();
 
-    return html(
-        '<input>', inputRef,
-        '<input type="button" value="Focus">', {
+    return [
+        Input(inputRef),
+        Button("Focus", {
             onclick: () => inputRef.current.focus()
-        }
-    );
+        })
+    ];
 }
 ```
