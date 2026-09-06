@@ -83,7 +83,7 @@ export { DataQuery, DataQueryResult, DataSet, queryData } from "./queryData.js";
 export { reactive } from "./reactive.js";
 export { flush } from "./reactiveNodeStack.js";
 export { ref, Ref } from "./ref.js";
-export { render } from "./render.js";
+export { render, RenderRoot } from "./render.js";
 export { renderToStream } from "./renderToStream.js";
 export { renderToString } from "./renderToString.js";
 export { repeat } from "./repeat.js";
