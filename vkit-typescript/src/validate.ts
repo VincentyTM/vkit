@@ -259,13 +259,11 @@ export function isValid<T>(value: any, schema: Schema<T>): value is T {
 
 export function validate<T>(value: any, schema: Schema<T>): ValidationError | null {
 	if (schema.type === "enum") {
-		if (schema.options) {
-			var m = schema.options.length;
+		var m = schema.options.length;
 
-			for (var i = 0; i < m; ++i) {
-				if (schema.options[i] === value) {
-					return null;
-				}
+		for (var i = 0; i < m; ++i) {
+			if (schema.options[i] === value) {
+				return null;
 			}
 		}
 
