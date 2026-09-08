@@ -20,7 +20,7 @@ interface ParseTree {
 	addClosingParenthesis(): void;
 	addOperand(node: BinaryNode): void;
 	addUnaryOperator(node: BinaryNode): void;
-	compare(node1: BinaryNode | null, node2: BinaryNode): boolean;
+	compare(node1: BinaryNode | null, node2: BinaryNode): node1 is BinaryNode;
 	findParent(node: BinaryNode): BinaryNode | null;
 	isClosingParenthesis(node: BinaryNode): boolean;
 	isOpeningParenthesis(node: BinaryNode): boolean;
@@ -62,7 +62,7 @@ function binaryNodeToString(this: BinaryNode, level?: number): string {
 		? "<" + (this.word || this.type) + ">" + inner + "</" + (this.word || this.type) + ">"
 		: "<" + (this.word || this.type) + " />"
 	);
-};
+}
 
 export function parseTree(operators: Record<string, ParseTreeOperator>): ParseTree {
 	var precedence: Record<string, number> = {};
@@ -117,10 +117,6 @@ export function parseTree(operators: Record<string, ParseTreeOperator>): ParseTr
 }
 
 function add(this: ParseTree, node: BinaryNode): void {
-	if (!node) {
-		return;
-	}
-
 	if (this.isClosingParenthesis(node)) {
 		this.addClosingParenthesis();
 	} else if (node.type in this.precedence) {
@@ -233,7 +229,7 @@ function findParent(this: ParseTree, node: BinaryNode): BinaryNode | null {
 	var parent: BinaryNode | null = this.current;
 
 	while (this.compare(parent, node)) {
-		parent = parent!.parent;
+		parent = parent.parent;
 	}
 
 	return parent;
